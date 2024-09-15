@@ -2,7 +2,7 @@ package golem:it;
 
 interface api {
 
-  record product-item {
+  record cart-item {
     product-id: string,
     name: string,
     price: float32,
@@ -11,7 +11,7 @@ interface api {
 
   record cart {
     user-id: string,
-    items: list<product-item>,
+    items: list<cart-item>,
     total: float32,
     currency: string,
     timestamp: u64,
@@ -26,7 +26,7 @@ interface api {
     success(order-confirmation),
   }
 
-  add-item: func(item: product-item) -> result<_, string>;
+  add-item: func(product-id: string, quantity: u32) -> result<_, string>;
 
   remove-item: func(product-id: string) -> result<_, string>;
 

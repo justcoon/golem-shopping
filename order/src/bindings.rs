@@ -3990,15 +3990,15 @@ pub mod exports {
                     super::super::super::super::__link_custom_section_describing_imports;
                 use super::super::super::super::_rt;
                 #[derive(Clone)]
-                pub struct ProductItem {
+                pub struct OrderItem {
                     pub product_id: _rt::String,
                     pub name: _rt::String,
                     pub price: f32,
                     pub quantity: u32,
                 }
-                impl ::core::fmt::Debug for ProductItem {
+                impl ::core::fmt::Debug for OrderItem {
                     fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
-                        f.debug_struct("ProductItem")
+                        f.debug_struct("OrderItem")
                             .field("product-id", &self.product_id)
                             .field("name", &self.name)
                             .field("price", &self.price)
@@ -4010,7 +4010,7 @@ pub mod exports {
                 pub struct Order {
                     pub order_id: _rt::String,
                     pub user_id: _rt::String,
-                    pub items: _rt::Vec<ProductItem>,
+                    pub items: _rt::Vec<OrderItem>,
                     pub total: f32,
                     pub currency: _rt::String,
                     pub timestamp: u64,
@@ -4030,7 +4030,7 @@ pub mod exports {
                 #[derive(Clone)]
                 pub struct CreateOrder {
                     pub user_id: _rt::String,
-                    pub items: _rt::Vec<ProductItem>,
+                    pub items: _rt::Vec<OrderItem>,
                     pub total: f32,
                     pub currency: _rt::String,
                     pub timestamp: u64,
@@ -4079,7 +4079,7 @@ pub mod exports {
                             let l7 = *base.add(16).cast::<f32>();
                             let l8 = *base.add(20).cast::<i32>();
 
-                            ProductItem {
+                            OrderItem {
                                 product_id: _rt::string_lift(bytes3),
                                 name: _rt::string_lift(bytes6),
                                 price: l7,
@@ -4104,39 +4104,29 @@ pub mod exports {
                 pub unsafe fn _export_add_item_cabi<T: Guest>(
                     arg0: *mut u8,
                     arg1: usize,
-                    arg2: *mut u8,
-                    arg3: usize,
-                    arg4: f32,
-                    arg5: i32,
+                    arg2: i32,
                 ) -> *mut u8 {
                     #[cfg(target_arch = "wasm32")]
                     _rt::run_ctors_once();
                     let len0 = arg1;
                     let bytes0 = _rt::Vec::from_raw_parts(arg0.cast(), len0, len0);
-                    let len1 = arg3;
-                    let bytes1 = _rt::Vec::from_raw_parts(arg2.cast(), len1, len1);
-                    let result2 = T::add_item(ProductItem {
-                        product_id: _rt::string_lift(bytes0),
-                        name: _rt::string_lift(bytes1),
-                        price: arg4,
-                        quantity: arg5 as u32,
-                    });
-                    let ptr3 = _RET_AREA.0.as_mut_ptr().cast::<u8>();
-                    match result2 {
+                    let result1 = T::add_item(_rt::string_lift(bytes0), arg2 as u32);
+                    let ptr2 = _RET_AREA.0.as_mut_ptr().cast::<u8>();
+                    match result1 {
                         Ok(_) => {
-                            *ptr3.add(0).cast::<u8>() = (0i32) as u8;
+                            *ptr2.add(0).cast::<u8>() = (0i32) as u8;
                         }
                         Err(e) => {
-                            *ptr3.add(0).cast::<u8>() = (1i32) as u8;
-                            let vec4 = (e.into_bytes()).into_boxed_slice();
-                            let ptr4 = vec4.as_ptr().cast::<u8>();
-                            let len4 = vec4.len();
-                            ::core::mem::forget(vec4);
-                            *ptr3.add(8).cast::<usize>() = len4;
-                            *ptr3.add(4).cast::<*mut u8>() = ptr4.cast_mut();
+                            *ptr2.add(0).cast::<u8>() = (1i32) as u8;
+                            let vec3 = (e.into_bytes()).into_boxed_slice();
+                            let ptr3 = vec3.as_ptr().cast::<u8>();
+                            let len3 = vec3.len();
+                            ::core::mem::forget(vec3);
+                            *ptr2.add(8).cast::<usize>() = len3;
+                            *ptr2.add(4).cast::<*mut u8>() = ptr3.cast_mut();
                         }
                     };
-                    ptr3
+                    ptr2
                 }
                 #[doc(hidden)]
                 #[allow(non_snake_case)]
@@ -4282,7 +4272,7 @@ pub mod exports {
                             for (i, e) in vec8.into_iter().enumerate() {
                                 let base = result8.add(i * 24);
                                 {
-                                    let ProductItem {
+                                    let OrderItem {
                                         product_id: product_id5,
                                         name: name5,
                                         price: price5,
@@ -4358,7 +4348,7 @@ pub mod exports {
                 }
                 pub trait Guest {
                     fn initialize_order(data: CreateOrder);
-                    fn add_item(item: ProductItem) -> Result<(), _rt::String>;
+                    fn add_item(product_id: _rt::String, quantity: u32) -> Result<(), _rt::String>;
                     fn remove_item(product_id: _rt::String) -> Result<(), _rt::String>;
                     fn update_item_quantity(
                         product_id: _rt::String,
@@ -4376,8 +4366,8 @@ pub mod exports {
                                   $($path_to_types)*::_export_initialize_order_cabi::<$ty>(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7)
                                 }
                                 #[export_name = "golem:it/api#add-item"]
-                                unsafe extern "C" fn export_add_item(arg0: *mut u8,arg1: usize,arg2: *mut u8,arg3: usize,arg4: f32,arg5: i32,) -> *mut u8 {
-                                  $($path_to_types)*::_export_add_item_cabi::<$ty>(arg0, arg1, arg2, arg3, arg4, arg5)
+                                unsafe extern "C" fn export_add_item(arg0: *mut u8,arg1: usize,arg2: i32,) -> *mut u8 {
+                                  $($path_to_types)*::_export_add_item_cabi::<$ty>(arg0, arg1, arg2)
                                 }
                                 #[export_name = "cabi_post_golem:it/api#add-item"]
                                 unsafe extern "C" fn _post_return_add_item(arg0: *mut u8,) {
@@ -4730,8 +4720,8 @@ pub(crate) use __export_shopping_order_impl as export;
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.25.0:shopping-order:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 3945] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xe4\x1d\x01A\x02\x01\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 3932] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xd7\x1d\x01A\x02\x01\
 A\x0d\x01B\x0a\x04\0\x08pollable\x03\x01\x01h\0\x01@\x01\x04self\x01\0\x7f\x04\0\
 \x16[method]pollable.ready\x01\x02\x01@\x01\x04self\x01\x01\0\x04\0\x16[method]p\
 ollable.block\x01\x03\x01p\x01\x01py\x01@\x01\x02in\x04\0\x05\x04\0\x04poll\x01\x06\
@@ -4803,17 +4793,17 @@ new-persistence-level\x13\x01\0\x04\0\x1bset-oplog-persistence-level\x01H\x01@\0
 K\x01@\x03\x09worker-id\x0d\x0etarget-version\x07\x04mode\x15\x01\0\x04\0\x0dupd\
 ate-worker\x01L\x01@\0\02\x04\0\x11get-self-metadata\x01M\x01k2\x01@\x01\x09work\
 er-id\x0d\0\xce\0\x04\0\x13get-worker-metadata\x01O\x03\x01\x14golem:api/host@0.\
-2.0\x05\x06\x01B\x13\x01r\x04\x0aproduct-ids\x04names\x05pricev\x08quantityy\x04\
-\0\x0cproduct-item\x03\0\0\x01p\x01\x01r\x06\x08order-ids\x07user-ids\x05items\x02\
+2.0\x05\x06\x01B\x12\x01r\x04\x0aproduct-ids\x04names\x05pricev\x08quantityy\x04\
+\0\x0aorder-item\x03\0\0\x01p\x01\x01r\x06\x08order-ids\x07user-ids\x05items\x02\
 \x05totalv\x08currencys\x09timestampw\x04\0\x05order\x03\0\x03\x01r\x05\x07user-\
 ids\x05items\x02\x05totalv\x08currencys\x09timestampw\x04\0\x0ccreate-order\x03\0\
 \x05\x01@\x01\x04data\x06\x01\0\x04\0\x10initialize-order\x01\x07\x01j\0\x01s\x01\
-@\x01\x04item\x01\0\x08\x04\0\x08add-item\x01\x09\x01@\x01\x0aproduct-ids\0\x08\x04\
-\0\x0bremove-item\x01\x0a\x01@\x02\x0aproduct-ids\x08quantityy\0\x08\x04\0\x14up\
-date-item-quantity\x01\x0b\x01k\x04\x01@\0\0\x0c\x04\0\x03get\x01\x0d\x04\x01\x0c\
-golem:it/api\x05\x07\x04\x01\x17golem:it/shopping-order\x04\0\x0b\x14\x01\0\x0es\
-hopping-order\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit-component\x07\
-0.208.1\x10wit-bindgen-rust\x060.25.0";
+@\x02\x0aproduct-ids\x08quantityy\0\x08\x04\0\x08add-item\x01\x09\x01@\x01\x0apr\
+oduct-ids\0\x08\x04\0\x0bremove-item\x01\x0a\x04\0\x14update-item-quantity\x01\x09\
+\x01k\x04\x01@\0\0\x0b\x04\0\x03get\x01\x0c\x04\x01\x0cgolem:it/api\x05\x07\x04\x01\
+\x17golem:it/shopping-order\x04\0\x0b\x14\x01\0\x0eshopping-order\x03\0\0\0G\x09\
+producers\x01\x0cprocessed-by\x02\x0dwit-component\x070.208.1\x10wit-bindgen-rus\
+t\x060.25.0";
 
 #[inline(never)]
 #[doc(hidden)]

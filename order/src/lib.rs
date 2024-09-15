@@ -2,21 +2,12 @@ mod bindings;
 
 use crate::bindings::exports::golem::it::api::*;
 use crate::bindings::golem::api::host::*;
+use std::cell::RefCell;
+use std::env;
 
 use rand::prelude::*;
 
 struct Component;
-
-/**
- * This is one of any number of data types that our application
- * uses. Golem will take care to persist all application state,
- * whether that state is local to a function being executed or
- * global across the entire program.
- */
-struct State {
-    user_id: String,
-    items: Vec<ProductItem>,
-}
 
 fn reserve_inventory() -> Result<(), &'static str> {
     // generate a random float 32:
@@ -61,53 +52,100 @@ fn dispatch_order() -> Result<(), &'static str> {
     Ok(())
 }
 
-/**
- * This holds the state of our application, which is always bound to
- * a given user. It is a global variable, which Rust doesn't like, so
- * we use `with_state` to access or update the global variable, so we
- * can avoid `unsafe` noise.
- */
-static mut STATE: State = State { user_id: String::new(), items: vec![] };
+fn get_total_price(items: Vec<OrderItem>) -> f32 {
+    let mut total = 0f32;
 
-fn with_state<T>(f: impl FnOnce(&mut State) -> T) -> T {
-    let result = unsafe { f(&mut STATE) };
+    for item in items {
+        total += item.price * item.quantity as f32;
+    }
 
-    return result;
+    total
 }
 
-// Here, we declare a Rust implementation of the `ShoppingCart` trait.
+thread_local! {
+    static STATE: RefCell<Option<Order>> = const { RefCell::new(None) };
+}
+
+fn with_state<T>(f: impl FnOnce(&mut Order) -> T) -> T {
+    STATE.with_borrow_mut(|state| {
+        if state.is_none() {
+            let worker_name = env::var("WORKER_NAME").expect("WORKER_NAME must be set");
+            let value = Order {
+                order_id: worker_name,
+                user_id: "".to_string(),
+                items: vec![],
+                total: 0f32,
+                currency: "USD".to_string(),
+                timestamp: 0,
+            };
+            *state = Some(value);
+        }
+
+        f(state.as_mut().unwrap())
+    })
+}
+
 impl Guest for Component {
-    fn initialize_cart(user_id: String) -> () {
+    fn initialize_order(data: CreateOrder) {
         with_state(|state| {
-            println!("Initializing cart for user {}", user_id);
-
-            state.user_id = user_id;
+            println!("Initializing order for user {}", data.user_id);
+            state.user_id = data.user_id;
+            state.currency = data.currency;
+            state.timestamp = data.timestamp;
+            state.total = data.total;
+            state.items = data.items;
         });
     }
 
-    fn add_item(item: ProductItem) -> () {
-        with_state(|state| {
-            println!("Adding item {:?} to the cart of user {}", item, state.user_id);
-
-            state.items.push(item);
-        });
-    }
-
-    fn remove_item(product_id: String) -> () {
+    fn add_item(product_id: String, quantity: u32) -> Result<(), String> {
         with_state(|state| {
             println!(
-                "Removing item with product ID {} from the cart of user {}",
+                "Adding item with product ID {} to the order of user {}",
+                product_id, state.user_id
+            );
+
+            let mut updated = false;
+            for item in &mut state.items {
+                if item.product_id == product_id {
+                    item.quantity += quantity;
+                    updated = true;
+                }
+            }
+
+            if !updated {
+                state.items.push(OrderItem {
+                    product_id,
+                    quantity,
+                    name: "undefined".to_string(),
+                    price: 0f32,
+                });
+            }
+
+            state.total = get_total_price(state.items.clone());
+
+            Ok(())
+        })
+    }
+
+    fn remove_item(product_id: String) -> Result<(), String> {
+        with_state(|state| {
+            println!(
+                "Removing item with product ID {} from the order of user {}",
                 product_id, state.user_id
             );
 
             state.items.retain(|item| item.product_id != product_id);
-        });
+
+            state.total = get_total_price(state.items.clone());
+
+            Ok(())
+        })
     }
 
-    fn update_item_quantity(product_id: String, quantity: u32) -> () {
+    fn update_item_quantity(product_id: String, quantity: u32) -> Result<(), String> {
         with_state(|state| {
             println!(
-                "Updating quantity of item with product ID {} to {} in the cart of user {}",
+                "Updating quantity of item with product ID {} to {} in the order of user {}",
                 product_id, quantity, state.user_id
             );
 
@@ -116,39 +154,16 @@ impl Guest for Component {
                     item.quantity = quantity;
                 }
             }
-        });
+            state.total = get_total_price(state.items.clone());
+            Ok(())
+        })
     }
 
-    fn checkout() -> CheckoutResult {
-        let result: Result<OrderConfirmation, &'static str> = with_state(|state| {
-            reserve_inventory()?;
+    fn get() -> Option<Order> {
+        STATE.with_borrow(|state| {
+            println!("Getting order");
 
-            charge_credit_card()?;
-
-            let order_id = generate_order();
-
-            dispatch_order()?;
-
-            state.items.clear();
-
-            println!("Checkout for order {}", order_id);
-
-            Ok(OrderConfirmation { order_id })
-        });
-
-        match result {
-            Ok(OrderConfirmation { order_id }) => {
-                CheckoutResult::Success(OrderConfirmation { order_id })
-            }
-            Err(err) => CheckoutResult::Error(err.to_string()),
-        }
-    }
-
-    fn get_cart_contents() -> Vec<ProductItem> {
-        with_state(|state| {
-            println!("Getting cart contents for user {}", state.user_id);
-
-            state.items.clone()
+            state.clone()
         })
     }
 }

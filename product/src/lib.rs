@@ -29,7 +29,6 @@ fn with_state<T>(f: impl FnOnce(&mut Product) -> T) -> T {
     })
 }
 
-// Here, we declare a Rust implementation of the `ShoppingCart` trait.
 impl Guest for Component {
     fn initialize_product(name: String, description: String) -> () {
         with_state(|state| {

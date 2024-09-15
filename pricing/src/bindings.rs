@@ -4239,6 +4239,7 @@ pub mod exports {
                         msrp_prices: _rt::Vec<PricingItem>,
                         list_prices: _rt::Vec<PricingItem>,
                     );
+                    /// update-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>) -> ();
                     fn get() -> Option<Pricing>;
                 }
                 #[doc(hidden)]

@@ -9,17 +9,6 @@ use rand::prelude::*;
 
 struct Component;
 
-/**
- * This is one of any number of data types that our application
- * uses. Golem will take care to persist all application state,
- * whether that state is local to a function being executed or
- * global across the entire program.
- */
-struct State {
-    user_id: String,
-    items: Vec<ProductItem>,
-}
-
 fn reserve_inventory() -> Result<(), &'static str> {
     // generate a random float 32:
     let mut rng = rand::thread_rng();
@@ -63,6 +52,16 @@ fn dispatch_order() -> Result<(), &'static str> {
     Ok(())
 }
 
+fn get_total_price(items: Vec<CartItem>) -> f32 {
+    let mut total = 0f32;
+
+    for item in items {
+        total += item.price * item.quantity as f32;
+    }
+
+    total
+}
+
 thread_local! {
     static STATE: RefCell<Option<Cart>> = const { RefCell::new(None) };
 }
@@ -71,39 +70,52 @@ fn with_state<T>(f: impl FnOnce(&mut Cart) -> T) -> T {
     STATE.with_borrow_mut(|state| {
         if state.is_none() {
             let worker_name = env::var("WORKER_NAME").expect("WORKER_NAME must be set");
-            let product = Cart {
+            let value = Cart {
                 user_id: worker_name,
                 items: vec![],
                 total: 0f32,
                 currency: "USD".to_string(),
                 timestamp: 0,
             };
-            *state = Some(product);
+            *state = Some(value);
         }
 
         f(state.as_mut().unwrap())
     })
 }
 
-// Here, we declare a Rust implementation of the `ShoppingCart` trait.
 impl Guest for Component {
-    fn initialize_cart(user_id: String) -> () {
+    fn add_item(product_id: String, quantity: u32) -> Result<(), String> {
         with_state(|state| {
-            println!("Initializing cart for user {}", user_id);
+            println!(
+                "Adding item with product ID {} to the cart of user {}",
+                product_id, state.user_id
+            );
 
-            state.user_id = user_id;
-        });
+            let mut updated = false;
+            for item in &mut state.items {
+                if item.product_id == product_id {
+                    item.quantity += quantity;
+                    updated = true;
+                }
+            }
+
+            if !updated {
+                state.items.push(CartItem {
+                    product_id,
+                    quantity,
+                    name: "undefined".to_string(),
+                    price: 0f32,
+                });
+            }
+
+            state.total = get_total_price(state.items.clone());
+
+            Ok(())
+        })
     }
 
-    fn add_item(item: ProductItem) -> () {
-        with_state(|state| {
-            println!("Adding item {:?} to the cart of user {}", item, state.user_id);
-
-            state.items.push(item);
-        });
-    }
-
-    fn remove_item(product_id: String) -> () {
+    fn remove_item(product_id: String) -> Result<(), String> {
         with_state(|state| {
             println!(
                 "Removing item with product ID {} from the cart of user {}",
@@ -111,10 +123,12 @@ impl Guest for Component {
             );
 
             state.items.retain(|item| item.product_id != product_id);
-        });
+            state.total = get_total_price(state.items.clone());
+            Ok(())
+        })
     }
 
-    fn update_item_quantity(product_id: String, quantity: u32) -> () {
+    fn update_item_quantity(product_id: String, quantity: u32) -> Result<(), String> {
         with_state(|state| {
             println!(
                 "Updating quantity of item with product ID {} to {} in the cart of user {}",
@@ -126,7 +140,9 @@ impl Guest for Component {
                     item.quantity = quantity;
                 }
             }
-        });
+            state.total = get_total_price(state.items.clone());
+            Ok(())
+        })
     }
 
     fn checkout() -> CheckoutResult {
@@ -154,11 +170,11 @@ impl Guest for Component {
         }
     }
 
-    fn get_cart_contents() -> Vec<ProductItem> {
-        with_state(|state| {
-            println!("Getting cart contents for user {}", state.user_id);
+    fn get() -> Option<Cart> {
+        STATE.with_borrow(|state| {
+            println!("Getting cart");
 
-            state.items.clone()
+            state.clone()
         })
     }
 }
