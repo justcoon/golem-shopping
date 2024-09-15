@@ -2,6 +2,12 @@ package golem:it;
 
 interface api {
 
+  enum order-status {
+    new,
+    confirmed,
+    cancelled,
+  }
+
   record order-item {
     product-id: string,
     name: string,
@@ -12,6 +18,7 @@ interface api {
   record order {
     order-id: string,
     user-id: string,
+    order-status: order-status,
     items: list<order-item>,
     total: float32,
     currency: string,

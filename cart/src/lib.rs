@@ -6,43 +6,14 @@ use std::cell::RefCell;
 use std::env;
 
 use rand::prelude::*;
+use uuid::Uuid;
 
 struct Component;
 
-fn reserve_inventory() -> Result<(), &'static str> {
-    // generate a random float 32:
-    let mut rng = rand::thread_rng();
-    let random_float: f32 = rng.gen();
-
-    // Reserve inventory for the items in the cart.
-    // If the inventory is not available, return an error.
-    // Otherwise, return a success result.
-    if random_float < 0.1 {
-        return Err("Inventory not available");
-    } else {
-        Ok(())
-    }
-}
-
-#[allow(unused)]
-fn release_inventory() -> Result<(), &'static str> {
-    // Release inventory for the items in the cart.
-    // If the inventory is not available, return an error.
-    // Otherwise, return a success result.
-    Ok(())
-}
-
-fn charge_credit_card() -> Result<(), &'static str> {
-    // Charge the user's credit card for the items in the cart.
-    // If the charge fails, return an error.
-    // Otherwise, return a success result.
-    Ok(())
-}
-
-fn generate_order() -> String {
+fn generate_order_id() -> String {
     // Save the order to the database.
     // Return the order ID.
-    "238738674".to_string()
+    Uuid::new_v4().to_string()
 }
 
 fn dispatch_order() -> Result<(), &'static str> {
@@ -147,15 +118,12 @@ impl Guest for Component {
 
     fn checkout() -> CheckoutResult {
         let result: Result<OrderConfirmation, &'static str> = with_state(|state| {
-            reserve_inventory()?;
-
-            charge_credit_card()?;
-
-            let order_id = generate_order();
+            let order_id = generate_order_id();
 
             dispatch_order()?;
 
             state.items.clear();
+            state.total = 0f32;
 
             println!("Checkout for order {}", order_id);
 

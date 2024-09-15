@@ -3989,6 +3989,44 @@ pub mod exports {
                 static __FORCE_SECTION_REF: fn() =
                     super::super::super::super::__link_custom_section_describing_imports;
                 use super::super::super::super::_rt;
+                #[repr(u8)]
+                #[derive(Clone, Copy, Eq, PartialEq)]
+                pub enum OrderStatus {
+                    New,
+                    Confirmed,
+                    Cancelled,
+                }
+                impl ::core::fmt::Debug for OrderStatus {
+                    fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+                        match self {
+                            OrderStatus::New => f.debug_tuple("OrderStatus::New").finish(),
+                            OrderStatus::Confirmed => {
+                                f.debug_tuple("OrderStatus::Confirmed").finish()
+                            }
+                            OrderStatus::Cancelled => {
+                                f.debug_tuple("OrderStatus::Cancelled").finish()
+                            }
+                        }
+                    }
+                }
+
+                impl OrderStatus {
+                    #[doc(hidden)]
+                    pub unsafe fn _lift(val: u8) -> OrderStatus {
+                        if !cfg!(debug_assertions) {
+                            return ::core::mem::transmute(val);
+                        }
+
+                        match val {
+                            0 => OrderStatus::New,
+                            1 => OrderStatus::Confirmed,
+                            2 => OrderStatus::Cancelled,
+
+                            _ => panic!("invalid enum discriminant"),
+                        }
+                    }
+                }
+
                 #[derive(Clone)]
                 pub struct OrderItem {
                     pub product_id: _rt::String,
@@ -4010,6 +4048,7 @@ pub mod exports {
                 pub struct Order {
                     pub order_id: _rt::String,
                     pub user_id: _rt::String,
+                    pub order_status: OrderStatus,
                     pub items: _rt::Vec<OrderItem>,
                     pub total: f32,
                     pub currency: _rt::String,
@@ -4020,6 +4059,7 @@ pub mod exports {
                         f.debug_struct("Order")
                             .field("order-id", &self.order_id)
                             .field("user-id", &self.user_id)
+                            .field("order-status", &self.order_status)
                             .field("items", &self.items)
                             .field("total", &self.total)
                             .field("currency", &self.currency)
@@ -4237,6 +4277,7 @@ pub mod exports {
                             let Order {
                                 order_id: order_id2,
                                 user_id: user_id2,
+                                order_status: order_status2,
                                 items: items2,
                                 total: total2,
                                 currency: currency2,
@@ -4254,6 +4295,7 @@ pub mod exports {
                             ::core::mem::forget(vec4);
                             *ptr1.add(20).cast::<usize>() = len4;
                             *ptr1.add(16).cast::<*mut u8>() = ptr4.cast_mut();
+                            *ptr1.add(24).cast::<u8>() = (order_status2.clone() as i32) as u8;
                             let vec8 = items2;
                             let len8 = vec8.len();
                             let layout8 =
@@ -4294,15 +4336,15 @@ pub mod exports {
                                     *base.add(20).cast::<i32>() = _rt::as_i32(quantity5);
                                 }
                             }
-                            *ptr1.add(28).cast::<usize>() = len8;
-                            *ptr1.add(24).cast::<*mut u8>() = result8;
-                            *ptr1.add(32).cast::<f32>() = _rt::as_f32(total2);
+                            *ptr1.add(32).cast::<usize>() = len8;
+                            *ptr1.add(28).cast::<*mut u8>() = result8;
+                            *ptr1.add(36).cast::<f32>() = _rt::as_f32(total2);
                             let vec9 = (currency2.into_bytes()).into_boxed_slice();
                             let ptr9 = vec9.as_ptr().cast::<u8>();
                             let len9 = vec9.len();
                             ::core::mem::forget(vec9);
-                            *ptr1.add(40).cast::<usize>() = len9;
-                            *ptr1.add(36).cast::<*mut u8>() = ptr9.cast_mut();
+                            *ptr1.add(44).cast::<usize>() = len9;
+                            *ptr1.add(40).cast::<*mut u8>() = ptr9.cast_mut();
                             *ptr1.add(48).cast::<i64>() = _rt::as_i64(timestamp2);
                         }
                         None => {
@@ -4324,8 +4366,8 @@ pub mod exports {
                             let l3 = *arg0.add(16).cast::<*mut u8>();
                             let l4 = *arg0.add(20).cast::<usize>();
                             _rt::cabi_dealloc(l3, l4, 1);
-                            let l9 = *arg0.add(24).cast::<*mut u8>();
-                            let l10 = *arg0.add(28).cast::<usize>();
+                            let l9 = *arg0.add(28).cast::<*mut u8>();
+                            let l10 = *arg0.add(32).cast::<usize>();
                             let base11 = l9;
                             let len11 = l10;
                             for i in 0..len11 {
@@ -4340,8 +4382,8 @@ pub mod exports {
                                 }
                             }
                             _rt::cabi_dealloc(base11, len11 * 24, 4);
-                            let l12 = *arg0.add(36).cast::<*mut u8>();
-                            let l13 = *arg0.add(40).cast::<usize>();
+                            let l12 = *arg0.add(40).cast::<*mut u8>();
+                            let l13 = *arg0.add(44).cast::<usize>();
                             _rt::cabi_dealloc(l12, l13, 1);
                         }
                     }
@@ -4720,8 +4762,8 @@ pub(crate) use __export_shopping_order_impl as export;
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.25.0:shopping-order:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 3932] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xd7\x1d\x01A\x02\x01\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 3991] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\x92\x1e\x01A\x02\x01\
 A\x0d\x01B\x0a\x04\0\x08pollable\x03\x01\x01h\0\x01@\x01\x04self\x01\0\x7f\x04\0\
 \x16[method]pollable.ready\x01\x02\x01@\x01\x04self\x01\x01\0\x04\0\x16[method]p\
 ollable.block\x01\x03\x01p\x01\x01py\x01@\x01\x02in\x04\0\x05\x04\0\x04poll\x01\x06\
@@ -4793,17 +4835,18 @@ new-persistence-level\x13\x01\0\x04\0\x1bset-oplog-persistence-level\x01H\x01@\0
 K\x01@\x03\x09worker-id\x0d\x0etarget-version\x07\x04mode\x15\x01\0\x04\0\x0dupd\
 ate-worker\x01L\x01@\0\02\x04\0\x11get-self-metadata\x01M\x01k2\x01@\x01\x09work\
 er-id\x0d\0\xce\0\x04\0\x13get-worker-metadata\x01O\x03\x01\x14golem:api/host@0.\
-2.0\x05\x06\x01B\x12\x01r\x04\x0aproduct-ids\x04names\x05pricev\x08quantityy\x04\
-\0\x0aorder-item\x03\0\0\x01p\x01\x01r\x06\x08order-ids\x07user-ids\x05items\x02\
-\x05totalv\x08currencys\x09timestampw\x04\0\x05order\x03\0\x03\x01r\x05\x07user-\
-ids\x05items\x02\x05totalv\x08currencys\x09timestampw\x04\0\x0ccreate-order\x03\0\
-\x05\x01@\x01\x04data\x06\x01\0\x04\0\x10initialize-order\x01\x07\x01j\0\x01s\x01\
-@\x02\x0aproduct-ids\x08quantityy\0\x08\x04\0\x08add-item\x01\x09\x01@\x01\x0apr\
-oduct-ids\0\x08\x04\0\x0bremove-item\x01\x0a\x04\0\x14update-item-quantity\x01\x09\
-\x01k\x04\x01@\0\0\x0b\x04\0\x03get\x01\x0c\x04\x01\x0cgolem:it/api\x05\x07\x04\x01\
-\x17golem:it/shopping-order\x04\0\x0b\x14\x01\0\x0eshopping-order\x03\0\0\0G\x09\
-producers\x01\x0cprocessed-by\x02\x0dwit-component\x070.208.1\x10wit-bindgen-rus\
-t\x060.25.0";
+2.0\x05\x06\x01B\x14\x01m\x03\x03new\x09confirmed\x09cancelled\x04\0\x0corder-st\
+atus\x03\0\0\x01r\x04\x0aproduct-ids\x04names\x05pricev\x08quantityy\x04\0\x0aor\
+der-item\x03\0\x02\x01p\x03\x01r\x07\x08order-ids\x07user-ids\x0corder-status\x01\
+\x05items\x04\x05totalv\x08currencys\x09timestampw\x04\0\x05order\x03\0\x05\x01r\
+\x05\x07user-ids\x05items\x04\x05totalv\x08currencys\x09timestampw\x04\0\x0ccrea\
+te-order\x03\0\x07\x01@\x01\x04data\x08\x01\0\x04\0\x10initialize-order\x01\x09\x01\
+j\0\x01s\x01@\x02\x0aproduct-ids\x08quantityy\0\x0a\x04\0\x08add-item\x01\x0b\x01\
+@\x01\x0aproduct-ids\0\x0a\x04\0\x0bremove-item\x01\x0c\x04\0\x14update-item-qua\
+ntity\x01\x0b\x01k\x06\x01@\0\0\x0d\x04\0\x03get\x01\x0e\x04\x01\x0cgolem:it/api\
+\x05\x07\x04\x01\x17golem:it/shopping-order\x04\0\x0b\x14\x01\0\x0eshopping-orde\
+r\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit-component\x070.208.1\x10\
+wit-bindgen-rust\x060.25.0";
 
 #[inline(never)]
 #[doc(hidden)]

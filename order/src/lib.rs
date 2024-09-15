@@ -9,49 +9,6 @@ use rand::prelude::*;
 
 struct Component;
 
-fn reserve_inventory() -> Result<(), &'static str> {
-    // generate a random float 32:
-    let mut rng = rand::thread_rng();
-    let random_float: f32 = rng.gen();
-
-    // Reserve inventory for the items in the cart.
-    // If the inventory is not available, return an error.
-    // Otherwise, return a success result.
-    if random_float < 0.1 {
-        return Err("Inventory not available");
-    } else {
-        Ok(())
-    }
-}
-
-#[allow(unused)]
-fn release_inventory() -> Result<(), &'static str> {
-    // Release inventory for the items in the cart.
-    // If the inventory is not available, return an error.
-    // Otherwise, return a success result.
-    Ok(())
-}
-
-fn charge_credit_card() -> Result<(), &'static str> {
-    // Charge the user's credit card for the items in the cart.
-    // If the charge fails, return an error.
-    // Otherwise, return a success result.
-    Ok(())
-}
-
-fn generate_order() -> String {
-    // Save the order to the database.
-    // Return the order ID.
-    "238738674".to_string()
-}
-
-fn dispatch_order() -> Result<(), &'static str> {
-    // Dispatch the order to the warehouse.
-    // If the order cannot be dispatched, return an error.
-    // Otherwise, return a success result.
-    Ok(())
-}
-
 fn get_total_price(items: Vec<OrderItem>) -> f32 {
     let mut total = 0f32;
 
@@ -73,6 +30,7 @@ fn with_state<T>(f: impl FnOnce(&mut Order) -> T) -> T {
             let value = Order {
                 order_id: worker_name,
                 user_id: "".to_string(),
+                order_status: OrderStatus::New,
                 items: vec![],
                 total: 0f32,
                 currency: "USD".to_string(),
@@ -88,7 +46,7 @@ fn with_state<T>(f: impl FnOnce(&mut Order) -> T) -> T {
 impl Guest for Component {
     fn initialize_order(data: CreateOrder) {
         with_state(|state| {
-            println!("Initializing order for user {}", data.user_id);
+            println!("Initializing order {} for user {}", state.order_id, data.user_id);
             state.user_id = data.user_id;
             state.currency = data.currency;
             state.timestamp = data.timestamp;
@@ -100,8 +58,8 @@ impl Guest for Component {
     fn add_item(product_id: String, quantity: u32) -> Result<(), String> {
         with_state(|state| {
             println!(
-                "Adding item with product ID {} to the order of user {}",
-                product_id, state.user_id
+                "Adding item with product ID {} to the order {} of user {}",
+                product_id, state.order_id, state.user_id
             );
 
             let mut updated = false;
@@ -130,8 +88,8 @@ impl Guest for Component {
     fn remove_item(product_id: String) -> Result<(), String> {
         with_state(|state| {
             println!(
-                "Removing item with product ID {} from the order of user {}",
-                product_id, state.user_id
+                "Removing item with product ID {} from the order {} of user {}",
+                product_id, state.order_id, state.user_id
             );
 
             state.items.retain(|item| item.product_id != product_id);
@@ -145,8 +103,8 @@ impl Guest for Component {
     fn update_item_quantity(product_id: String, quantity: u32) -> Result<(), String> {
         with_state(|state| {
             println!(
-                "Updating quantity of item with product ID {} to {} in the order of user {}",
-                product_id, quantity, state.user_id
+                "Updating quantity of item with product ID {} to {} in the order {} of user {}",
+                product_id, quantity, state.order_id, state.user_id
             );
 
             for item in &mut state.items {
@@ -154,7 +112,9 @@ impl Guest for Component {
                     item.quantity = quantity;
                 }
             }
+
             state.total = get_total_price(state.items.clone());
+
             Ok(())
         })
     }
