@@ -101,7 +101,34 @@ dependencies = [
 ]
 
 [[package]]
-name = "shopping-cart-example"
+name = "shopping-cart"
+version = "0.0.1"
+dependencies = [
+ "once_cell",
+ "rand",
+ "wit-bindgen-rt",
+]
+
+[[package]]
+name = "shopping-order"
+version = "0.0.1"
+dependencies = [
+ "once_cell",
+ "rand",
+ "wit-bindgen-rt",
+]
+
+[[package]]
+name = "shopping-pricing"
+version = "0.0.1"
+dependencies = [
+ "once_cell",
+ "rand",
+ "wit-bindgen-rt",
+]
+
+[[package]]
+name = "shopping-product"
 version = "0.0.1"
 dependencies = [
  "once_cell",

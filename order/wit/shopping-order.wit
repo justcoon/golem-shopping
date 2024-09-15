@@ -9,7 +9,8 @@ interface api {
     quantity: u32,
   }
 
-  record cart {
+  record order {
+    order-id: string,
     user-id: string,
     items: list<product-item>,
     total: float32,
@@ -17,14 +18,15 @@ interface api {
     timestamp: u64,
   }
 
-  record order-confirmation {
-    order-id: string,
+  record create-order {
+    user-id: string,
+    items: list<product-item>,
+    total: float32,
+    currency: string,
+    timestamp: u64,
   }
 
-  variant checkout-result {
-    error(string),
-    success(order-confirmation),
-  }
+  initialize-order: func(data: create-order) -> ();
 
   add-item: func(item: product-item) -> result<_, string>;
 
@@ -32,12 +34,10 @@ interface api {
 
   update-item-quantity: func(product-id: string, quantity: u32) -> result<_, string>;
 
-  checkout: func() -> checkout-result;
-
-  get: func() -> option<cart>;
+  get: func() -> option<order>;
 }
 
-world shopping-cart {
+world shopping-order {
   import golem:api/host@0.2.0;
 
   export api;
