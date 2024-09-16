@@ -3980,7 +3980,7 @@ pub mod exports {
     #[allow(dead_code)]
     pub mod golem {
         #[allow(dead_code)]
-        pub mod shopping_pricing {
+        pub mod pricing {
             #[allow(dead_code, clippy::all)]
             pub mod api {
                 #[used]
@@ -4301,33 +4301,33 @@ pub mod exports {
                 }
                 #[doc(hidden)]
 
-                macro_rules! __export_golem_shopping_pricing_api_cabi{
+                macro_rules! __export_golem_pricing_api_cabi{
                                   ($ty:ident with_types_in $($path_to_types:tt)*) => (const _: () = {
 
-                                    #[export_name = "golem:shopping-pricing/api#initialize-pricing"]
+                                    #[export_name = "golem:pricing/api#initialize-pricing"]
                                     unsafe extern "C" fn export_initialize_pricing(arg0: *mut u8,arg1: usize,arg2: *mut u8,arg3: usize,) {
                                       $($path_to_types)*::_export_initialize_pricing_cabi::<$ty>(arg0, arg1, arg2, arg3)
                                     }
-                                    #[export_name = "golem:shopping-pricing/api#get-price"]
+                                    #[export_name = "golem:pricing/api#get-price"]
                                     unsafe extern "C" fn export_get_price(arg0: *mut u8,arg1: usize,arg2: *mut u8,arg3: usize,) -> *mut u8 {
                                       $($path_to_types)*::_export_get_price_cabi::<$ty>(arg0, arg1, arg2, arg3)
                                     }
-                                    #[export_name = "cabi_post_golem:shopping-pricing/api#get-price"]
+                                    #[export_name = "cabi_post_golem:pricing/api#get-price"]
                                     unsafe extern "C" fn _post_return_get_price(arg0: *mut u8,) {
                                       $($path_to_types)*::__post_return_get_price::<$ty>(arg0)
                                     }
-                                    #[export_name = "golem:shopping-pricing/api#get"]
+                                    #[export_name = "golem:pricing/api#get"]
                                     unsafe extern "C" fn export_get() -> *mut u8 {
                                       $($path_to_types)*::_export_get_cabi::<$ty>()
                                     }
-                                    #[export_name = "cabi_post_golem:shopping-pricing/api#get"]
+                                    #[export_name = "cabi_post_golem:pricing/api#get"]
                                     unsafe extern "C" fn _post_return_get(arg0: *mut u8,) {
                                       $($path_to_types)*::__post_return_get::<$ty>(arg0)
                                     }
                                   };);
                                 }
                 #[doc(hidden)]
-                pub(crate) use __export_golem_shopping_pricing_api_cabi;
+                pub(crate) use __export_golem_pricing_api_cabi;
                 #[repr(align(4))]
                 struct _RetArea([::core::mem::MaybeUninit<u8>; 28]);
                 static mut _RET_AREA: _RetArea = _RetArea([::core::mem::MaybeUninit::uninit(); 28]);
@@ -4635,20 +4635,20 @@ mod _rt {
 #[allow(unused_macros)]
 #[doc(hidden)]
 
-macro_rules! __export_shopping_pricing_impl {
+macro_rules! __export_pricing_impl {
                           ($ty:ident) => (self::export!($ty with_types_in self););
                           ($ty:ident with_types_in $($path_to_types_root:tt)*) => (
-                          $($path_to_types_root)*::exports::golem::shopping_pricing::api::__export_golem_shopping_pricing_api_cabi!($ty with_types_in $($path_to_types_root)*::exports::golem::shopping_pricing::api);
+                          $($path_to_types_root)*::exports::golem::pricing::api::__export_golem_pricing_api_cabi!($ty with_types_in $($path_to_types_root)*::exports::golem::pricing::api);
                           )
                         }
 #[doc(inline)]
-pub(crate) use __export_shopping_pricing_impl as export;
+pub(crate) use __export_pricing_impl as export;
 
 #[cfg(target_arch = "wasm32")]
-#[link_section = "component-type:wit-bindgen:0.25.0:shopping-pricing:encoded world"]
+#[link_section = "component-type:wit-bindgen:0.25.0:pricing:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 3830] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xef\x1c\x01A\x02\x01\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 3794] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xd4\x1c\x01A\x02\x01\
 A\x0d\x01B\x0a\x04\0\x08pollable\x03\x01\x01h\0\x01@\x01\x04self\x01\0\x7f\x04\0\
 \x16[method]pollable.ready\x01\x02\x01@\x01\x04self\x01\x01\0\x04\0\x16[method]p\
 ollable.block\x01\x03\x01p\x01\x01py\x01@\x01\x02in\x04\0\x05\x04\0\x04poll\x01\x06\
@@ -4724,10 +4724,10 @@ er-id\x0d\0\xce\0\x04\0\x13get-worker-metadata\x01O\x03\x01\x14golem:api/host@0.
 tem\x03\0\0\x01p\x01\x01r\x03\x08asset-ids\x0bmsrp-prices\x02\x0blist-prices\x02\
 \x04\0\x07pricing\x03\0\x03\x01@\x02\x0bmsrp-prices\x02\x0blist-prices\x02\x01\0\
 \x04\0\x12initialize-pricing\x01\x05\x01k\x01\x01@\x02\x08currencys\x04zones\0\x06\
-\x04\0\x09get-price\x01\x07\x01k\x04\x01@\0\0\x08\x04\0\x03get\x01\x09\x04\x01\x1a\
-golem:shopping-pricing/api\x05\x07\x04\x01'golem:shopping-pricing/shopping-prici\
-ng\x04\0\x0b\x16\x01\0\x10shopping-pricing\x03\0\0\0G\x09producers\x01\x0cproces\
-sed-by\x02\x0dwit-component\x070.208.1\x10wit-bindgen-rust\x060.25.0";
+\x04\0\x09get-price\x01\x07\x01k\x04\x01@\0\0\x08\x04\0\x03get\x01\x09\x04\x01\x11\
+golem:pricing/api\x05\x07\x04\x01\x15golem:pricing/pricing\x04\0\x0b\x0d\x01\0\x07\
+pricing\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit-component\x070.20\
+8.1\x10wit-bindgen-rust\x060.25.0";
 
 #[inline(never)]
 #[doc(hidden)]

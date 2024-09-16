@@ -1,12 +1,6 @@
-package golem: shopping-order;
+package golem: cart;
 
 interface api {
-
-  enum order-status {
-    new,
-    shipped,
-    cancelled,
-  }
 
   record address {
     street1: string,
@@ -20,36 +14,32 @@ interface api {
     phone-number: option<string>
   }
 
-  record order-item {
+
+  record cart-item {
     product-id: string,
     name: string,
     price: float32,
     quantity: u32,
   }
 
-  record order {
+  record cart {
+    user-id: string,
+    items: list<cart-item>,
+    billing-address: option<address>,
+    shipping-address: option<address>,
+    total: float32,
+    currency: string,
+    timestamp: u64,
+  }
+
+  record order-confirmation {
     order-id: string,
-    user-id: string,
-    order-status: order-status,
-    items: list<order-item>,
-    billing-address: option<address>,
-    shipping-address: option<address>,
-    total: float32,
-    currency: string,
-    timestamp: u64,
   }
 
-  record create-order {
-    user-id: string,
-    items: list<order-item>,
-    billing-address: option<address>,
-    shipping-address: option<address>,
-    total: float32,
-    currency: string,
-    timestamp: u64,
+  variant checkout-result {
+    error(string),
+    success(order-confirmation),
   }
-
-  initialize-order: func(data: create-order) -> ();
 
   add-item: func(product-id: string, quantity: u32) -> result<_, string>;
 
@@ -61,16 +51,15 @@ interface api {
 
   update-billing-address: func(address: address) -> result<_, string>;
 
-  ship-order: func() -> result<_, string>;
+  checkout: func() -> checkout-result;
 
-  cancel-order: func() -> result<_, string>;
-
-  get: func() -> option<order>;
+  get: func() -> option<cart>;
 }
 
-world shopping-order {
-  import golem: shopping-pricing-stub/stub-shopping-pricing;
-  import golem: shopping-product-stub/stub-shopping-product;
+world cart {
+  import golem: pricing-stub/stub-pricing;
+  import golem: product-stub/stub-product;
+  import golem: order-stub/stub-order;
 
   import golem: api/host@0.2.0;
 

@@ -1,13 +1,11 @@
 mod bindings;
 
-use crate::bindings::exports::golem::shopping_order::api::*;
-use crate::bindings::golem::api::host::*;
+use crate::bindings::exports::golem::order::api::*;
 use std::cell::RefCell;
 use std::env;
 
-use crate::bindings::golem::shopping_pricing::api::PricingItem;
-use crate::bindings::golem::shopping_pricing_stub::stub_shopping_pricing::Pricing;
-use crate::bindings::golem::shopping_product_stub::stub_shopping_product::Product;
+use crate::bindings::golem::pricing::api::PricingItem;
+use crate::bindings::golem::product_stub::stub_product::Product;
 use rand::prelude::*;
 
 struct Component;
@@ -35,8 +33,8 @@ fn get_pricing_worker_urn(product_id: String) -> String {
 fn get_product(product_id: String) -> Option<Product> {
     println!("Getting product: {}", product_id);
 
+    use bindings::golem::product_stub::stub_product::*;
     use bindings::golem::rpc::types::Uri;
-    use bindings::golem::shopping_product_stub::stub_shopping_product::*;
 
     let api = Api::new(&Uri { value: get_product_worker_urn(product_id) });
 
@@ -46,8 +44,8 @@ fn get_product(product_id: String) -> Option<Product> {
 fn get_pricing(product_id: String, currency: String, zone: String) -> Option<PricingItem> {
     println!("Getting pricing: {}", product_id);
 
+    use bindings::golem::pricing_stub::stub_pricing::*;
     use bindings::golem::rpc::types::Uri;
-    use bindings::golem::shopping_pricing_stub::stub_shopping_pricing::*;
 
     let api = Api::new(&Uri { value: get_pricing_worker_urn(product_id) });
 
@@ -112,8 +110,11 @@ impl Guest for Component {
 
                 if !updated {
                     let product = get_product(product_id.clone());
-                    let pricing =
-                        get_pricing(product_id.clone(), state.currency.clone(), "global".to_string());
+                    let pricing = get_pricing(
+                        product_id.clone(),
+                        state.currency.clone(),
+                        "global".to_string(),
+                    );
                     match (product, pricing) {
                         (Some(product), Some(pricing)) => {
                             state.items.push(OrderItem {

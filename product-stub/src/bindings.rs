@@ -3,6 +3,106 @@
 #[allow(dead_code)]
 pub mod golem {
     #[allow(dead_code)]
+    pub mod product {
+        #[allow(dead_code, clippy::all)]
+        pub mod api {
+            #[used]
+            #[doc(hidden)]
+            #[cfg(target_arch = "wasm32")]
+            static __FORCE_SECTION_REF: fn() =
+                super::super::super::__link_custom_section_describing_imports;
+            use super::super::super::_rt;
+            #[derive(Clone)]
+            pub struct Product {
+                pub product_id: _rt::String,
+                pub name: _rt::String,
+                pub description: _rt::String,
+            }
+            impl ::core::fmt::Debug for Product {
+                fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+                    f.debug_struct("Product")
+                        .field("product-id", &self.product_id)
+                        .field("name", &self.name)
+                        .field("description", &self.description)
+                        .finish()
+                }
+            }
+            #[allow(unused_unsafe, clippy::all)]
+            pub fn initialize_product(name: &str, description: &str) {
+                unsafe {
+                    let vec0 = name;
+                    let ptr0 = vec0.as_ptr().cast::<u8>();
+                    let len0 = vec0.len();
+                    let vec1 = description;
+                    let ptr1 = vec1.as_ptr().cast::<u8>();
+                    let len1 = vec1.len();
+
+                    #[cfg(target_arch = "wasm32")]
+                    #[link(wasm_import_module = "golem:product/api")]
+                    extern "C" {
+                        #[link_name = "initialize-product"]
+                        fn wit_import(_: *mut u8, _: usize, _: *mut u8, _: usize);
+                    }
+
+                    #[cfg(not(target_arch = "wasm32"))]
+                    fn wit_import(_: *mut u8, _: usize, _: *mut u8, _: usize) {
+                        unreachable!()
+                    }
+                    wit_import(ptr0.cast_mut(), len0, ptr1.cast_mut(), len1);
+                }
+            }
+            #[allow(unused_unsafe, clippy::all)]
+            pub fn get() -> Option<Product> {
+                unsafe {
+                    #[repr(align(4))]
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 28]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 28]);
+                    let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
+                    #[cfg(target_arch = "wasm32")]
+                    #[link(wasm_import_module = "golem:product/api")]
+                    extern "C" {
+                        #[link_name = "get"]
+                        fn wit_import(_: *mut u8);
+                    }
+
+                    #[cfg(not(target_arch = "wasm32"))]
+                    fn wit_import(_: *mut u8) {
+                        unreachable!()
+                    }
+                    wit_import(ptr0);
+                    let l1 = i32::from(*ptr0.add(0).cast::<u8>());
+                    match l1 {
+                        0 => None,
+                        1 => {
+                            let e = {
+                                let l2 = *ptr0.add(4).cast::<*mut u8>();
+                                let l3 = *ptr0.add(8).cast::<usize>();
+                                let len4 = l3;
+                                let bytes4 = _rt::Vec::from_raw_parts(l2.cast(), len4, len4);
+                                let l5 = *ptr0.add(12).cast::<*mut u8>();
+                                let l6 = *ptr0.add(16).cast::<usize>();
+                                let len7 = l6;
+                                let bytes7 = _rt::Vec::from_raw_parts(l5.cast(), len7, len7);
+                                let l8 = *ptr0.add(20).cast::<*mut u8>();
+                                let l9 = *ptr0.add(24).cast::<usize>();
+                                let len10 = l9;
+                                let bytes10 = _rt::Vec::from_raw_parts(l8.cast(), len10, len10);
+
+                                Product {
+                                    product_id: _rt::string_lift(bytes4),
+                                    name: _rt::string_lift(bytes7),
+                                    description: _rt::string_lift(bytes10),
+                                }
+                            };
+                            Some(e)
+                        }
+                        _ => _rt::invalid_enum_discriminant(),
+                    }
+                }
+            }
+        }
+    }
+    #[allow(dead_code)]
     pub mod rpc {
         #[allow(dead_code, clippy::all)]
         pub mod types {
@@ -2181,106 +2281,6 @@ pub mod golem {
             }
         }
     }
-    #[allow(dead_code)]
-    pub mod shopping_product {
-        #[allow(dead_code, clippy::all)]
-        pub mod api {
-            #[used]
-            #[doc(hidden)]
-            #[cfg(target_arch = "wasm32")]
-            static __FORCE_SECTION_REF: fn() =
-                super::super::super::__link_custom_section_describing_imports;
-            use super::super::super::_rt;
-            #[derive(Clone)]
-            pub struct Product {
-                pub product_id: _rt::String,
-                pub name: _rt::String,
-                pub description: _rt::String,
-            }
-            impl ::core::fmt::Debug for Product {
-                fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
-                    f.debug_struct("Product")
-                        .field("product-id", &self.product_id)
-                        .field("name", &self.name)
-                        .field("description", &self.description)
-                        .finish()
-                }
-            }
-            #[allow(unused_unsafe, clippy::all)]
-            pub fn initialize_product(name: &str, description: &str) {
-                unsafe {
-                    let vec0 = name;
-                    let ptr0 = vec0.as_ptr().cast::<u8>();
-                    let len0 = vec0.len();
-                    let vec1 = description;
-                    let ptr1 = vec1.as_ptr().cast::<u8>();
-                    let len1 = vec1.len();
-
-                    #[cfg(target_arch = "wasm32")]
-                    #[link(wasm_import_module = "golem:shopping-product/api")]
-                    extern "C" {
-                        #[link_name = "initialize-product"]
-                        fn wit_import(_: *mut u8, _: usize, _: *mut u8, _: usize);
-                    }
-
-                    #[cfg(not(target_arch = "wasm32"))]
-                    fn wit_import(_: *mut u8, _: usize, _: *mut u8, _: usize) {
-                        unreachable!()
-                    }
-                    wit_import(ptr0.cast_mut(), len0, ptr1.cast_mut(), len1);
-                }
-            }
-            #[allow(unused_unsafe, clippy::all)]
-            pub fn get() -> Option<Product> {
-                unsafe {
-                    #[repr(align(4))]
-                    struct RetArea([::core::mem::MaybeUninit<u8>; 28]);
-                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 28]);
-                    let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
-                    #[cfg(target_arch = "wasm32")]
-                    #[link(wasm_import_module = "golem:shopping-product/api")]
-                    extern "C" {
-                        #[link_name = "get"]
-                        fn wit_import(_: *mut u8);
-                    }
-
-                    #[cfg(not(target_arch = "wasm32"))]
-                    fn wit_import(_: *mut u8) {
-                        unreachable!()
-                    }
-                    wit_import(ptr0);
-                    let l1 = i32::from(*ptr0.add(0).cast::<u8>());
-                    match l1 {
-                        0 => None,
-                        1 => {
-                            let e = {
-                                let l2 = *ptr0.add(4).cast::<*mut u8>();
-                                let l3 = *ptr0.add(8).cast::<usize>();
-                                let len4 = l3;
-                                let bytes4 = _rt::Vec::from_raw_parts(l2.cast(), len4, len4);
-                                let l5 = *ptr0.add(12).cast::<*mut u8>();
-                                let l6 = *ptr0.add(16).cast::<usize>();
-                                let len7 = l6;
-                                let bytes7 = _rt::Vec::from_raw_parts(l5.cast(), len7, len7);
-                                let l8 = *ptr0.add(20).cast::<*mut u8>();
-                                let l9 = *ptr0.add(24).cast::<usize>();
-                                let len10 = l9;
-                                let bytes10 = _rt::Vec::from_raw_parts(l8.cast(), len10, len10);
-
-                                Product {
-                                    product_id: _rt::string_lift(bytes4),
-                                    name: _rt::string_lift(bytes7),
-                                    description: _rt::string_lift(bytes10),
-                                }
-                            };
-                            Some(e)
-                        }
-                        _ => _rt::invalid_enum_discriminant(),
-                    }
-                }
-            }
-        }
-    }
 }
 #[allow(dead_code)]
 pub mod wasi {
@@ -2459,9 +2459,9 @@ pub mod exports {
     #[allow(dead_code)]
     pub mod golem {
         #[allow(dead_code)]
-        pub mod shopping_product_stub {
+        pub mod product_stub {
             #[allow(dead_code, clippy::all)]
-            pub mod stub_shopping_product {
+            pub mod stub_product {
                 #[used]
                 #[doc(hidden)]
                 #[cfg(target_arch = "wasm32")]
@@ -2470,8 +2470,7 @@ pub mod exports {
                 use super::super::super::super::_rt;
                 pub type GolemRpcUri = super::super::super::super::golem::rpc::types::Uri;
                 pub type WasiIoPollable = super::super::super::super::wasi::io::poll::Pollable;
-                pub type Product =
-                    super::super::super::super::golem::shopping_product::api::Product;
+                pub type Product = super::super::super::super::golem::product::api::Product;
 
                 #[derive(Debug)]
                 #[repr(transparent)]
@@ -2598,9 +2597,7 @@ pub mod exports {
 
                         #[cfg(target_arch = "wasm32")]
                         {
-                            #[link(
-                                wasm_import_module = "[export]golem:shopping-product-stub/stub-shopping-product"
-                            )]
+                            #[link(wasm_import_module = "[export]golem:product-stub/stub-product")]
                             extern "C" {
                                 #[link_name = "[resource-drop]future-get-result"]
                                 fn drop(_: u32);
@@ -2735,9 +2732,7 @@ pub mod exports {
 
                         #[cfg(target_arch = "wasm32")]
                         {
-                            #[link(
-                                wasm_import_module = "[export]golem:shopping-product-stub/stub-shopping-product"
-                            )]
+                            #[link(wasm_import_module = "[export]golem:product-stub/stub-product")]
                             extern "C" {
                                 #[link_name = "[resource-drop]api"]
                                 fn drop(_: u32);
@@ -2776,7 +2771,11 @@ pub mod exports {
                             match e {
                                 Some(e) => {
                                     *ptr1.add(4).cast::<u8>() = (1i32) as u8;
-                                    let super::super::super::super::golem::shopping_product::api::Product{ product_id:product_id2, name:name2, description:description2, } = e;
+                                    let super::super::super::super::golem::product::api::Product {
+                                        product_id: product_id2,
+                                        name: name2,
+                                        description: description2,
+                                    } = e;
                                     let vec3 = (product_id2.into_bytes()).into_boxed_slice();
                                     let ptr3 = vec3.as_ptr().cast::<u8>();
                                     let len3 = vec3.len();
@@ -2906,7 +2905,7 @@ pub mod exports {
                     match result0 {
                         Some(e) => {
                             *ptr1.add(0).cast::<u8>() = (1i32) as u8;
-                            let super::super::super::super::golem::shopping_product::api::Product {
+                            let super::super::super::super::golem::product::api::Product {
                                 product_id: product_id2,
                                 name: name2,
                                 description: description2,
@@ -2981,9 +2980,7 @@ pub mod exports {
 
                         #[cfg(target_arch = "wasm32")]
                         {
-                            #[link(
-                                wasm_import_module = "[export]golem:shopping-product-stub/stub-shopping-product"
-                            )]
+                            #[link(wasm_import_module = "[export]golem:product-stub/stub-product")]
                             extern "C" {
                                 #[link_name = "[resource-new]future-get-result"]
                                 fn new(_: *mut u8) -> u32;
@@ -3005,9 +3002,7 @@ pub mod exports {
 
                         #[cfg(target_arch = "wasm32")]
                         {
-                            #[link(
-                                wasm_import_module = "[export]golem:shopping-product-stub/stub-shopping-product"
-                            )]
+                            #[link(wasm_import_module = "[export]golem:product-stub/stub-product")]
                             extern "C" {
                                 #[link_name = "[resource-rep]future-get-result"]
                                 fn rep(_: u32) -> *mut u8;
@@ -3033,9 +3028,7 @@ pub mod exports {
 
                         #[cfg(target_arch = "wasm32")]
                         {
-                            #[link(
-                                wasm_import_module = "[export]golem:shopping-product-stub/stub-shopping-product"
-                            )]
+                            #[link(wasm_import_module = "[export]golem:product-stub/stub-product")]
                             extern "C" {
                                 #[link_name = "[resource-new]api"]
                                 fn new(_: *mut u8) -> u32;
@@ -3057,9 +3050,7 @@ pub mod exports {
 
                         #[cfg(target_arch = "wasm32")]
                         {
-                            #[link(
-                                wasm_import_module = "[export]golem:shopping-product-stub/stub-shopping-product"
-                            )]
+                            #[link(wasm_import_module = "[export]golem:product-stub/stub-product")]
                             extern "C" {
                                 #[link_name = "[resource-rep]api"]
                                 fn rep(_: u32) -> *mut u8;
@@ -3080,49 +3071,49 @@ pub mod exports {
                 }
                 #[doc(hidden)]
 
-                macro_rules! __export_golem_shopping_product_stub_stub_shopping_product_cabi{
+                macro_rules! __export_golem_product_stub_stub_product_cabi{
                             ($ty:ident with_types_in $($path_to_types:tt)*) => (const _: () = {
 
-                              #[export_name = "golem:shopping-product-stub/stub-shopping-product#[method]future-get-result.subscribe"]
+                              #[export_name = "golem:product-stub/stub-product#[method]future-get-result.subscribe"]
                               unsafe extern "C" fn export_method_future_get_result_subscribe(arg0: *mut u8,) -> i32 {
                                 $($path_to_types)*::_export_method_future_get_result_subscribe_cabi::<<$ty as $($path_to_types)*::Guest>::FutureGetResult>(arg0)
                               }
-                              #[export_name = "golem:shopping-product-stub/stub-shopping-product#[method]future-get-result.get"]
+                              #[export_name = "golem:product-stub/stub-product#[method]future-get-result.get"]
                               unsafe extern "C" fn export_method_future_get_result_get(arg0: *mut u8,) -> *mut u8 {
                                 $($path_to_types)*::_export_method_future_get_result_get_cabi::<<$ty as $($path_to_types)*::Guest>::FutureGetResult>(arg0)
                               }
-                              #[export_name = "cabi_post_golem:shopping-product-stub/stub-shopping-product#[method]future-get-result.get"]
+                              #[export_name = "cabi_post_golem:product-stub/stub-product#[method]future-get-result.get"]
                               unsafe extern "C" fn _post_return_method_future_get_result_get(arg0: *mut u8,) {
                                 $($path_to_types)*::__post_return_method_future_get_result_get::<<$ty as $($path_to_types)*::Guest>::FutureGetResult>(arg0)
                               }
-                              #[export_name = "golem:shopping-product-stub/stub-shopping-product#[constructor]api"]
+                              #[export_name = "golem:product-stub/stub-product#[constructor]api"]
                               unsafe extern "C" fn export_constructor_api(arg0: *mut u8,arg1: usize,) -> i32 {
                                 $($path_to_types)*::_export_constructor_api_cabi::<<$ty as $($path_to_types)*::Guest>::Api>(arg0, arg1)
                               }
-                              #[export_name = "golem:shopping-product-stub/stub-shopping-product#[method]api.blocking-initialize-product"]
+                              #[export_name = "golem:product-stub/stub-product#[method]api.blocking-initialize-product"]
                               unsafe extern "C" fn export_method_api_blocking_initialize_product(arg0: *mut u8,arg1: *mut u8,arg2: usize,arg3: *mut u8,arg4: usize,) {
                                 $($path_to_types)*::_export_method_api_blocking_initialize_product_cabi::<<$ty as $($path_to_types)*::Guest>::Api>(arg0, arg1, arg2, arg3, arg4)
                               }
-                              #[export_name = "golem:shopping-product-stub/stub-shopping-product#[method]api.initialize-product"]
+                              #[export_name = "golem:product-stub/stub-product#[method]api.initialize-product"]
                               unsafe extern "C" fn export_method_api_initialize_product(arg0: *mut u8,arg1: *mut u8,arg2: usize,arg3: *mut u8,arg4: usize,) {
                                 $($path_to_types)*::_export_method_api_initialize_product_cabi::<<$ty as $($path_to_types)*::Guest>::Api>(arg0, arg1, arg2, arg3, arg4)
                               }
-                              #[export_name = "golem:shopping-product-stub/stub-shopping-product#[method]api.blocking-get"]
+                              #[export_name = "golem:product-stub/stub-product#[method]api.blocking-get"]
                               unsafe extern "C" fn export_method_api_blocking_get(arg0: *mut u8,) -> *mut u8 {
                                 $($path_to_types)*::_export_method_api_blocking_get_cabi::<<$ty as $($path_to_types)*::Guest>::Api>(arg0)
                               }
-                              #[export_name = "cabi_post_golem:shopping-product-stub/stub-shopping-product#[method]api.blocking-get"]
+                              #[export_name = "cabi_post_golem:product-stub/stub-product#[method]api.blocking-get"]
                               unsafe extern "C" fn _post_return_method_api_blocking_get(arg0: *mut u8,) {
                                 $($path_to_types)*::__post_return_method_api_blocking_get::<<$ty as $($path_to_types)*::Guest>::Api>(arg0)
                               }
-                              #[export_name = "golem:shopping-product-stub/stub-shopping-product#[method]api.get"]
+                              #[export_name = "golem:product-stub/stub-product#[method]api.get"]
                               unsafe extern "C" fn export_method_api_get(arg0: *mut u8,) -> i32 {
                                 $($path_to_types)*::_export_method_api_get_cabi::<<$ty as $($path_to_types)*::Guest>::Api>(arg0)
                               }
 
                               const _: () = {
                                 #[doc(hidden)]
-                                #[export_name = "golem:shopping-product-stub/stub-shopping-product#[dtor]future-get-result"]
+                                #[export_name = "golem:product-stub/stub-product#[dtor]future-get-result"]
                                 #[allow(non_snake_case)]
                                 unsafe extern "C" fn dtor(rep: *mut u8) {
                                   $($path_to_types)*::FutureGetResult::dtor::<
@@ -3134,7 +3125,7 @@ pub mod exports {
 
                               const _: () = {
                                 #[doc(hidden)]
-                                #[export_name = "golem:shopping-product-stub/stub-shopping-product#[dtor]api"]
+                                #[export_name = "golem:product-stub/stub-product#[dtor]api"]
                                 #[allow(non_snake_case)]
                                 unsafe extern "C" fn dtor(rep: *mut u8) {
                                   $($path_to_types)*::Api::dtor::<
@@ -3146,7 +3137,7 @@ pub mod exports {
                             };);
                           }
                 #[doc(hidden)]
-                pub(crate) use __export_golem_shopping_product_stub_stub_shopping_product_cabi;
+                pub(crate) use __export_golem_product_stub_stub_product_cabi;
                 #[repr(align(4))]
                 struct _RetArea([::core::mem::MaybeUninit<u8>; 32]);
                 static mut _RET_AREA: _RetArea = _RetArea([::core::mem::MaybeUninit::uninit(); 32]);
@@ -3455,20 +3446,20 @@ mod _rt {
 #[allow(unused_macros)]
 #[doc(hidden)]
 
-macro_rules! __export_wasm_rpc_stub_shopping_product_impl {
+macro_rules! __export_wasm_rpc_stub_product_impl {
                     ($ty:ident) => (self::export!($ty with_types_in self););
                     ($ty:ident with_types_in $($path_to_types_root:tt)*) => (
-                    $($path_to_types_root)*::exports::golem::shopping_product_stub::stub_shopping_product::__export_golem_shopping_product_stub_stub_shopping_product_cabi!($ty with_types_in $($path_to_types_root)*::exports::golem::shopping_product_stub::stub_shopping_product);
+                    $($path_to_types_root)*::exports::golem::product_stub::stub_product::__export_golem_product_stub_stub_product_cabi!($ty with_types_in $($path_to_types_root)*::exports::golem::product_stub::stub_product);
                     )
                   }
 #[doc(inline)]
-pub(crate) use __export_wasm_rpc_stub_shopping_product_impl as export;
+pub(crate) use __export_wasm_rpc_stub_product_impl as export;
 
 #[cfg(target_arch = "wasm32")]
-#[link_section = "component-type:wit-bindgen:0.25.0:wasm-rpc-stub-shopping-product:encoded world"]
+#[link_section = "component-type:wit-bindgen:0.25.0:wasm-rpc-stub-product:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 2017] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xcc\x0e\x01A\x02\x01\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 1963] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\x9f\x0e\x01A\x02\x01\
 A\x0b\x01B\x0a\x04\0\x08pollable\x03\x01\x01h\0\x01@\x01\x04self\x01\0\x7f\x04\0\
 \x16[method]pollable.ready\x01\x02\x01@\x01\x04self\x01\x01\0\x04\0\x16[method]p\
 ollable.block\x01\x03\x01p\x01\x01py\x01@\x01\x02in\x04\0\x05\x04\0\x04poll\x01\x06\
@@ -3496,21 +3487,20 @@ scribe\x01!\x01k\x19\x01@\x01\x04self\x1f\0\"\x04\0\x20[method]future-invoke-res
 ult.get\x01#\x03\x01\x15golem:rpc/types@0.1.0\x05\x02\x01B\x07\x01r\x03\x0aprodu\
 ct-ids\x04names\x0bdescriptions\x04\0\x07product\x03\0\0\x01@\x02\x04names\x0bde\
 scriptions\x01\0\x04\0\x12initialize-product\x01\x02\x01k\x01\x01@\0\0\x03\x04\0\
-\x03get\x01\x04\x03\x01\x1agolem:shopping-product/api\x05\x03\x02\x03\0\x01\x03u\
-ri\x02\x03\0\x02\x07product\x01B\x1c\x02\x03\x02\x01\x04\x04\0\x0dgolem-rpc-uri\x03\
-\0\0\x02\x03\x02\x01\x01\x04\0\x10wasi-io-pollable\x03\0\x02\x02\x03\x02\x01\x05\
-\x04\0\x07product\x03\0\x04\x04\0\x11future-get-result\x03\x01\x04\0\x03api\x03\x01\
-\x01h\x06\x01i\x03\x01@\x01\x04self\x08\0\x09\x04\0#[method]future-get-result.su\
-bscribe\x01\x0a\x01k\x05\x01k\x0b\x01@\x01\x04self\x08\0\x0c\x04\0\x1d[method]fu\
-ture-get-result.get\x01\x0d\x01i\x07\x01@\x01\x08location\x01\0\x0e\x04\0\x10[co\
-nstructor]api\x01\x0f\x01h\x07\x01@\x03\x04self\x10\x04names\x0bdescriptions\x01\
-\0\x04\0'[method]api.blocking-initialize-product\x01\x11\x04\0\x1e[method]api.in\
-itialize-product\x01\x11\x01@\x01\x04self\x10\0\x0b\x04\0\x18[method]api.blockin\
-g-get\x01\x12\x01i\x06\x01@\x01\x04self\x10\0\x13\x04\0\x0f[method]api.get\x01\x14\
-\x04\x011golem:shopping-product-stub/stub-shopping-product\x05\x06\x04\x01:golem\
-:shopping-product-stub/wasm-rpc-stub-shopping-product\x04\0\x0b$\x01\0\x1ewasm-r\
-pc-stub-shopping-product\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit-\
-component\x070.208.1\x10wit-bindgen-rust\x060.25.0";
+\x03get\x01\x04\x03\x01\x11golem:product/api\x05\x03\x02\x03\0\x01\x03uri\x02\x03\
+\0\x02\x07product\x01B\x1c\x02\x03\x02\x01\x04\x04\0\x0dgolem-rpc-uri\x03\0\0\x02\
+\x03\x02\x01\x01\x04\0\x10wasi-io-pollable\x03\0\x02\x02\x03\x02\x01\x05\x04\0\x07\
+product\x03\0\x04\x04\0\x11future-get-result\x03\x01\x04\0\x03api\x03\x01\x01h\x06\
+\x01i\x03\x01@\x01\x04self\x08\0\x09\x04\0#[method]future-get-result.subscribe\x01\
+\x0a\x01k\x05\x01k\x0b\x01@\x01\x04self\x08\0\x0c\x04\0\x1d[method]future-get-re\
+sult.get\x01\x0d\x01i\x07\x01@\x01\x08location\x01\0\x0e\x04\0\x10[constructor]a\
+pi\x01\x0f\x01h\x07\x01@\x03\x04self\x10\x04names\x0bdescriptions\x01\0\x04\0'[m\
+ethod]api.blocking-initialize-product\x01\x11\x04\0\x1e[method]api.initialize-pr\
+oduct\x01\x11\x01@\x01\x04self\x10\0\x0b\x04\0\x18[method]api.blocking-get\x01\x12\
+\x01i\x06\x01@\x01\x04self\x10\0\x13\x04\0\x0f[method]api.get\x01\x14\x04\x01\x1f\
+golem:product-stub/stub-product\x05\x06\x04\x01(golem:product-stub/wasm-rpc-stub\
+-product\x04\0\x0b\x1b\x01\0\x15wasm-rpc-stub-product\x03\0\0\0G\x09producers\x01\
+\x0cprocessed-by\x02\x0dwit-component\x070.208.1\x10wit-bindgen-rust\x060.25.0";
 
 #[inline(never)]
 #[doc(hidden)]

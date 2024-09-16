@@ -1,5 +1,5 @@
 [package]
-name = "shopping-cart"
+name = "cart"
 version = "0.0.1"
 edition = "2021"
 
@@ -9,26 +9,26 @@ path = "wit"
 [package.metadata.component.target.dependencies."golem:api"]
 path = "wit/deps/golem"
 
+[package.metadata.component.target.dependencies."golem:order"]
+path = "wit/deps/golem_order"
+
+[package.metadata.component.target.dependencies."golem:order-stub"]
+path = "wit/deps/golem_order-stub"
+
+[package.metadata.component.target.dependencies."golem:pricing"]
+path = "wit/deps/golem_pricing"
+
+[package.metadata.component.target.dependencies."golem:pricing-stub"]
+path = "wit/deps/golem_pricing-stub"
+
+[package.metadata.component.target.dependencies."golem:product"]
+path = "wit/deps/golem_product"
+
+[package.metadata.component.target.dependencies."golem:product-stub"]
+path = "wit/deps/golem_product-stub"
+
 [package.metadata.component.target.dependencies."golem:rpc"]
 path = "wit/deps/wasm-rpc"
-
-[package.metadata.component.target.dependencies."golem:shopping-order"]
-path = "wit/deps/golem_shopping-order"
-
-[package.metadata.component.target.dependencies."golem:shopping-order-stub"]
-path = "wit/deps/golem_shopping-order-stub"
-
-[package.metadata.component.target.dependencies."golem:shopping-pricing"]
-path = "wit/deps/golem_shopping-pricing"
-
-[package.metadata.component.target.dependencies."golem:shopping-pricing-stub"]
-path = "wit/deps/golem_shopping-pricing-stub"
-
-[package.metadata.component.target.dependencies."golem:shopping-product"]
-path = "wit/deps/golem_shopping-product"
-
-[package.metadata.component.target.dependencies."golem:shopping-product-stub"]
-path = "wit/deps/golem_shopping-product-stub"
 
 [package.metadata.component.target.dependencies."unused:main"]
 path = "wit/deps/all"

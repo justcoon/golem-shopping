@@ -10,12 +10,11 @@ pub struct FutureGetResult {
     pub future_invoke_result: FutureInvokeResult,
 }
 struct Component;
-impl crate::bindings::exports::golem::shopping_product_stub::stub_shopping_product::Guest
-for Component {
+impl crate::bindings::exports::golem::product_stub::stub_product::Guest for Component {
     type Api = crate::Api;
     type FutureGetResult = crate::FutureGetResult;
 }
-impl crate::bindings::exports::golem::shopping_product_stub::stub_shopping_product::GuestFutureGetResult
+impl crate::bindings::exports::golem::product_stub::stub_product::GuestFutureGetResult
 for FutureGetResult {
     fn subscribe(&self) -> bindings::wasi::io::poll::Pollable {
         let pollable = self.future_invoke_result.subscribe();
@@ -24,18 +23,13 @@ for FutureGetResult {
         };
         pollable
     }
-    fn get(
-        &self,
-    ) -> Option<Option<crate::bindings::golem::shopping_product::api::Product>> {
+    fn get(&self) -> Option<Option<crate::bindings::golem::product::api::Product>> {
         self.future_invoke_result
             .get()
             .map(|result| {
                 let result = result
                     .expect(
-                        &format!(
-                            "Failed to invoke remote {}",
-                            "golem:shopping-product/api.{get}"
-                        ),
+                        &format!("Failed to invoke remote {}", "golem:product/api.{get}"),
                     );
                 (result
                     .tuple_element(0)
@@ -44,7 +38,7 @@ for FutureGetResult {
                     .expect("option not found")
                     .map(|inner| {
                         let record = inner;
-                        crate::bindings::golem::shopping_product::api::Product {
+                        crate::bindings::golem::product::api::Product {
                             product_id: record
                                 .field(0usize)
                                 .expect("record field not found")
@@ -68,8 +62,7 @@ for FutureGetResult {
             })
     }
 }
-impl crate::bindings::exports::golem::shopping_product_stub::stub_shopping_product::GuestApi
-for Api {
+impl crate::bindings::exports::golem::product_stub::stub_product::GuestApi for Api {
     fn new(location: crate::bindings::golem::rpc::types::Uri) -> Self {
         let location = golem_wasm_rpc::Uri {
             value: location.value,
@@ -82,7 +75,7 @@ for Api {
         let result = self
             .rpc
             .invoke_and_await(
-                "golem:shopping-product/api.{initialize-product}",
+                "golem:product/api.{initialize-product}",
                 &[
                     WitValue::builder().string(&name),
                     WitValue::builder().string(&description),
@@ -91,7 +84,7 @@ for Api {
             .expect(
                 &format!(
                     "Failed to invoke-and-await remote {}",
-                    "golem:shopping-product/api.{initialize-product}"
+                    "golem:product/api.{initialize-product}"
                 ),
             );
         ()
@@ -100,7 +93,7 @@ for Api {
         let result = self
             .rpc
             .invoke(
-                "golem:shopping-product/api.{initialize-product}",
+                "golem:product/api.{initialize-product}",
                 &[
                     WitValue::builder().string(&name),
                     WitValue::builder().string(&description),
@@ -109,21 +102,18 @@ for Api {
             .expect(
                 &format!(
                     "Failed to invoke remote {}",
-                    "golem:shopping-product/api.{initialize-product}"
+                    "golem:product/api.{initialize-product}"
                 ),
             );
         ()
     }
-    fn blocking_get(
-        &self,
-    ) -> Option<crate::bindings::golem::shopping_product::api::Product> {
+    fn blocking_get(&self) -> Option<crate::bindings::golem::product::api::Product> {
         let result = self
             .rpc
-            .invoke_and_await("golem:shopping-product/api.{get}", &[])
+            .invoke_and_await("golem:product/api.{get}", &[])
             .expect(
                 &format!(
-                    "Failed to invoke-and-await remote {}",
-                    "golem:shopping-product/api.{get}"
+                    "Failed to invoke-and-await remote {}", "golem:product/api.{get}"
                 ),
             );
         (result
@@ -133,7 +123,7 @@ for Api {
             .expect("option not found")
             .map(|inner| {
                 let record = inner;
-                crate::bindings::golem::shopping_product::api::Product {
+                crate::bindings::golem::product::api::Product {
                     product_id: record
                         .field(0usize)
                         .expect("record field not found")
@@ -157,11 +147,9 @@ for Api {
     }
     fn get(
         &self,
-    ) -> crate::bindings::exports::golem::shopping_product_stub::stub_shopping_product::FutureGetResult {
-        let result = self
-            .rpc
-            .async_invoke_and_await("golem:shopping-product/api.{get}", &[]);
-        crate::bindings::exports::golem::shopping_product_stub::stub_shopping_product::FutureGetResult::new(FutureGetResult {
+    ) -> crate::bindings::exports::golem::product_stub::stub_product::FutureGetResult {
+        let result = self.rpc.async_invoke_and_await("golem:product/api.{get}", &[]);
+        crate::bindings::exports::golem::product_stub::stub_product::FutureGetResult::new(FutureGetResult {
             future_invoke_result: result,
         })
     }

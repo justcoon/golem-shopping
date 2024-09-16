@@ -1,10 +1,10 @@
-package golem:shopping-pricing-stub;
+package golem:pricing-stub;
 
-interface stub-shopping-pricing {
+interface stub-pricing {
   use golem:rpc/types@0.1.0.{uri as golem-rpc-uri};
   use wasi:io/poll@0.2.0.{pollable as wasi-io-pollable};
-  use golem:shopping-pricing/api.{pricing-item};
-  use golem:shopping-pricing/api.{pricing};
+  use golem:pricing/api.{pricing-item};
+  use golem:pricing/api.{pricing};
 
   resource future-get-price-result {
     subscribe: func() -> wasi-io-pollable;
@@ -26,6 +26,6 @@ interface stub-shopping-pricing {
 
 }
 
-world wasm-rpc-stub-shopping-pricing {
-  export stub-shopping-pricing;
+world wasm-rpc-stub-pricing {
+  export stub-pricing;
 }

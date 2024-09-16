@@ -1,23 +1,23 @@
 [package]
-name = "shopping-product-stub"
+name = "product-stub"
 version = "0.0.1"
 edition = "2021"
 
 [package.metadata.component]
-package = "golem:shopping-product"
+package = "golem:product"
 
 [package.metadata.component.target]
-world = "wasm-rpc-stub-shopping-product"
+world = "wasm-rpc-stub-product"
 path = "wit"
 
 [package.metadata.component.target.dependencies."golem:api"]
 path = "wit/deps/golem"
 
+[package.metadata.component.target.dependencies."golem:product"]
+path = "wit/deps/golem_product"
+
 [package.metadata.component.target.dependencies."golem:rpc"]
 path = "wit/deps/wasm-rpc"
-
-[package.metadata.component.target.dependencies."golem:shopping-product"]
-path = "wit/deps/golem_shopping-product"
 
 [package.metadata.component.target.dependencies."unused:main"]
 path = "wit/deps/all"

@@ -68,6 +68,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "cart"
+version = "0.0.1"
+dependencies = [
+ "golem-rust",
+ "once_cell",
+ "rand",
+ "uuid",
+ "wit-bindgen-rt",
+]
+
+[[package]]
 name = "cfg-if"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -228,6 +239,24 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "33ea5043e58958ee56f3e15a90aee535795cd7dfd319846288d93c5b57d85cbe"
 
 [[package]]
+name = "order"
+version = "0.0.1"
+dependencies = [
+ "golem-rust",
+ "once_cell",
+ "rand",
+ "wit-bindgen-rt",
+]
+
+[[package]]
+name = "order-stub"
+version = "0.0.1"
+dependencies = [
+ "golem-wasm-rpc",
+ "wit-bindgen-rt",
+]
+
+[[package]]
 name = "petgraph"
 version = "0.6.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -257,12 +286,46 @@ dependencies = [
 ]
 
 [[package]]
+name = "pricing"
+version = "0.0.1"
+dependencies = [
+ "once_cell",
+ "rand",
+ "wit-bindgen-rt",
+]
+
+[[package]]
+name = "pricing-stub"
+version = "0.0.1"
+dependencies = [
+ "golem-wasm-rpc",
+ "wit-bindgen-rt",
+]
+
+[[package]]
 name = "proc-macro2"
 version = "1.0.86"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5e719e8df665df0d1c8fbfd238015744736151d4445ec0836b8e628aae103b77"
 dependencies = [
  "unicode-ident",
+]
+
+[[package]]
+name = "product"
+version = "0.0.1"
+dependencies = [
+ "once_cell",
+ "rand",
+ "wit-bindgen-rt",
+]
+
+[[package]]
+name = "product-stub"
+version = "0.0.1"
+dependencies = [
+ "golem-wasm-rpc",
+ "wit-bindgen-rt",
 ]
 
 [[package]]
@@ -444,69 +507,6 @@ dependencies = [
  "memchr",
  "ryu",
  "serde",
-]
-
-[[package]]
-name = "shopping-cart"
-version = "0.0.1"
-dependencies = [
- "golem-rust",
- "once_cell",
- "rand",
- "uuid",
- "wit-bindgen-rt",
-]
-
-[[package]]
-name = "shopping-order"
-version = "0.0.1"
-dependencies = [
- "golem-rust",
- "once_cell",
- "rand",
- "wit-bindgen-rt",
-]
-
-[[package]]
-name = "shopping-order-stub"
-version = "0.0.1"
-dependencies = [
- "golem-wasm-rpc",
- "wit-bindgen-rt",
-]
-
-[[package]]
-name = "shopping-pricing"
-version = "0.0.1"
-dependencies = [
- "once_cell",
- "rand",
- "wit-bindgen-rt",
-]
-
-[[package]]
-name = "shopping-pricing-stub"
-version = "0.0.1"
-dependencies = [
- "golem-wasm-rpc",
- "wit-bindgen-rt",
-]
-
-[[package]]
-name = "shopping-product"
-version = "0.0.1"
-dependencies = [
- "once_cell",
- "rand",
- "wit-bindgen-rt",
-]
-
-[[package]]
-name = "shopping-product-stub"
-version = "0.0.1"
-dependencies = [
- "golem-wasm-rpc",
- "wit-bindgen-rt",
 ]
 
 [[package]]

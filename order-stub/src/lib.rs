@@ -31,8 +31,7 @@ pub struct FutureGetResult {
     pub future_invoke_result: FutureInvokeResult,
 }
 struct Component;
-impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::Guest
-for Component {
+impl crate::bindings::exports::golem::order_stub::stub_order::Guest for Component {
     type Api = crate::Api;
     type FutureAddItemResult = crate::FutureAddItemResult;
     type FutureRemoveItemResult = crate::FutureRemoveItemResult;
@@ -43,7 +42,7 @@ for Component {
     type FutureCancelOrderResult = crate::FutureCancelOrderResult;
     type FutureGetResult = crate::FutureGetResult;
 }
-impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::GuestFutureAddItemResult
+impl crate::bindings::exports::golem::order_stub::stub_order::GuestFutureAddItemResult
 for FutureAddItemResult {
     fn subscribe(&self) -> bindings::wasi::io::poll::Pollable {
         let pollable = self.future_invoke_result.subscribe();
@@ -59,8 +58,7 @@ for FutureAddItemResult {
                 let result = result
                     .expect(
                         &format!(
-                            "Failed to invoke remote {}",
-                            "golem:shopping-order/api.{add-item}"
+                            "Failed to invoke remote {}", "golem:order/api.{add-item}"
                         ),
                     );
                 ({
@@ -85,7 +83,7 @@ for FutureAddItemResult {
             })
     }
 }
-impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::GuestFutureRemoveItemResult
+impl crate::bindings::exports::golem::order_stub::stub_order::GuestFutureRemoveItemResult
 for FutureRemoveItemResult {
     fn subscribe(&self) -> bindings::wasi::io::poll::Pollable {
         let pollable = self.future_invoke_result.subscribe();
@@ -101,8 +99,7 @@ for FutureRemoveItemResult {
                 let result = result
                     .expect(
                         &format!(
-                            "Failed to invoke remote {}",
-                            "golem:shopping-order/api.{remove-item}"
+                            "Failed to invoke remote {}", "golem:order/api.{remove-item}"
                         ),
                     );
                 ({
@@ -127,7 +124,7 @@ for FutureRemoveItemResult {
             })
     }
 }
-impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::GuestFutureUpdateItemQuantityResult
+impl crate::bindings::exports::golem::order_stub::stub_order::GuestFutureUpdateItemQuantityResult
 for FutureUpdateItemQuantityResult {
     fn subscribe(&self) -> bindings::wasi::io::poll::Pollable {
         let pollable = self.future_invoke_result.subscribe();
@@ -144,7 +141,7 @@ for FutureUpdateItemQuantityResult {
                     .expect(
                         &format!(
                             "Failed to invoke remote {}",
-                            "golem:shopping-order/api.{update-item-quantity}"
+                            "golem:order/api.{update-item-quantity}"
                         ),
                     );
                 ({
@@ -169,7 +166,7 @@ for FutureUpdateItemQuantityResult {
             })
     }
 }
-impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::GuestFutureUpdateShippingAddressResult
+impl crate::bindings::exports::golem::order_stub::stub_order::GuestFutureUpdateShippingAddressResult
 for FutureUpdateShippingAddressResult {
     fn subscribe(&self) -> bindings::wasi::io::poll::Pollable {
         let pollable = self.future_invoke_result.subscribe();
@@ -186,7 +183,7 @@ for FutureUpdateShippingAddressResult {
                     .expect(
                         &format!(
                             "Failed to invoke remote {}",
-                            "golem:shopping-order/api.{update-shipping-address}"
+                            "golem:order/api.{update-shipping-address}"
                         ),
                     );
                 ({
@@ -211,7 +208,7 @@ for FutureUpdateShippingAddressResult {
             })
     }
 }
-impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::GuestFutureUpdateBillingAddressResult
+impl crate::bindings::exports::golem::order_stub::stub_order::GuestFutureUpdateBillingAddressResult
 for FutureUpdateBillingAddressResult {
     fn subscribe(&self) -> bindings::wasi::io::poll::Pollable {
         let pollable = self.future_invoke_result.subscribe();
@@ -228,7 +225,7 @@ for FutureUpdateBillingAddressResult {
                     .expect(
                         &format!(
                             "Failed to invoke remote {}",
-                            "golem:shopping-order/api.{update-billing-address}"
+                            "golem:order/api.{update-billing-address}"
                         ),
                     );
                 ({
@@ -253,7 +250,7 @@ for FutureUpdateBillingAddressResult {
             })
     }
 }
-impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::GuestFutureShipOrderResult
+impl crate::bindings::exports::golem::order_stub::stub_order::GuestFutureShipOrderResult
 for FutureShipOrderResult {
     fn subscribe(&self) -> bindings::wasi::io::poll::Pollable {
         let pollable = self.future_invoke_result.subscribe();
@@ -269,8 +266,7 @@ for FutureShipOrderResult {
                 let result = result
                     .expect(
                         &format!(
-                            "Failed to invoke remote {}",
-                            "golem:shopping-order/api.{ship-order}"
+                            "Failed to invoke remote {}", "golem:order/api.{ship-order}"
                         ),
                     );
                 ({
@@ -295,7 +291,7 @@ for FutureShipOrderResult {
             })
     }
 }
-impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::GuestFutureCancelOrderResult
+impl crate::bindings::exports::golem::order_stub::stub_order::GuestFutureCancelOrderResult
 for FutureCancelOrderResult {
     fn subscribe(&self) -> bindings::wasi::io::poll::Pollable {
         let pollable = self.future_invoke_result.subscribe();
@@ -312,7 +308,7 @@ for FutureCancelOrderResult {
                     .expect(
                         &format!(
                             "Failed to invoke remote {}",
-                            "golem:shopping-order/api.{cancel-order}"
+                            "golem:order/api.{cancel-order}"
                         ),
                     );
                 ({
@@ -337,7 +333,7 @@ for FutureCancelOrderResult {
             })
     }
 }
-impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::GuestFutureGetResult
+impl crate::bindings::exports::golem::order_stub::stub_order::GuestFutureGetResult
 for FutureGetResult {
     fn subscribe(&self) -> bindings::wasi::io::poll::Pollable {
         let pollable = self.future_invoke_result.subscribe();
@@ -346,16 +342,13 @@ for FutureGetResult {
         };
         pollable
     }
-    fn get(&self) -> Option<Option<crate::bindings::golem::shopping_order::api::Order>> {
+    fn get(&self) -> Option<Option<crate::bindings::golem::order::api::Order>> {
         self.future_invoke_result
             .get()
             .map(|result| {
                 let result = result
                     .expect(
-                        &format!(
-                            "Failed to invoke remote {}",
-                            "golem:shopping-order/api.{get}"
-                        ),
+                        &format!("Failed to invoke remote {}", "golem:order/api.{get}"),
                     );
                 (result
                     .tuple_element(0)
@@ -364,7 +357,7 @@ for FutureGetResult {
                     .expect("option not found")
                     .map(|inner| {
                         let record = inner;
-                        crate::bindings::golem::shopping_order::api::Order {
+                        crate::bindings::golem::order::api::Order {
                             order_id: record
                                 .field(0usize)
                                 .expect("record field not found")
@@ -384,14 +377,12 @@ for FutureGetResult {
                                     .enum_value()
                                     .expect("enum not found");
                                 match case_idx {
-                                    0u32 => {
-                                        crate::bindings::golem::shopping_order::api::OrderStatus::New
-                                    }
+                                    0u32 => crate::bindings::golem::order::api::OrderStatus::New,
                                     1u32 => {
-                                        crate::bindings::golem::shopping_order::api::OrderStatus::Shipped
+                                        crate::bindings::golem::order::api::OrderStatus::Shipped
                                     }
                                     2u32 => {
-                                        crate::bindings::golem::shopping_order::api::OrderStatus::Cancelled
+                                        crate::bindings::golem::order::api::OrderStatus::Cancelled
                                     }
                                     _ => unreachable!("invalid enum case index"),
                                 }
@@ -401,7 +392,7 @@ for FutureGetResult {
                                 .expect("record field not found")
                                 .list_elements(|item| {
                                     let record = item;
-                                    crate::bindings::golem::shopping_order::api::OrderItem {
+                                    crate::bindings::golem::order::api::OrderItem {
                                         product_id: record
                                             .field(0usize)
                                             .expect("record field not found")
@@ -434,7 +425,7 @@ for FutureGetResult {
                                 .expect("option not found")
                                 .map(|inner| {
                                     let record = inner;
-                                    crate::bindings::golem::shopping_order::api::Address {
+                                    crate::bindings::golem::order::api::Address {
                                         street1: record
                                             .field(0usize)
                                             .expect("record field not found")
@@ -506,7 +497,7 @@ for FutureGetResult {
                                 .expect("option not found")
                                 .map(|inner| {
                                     let record = inner;
-                                    crate::bindings::golem::shopping_order::api::Address {
+                                    crate::bindings::golem::order::api::Address {
                                         street1: record
                                             .field(0usize)
                                             .expect("record field not found")
@@ -592,8 +583,7 @@ for FutureGetResult {
             })
     }
 }
-impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::GuestApi
-for Api {
+impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
     fn new(location: crate::bindings::golem::rpc::types::Uri) -> Self {
         let location = golem_wasm_rpc::Uri {
             value: location.value,
@@ -604,12 +594,12 @@ for Api {
     }
     fn blocking_initialize_order(
         &self,
-        data: crate::bindings::golem::shopping_order::api::CreateOrder,
+        data: crate::bindings::golem::order::api::CreateOrder,
     ) -> () {
         let result = self
             .rpc
             .invoke_and_await(
-                "golem:shopping-order/api.{initialize-order}",
+                "golem:order/api.{initialize-order}",
                 &[
                     WitValue::builder()
                         .record()
@@ -836,19 +826,19 @@ for Api {
             .expect(
                 &format!(
                     "Failed to invoke-and-await remote {}",
-                    "golem:shopping-order/api.{initialize-order}"
+                    "golem:order/api.{initialize-order}"
                 ),
             );
         ()
     }
     fn initialize_order(
         &self,
-        data: crate::bindings::golem::shopping_order::api::CreateOrder,
+        data: crate::bindings::golem::order::api::CreateOrder,
     ) -> () {
         let result = self
             .rpc
             .invoke(
-                "golem:shopping-order/api.{initialize-order}",
+                "golem:order/api.{initialize-order}",
                 &[
                     WitValue::builder()
                         .record()
@@ -1074,8 +1064,7 @@ for Api {
             )
             .expect(
                 &format!(
-                    "Failed to invoke remote {}",
-                    "golem:shopping-order/api.{initialize-order}"
+                    "Failed to invoke remote {}", "golem:order/api.{initialize-order}"
                 ),
             );
         ()
@@ -1088,7 +1077,7 @@ for Api {
         let result = self
             .rpc
             .invoke_and_await(
-                "golem:shopping-order/api.{add-item}",
+                "golem:order/api.{add-item}",
                 &[
                     WitValue::builder().string(&product_id),
                     WitValue::builder().u32(quantity),
@@ -1096,8 +1085,7 @@ for Api {
             )
             .expect(
                 &format!(
-                    "Failed to invoke-and-await remote {}",
-                    "golem:shopping-order/api.{add-item}"
+                    "Failed to invoke-and-await remote {}", "golem:order/api.{add-item}"
                 ),
             );
         ({
@@ -1124,17 +1112,17 @@ for Api {
         &self,
         product_id: String,
         quantity: u32,
-    ) -> crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureAddItemResult {
+    ) -> crate::bindings::exports::golem::order_stub::stub_order::FutureAddItemResult {
         let result = self
             .rpc
             .async_invoke_and_await(
-                "golem:shopping-order/api.{add-item}",
+                "golem:order/api.{add-item}",
                 &[
                     WitValue::builder().string(&product_id),
                     WitValue::builder().u32(quantity),
                 ],
             );
-        crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureAddItemResult::new(FutureAddItemResult {
+        crate::bindings::exports::golem::order_stub::stub_order::FutureAddItemResult::new(FutureAddItemResult {
             future_invoke_result: result,
         })
     }
@@ -1142,13 +1130,13 @@ for Api {
         let result = self
             .rpc
             .invoke_and_await(
-                "golem:shopping-order/api.{remove-item}",
+                "golem:order/api.{remove-item}",
                 &[WitValue::builder().string(&product_id)],
             )
             .expect(
                 &format!(
                     "Failed to invoke-and-await remote {}",
-                    "golem:shopping-order/api.{remove-item}"
+                    "golem:order/api.{remove-item}"
                 ),
             );
         ({
@@ -1174,14 +1162,14 @@ for Api {
     fn remove_item(
         &self,
         product_id: String,
-    ) -> crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureRemoveItemResult {
+    ) -> crate::bindings::exports::golem::order_stub::stub_order::FutureRemoveItemResult {
         let result = self
             .rpc
             .async_invoke_and_await(
-                "golem:shopping-order/api.{remove-item}",
+                "golem:order/api.{remove-item}",
                 &[WitValue::builder().string(&product_id)],
             );
-        crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureRemoveItemResult::new(FutureRemoveItemResult {
+        crate::bindings::exports::golem::order_stub::stub_order::FutureRemoveItemResult::new(FutureRemoveItemResult {
             future_invoke_result: result,
         })
     }
@@ -1193,7 +1181,7 @@ for Api {
         let result = self
             .rpc
             .invoke_and_await(
-                "golem:shopping-order/api.{update-item-quantity}",
+                "golem:order/api.{update-item-quantity}",
                 &[
                     WitValue::builder().string(&product_id),
                     WitValue::builder().u32(quantity),
@@ -1202,7 +1190,7 @@ for Api {
             .expect(
                 &format!(
                     "Failed to invoke-and-await remote {}",
-                    "golem:shopping-order/api.{update-item-quantity}"
+                    "golem:order/api.{update-item-quantity}"
                 ),
             );
         ({
@@ -1229,28 +1217,28 @@ for Api {
         &self,
         product_id: String,
         quantity: u32,
-    ) -> crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureUpdateItemQuantityResult {
+    ) -> crate::bindings::exports::golem::order_stub::stub_order::FutureUpdateItemQuantityResult {
         let result = self
             .rpc
             .async_invoke_and_await(
-                "golem:shopping-order/api.{update-item-quantity}",
+                "golem:order/api.{update-item-quantity}",
                 &[
                     WitValue::builder().string(&product_id),
                     WitValue::builder().u32(quantity),
                 ],
             );
-        crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureUpdateItemQuantityResult::new(FutureUpdateItemQuantityResult {
+        crate::bindings::exports::golem::order_stub::stub_order::FutureUpdateItemQuantityResult::new(FutureUpdateItemQuantityResult {
             future_invoke_result: result,
         })
     }
     fn blocking_update_shipping_address(
         &self,
-        address: crate::bindings::golem::shopping_order::api::Address,
+        address: crate::bindings::golem::order::api::Address,
     ) -> Result<(), String> {
         let result = self
             .rpc
             .invoke_and_await(
-                "golem:shopping-order/api.{update-shipping-address}",
+                "golem:order/api.{update-shipping-address}",
                 &[
                     WitValue::builder()
                         .record()
@@ -1298,7 +1286,7 @@ for Api {
             .expect(
                 &format!(
                     "Failed to invoke-and-await remote {}",
-                    "golem:shopping-order/api.{update-shipping-address}"
+                    "golem:order/api.{update-shipping-address}"
                 ),
             );
         ({
@@ -1323,12 +1311,12 @@ for Api {
     }
     fn update_shipping_address(
         &self,
-        address: crate::bindings::golem::shopping_order::api::Address,
-    ) -> crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureUpdateShippingAddressResult {
+        address: crate::bindings::golem::order::api::Address,
+    ) -> crate::bindings::exports::golem::order_stub::stub_order::FutureUpdateShippingAddressResult {
         let result = self
             .rpc
             .async_invoke_and_await(
-                "golem:shopping-order/api.{update-shipping-address}",
+                "golem:order/api.{update-shipping-address}",
                 &[
                     WitValue::builder()
                         .record()
@@ -1373,18 +1361,18 @@ for Api {
                         .finish(),
                 ],
             );
-        crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureUpdateShippingAddressResult::new(FutureUpdateShippingAddressResult {
+        crate::bindings::exports::golem::order_stub::stub_order::FutureUpdateShippingAddressResult::new(FutureUpdateShippingAddressResult {
             future_invoke_result: result,
         })
     }
     fn blocking_update_billing_address(
         &self,
-        address: crate::bindings::golem::shopping_order::api::Address,
+        address: crate::bindings::golem::order::api::Address,
     ) -> Result<(), String> {
         let result = self
             .rpc
             .invoke_and_await(
-                "golem:shopping-order/api.{update-billing-address}",
+                "golem:order/api.{update-billing-address}",
                 &[
                     WitValue::builder()
                         .record()
@@ -1432,7 +1420,7 @@ for Api {
             .expect(
                 &format!(
                     "Failed to invoke-and-await remote {}",
-                    "golem:shopping-order/api.{update-billing-address}"
+                    "golem:order/api.{update-billing-address}"
                 ),
             );
         ({
@@ -1457,12 +1445,12 @@ for Api {
     }
     fn update_billing_address(
         &self,
-        address: crate::bindings::golem::shopping_order::api::Address,
-    ) -> crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureUpdateBillingAddressResult {
+        address: crate::bindings::golem::order::api::Address,
+    ) -> crate::bindings::exports::golem::order_stub::stub_order::FutureUpdateBillingAddressResult {
         let result = self
             .rpc
             .async_invoke_and_await(
-                "golem:shopping-order/api.{update-billing-address}",
+                "golem:order/api.{update-billing-address}",
                 &[
                     WitValue::builder()
                         .record()
@@ -1507,18 +1495,18 @@ for Api {
                         .finish(),
                 ],
             );
-        crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureUpdateBillingAddressResult::new(FutureUpdateBillingAddressResult {
+        crate::bindings::exports::golem::order_stub::stub_order::FutureUpdateBillingAddressResult::new(FutureUpdateBillingAddressResult {
             future_invoke_result: result,
         })
     }
     fn blocking_ship_order(&self) -> Result<(), String> {
         let result = self
             .rpc
-            .invoke_and_await("golem:shopping-order/api.{ship-order}", &[])
+            .invoke_and_await("golem:order/api.{ship-order}", &[])
             .expect(
                 &format!(
                     "Failed to invoke-and-await remote {}",
-                    "golem:shopping-order/api.{ship-order}"
+                    "golem:order/api.{ship-order}"
                 ),
             );
         ({
@@ -1543,22 +1531,22 @@ for Api {
     }
     fn ship_order(
         &self,
-    ) -> crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureShipOrderResult {
+    ) -> crate::bindings::exports::golem::order_stub::stub_order::FutureShipOrderResult {
         let result = self
             .rpc
-            .async_invoke_and_await("golem:shopping-order/api.{ship-order}", &[]);
-        crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureShipOrderResult::new(FutureShipOrderResult {
+            .async_invoke_and_await("golem:order/api.{ship-order}", &[]);
+        crate::bindings::exports::golem::order_stub::stub_order::FutureShipOrderResult::new(FutureShipOrderResult {
             future_invoke_result: result,
         })
     }
     fn blocking_cancel_order(&self) -> Result<(), String> {
         let result = self
             .rpc
-            .invoke_and_await("golem:shopping-order/api.{cancel-order}", &[])
+            .invoke_and_await("golem:order/api.{cancel-order}", &[])
             .expect(
                 &format!(
                     "Failed to invoke-and-await remote {}",
-                    "golem:shopping-order/api.{cancel-order}"
+                    "golem:order/api.{cancel-order}"
                 ),
             );
         ({
@@ -1583,25 +1571,20 @@ for Api {
     }
     fn cancel_order(
         &self,
-    ) -> crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureCancelOrderResult {
+    ) -> crate::bindings::exports::golem::order_stub::stub_order::FutureCancelOrderResult {
         let result = self
             .rpc
-            .async_invoke_and_await("golem:shopping-order/api.{cancel-order}", &[]);
-        crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureCancelOrderResult::new(FutureCancelOrderResult {
+            .async_invoke_and_await("golem:order/api.{cancel-order}", &[]);
+        crate::bindings::exports::golem::order_stub::stub_order::FutureCancelOrderResult::new(FutureCancelOrderResult {
             future_invoke_result: result,
         })
     }
-    fn blocking_get(
-        &self,
-    ) -> Option<crate::bindings::golem::shopping_order::api::Order> {
+    fn blocking_get(&self) -> Option<crate::bindings::golem::order::api::Order> {
         let result = self
             .rpc
-            .invoke_and_await("golem:shopping-order/api.{get}", &[])
+            .invoke_and_await("golem:order/api.{get}", &[])
             .expect(
-                &format!(
-                    "Failed to invoke-and-await remote {}",
-                    "golem:shopping-order/api.{get}"
-                ),
+                &format!("Failed to invoke-and-await remote {}", "golem:order/api.{get}"),
             );
         (result
             .tuple_element(0)
@@ -1610,7 +1593,7 @@ for Api {
             .expect("option not found")
             .map(|inner| {
                 let record = inner;
-                crate::bindings::golem::shopping_order::api::Order {
+                crate::bindings::golem::order::api::Order {
                     order_id: record
                         .field(0usize)
                         .expect("record field not found")
@@ -1630,14 +1613,12 @@ for Api {
                             .enum_value()
                             .expect("enum not found");
                         match case_idx {
-                            0u32 => {
-                                crate::bindings::golem::shopping_order::api::OrderStatus::New
-                            }
+                            0u32 => crate::bindings::golem::order::api::OrderStatus::New,
                             1u32 => {
-                                crate::bindings::golem::shopping_order::api::OrderStatus::Shipped
+                                crate::bindings::golem::order::api::OrderStatus::Shipped
                             }
                             2u32 => {
-                                crate::bindings::golem::shopping_order::api::OrderStatus::Cancelled
+                                crate::bindings::golem::order::api::OrderStatus::Cancelled
                             }
                             _ => unreachable!("invalid enum case index"),
                         }
@@ -1647,7 +1628,7 @@ for Api {
                         .expect("record field not found")
                         .list_elements(|item| {
                             let record = item;
-                            crate::bindings::golem::shopping_order::api::OrderItem {
+                            crate::bindings::golem::order::api::OrderItem {
                                 product_id: record
                                     .field(0usize)
                                     .expect("record field not found")
@@ -1680,7 +1661,7 @@ for Api {
                         .expect("option not found")
                         .map(|inner| {
                             let record = inner;
-                            crate::bindings::golem::shopping_order::api::Address {
+                            crate::bindings::golem::order::api::Address {
                                 street1: record
                                     .field(0usize)
                                     .expect("record field not found")
@@ -1752,7 +1733,7 @@ for Api {
                         .expect("option not found")
                         .map(|inner| {
                             let record = inner;
-                            crate::bindings::golem::shopping_order::api::Address {
+                            crate::bindings::golem::order::api::Address {
                                 street1: record
                                     .field(0usize)
                                     .expect("record field not found")
@@ -1838,11 +1819,9 @@ for Api {
     }
     fn get(
         &self,
-    ) -> crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureGetResult {
-        let result = self
-            .rpc
-            .async_invoke_and_await("golem:shopping-order/api.{get}", &[]);
-        crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureGetResult::new(FutureGetResult {
+    ) -> crate::bindings::exports::golem::order_stub::stub_order::FutureGetResult {
+        let result = self.rpc.async_invoke_and_await("golem:order/api.{get}", &[]);
+        crate::bindings::exports::golem::order_stub::stub_order::FutureGetResult::new(FutureGetResult {
             future_invoke_result: result,
         })
     }

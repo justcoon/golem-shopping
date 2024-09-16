@@ -1,9 +1,9 @@
-package golem:shopping-product-stub;
+package golem:product-stub;
 
-interface stub-shopping-product {
+interface stub-product {
   use golem:rpc/types@0.1.0.{uri as golem-rpc-uri};
   use wasi:io/poll@0.2.0.{pollable as wasi-io-pollable};
-  use golem:shopping-product/api.{product};
+  use golem:product/api.{product};
 
   resource future-get-result {
     subscribe: func() -> wasi-io-pollable;
@@ -19,6 +19,6 @@ interface stub-shopping-product {
 
 }
 
-world wasm-rpc-stub-shopping-product {
-  export stub-shopping-product;
+world wasm-rpc-stub-product {
+  export stub-product;
 }

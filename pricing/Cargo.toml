@@ -1,5 +1,5 @@
 [package]
-name = "shopping-pricing"
+name = "pricing"
 version = "0.0.1"
 edition = "2021"
 

@@ -1,4 +1,4 @@
-package golem:shopping-pricing;
+package golem:pricing;
 
 interface api {
 
@@ -23,7 +23,7 @@ interface api {
   get: func() -> option<pricing>;
 }
 
-world shopping-pricing {
+world pricing {
   import golem:api/host@0.2.0;
 
   export api;

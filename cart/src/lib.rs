@@ -1,14 +1,13 @@
 mod bindings;
 
-use crate::bindings::exports::golem::shopping_cart::api::*;
-use crate::bindings::golem::api::host::*;
+use crate::bindings::exports::golem::cart::api::*;
 use std::cell::RefCell;
 use std::env;
 
-use crate::bindings::golem::shopping_pricing_stub::stub_shopping_pricing::PricingItem;
-use crate::bindings::golem::shopping_product_stub::stub_shopping_product::Product;
+use crate::bindings::golem::pricing_stub::stub_pricing::PricingItem;
+use crate::bindings::golem::product_stub::stub_product::Product;
 
-use crate::bindings::golem::shopping_order::api::OrderItem;
+use crate::bindings::golem::order::api::OrderItem;
 use rand::prelude::*;
 use uuid::Uuid;
 
@@ -46,8 +45,8 @@ fn get_order_worker_urn(oder_id: String) -> String {
 fn get_product(product_id: String) -> Option<Product> {
     println!("Getting product: {}", product_id);
 
+    use bindings::golem::product_stub::stub_product::*;
     use bindings::golem::rpc::types::Uri;
-    use bindings::golem::shopping_product_stub::stub_shopping_product::*;
 
     let api = Api::new(&Uri { value: get_product_worker_urn(product_id) });
 
@@ -57,8 +56,8 @@ fn get_product(product_id: String) -> Option<Product> {
 fn get_pricing(product_id: String, currency: String, zone: String) -> Option<PricingItem> {
     println!("Getting pricing: {}", product_id);
 
+    use bindings::golem::pricing_stub::stub_pricing::*;
     use bindings::golem::rpc::types::Uri;
-    use bindings::golem::shopping_pricing_stub::stub_shopping_pricing::*;
 
     let api = Api::new(&Uri { value: get_pricing_worker_urn(product_id) });
 
@@ -68,8 +67,8 @@ fn get_pricing(product_id: String, currency: String, zone: String) -> Option<Pri
 fn create_order(order_id: String, cart: Cart) -> Result<String, &'static str> {
     println!("Creating order: {}", order_id);
 
+    use bindings::golem::order_stub::stub_order::*;
     use bindings::golem::rpc::types::Uri;
-    use bindings::golem::shopping_order_stub::stub_shopping_order::*;
 
     let api = Api::new(&Uri { value: get_order_worker_urn(order_id.clone()) });
 

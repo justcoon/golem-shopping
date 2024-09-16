@@ -1,7 +1,6 @@
 mod bindings;
 
-use crate::bindings::exports::golem::shopping_pricing::api::*;
-use crate::bindings::golem::api::host::*;
+use crate::bindings::exports::golem::pricing::api::*;
 use std::cell::RefCell;
 use std::env;
 
