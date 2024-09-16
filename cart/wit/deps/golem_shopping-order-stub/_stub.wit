@@ -1,0 +1,45 @@
+package golem:shopping-order-stub;
+
+interface stub-shopping-order {
+  use golem:rpc/types@0.1.0.{uri as golem-rpc-uri};
+  use wasi:io/poll@0.2.0.{pollable as wasi-io-pollable};
+  use golem:shopping-order/api.{order-status};
+  use golem:shopping-order/api.{order-item};
+  use golem:shopping-order/api.{order};
+  use golem:shopping-order/api.{create-order};
+
+  resource future-add-item-result {
+    subscribe: func() -> wasi-io-pollable;
+    get: func() -> option<result<_, string>>;
+  }
+  resource future-remove-item-result {
+    subscribe: func() -> wasi-io-pollable;
+    get: func() -> option<result<_, string>>;
+  }
+  resource future-update-item-quantity-result {
+    subscribe: func() -> wasi-io-pollable;
+    get: func() -> option<result<_, string>>;
+  }
+  resource future-get-result {
+    subscribe: func() -> wasi-io-pollable;
+    get: func() -> option<option<order>>;
+  }
+  resource api {
+    constructor(location: golem-rpc-uri);
+    blocking-initialize-order: func(data: create-order);
+    initialize-order: func(data: create-order);
+    blocking-add-item: func(product-id: string, quantity: u32) -> result<_, string>;
+    add-item: func(product-id: string, quantity: u32) -> future-add-item-result;
+    blocking-remove-item: func(product-id: string) -> result<_, string>;
+    remove-item: func(product-id: string) -> future-remove-item-result;
+    blocking-update-item-quantity: func(product-id: string, quantity: u32) -> result<_, string>;
+    update-item-quantity: func(product-id: string, quantity: u32) -> future-update-item-quantity-result;
+    blocking-get: func() -> option<order>;
+    get: func() -> future-get-result;
+  }
+
+}
+
+world wasm-rpc-stub-shopping-order {
+  export stub-shopping-order;
+}

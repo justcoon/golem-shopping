@@ -1,0 +1,20 @@
+package golem:shopping-product;
+
+interface api {
+
+  record product {
+    product-id: string,
+    name: string,
+    description: string
+  }
+
+  initialize-product: func(name: string, description: string) -> ();
+
+  get: func() -> option<product>;
+}
+
+world shopping-product {
+  import golem:api/host@0.2.0;
+
+  export api;
+}

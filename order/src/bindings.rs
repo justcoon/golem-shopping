@@ -3700,6 +3700,1300 @@ pub mod golem {
             }
         }
     }
+    #[allow(dead_code)]
+    pub mod shopping_pricing {
+        #[allow(dead_code, clippy::all)]
+        pub mod api {
+            #[used]
+            #[doc(hidden)]
+            #[cfg(target_arch = "wasm32")]
+            static __FORCE_SECTION_REF: fn() =
+                super::super::super::__link_custom_section_describing_imports;
+            use super::super::super::_rt;
+            #[derive(Clone)]
+            pub struct PricingItem {
+                pub price: f32,
+                pub currency: _rt::String,
+                pub zone: _rt::String,
+            }
+            impl ::core::fmt::Debug for PricingItem {
+                fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+                    f.debug_struct("PricingItem")
+                        .field("price", &self.price)
+                        .field("currency", &self.currency)
+                        .field("zone", &self.zone)
+                        .finish()
+                }
+            }
+            #[derive(Clone)]
+            pub struct Pricing {
+                pub asset_id: _rt::String,
+                pub msrp_prices: _rt::Vec<PricingItem>,
+                pub list_prices: _rt::Vec<PricingItem>,
+            }
+            impl ::core::fmt::Debug for Pricing {
+                fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+                    f.debug_struct("Pricing")
+                        .field("asset-id", &self.asset_id)
+                        .field("msrp-prices", &self.msrp_prices)
+                        .field("list-prices", &self.list_prices)
+                        .finish()
+                }
+            }
+            #[allow(unused_unsafe, clippy::all)]
+            pub fn initialize_pricing(msrp_prices: &[PricingItem], list_prices: &[PricingItem]) {
+                unsafe {
+                    let vec3 = msrp_prices;
+                    let len3 = vec3.len();
+                    let layout3 = _rt::alloc::Layout::from_size_align_unchecked(vec3.len() * 20, 4);
+                    let result3 = if layout3.size() != 0 {
+                        let ptr = _rt::alloc::alloc(layout3).cast::<u8>();
+                        if ptr.is_null() {
+                            _rt::alloc::handle_alloc_error(layout3);
+                        }
+                        ptr
+                    } else {
+                        {
+                            ::core::ptr::null_mut()
+                        }
+                    };
+                    for (i, e) in vec3.into_iter().enumerate() {
+                        let base = result3.add(i * 20);
+                        {
+                            let PricingItem { price: price0, currency: currency0, zone: zone0 } = e;
+                            *base.add(0).cast::<f32>() = _rt::as_f32(price0);
+                            let vec1 = currency0;
+                            let ptr1 = vec1.as_ptr().cast::<u8>();
+                            let len1 = vec1.len();
+                            *base.add(8).cast::<usize>() = len1;
+                            *base.add(4).cast::<*mut u8>() = ptr1.cast_mut();
+                            let vec2 = zone0;
+                            let ptr2 = vec2.as_ptr().cast::<u8>();
+                            let len2 = vec2.len();
+                            *base.add(16).cast::<usize>() = len2;
+                            *base.add(12).cast::<*mut u8>() = ptr2.cast_mut();
+                        }
+                    }
+                    let vec7 = list_prices;
+                    let len7 = vec7.len();
+                    let layout7 = _rt::alloc::Layout::from_size_align_unchecked(vec7.len() * 20, 4);
+                    let result7 = if layout7.size() != 0 {
+                        let ptr = _rt::alloc::alloc(layout7).cast::<u8>();
+                        if ptr.is_null() {
+                            _rt::alloc::handle_alloc_error(layout7);
+                        }
+                        ptr
+                    } else {
+                        {
+                            ::core::ptr::null_mut()
+                        }
+                    };
+                    for (i, e) in vec7.into_iter().enumerate() {
+                        let base = result7.add(i * 20);
+                        {
+                            let PricingItem { price: price4, currency: currency4, zone: zone4 } = e;
+                            *base.add(0).cast::<f32>() = _rt::as_f32(price4);
+                            let vec5 = currency4;
+                            let ptr5 = vec5.as_ptr().cast::<u8>();
+                            let len5 = vec5.len();
+                            *base.add(8).cast::<usize>() = len5;
+                            *base.add(4).cast::<*mut u8>() = ptr5.cast_mut();
+                            let vec6 = zone4;
+                            let ptr6 = vec6.as_ptr().cast::<u8>();
+                            let len6 = vec6.len();
+                            *base.add(16).cast::<usize>() = len6;
+                            *base.add(12).cast::<*mut u8>() = ptr6.cast_mut();
+                        }
+                    }
+
+                    #[cfg(target_arch = "wasm32")]
+                    #[link(wasm_import_module = "golem:shopping-pricing/api")]
+                    extern "C" {
+                        #[link_name = "initialize-pricing"]
+                        fn wit_import(_: *mut u8, _: usize, _: *mut u8, _: usize);
+                    }
+
+                    #[cfg(not(target_arch = "wasm32"))]
+                    fn wit_import(_: *mut u8, _: usize, _: *mut u8, _: usize) {
+                        unreachable!()
+                    }
+                    wit_import(result3, len3, result7, len7);
+                    if layout3.size() != 0 {
+                        _rt::alloc::dealloc(result3.cast(), layout3);
+                    }
+                    if layout7.size() != 0 {
+                        _rt::alloc::dealloc(result7.cast(), layout7);
+                    }
+                }
+            }
+            #[allow(unused_unsafe, clippy::all)]
+            /// update-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>) -> ();
+            pub fn get() -> Option<Pricing> {
+                unsafe {
+                    #[repr(align(4))]
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 28]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 28]);
+                    let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
+                    #[cfg(target_arch = "wasm32")]
+                    #[link(wasm_import_module = "golem:shopping-pricing/api")]
+                    extern "C" {
+                        #[link_name = "get"]
+                        fn wit_import(_: *mut u8);
+                    }
+
+                    #[cfg(not(target_arch = "wasm32"))]
+                    fn wit_import(_: *mut u8) {
+                        unreachable!()
+                    }
+                    wit_import(ptr0);
+                    let l1 = i32::from(*ptr0.add(0).cast::<u8>());
+                    match l1 {
+                        0 => None,
+                        1 => {
+                            let e = {
+                                let l2 = *ptr0.add(4).cast::<*mut u8>();
+                                let l3 = *ptr0.add(8).cast::<usize>();
+                                let len4 = l3;
+                                let bytes4 = _rt::Vec::from_raw_parts(l2.cast(), len4, len4);
+                                let l5 = *ptr0.add(12).cast::<*mut u8>();
+                                let l6 = *ptr0.add(16).cast::<usize>();
+                                let base14 = l5;
+                                let len14 = l6;
+                                let mut result14 = _rt::Vec::with_capacity(len14);
+                                for i in 0..len14 {
+                                    let base = base14.add(i * 20);
+                                    let e14 = {
+                                        let l7 = *base.add(0).cast::<f32>();
+                                        let l8 = *base.add(4).cast::<*mut u8>();
+                                        let l9 = *base.add(8).cast::<usize>();
+                                        let len10 = l9;
+                                        let bytes10 =
+                                            _rt::Vec::from_raw_parts(l8.cast(), len10, len10);
+                                        let l11 = *base.add(12).cast::<*mut u8>();
+                                        let l12 = *base.add(16).cast::<usize>();
+                                        let len13 = l12;
+                                        let bytes13 =
+                                            _rt::Vec::from_raw_parts(l11.cast(), len13, len13);
+
+                                        PricingItem {
+                                            price: l7,
+                                            currency: _rt::string_lift(bytes10),
+                                            zone: _rt::string_lift(bytes13),
+                                        }
+                                    };
+                                    result14.push(e14);
+                                }
+                                _rt::cabi_dealloc(base14, len14 * 20, 4);
+                                let l15 = *ptr0.add(20).cast::<*mut u8>();
+                                let l16 = *ptr0.add(24).cast::<usize>();
+                                let base24 = l15;
+                                let len24 = l16;
+                                let mut result24 = _rt::Vec::with_capacity(len24);
+                                for i in 0..len24 {
+                                    let base = base24.add(i * 20);
+                                    let e24 = {
+                                        let l17 = *base.add(0).cast::<f32>();
+                                        let l18 = *base.add(4).cast::<*mut u8>();
+                                        let l19 = *base.add(8).cast::<usize>();
+                                        let len20 = l19;
+                                        let bytes20 =
+                                            _rt::Vec::from_raw_parts(l18.cast(), len20, len20);
+                                        let l21 = *base.add(12).cast::<*mut u8>();
+                                        let l22 = *base.add(16).cast::<usize>();
+                                        let len23 = l22;
+                                        let bytes23 =
+                                            _rt::Vec::from_raw_parts(l21.cast(), len23, len23);
+
+                                        PricingItem {
+                                            price: l17,
+                                            currency: _rt::string_lift(bytes20),
+                                            zone: _rt::string_lift(bytes23),
+                                        }
+                                    };
+                                    result24.push(e24);
+                                }
+                                _rt::cabi_dealloc(base24, len24 * 20, 4);
+
+                                Pricing {
+                                    asset_id: _rt::string_lift(bytes4),
+                                    msrp_prices: result14,
+                                    list_prices: result24,
+                                }
+                            };
+                            Some(e)
+                        }
+                        _ => _rt::invalid_enum_discriminant(),
+                    }
+                }
+            }
+        }
+    }
+    #[allow(dead_code)]
+    pub mod shopping_pricing_stub {
+        #[allow(dead_code, clippy::all)]
+        pub mod stub_shopping_pricing {
+            #[used]
+            #[doc(hidden)]
+            #[cfg(target_arch = "wasm32")]
+            static __FORCE_SECTION_REF: fn() =
+                super::super::super::__link_custom_section_describing_imports;
+            use super::super::super::_rt;
+            pub type GolemRpcUri = super::super::super::golem::rpc::types::Uri;
+            pub type WasiIoPollable = super::super::super::wasi::io::poll::Pollable;
+            pub type PricingItem = super::super::super::golem::shopping_pricing::api::PricingItem;
+            pub type Pricing = super::super::super::golem::shopping_pricing::api::Pricing;
+
+            #[derive(Debug)]
+            #[repr(transparent)]
+            pub struct FutureGetResult {
+                handle: _rt::Resource<FutureGetResult>,
+            }
+
+            impl FutureGetResult {
+                #[doc(hidden)]
+                pub unsafe fn from_handle(handle: u32) -> Self {
+                    Self { handle: _rt::Resource::from_handle(handle) }
+                }
+
+                #[doc(hidden)]
+                pub fn take_handle(&self) -> u32 {
+                    _rt::Resource::take_handle(&self.handle)
+                }
+
+                #[doc(hidden)]
+                pub fn handle(&self) -> u32 {
+                    _rt::Resource::handle(&self.handle)
+                }
+            }
+
+            unsafe impl _rt::WasmResource for FutureGetResult {
+                #[inline]
+                unsafe fn drop(_handle: u32) {
+                    #[cfg(not(target_arch = "wasm32"))]
+                    unreachable!();
+
+                    #[cfg(target_arch = "wasm32")]
+                    {
+                        #[link(
+                            wasm_import_module = "golem:shopping-pricing-stub/stub-shopping-pricing"
+                        )]
+                        extern "C" {
+                            #[link_name = "[resource-drop]future-get-result"]
+                            fn drop(_: u32);
+                        }
+
+                        drop(_handle);
+                    }
+                }
+            }
+
+            #[derive(Debug)]
+            #[repr(transparent)]
+            pub struct Api {
+                handle: _rt::Resource<Api>,
+            }
+
+            impl Api {
+                #[doc(hidden)]
+                pub unsafe fn from_handle(handle: u32) -> Self {
+                    Self { handle: _rt::Resource::from_handle(handle) }
+                }
+
+                #[doc(hidden)]
+                pub fn take_handle(&self) -> u32 {
+                    _rt::Resource::take_handle(&self.handle)
+                }
+
+                #[doc(hidden)]
+                pub fn handle(&self) -> u32 {
+                    _rt::Resource::handle(&self.handle)
+                }
+            }
+
+            unsafe impl _rt::WasmResource for Api {
+                #[inline]
+                unsafe fn drop(_handle: u32) {
+                    #[cfg(not(target_arch = "wasm32"))]
+                    unreachable!();
+
+                    #[cfg(target_arch = "wasm32")]
+                    {
+                        #[link(
+                            wasm_import_module = "golem:shopping-pricing-stub/stub-shopping-pricing"
+                        )]
+                        extern "C" {
+                            #[link_name = "[resource-drop]api"]
+                            fn drop(_: u32);
+                        }
+
+                        drop(_handle);
+                    }
+                }
+            }
+
+            impl FutureGetResult {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn subscribe(&self) -> WasiIoPollable {
+                    unsafe {
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(
+                            wasm_import_module = "golem:shopping-pricing-stub/stub-shopping-pricing"
+                        )]
+                        extern "C" {
+                            #[link_name = "[method]future-get-result.subscribe"]
+                            fn wit_import(_: i32) -> i32;
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import((self).handle() as i32);
+                        super::super::super::wasi::io::poll::Pollable::from_handle(ret as u32)
+                    }
+                }
+            }
+            impl FutureGetResult {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn get(&self) -> Option<Option<Pricing>> {
+                    unsafe {
+                        #[repr(align(4))]
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 32]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 32]);
+                        let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(
+                            wasm_import_module = "golem:shopping-pricing-stub/stub-shopping-pricing"
+                        )]
+                        extern "C" {
+                            #[link_name = "[method]future-get-result.get"]
+                            fn wit_import(_: i32, _: *mut u8);
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32, _: *mut u8) {
+                            unreachable!()
+                        }
+                        wit_import((self).handle() as i32, ptr0);
+                        let l1 = i32::from(*ptr0.add(0).cast::<u8>());
+                        match l1 {
+                            0 => None,
+                            1 => {
+                                let e = {
+                                    let l2 = i32::from(*ptr0.add(4).cast::<u8>());
+
+                                    match l2 {
+                                        0 => None,
+                                        1 => {
+                                            let e = {
+                                                let l3 = *ptr0.add(8).cast::<*mut u8>();
+                                                let l4 = *ptr0.add(12).cast::<usize>();
+                                                let len5 = l4;
+                                                let bytes5 =
+                                                    _rt::Vec::from_raw_parts(l3.cast(), len5, len5);
+                                                let l6 = *ptr0.add(16).cast::<*mut u8>();
+                                                let l7 = *ptr0.add(20).cast::<usize>();
+                                                let base15 = l6;
+                                                let len15 = l7;
+                                                let mut result15 = _rt::Vec::with_capacity(len15);
+                                                for i in 0..len15 {
+                                                    let base = base15.add(i * 20);
+                                                    let e15 = {
+                                                        let l8 = *base.add(0).cast::<f32>();
+                                                        let l9 = *base.add(4).cast::<*mut u8>();
+                                                        let l10 = *base.add(8).cast::<usize>();
+                                                        let len11 = l10;
+                                                        let bytes11 = _rt::Vec::from_raw_parts(
+                                                            l9.cast(),
+                                                            len11,
+                                                            len11,
+                                                        );
+                                                        let l12 = *base.add(12).cast::<*mut u8>();
+                                                        let l13 = *base.add(16).cast::<usize>();
+                                                        let len14 = l13;
+                                                        let bytes14 = _rt::Vec::from_raw_parts(
+                                                            l12.cast(),
+                                                            len14,
+                                                            len14,
+                                                        );
+
+                                                        super::super::super::golem::shopping_pricing::api::PricingItem{
+                                                            price: l8,
+                                                            currency: _rt::string_lift(bytes11),
+                                                            zone: _rt::string_lift(bytes14),
+                                                          }
+                                                    };
+                                                    result15.push(e15);
+                                                }
+                                                _rt::cabi_dealloc(base15, len15 * 20, 4);
+                                                let l16 = *ptr0.add(24).cast::<*mut u8>();
+                                                let l17 = *ptr0.add(28).cast::<usize>();
+                                                let base25 = l16;
+                                                let len25 = l17;
+                                                let mut result25 = _rt::Vec::with_capacity(len25);
+                                                for i in 0..len25 {
+                                                    let base = base25.add(i * 20);
+                                                    let e25 = {
+                                                        let l18 = *base.add(0).cast::<f32>();
+                                                        let l19 = *base.add(4).cast::<*mut u8>();
+                                                        let l20 = *base.add(8).cast::<usize>();
+                                                        let len21 = l20;
+                                                        let bytes21 = _rt::Vec::from_raw_parts(
+                                                            l19.cast(),
+                                                            len21,
+                                                            len21,
+                                                        );
+                                                        let l22 = *base.add(12).cast::<*mut u8>();
+                                                        let l23 = *base.add(16).cast::<usize>();
+                                                        let len24 = l23;
+                                                        let bytes24 = _rt::Vec::from_raw_parts(
+                                                            l22.cast(),
+                                                            len24,
+                                                            len24,
+                                                        );
+
+                                                        super::super::super::golem::shopping_pricing::api::PricingItem{
+                                                            price: l18,
+                                                            currency: _rt::string_lift(bytes21),
+                                                            zone: _rt::string_lift(bytes24),
+                                                          }
+                                                    };
+                                                    result25.push(e25);
+                                                }
+                                                _rt::cabi_dealloc(base25, len25 * 20, 4);
+
+                                                super::super::super::golem::shopping_pricing::api::Pricing{
+                                                        asset_id: _rt::string_lift(bytes5),
+                                                        msrp_prices: result15,
+                                                        list_prices: result25,
+                                                      }
+                                            };
+                                            Some(e)
+                                        }
+                                        _ => _rt::invalid_enum_discriminant(),
+                                    }
+                                };
+                                Some(e)
+                            }
+                            _ => _rt::invalid_enum_discriminant(),
+                        }
+                    }
+                }
+            }
+            impl Api {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn new(location: &GolemRpcUri) -> Self {
+                    unsafe {
+                        let super::super::super::golem::rpc::types::Uri { value: value0 } =
+                            location;
+                        let vec1 = value0;
+                        let ptr1 = vec1.as_ptr().cast::<u8>();
+                        let len1 = vec1.len();
+
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(
+                            wasm_import_module = "golem:shopping-pricing-stub/stub-shopping-pricing"
+                        )]
+                        extern "C" {
+                            #[link_name = "[constructor]api"]
+                            fn wit_import(_: *mut u8, _: usize) -> i32;
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: *mut u8, _: usize) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import(ptr1.cast_mut(), len1);
+                        Api::from_handle(ret as u32)
+                    }
+                }
+            }
+            impl Api {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn blocking_initialize_pricing(
+                    &self,
+                    msrp_prices: &[PricingItem],
+                    list_prices: &[PricingItem],
+                ) {
+                    unsafe {
+                        let vec3 = msrp_prices;
+                        let len3 = vec3.len();
+                        let layout3 =
+                            _rt::alloc::Layout::from_size_align_unchecked(vec3.len() * 20, 4);
+                        let result3 = if layout3.size() != 0 {
+                            let ptr = _rt::alloc::alloc(layout3).cast::<u8>();
+                            if ptr.is_null() {
+                                _rt::alloc::handle_alloc_error(layout3);
+                            }
+                            ptr
+                        } else {
+                            {
+                                ::core::ptr::null_mut()
+                            }
+                        };
+                        for (i, e) in vec3.into_iter().enumerate() {
+                            let base = result3.add(i * 20);
+                            {
+                                let super::super::super::golem::shopping_pricing::api::PricingItem{ price:price0, currency:currency0, zone:zone0, } = e;
+                                *base.add(0).cast::<f32>() = _rt::as_f32(price0);
+                                let vec1 = currency0;
+                                let ptr1 = vec1.as_ptr().cast::<u8>();
+                                let len1 = vec1.len();
+                                *base.add(8).cast::<usize>() = len1;
+                                *base.add(4).cast::<*mut u8>() = ptr1.cast_mut();
+                                let vec2 = zone0;
+                                let ptr2 = vec2.as_ptr().cast::<u8>();
+                                let len2 = vec2.len();
+                                *base.add(16).cast::<usize>() = len2;
+                                *base.add(12).cast::<*mut u8>() = ptr2.cast_mut();
+                            }
+                        }
+                        let vec7 = list_prices;
+                        let len7 = vec7.len();
+                        let layout7 =
+                            _rt::alloc::Layout::from_size_align_unchecked(vec7.len() * 20, 4);
+                        let result7 = if layout7.size() != 0 {
+                            let ptr = _rt::alloc::alloc(layout7).cast::<u8>();
+                            if ptr.is_null() {
+                                _rt::alloc::handle_alloc_error(layout7);
+                            }
+                            ptr
+                        } else {
+                            {
+                                ::core::ptr::null_mut()
+                            }
+                        };
+                        for (i, e) in vec7.into_iter().enumerate() {
+                            let base = result7.add(i * 20);
+                            {
+                                let super::super::super::golem::shopping_pricing::api::PricingItem{ price:price4, currency:currency4, zone:zone4, } = e;
+                                *base.add(0).cast::<f32>() = _rt::as_f32(price4);
+                                let vec5 = currency4;
+                                let ptr5 = vec5.as_ptr().cast::<u8>();
+                                let len5 = vec5.len();
+                                *base.add(8).cast::<usize>() = len5;
+                                *base.add(4).cast::<*mut u8>() = ptr5.cast_mut();
+                                let vec6 = zone4;
+                                let ptr6 = vec6.as_ptr().cast::<u8>();
+                                let len6 = vec6.len();
+                                *base.add(16).cast::<usize>() = len6;
+                                *base.add(12).cast::<*mut u8>() = ptr6.cast_mut();
+                            }
+                        }
+
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(
+                            wasm_import_module = "golem:shopping-pricing-stub/stub-shopping-pricing"
+                        )]
+                        extern "C" {
+                            #[link_name = "[method]api.blocking-initialize-pricing"]
+                            fn wit_import(_: i32, _: *mut u8, _: usize, _: *mut u8, _: usize);
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32, _: *mut u8, _: usize, _: *mut u8, _: usize) {
+                            unreachable!()
+                        }
+                        wit_import((self).handle() as i32, result3, len3, result7, len7);
+                        if layout3.size() != 0 {
+                            _rt::alloc::dealloc(result3.cast(), layout3);
+                        }
+                        if layout7.size() != 0 {
+                            _rt::alloc::dealloc(result7.cast(), layout7);
+                        }
+                    }
+                }
+            }
+            impl Api {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn initialize_pricing(
+                    &self,
+                    msrp_prices: &[PricingItem],
+                    list_prices: &[PricingItem],
+                ) {
+                    unsafe {
+                        let vec3 = msrp_prices;
+                        let len3 = vec3.len();
+                        let layout3 =
+                            _rt::alloc::Layout::from_size_align_unchecked(vec3.len() * 20, 4);
+                        let result3 = if layout3.size() != 0 {
+                            let ptr = _rt::alloc::alloc(layout3).cast::<u8>();
+                            if ptr.is_null() {
+                                _rt::alloc::handle_alloc_error(layout3);
+                            }
+                            ptr
+                        } else {
+                            {
+                                ::core::ptr::null_mut()
+                            }
+                        };
+                        for (i, e) in vec3.into_iter().enumerate() {
+                            let base = result3.add(i * 20);
+                            {
+                                let super::super::super::golem::shopping_pricing::api::PricingItem{ price:price0, currency:currency0, zone:zone0, } = e;
+                                *base.add(0).cast::<f32>() = _rt::as_f32(price0);
+                                let vec1 = currency0;
+                                let ptr1 = vec1.as_ptr().cast::<u8>();
+                                let len1 = vec1.len();
+                                *base.add(8).cast::<usize>() = len1;
+                                *base.add(4).cast::<*mut u8>() = ptr1.cast_mut();
+                                let vec2 = zone0;
+                                let ptr2 = vec2.as_ptr().cast::<u8>();
+                                let len2 = vec2.len();
+                                *base.add(16).cast::<usize>() = len2;
+                                *base.add(12).cast::<*mut u8>() = ptr2.cast_mut();
+                            }
+                        }
+                        let vec7 = list_prices;
+                        let len7 = vec7.len();
+                        let layout7 =
+                            _rt::alloc::Layout::from_size_align_unchecked(vec7.len() * 20, 4);
+                        let result7 = if layout7.size() != 0 {
+                            let ptr = _rt::alloc::alloc(layout7).cast::<u8>();
+                            if ptr.is_null() {
+                                _rt::alloc::handle_alloc_error(layout7);
+                            }
+                            ptr
+                        } else {
+                            {
+                                ::core::ptr::null_mut()
+                            }
+                        };
+                        for (i, e) in vec7.into_iter().enumerate() {
+                            let base = result7.add(i * 20);
+                            {
+                                let super::super::super::golem::shopping_pricing::api::PricingItem{ price:price4, currency:currency4, zone:zone4, } = e;
+                                *base.add(0).cast::<f32>() = _rt::as_f32(price4);
+                                let vec5 = currency4;
+                                let ptr5 = vec5.as_ptr().cast::<u8>();
+                                let len5 = vec5.len();
+                                *base.add(8).cast::<usize>() = len5;
+                                *base.add(4).cast::<*mut u8>() = ptr5.cast_mut();
+                                let vec6 = zone4;
+                                let ptr6 = vec6.as_ptr().cast::<u8>();
+                                let len6 = vec6.len();
+                                *base.add(16).cast::<usize>() = len6;
+                                *base.add(12).cast::<*mut u8>() = ptr6.cast_mut();
+                            }
+                        }
+
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(
+                            wasm_import_module = "golem:shopping-pricing-stub/stub-shopping-pricing"
+                        )]
+                        extern "C" {
+                            #[link_name = "[method]api.initialize-pricing"]
+                            fn wit_import(_: i32, _: *mut u8, _: usize, _: *mut u8, _: usize);
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32, _: *mut u8, _: usize, _: *mut u8, _: usize) {
+                            unreachable!()
+                        }
+                        wit_import((self).handle() as i32, result3, len3, result7, len7);
+                        if layout3.size() != 0 {
+                            _rt::alloc::dealloc(result3.cast(), layout3);
+                        }
+                        if layout7.size() != 0 {
+                            _rt::alloc::dealloc(result7.cast(), layout7);
+                        }
+                    }
+                }
+            }
+            impl Api {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn blocking_get(&self) -> Option<Pricing> {
+                    unsafe {
+                        #[repr(align(4))]
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 28]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 28]);
+                        let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(
+                            wasm_import_module = "golem:shopping-pricing-stub/stub-shopping-pricing"
+                        )]
+                        extern "C" {
+                            #[link_name = "[method]api.blocking-get"]
+                            fn wit_import(_: i32, _: *mut u8);
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32, _: *mut u8) {
+                            unreachable!()
+                        }
+                        wit_import((self).handle() as i32, ptr0);
+                        let l1 = i32::from(*ptr0.add(0).cast::<u8>());
+                        match l1 {
+                            0 => None,
+                            1 => {
+                                let e = {
+                                    let l2 = *ptr0.add(4).cast::<*mut u8>();
+                                    let l3 = *ptr0.add(8).cast::<usize>();
+                                    let len4 = l3;
+                                    let bytes4 = _rt::Vec::from_raw_parts(l2.cast(), len4, len4);
+                                    let l5 = *ptr0.add(12).cast::<*mut u8>();
+                                    let l6 = *ptr0.add(16).cast::<usize>();
+                                    let base14 = l5;
+                                    let len14 = l6;
+                                    let mut result14 = _rt::Vec::with_capacity(len14);
+                                    for i in 0..len14 {
+                                        let base = base14.add(i * 20);
+                                        let e14 = {
+                                            let l7 = *base.add(0).cast::<f32>();
+                                            let l8 = *base.add(4).cast::<*mut u8>();
+                                            let l9 = *base.add(8).cast::<usize>();
+                                            let len10 = l9;
+                                            let bytes10 =
+                                                _rt::Vec::from_raw_parts(l8.cast(), len10, len10);
+                                            let l11 = *base.add(12).cast::<*mut u8>();
+                                            let l12 = *base.add(16).cast::<usize>();
+                                            let len13 = l12;
+                                            let bytes13 =
+                                                _rt::Vec::from_raw_parts(l11.cast(), len13, len13);
+
+                                            super::super::super::golem::shopping_pricing::api::PricingItem{
+                                                      price: l7,
+                                                      currency: _rt::string_lift(bytes10),
+                                                      zone: _rt::string_lift(bytes13),
+                                                    }
+                                        };
+                                        result14.push(e14);
+                                    }
+                                    _rt::cabi_dealloc(base14, len14 * 20, 4);
+                                    let l15 = *ptr0.add(20).cast::<*mut u8>();
+                                    let l16 = *ptr0.add(24).cast::<usize>();
+                                    let base24 = l15;
+                                    let len24 = l16;
+                                    let mut result24 = _rt::Vec::with_capacity(len24);
+                                    for i in 0..len24 {
+                                        let base = base24.add(i * 20);
+                                        let e24 = {
+                                            let l17 = *base.add(0).cast::<f32>();
+                                            let l18 = *base.add(4).cast::<*mut u8>();
+                                            let l19 = *base.add(8).cast::<usize>();
+                                            let len20 = l19;
+                                            let bytes20 =
+                                                _rt::Vec::from_raw_parts(l18.cast(), len20, len20);
+                                            let l21 = *base.add(12).cast::<*mut u8>();
+                                            let l22 = *base.add(16).cast::<usize>();
+                                            let len23 = l22;
+                                            let bytes23 =
+                                                _rt::Vec::from_raw_parts(l21.cast(), len23, len23);
+
+                                            super::super::super::golem::shopping_pricing::api::PricingItem{
+                                                      price: l17,
+                                                      currency: _rt::string_lift(bytes20),
+                                                      zone: _rt::string_lift(bytes23),
+                                                    }
+                                        };
+                                        result24.push(e24);
+                                    }
+                                    _rt::cabi_dealloc(base24, len24 * 20, 4);
+
+                                    super::super::super::golem::shopping_pricing::api::Pricing {
+                                        asset_id: _rt::string_lift(bytes4),
+                                        msrp_prices: result14,
+                                        list_prices: result24,
+                                    }
+                                };
+                                Some(e)
+                            }
+                            _ => _rt::invalid_enum_discriminant(),
+                        }
+                    }
+                }
+            }
+            impl Api {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn get(&self) -> FutureGetResult {
+                    unsafe {
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(
+                            wasm_import_module = "golem:shopping-pricing-stub/stub-shopping-pricing"
+                        )]
+                        extern "C" {
+                            #[link_name = "[method]api.get"]
+                            fn wit_import(_: i32) -> i32;
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import((self).handle() as i32);
+                        FutureGetResult::from_handle(ret as u32)
+                    }
+                }
+            }
+        }
+    }
+    #[allow(dead_code)]
+    pub mod shopping_product {
+        #[allow(dead_code, clippy::all)]
+        pub mod api {
+            #[used]
+            #[doc(hidden)]
+            #[cfg(target_arch = "wasm32")]
+            static __FORCE_SECTION_REF: fn() =
+                super::super::super::__link_custom_section_describing_imports;
+            use super::super::super::_rt;
+            #[derive(Clone)]
+            pub struct Product {
+                pub product_id: _rt::String,
+                pub name: _rt::String,
+                pub description: _rt::String,
+            }
+            impl ::core::fmt::Debug for Product {
+                fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+                    f.debug_struct("Product")
+                        .field("product-id", &self.product_id)
+                        .field("name", &self.name)
+                        .field("description", &self.description)
+                        .finish()
+                }
+            }
+            #[allow(unused_unsafe, clippy::all)]
+            pub fn initialize_product(name: &str, description: &str) {
+                unsafe {
+                    let vec0 = name;
+                    let ptr0 = vec0.as_ptr().cast::<u8>();
+                    let len0 = vec0.len();
+                    let vec1 = description;
+                    let ptr1 = vec1.as_ptr().cast::<u8>();
+                    let len1 = vec1.len();
+
+                    #[cfg(target_arch = "wasm32")]
+                    #[link(wasm_import_module = "golem:shopping-product/api")]
+                    extern "C" {
+                        #[link_name = "initialize-product"]
+                        fn wit_import(_: *mut u8, _: usize, _: *mut u8, _: usize);
+                    }
+
+                    #[cfg(not(target_arch = "wasm32"))]
+                    fn wit_import(_: *mut u8, _: usize, _: *mut u8, _: usize) {
+                        unreachable!()
+                    }
+                    wit_import(ptr0.cast_mut(), len0, ptr1.cast_mut(), len1);
+                }
+            }
+            #[allow(unused_unsafe, clippy::all)]
+            pub fn get() -> Option<Product> {
+                unsafe {
+                    #[repr(align(4))]
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 28]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 28]);
+                    let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
+                    #[cfg(target_arch = "wasm32")]
+                    #[link(wasm_import_module = "golem:shopping-product/api")]
+                    extern "C" {
+                        #[link_name = "get"]
+                        fn wit_import(_: *mut u8);
+                    }
+
+                    #[cfg(not(target_arch = "wasm32"))]
+                    fn wit_import(_: *mut u8) {
+                        unreachable!()
+                    }
+                    wit_import(ptr0);
+                    let l1 = i32::from(*ptr0.add(0).cast::<u8>());
+                    match l1 {
+                        0 => None,
+                        1 => {
+                            let e = {
+                                let l2 = *ptr0.add(4).cast::<*mut u8>();
+                                let l3 = *ptr0.add(8).cast::<usize>();
+                                let len4 = l3;
+                                let bytes4 = _rt::Vec::from_raw_parts(l2.cast(), len4, len4);
+                                let l5 = *ptr0.add(12).cast::<*mut u8>();
+                                let l6 = *ptr0.add(16).cast::<usize>();
+                                let len7 = l6;
+                                let bytes7 = _rt::Vec::from_raw_parts(l5.cast(), len7, len7);
+                                let l8 = *ptr0.add(20).cast::<*mut u8>();
+                                let l9 = *ptr0.add(24).cast::<usize>();
+                                let len10 = l9;
+                                let bytes10 = _rt::Vec::from_raw_parts(l8.cast(), len10, len10);
+
+                                Product {
+                                    product_id: _rt::string_lift(bytes4),
+                                    name: _rt::string_lift(bytes7),
+                                    description: _rt::string_lift(bytes10),
+                                }
+                            };
+                            Some(e)
+                        }
+                        _ => _rt::invalid_enum_discriminant(),
+                    }
+                }
+            }
+        }
+    }
+    #[allow(dead_code)]
+    pub mod shopping_product_stub {
+        #[allow(dead_code, clippy::all)]
+        pub mod stub_shopping_product {
+            #[used]
+            #[doc(hidden)]
+            #[cfg(target_arch = "wasm32")]
+            static __FORCE_SECTION_REF: fn() =
+                super::super::super::__link_custom_section_describing_imports;
+            use super::super::super::_rt;
+            pub type GolemRpcUri = super::super::super::golem::rpc::types::Uri;
+            pub type WasiIoPollable = super::super::super::wasi::io::poll::Pollable;
+            pub type Product = super::super::super::golem::shopping_product::api::Product;
+
+            #[derive(Debug)]
+            #[repr(transparent)]
+            pub struct FutureGetResult {
+                handle: _rt::Resource<FutureGetResult>,
+            }
+
+            impl FutureGetResult {
+                #[doc(hidden)]
+                pub unsafe fn from_handle(handle: u32) -> Self {
+                    Self { handle: _rt::Resource::from_handle(handle) }
+                }
+
+                #[doc(hidden)]
+                pub fn take_handle(&self) -> u32 {
+                    _rt::Resource::take_handle(&self.handle)
+                }
+
+                #[doc(hidden)]
+                pub fn handle(&self) -> u32 {
+                    _rt::Resource::handle(&self.handle)
+                }
+            }
+
+            unsafe impl _rt::WasmResource for FutureGetResult {
+                #[inline]
+                unsafe fn drop(_handle: u32) {
+                    #[cfg(not(target_arch = "wasm32"))]
+                    unreachable!();
+
+                    #[cfg(target_arch = "wasm32")]
+                    {
+                        #[link(
+                            wasm_import_module = "golem:shopping-product-stub/stub-shopping-product"
+                        )]
+                        extern "C" {
+                            #[link_name = "[resource-drop]future-get-result"]
+                            fn drop(_: u32);
+                        }
+
+                        drop(_handle);
+                    }
+                }
+            }
+
+            #[derive(Debug)]
+            #[repr(transparent)]
+            pub struct Api {
+                handle: _rt::Resource<Api>,
+            }
+
+            impl Api {
+                #[doc(hidden)]
+                pub unsafe fn from_handle(handle: u32) -> Self {
+                    Self { handle: _rt::Resource::from_handle(handle) }
+                }
+
+                #[doc(hidden)]
+                pub fn take_handle(&self) -> u32 {
+                    _rt::Resource::take_handle(&self.handle)
+                }
+
+                #[doc(hidden)]
+                pub fn handle(&self) -> u32 {
+                    _rt::Resource::handle(&self.handle)
+                }
+            }
+
+            unsafe impl _rt::WasmResource for Api {
+                #[inline]
+                unsafe fn drop(_handle: u32) {
+                    #[cfg(not(target_arch = "wasm32"))]
+                    unreachable!();
+
+                    #[cfg(target_arch = "wasm32")]
+                    {
+                        #[link(
+                            wasm_import_module = "golem:shopping-product-stub/stub-shopping-product"
+                        )]
+                        extern "C" {
+                            #[link_name = "[resource-drop]api"]
+                            fn drop(_: u32);
+                        }
+
+                        drop(_handle);
+                    }
+                }
+            }
+
+            impl FutureGetResult {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn subscribe(&self) -> WasiIoPollable {
+                    unsafe {
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(
+                            wasm_import_module = "golem:shopping-product-stub/stub-shopping-product"
+                        )]
+                        extern "C" {
+                            #[link_name = "[method]future-get-result.subscribe"]
+                            fn wit_import(_: i32) -> i32;
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import((self).handle() as i32);
+                        super::super::super::wasi::io::poll::Pollable::from_handle(ret as u32)
+                    }
+                }
+            }
+            impl FutureGetResult {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn get(&self) -> Option<Option<Product>> {
+                    unsafe {
+                        #[repr(align(4))]
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 32]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 32]);
+                        let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(
+                            wasm_import_module = "golem:shopping-product-stub/stub-shopping-product"
+                        )]
+                        extern "C" {
+                            #[link_name = "[method]future-get-result.get"]
+                            fn wit_import(_: i32, _: *mut u8);
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32, _: *mut u8) {
+                            unreachable!()
+                        }
+                        wit_import((self).handle() as i32, ptr0);
+                        let l1 = i32::from(*ptr0.add(0).cast::<u8>());
+                        match l1 {
+                            0 => None,
+                            1 => {
+                                let e = {
+                                    let l2 = i32::from(*ptr0.add(4).cast::<u8>());
+
+                                    match l2 {
+                                        0 => None,
+                                        1 => {
+                                            let e = {
+                                                let l3 = *ptr0.add(8).cast::<*mut u8>();
+                                                let l4 = *ptr0.add(12).cast::<usize>();
+                                                let len5 = l4;
+                                                let bytes5 =
+                                                    _rt::Vec::from_raw_parts(l3.cast(), len5, len5);
+                                                let l6 = *ptr0.add(16).cast::<*mut u8>();
+                                                let l7 = *ptr0.add(20).cast::<usize>();
+                                                let len8 = l7;
+                                                let bytes8 =
+                                                    _rt::Vec::from_raw_parts(l6.cast(), len8, len8);
+                                                let l9 = *ptr0.add(24).cast::<*mut u8>();
+                                                let l10 = *ptr0.add(28).cast::<usize>();
+                                                let len11 = l10;
+                                                let bytes11 = _rt::Vec::from_raw_parts(
+                                                    l9.cast(),
+                                                    len11,
+                                                    len11,
+                                                );
+
+                                                super::super::super::golem::shopping_product::api::Product{
+                                                        product_id: _rt::string_lift(bytes5),
+                                                        name: _rt::string_lift(bytes8),
+                                                        description: _rt::string_lift(bytes11),
+                                                      }
+                                            };
+                                            Some(e)
+                                        }
+                                        _ => _rt::invalid_enum_discriminant(),
+                                    }
+                                };
+                                Some(e)
+                            }
+                            _ => _rt::invalid_enum_discriminant(),
+                        }
+                    }
+                }
+            }
+            impl Api {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn new(location: &GolemRpcUri) -> Self {
+                    unsafe {
+                        let super::super::super::golem::rpc::types::Uri { value: value0 } =
+                            location;
+                        let vec1 = value0;
+                        let ptr1 = vec1.as_ptr().cast::<u8>();
+                        let len1 = vec1.len();
+
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(
+                            wasm_import_module = "golem:shopping-product-stub/stub-shopping-product"
+                        )]
+                        extern "C" {
+                            #[link_name = "[constructor]api"]
+                            fn wit_import(_: *mut u8, _: usize) -> i32;
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: *mut u8, _: usize) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import(ptr1.cast_mut(), len1);
+                        Api::from_handle(ret as u32)
+                    }
+                }
+            }
+            impl Api {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn blocking_initialize_product(&self, name: &str, description: &str) {
+                    unsafe {
+                        let vec0 = name;
+                        let ptr0 = vec0.as_ptr().cast::<u8>();
+                        let len0 = vec0.len();
+                        let vec1 = description;
+                        let ptr1 = vec1.as_ptr().cast::<u8>();
+                        let len1 = vec1.len();
+
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(
+                            wasm_import_module = "golem:shopping-product-stub/stub-shopping-product"
+                        )]
+                        extern "C" {
+                            #[link_name = "[method]api.blocking-initialize-product"]
+                            fn wit_import(_: i32, _: *mut u8, _: usize, _: *mut u8, _: usize);
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32, _: *mut u8, _: usize, _: *mut u8, _: usize) {
+                            unreachable!()
+                        }
+                        wit_import(
+                            (self).handle() as i32,
+                            ptr0.cast_mut(),
+                            len0,
+                            ptr1.cast_mut(),
+                            len1,
+                        );
+                    }
+                }
+            }
+            impl Api {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn initialize_product(&self, name: &str, description: &str) {
+                    unsafe {
+                        let vec0 = name;
+                        let ptr0 = vec0.as_ptr().cast::<u8>();
+                        let len0 = vec0.len();
+                        let vec1 = description;
+                        let ptr1 = vec1.as_ptr().cast::<u8>();
+                        let len1 = vec1.len();
+
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(
+                            wasm_import_module = "golem:shopping-product-stub/stub-shopping-product"
+                        )]
+                        extern "C" {
+                            #[link_name = "[method]api.initialize-product"]
+                            fn wit_import(_: i32, _: *mut u8, _: usize, _: *mut u8, _: usize);
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32, _: *mut u8, _: usize, _: *mut u8, _: usize) {
+                            unreachable!()
+                        }
+                        wit_import(
+                            (self).handle() as i32,
+                            ptr0.cast_mut(),
+                            len0,
+                            ptr1.cast_mut(),
+                            len1,
+                        );
+                    }
+                }
+            }
+            impl Api {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn blocking_get(&self) -> Option<Product> {
+                    unsafe {
+                        #[repr(align(4))]
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 28]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 28]);
+                        let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(
+                            wasm_import_module = "golem:shopping-product-stub/stub-shopping-product"
+                        )]
+                        extern "C" {
+                            #[link_name = "[method]api.blocking-get"]
+                            fn wit_import(_: i32, _: *mut u8);
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32, _: *mut u8) {
+                            unreachable!()
+                        }
+                        wit_import((self).handle() as i32, ptr0);
+                        let l1 = i32::from(*ptr0.add(0).cast::<u8>());
+                        match l1 {
+                            0 => None,
+                            1 => {
+                                let e = {
+                                    let l2 = *ptr0.add(4).cast::<*mut u8>();
+                                    let l3 = *ptr0.add(8).cast::<usize>();
+                                    let len4 = l3;
+                                    let bytes4 = _rt::Vec::from_raw_parts(l2.cast(), len4, len4);
+                                    let l5 = *ptr0.add(12).cast::<*mut u8>();
+                                    let l6 = *ptr0.add(16).cast::<usize>();
+                                    let len7 = l6;
+                                    let bytes7 = _rt::Vec::from_raw_parts(l5.cast(), len7, len7);
+                                    let l8 = *ptr0.add(20).cast::<*mut u8>();
+                                    let l9 = *ptr0.add(24).cast::<usize>();
+                                    let len10 = l9;
+                                    let bytes10 = _rt::Vec::from_raw_parts(l8.cast(), len10, len10);
+
+                                    super::super::super::golem::shopping_product::api::Product {
+                                        product_id: _rt::string_lift(bytes4),
+                                        name: _rt::string_lift(bytes7),
+                                        description: _rt::string_lift(bytes10),
+                                    }
+                                };
+                                Some(e)
+                            }
+                            _ => _rt::invalid_enum_discriminant(),
+                        }
+                    }
+                }
+            }
+            impl Api {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn get(&self) -> FutureGetResult {
+                    unsafe {
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(
+                            wasm_import_module = "golem:shopping-product-stub/stub-shopping-product"
+                        )]
+                        extern "C" {
+                            #[link_name = "[method]api.get"]
+                            fn wit_import(_: i32) -> i32;
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import((self).handle() as i32);
+                        FutureGetResult::from_handle(ret as u32)
+                    }
+                }
+            }
+        }
+    }
 }
 #[allow(dead_code)]
 pub mod wasi {
@@ -4762,91 +6056,121 @@ pub(crate) use __export_shopping_order_impl as export;
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.25.0:shopping-order:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 4015] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xaa\x1e\x01A\x02\x01\
-A\x0d\x01B\x0a\x04\0\x08pollable\x03\x01\x01h\0\x01@\x01\x04self\x01\0\x7f\x04\0\
-\x16[method]pollable.ready\x01\x02\x01@\x01\x04self\x01\x01\0\x04\0\x16[method]p\
-ollable.block\x01\x03\x01p\x01\x01py\x01@\x01\x02in\x04\0\x05\x04\0\x04poll\x01\x06\
-\x03\x01\x12wasi:io/poll@0.2.0\x05\0\x02\x03\0\0\x08pollable\x01B*\x02\x03\x02\x01\
-\x01\x04\0\x08pollable\x03\0\0\x01z\x04\0\x0anode-index\x03\0\x02\x01r\x01\x05va\
-lues\x04\0\x03uri\x03\0\x04\x01p\x03\x01k\x03\x01o\x02y\x07\x01p\x7f\x01j\x01\x07\
-\x01\x07\x01o\x02\x05w\x01q\x16\x0crecord-value\x01\x06\0\x0dvariant-value\x01\x08\
-\0\x0aenum-value\x01y\0\x0bflags-value\x01\x09\0\x0btuple-value\x01\x06\0\x0alis\
-t-value\x01\x06\0\x0coption-value\x01\x07\0\x0cresult-value\x01\x0a\0\x07prim-u8\
-\x01}\0\x08prim-u16\x01{\0\x08prim-u32\x01y\0\x08prim-u64\x01w\0\x07prim-s8\x01~\
-\0\x08prim-s16\x01|\0\x08prim-s32\x01z\0\x08prim-s64\x01x\0\x0cprim-float32\x01v\
-\0\x0cprim-float64\x01u\0\x09prim-char\x01t\0\x09prim-bool\x01\x7f\0\x0bprim-str\
-ing\x01s\0\x06handle\x01\x0b\0\x04\0\x08wit-node\x03\0\x0c\x01p\x0d\x01r\x01\x05\
-nodes\x0e\x04\0\x09wit-value\x03\0\x0f\x01q\x04\x0eprotocol-error\x01s\0\x06deni\
-ed\x01s\0\x09not-found\x01s\0\x15remote-internal-error\x01s\0\x04\0\x09rpc-error\
-\x03\0\x11\x04\0\x08wasm-rpc\x03\x01\x04\0\x14future-invoke-result\x03\x01\x01i\x13\
-\x01@\x01\x08location\x05\0\x15\x04\0\x15[constructor]wasm-rpc\x01\x16\x01h\x13\x01\
-p\x10\x01j\x01\x10\x01\x12\x01@\x03\x04self\x17\x0dfunction-names\x0ffunction-pa\
-rams\x18\0\x19\x04\0![method]wasm-rpc.invoke-and-await\x01\x1a\x01j\0\x01\x12\x01\
-@\x03\x04self\x17\x0dfunction-names\x0ffunction-params\x18\0\x1b\x04\0\x17[metho\
-d]wasm-rpc.invoke\x01\x1c\x01i\x14\x01@\x03\x04self\x17\x0dfunction-names\x0ffun\
-ction-params\x18\0\x1d\x04\0'[method]wasm-rpc.async-invoke-and-await\x01\x1e\x01\
-h\x14\x01i\x01\x01@\x01\x04self\x1f\0\x20\x04\0&[method]future-invoke-result.sub\
-scribe\x01!\x01k\x19\x01@\x01\x04self\x1f\0\"\x04\0\x20[method]future-invoke-res\
-ult.get\x01#\x03\x01\x15golem:rpc/types@0.1.0\x05\x02\x01B\x0f\x02\x03\x02\x01\x01\
-\x04\0\x08pollable\x03\0\0\x01w\x04\0\x07instant\x03\0\x02\x01w\x04\0\x08duratio\
-n\x03\0\x04\x01@\0\0\x03\x04\0\x03now\x01\x06\x01@\0\0\x05\x04\0\x0aresolution\x01\
-\x07\x01i\x01\x01@\x01\x04when\x03\0\x08\x04\0\x11subscribe-instant\x01\x09\x01@\
-\x01\x04when\x05\0\x08\x04\0\x12subscribe-duration\x01\x0a\x03\x01!wasi:clocks/m\
-onotonic-clock@0.2.0\x05\x03\x02\x03\0\x01\x03uri\x02\x03\0\x02\x08duration\x01B\
-f\x02\x03\x02\x01\x04\x04\0\x03uri\x03\0\0\x02\x03\x02\x01\x05\x04\0\x08duration\
-\x03\0\x02\x01w\x04\0\x0boplog-index\x03\0\x04\x01w\x04\0\x11component-version\x03\
-\0\x06\x01r\x02\x09high-bitsw\x08low-bitsw\x04\0\x04uuid\x03\0\x08\x01r\x01\x04u\
-uid\x09\x04\0\x0ccomponent-id\x03\0\x0a\x01r\x02\x0ccomponent-id\x0b\x0bworker-n\
-ames\x04\0\x09worker-id\x03\0\x0c\x01r\x02\x09worker-id\x0d\x09oplog-idx\x05\x04\
-\0\x0apromise-id\x03\0\x0e\x01r\x04\x0cmax-attemptsy\x09min-delay\x03\x09max-del\
-ay\x03\x0amultiplieru\x04\0\x0cretry-policy\x03\0\x10\x01q\x03\x0fpersist-nothin\
-g\0\0\x1bpersist-remote-side-effects\0\0\x05smart\0\0\x04\0\x11persistence-level\
-\x03\0\x12\x01m\x02\x09automatic\x0esnapshot-based\x04\0\x0bupdate-mode\x03\0\x14\
-\x01m\x06\x05equal\x09not-equal\x0dgreater-equal\x07greater\x0aless-equal\x04les\
-s\x04\0\x11filter-comparator\x03\0\x16\x01m\x04\x05equal\x09not-equal\x04like\x08\
-not-like\x04\0\x18string-filter-comparator\x03\0\x18\x01m\x07\x07running\x04idle\
-\x09suspended\x0binterrupted\x08retrying\x06failed\x06exited\x04\0\x0dworker-sta\
-tus\x03\0\x1a\x01r\x02\x0acomparator\x19\x05values\x04\0\x12worker-name-filter\x03\
-\0\x1c\x01r\x02\x0acomparator\x17\x05value\x1b\x04\0\x14worker-status-filter\x03\
-\0\x1e\x01r\x02\x0acomparator\x17\x05valuew\x04\0\x15worker-version-filter\x03\0\
-\x20\x01r\x02\x0acomparator\x17\x05valuew\x04\0\x18worker-created-at-filter\x03\0\
-\"\x01r\x03\x04names\x0acomparator\x19\x05values\x04\0\x11worker-env-filter\x03\0\
-$\x01q\x05\x04name\x01\x1d\0\x06status\x01\x1f\0\x07version\x01!\0\x0acreated-at\
-\x01#\0\x03env\x01%\0\x04\0\x16worker-property-filter\x03\0&\x01p'\x01r\x01\x07f\
-ilters(\x04\0\x11worker-all-filter\x03\0)\x01p*\x01r\x01\x07filters+\x04\0\x11wo\
-rker-any-filter\x03\0,\x01ps\x01o\x02ss\x01p/\x01r\x06\x09worker-id\x0d\x04args.\
-\x03env0\x06status\x1b\x11component-versionw\x0bretry-countw\x04\0\x0fworker-met\
-adata\x03\01\x04\0\x0bget-workers\x03\x01\x01k-\x01i3\x01@\x03\x0ccomponent-id\x0b\
-\x06filter4\x07precise\x7f\05\x04\0\x18[constructor]get-workers\x016\x01h3\x01p2\
-\x01k8\x01@\x01\x04self7\09\x04\0\x1c[method]get-workers.get-next\x01:\x01@\0\0\x0f\
-\x04\0\x0ecreate-promise\x01;\x01p}\x01@\x01\x0apromise-id\x0f\0<\x04\0\x0dawait\
--promise\x01=\x01@\x02\x0apromise-id\x0f\x04data<\0\x7f\x04\0\x10complete-promis\
-e\x01>\x01@\x01\x0apromise-id\x0f\x01\0\x04\0\x0edelete-promise\x01?\x01@\x01\x0d\
-function-names\0\x01\x04\0\x0cget-self-uri\x01@\x01@\0\0\x05\x04\0\x0fget-oplog-\
-index\x01A\x01@\x01\x09oplog-idx\x05\x01\0\x04\0\x0fset-oplog-index\x01B\x01@\x01\
-\x08replicas}\x01\0\x04\0\x0coplog-commit\x01C\x04\0\x14mark-begin-operation\x01\
-A\x01@\x01\x05begin\x05\x01\0\x04\0\x12mark-end-operation\x01D\x01@\0\0\x11\x04\0\
-\x10get-retry-policy\x01E\x01@\x01\x10new-retry-policy\x11\x01\0\x04\0\x10set-re\
-try-policy\x01F\x01@\0\0\x13\x04\0\x1bget-oplog-persistence-level\x01G\x01@\x01\x15\
-new-persistence-level\x13\x01\0\x04\0\x1bset-oplog-persistence-level\x01H\x01@\0\
-\0\x7f\x04\0\x14get-idempotence-mode\x01I\x01@\x01\x0aidempotent\x7f\x01\0\x04\0\
-\x14set-idempotence-mode\x01J\x01@\0\0\x09\x04\0\x18generate-idempotency-key\x01\
-K\x01@\x03\x09worker-id\x0d\x0etarget-version\x07\x04mode\x15\x01\0\x04\0\x0dupd\
-ate-worker\x01L\x01@\0\02\x04\0\x11get-self-metadata\x01M\x01k2\x01@\x01\x09work\
-er-id\x0d\0\xce\0\x04\0\x13get-worker-metadata\x01O\x03\x01\x14golem:api/host@0.\
-2.0\x05\x06\x01B\x14\x01m\x03\x03new\x09confirmed\x09cancelled\x04\0\x0corder-st\
-atus\x03\0\0\x01r\x04\x0aproduct-ids\x04names\x05pricev\x08quantityy\x04\0\x0aor\
-der-item\x03\0\x02\x01p\x03\x01r\x07\x08order-ids\x07user-ids\x0corder-status\x01\
-\x05items\x04\x05totalv\x08currencys\x09timestampw\x04\0\x05order\x03\0\x05\x01r\
-\x05\x07user-ids\x05items\x04\x05totalv\x08currencys\x09timestampw\x04\0\x0ccrea\
-te-order\x03\0\x07\x01@\x01\x04data\x08\x01\0\x04\0\x10initialize-order\x01\x09\x01\
-j\0\x01s\x01@\x02\x0aproduct-ids\x08quantityy\0\x0a\x04\0\x08add-item\x01\x0b\x01\
-@\x01\x0aproduct-ids\0\x0a\x04\0\x0bremove-item\x01\x0c\x04\0\x14update-item-qua\
-ntity\x01\x0b\x01k\x06\x01@\0\0\x0d\x04\0\x03get\x01\x0e\x04\x01\x18golem:shoppi\
-ng-order/api\x05\x07\x04\x01#golem:shopping-order/shopping-order\x04\0\x0b\x14\x01\
-\0\x0eshopping-order\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit-comp\
-onent\x070.208.1\x10wit-bindgen-rust\x060.25.0";
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 5414] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xa1)\x01A\x02\x01A\x18\
+\x01B\x0a\x04\0\x08pollable\x03\x01\x01h\0\x01@\x01\x04self\x01\0\x7f\x04\0\x16[\
+method]pollable.ready\x01\x02\x01@\x01\x04self\x01\x01\0\x04\0\x16[method]pollab\
+le.block\x01\x03\x01p\x01\x01py\x01@\x01\x02in\x04\0\x05\x04\0\x04poll\x01\x06\x03\
+\x01\x12wasi:io/poll@0.2.0\x05\0\x02\x03\0\0\x08pollable\x01B*\x02\x03\x02\x01\x01\
+\x04\0\x08pollable\x03\0\0\x01z\x04\0\x0anode-index\x03\0\x02\x01r\x01\x05values\
+\x04\0\x03uri\x03\0\x04\x01p\x03\x01k\x03\x01o\x02y\x07\x01p\x7f\x01j\x01\x07\x01\
+\x07\x01o\x02\x05w\x01q\x16\x0crecord-value\x01\x06\0\x0dvariant-value\x01\x08\0\
+\x0aenum-value\x01y\0\x0bflags-value\x01\x09\0\x0btuple-value\x01\x06\0\x0alist-\
+value\x01\x06\0\x0coption-value\x01\x07\0\x0cresult-value\x01\x0a\0\x07prim-u8\x01\
+}\0\x08prim-u16\x01{\0\x08prim-u32\x01y\0\x08prim-u64\x01w\0\x07prim-s8\x01~\0\x08\
+prim-s16\x01|\0\x08prim-s32\x01z\0\x08prim-s64\x01x\0\x0cprim-float32\x01v\0\x0c\
+prim-float64\x01u\0\x09prim-char\x01t\0\x09prim-bool\x01\x7f\0\x0bprim-string\x01\
+s\0\x06handle\x01\x0b\0\x04\0\x08wit-node\x03\0\x0c\x01p\x0d\x01r\x01\x05nodes\x0e\
+\x04\0\x09wit-value\x03\0\x0f\x01q\x04\x0eprotocol-error\x01s\0\x06denied\x01s\0\
+\x09not-found\x01s\0\x15remote-internal-error\x01s\0\x04\0\x09rpc-error\x03\0\x11\
+\x04\0\x08wasm-rpc\x03\x01\x04\0\x14future-invoke-result\x03\x01\x01i\x13\x01@\x01\
+\x08location\x05\0\x15\x04\0\x15[constructor]wasm-rpc\x01\x16\x01h\x13\x01p\x10\x01\
+j\x01\x10\x01\x12\x01@\x03\x04self\x17\x0dfunction-names\x0ffunction-params\x18\0\
+\x19\x04\0![method]wasm-rpc.invoke-and-await\x01\x1a\x01j\0\x01\x12\x01@\x03\x04\
+self\x17\x0dfunction-names\x0ffunction-params\x18\0\x1b\x04\0\x17[method]wasm-rp\
+c.invoke\x01\x1c\x01i\x14\x01@\x03\x04self\x17\x0dfunction-names\x0ffunction-par\
+ams\x18\0\x1d\x04\0'[method]wasm-rpc.async-invoke-and-await\x01\x1e\x01h\x14\x01\
+i\x01\x01@\x01\x04self\x1f\0\x20\x04\0&[method]future-invoke-result.subscribe\x01\
+!\x01k\x19\x01@\x01\x04self\x1f\0\"\x04\0\x20[method]future-invoke-result.get\x01\
+#\x03\x01\x15golem:rpc/types@0.1.0\x05\x02\x01B\x0a\x01r\x03\x05pricev\x08curren\
+cys\x04zones\x04\0\x0cpricing-item\x03\0\0\x01p\x01\x01r\x03\x08asset-ids\x0bmsr\
+p-prices\x02\x0blist-prices\x02\x04\0\x07pricing\x03\0\x03\x01@\x02\x0bmsrp-pric\
+es\x02\x0blist-prices\x02\x01\0\x04\0\x12initialize-pricing\x01\x05\x01k\x04\x01\
+@\0\0\x06\x04\0\x03get\x01\x07\x03\x01\x1agolem:shopping-pricing/api\x05\x03\x02\
+\x03\0\x01\x03uri\x02\x03\0\x02\x0cpricing-item\x02\x03\0\x02\x07pricing\x01B\x1f\
+\x02\x03\x02\x01\x04\x04\0\x0dgolem-rpc-uri\x03\0\0\x02\x03\x02\x01\x01\x04\0\x10\
+wasi-io-pollable\x03\0\x02\x02\x03\x02\x01\x05\x04\0\x0cpricing-item\x03\0\x04\x02\
+\x03\x02\x01\x06\x04\0\x07pricing\x03\0\x06\x04\0\x11future-get-result\x03\x01\x04\
+\0\x03api\x03\x01\x01h\x08\x01i\x03\x01@\x01\x04self\x0a\0\x0b\x04\0#[method]fut\
+ure-get-result.subscribe\x01\x0c\x01k\x07\x01k\x0d\x01@\x01\x04self\x0a\0\x0e\x04\
+\0\x1d[method]future-get-result.get\x01\x0f\x01i\x09\x01@\x01\x08location\x01\0\x10\
+\x04\0\x10[constructor]api\x01\x11\x01h\x09\x01p\x05\x01@\x03\x04self\x12\x0bmsr\
+p-prices\x13\x0blist-prices\x13\x01\0\x04\0'[method]api.blocking-initialize-pric\
+ing\x01\x14\x04\0\x1e[method]api.initialize-pricing\x01\x14\x01@\x01\x04self\x12\
+\0\x0d\x04\0\x18[method]api.blocking-get\x01\x15\x01i\x08\x01@\x01\x04self\x12\0\
+\x16\x04\0\x0f[method]api.get\x01\x17\x03\x011golem:shopping-pricing-stub/stub-s\
+hopping-pricing\x05\x07\x01B\x07\x01r\x03\x0aproduct-ids\x04names\x0bdescription\
+s\x04\0\x07product\x03\0\0\x01@\x02\x04names\x0bdescriptions\x01\0\x04\0\x12init\
+ialize-product\x01\x02\x01k\x01\x01@\0\0\x03\x04\0\x03get\x01\x04\x03\x01\x1agol\
+em:shopping-product/api\x05\x08\x02\x03\0\x04\x07product\x01B\x1c\x02\x03\x02\x01\
+\x04\x04\0\x0dgolem-rpc-uri\x03\0\0\x02\x03\x02\x01\x01\x04\0\x10wasi-io-pollabl\
+e\x03\0\x02\x02\x03\x02\x01\x09\x04\0\x07product\x03\0\x04\x04\0\x11future-get-r\
+esult\x03\x01\x04\0\x03api\x03\x01\x01h\x06\x01i\x03\x01@\x01\x04self\x08\0\x09\x04\
+\0#[method]future-get-result.subscribe\x01\x0a\x01k\x05\x01k\x0b\x01@\x01\x04sel\
+f\x08\0\x0c\x04\0\x1d[method]future-get-result.get\x01\x0d\x01i\x07\x01@\x01\x08\
+location\x01\0\x0e\x04\0\x10[constructor]api\x01\x0f\x01h\x07\x01@\x03\x04self\x10\
+\x04names\x0bdescriptions\x01\0\x04\0'[method]api.blocking-initialize-product\x01\
+\x11\x04\0\x1e[method]api.initialize-product\x01\x11\x01@\x01\x04self\x10\0\x0b\x04\
+\0\x18[method]api.blocking-get\x01\x12\x01i\x06\x01@\x01\x04self\x10\0\x13\x04\0\
+\x0f[method]api.get\x01\x14\x03\x011golem:shopping-product-stub/stub-shopping-pr\
+oduct\x05\x0a\x01B\x0f\x02\x03\x02\x01\x01\x04\0\x08pollable\x03\0\0\x01w\x04\0\x07\
+instant\x03\0\x02\x01w\x04\0\x08duration\x03\0\x04\x01@\0\0\x03\x04\0\x03now\x01\
+\x06\x01@\0\0\x05\x04\0\x0aresolution\x01\x07\x01i\x01\x01@\x01\x04when\x03\0\x08\
+\x04\0\x11subscribe-instant\x01\x09\x01@\x01\x04when\x05\0\x08\x04\0\x12subscrib\
+e-duration\x01\x0a\x03\x01!wasi:clocks/monotonic-clock@0.2.0\x05\x0b\x02\x03\0\x06\
+\x08duration\x01Bf\x02\x03\x02\x01\x04\x04\0\x03uri\x03\0\0\x02\x03\x02\x01\x0c\x04\
+\0\x08duration\x03\0\x02\x01w\x04\0\x0boplog-index\x03\0\x04\x01w\x04\0\x11compo\
+nent-version\x03\0\x06\x01r\x02\x09high-bitsw\x08low-bitsw\x04\0\x04uuid\x03\0\x08\
+\x01r\x01\x04uuid\x09\x04\0\x0ccomponent-id\x03\0\x0a\x01r\x02\x0ccomponent-id\x0b\
+\x0bworker-names\x04\0\x09worker-id\x03\0\x0c\x01r\x02\x09worker-id\x0d\x09oplog\
+-idx\x05\x04\0\x0apromise-id\x03\0\x0e\x01r\x04\x0cmax-attemptsy\x09min-delay\x03\
+\x09max-delay\x03\x0amultiplieru\x04\0\x0cretry-policy\x03\0\x10\x01q\x03\x0fper\
+sist-nothing\0\0\x1bpersist-remote-side-effects\0\0\x05smart\0\0\x04\0\x11persis\
+tence-level\x03\0\x12\x01m\x02\x09automatic\x0esnapshot-based\x04\0\x0bupdate-mo\
+de\x03\0\x14\x01m\x06\x05equal\x09not-equal\x0dgreater-equal\x07greater\x0aless-\
+equal\x04less\x04\0\x11filter-comparator\x03\0\x16\x01m\x04\x05equal\x09not-equa\
+l\x04like\x08not-like\x04\0\x18string-filter-comparator\x03\0\x18\x01m\x07\x07ru\
+nning\x04idle\x09suspended\x0binterrupted\x08retrying\x06failed\x06exited\x04\0\x0d\
+worker-status\x03\0\x1a\x01r\x02\x0acomparator\x19\x05values\x04\0\x12worker-nam\
+e-filter\x03\0\x1c\x01r\x02\x0acomparator\x17\x05value\x1b\x04\0\x14worker-statu\
+s-filter\x03\0\x1e\x01r\x02\x0acomparator\x17\x05valuew\x04\0\x15worker-version-\
+filter\x03\0\x20\x01r\x02\x0acomparator\x17\x05valuew\x04\0\x18worker-created-at\
+-filter\x03\0\"\x01r\x03\x04names\x0acomparator\x19\x05values\x04\0\x11worker-en\
+v-filter\x03\0$\x01q\x05\x04name\x01\x1d\0\x06status\x01\x1f\0\x07version\x01!\0\
+\x0acreated-at\x01#\0\x03env\x01%\0\x04\0\x16worker-property-filter\x03\0&\x01p'\
+\x01r\x01\x07filters(\x04\0\x11worker-all-filter\x03\0)\x01p*\x01r\x01\x07filter\
+s+\x04\0\x11worker-any-filter\x03\0,\x01ps\x01o\x02ss\x01p/\x01r\x06\x09worker-i\
+d\x0d\x04args.\x03env0\x06status\x1b\x11component-versionw\x0bretry-countw\x04\0\
+\x0fworker-metadata\x03\01\x04\0\x0bget-workers\x03\x01\x01k-\x01i3\x01@\x03\x0c\
+component-id\x0b\x06filter4\x07precise\x7f\05\x04\0\x18[constructor]get-workers\x01\
+6\x01h3\x01p2\x01k8\x01@\x01\x04self7\09\x04\0\x1c[method]get-workers.get-next\x01\
+:\x01@\0\0\x0f\x04\0\x0ecreate-promise\x01;\x01p}\x01@\x01\x0apromise-id\x0f\0<\x04\
+\0\x0dawait-promise\x01=\x01@\x02\x0apromise-id\x0f\x04data<\0\x7f\x04\0\x10comp\
+lete-promise\x01>\x01@\x01\x0apromise-id\x0f\x01\0\x04\0\x0edelete-promise\x01?\x01\
+@\x01\x0dfunction-names\0\x01\x04\0\x0cget-self-uri\x01@\x01@\0\0\x05\x04\0\x0fg\
+et-oplog-index\x01A\x01@\x01\x09oplog-idx\x05\x01\0\x04\0\x0fset-oplog-index\x01\
+B\x01@\x01\x08replicas}\x01\0\x04\0\x0coplog-commit\x01C\x04\0\x14mark-begin-ope\
+ration\x01A\x01@\x01\x05begin\x05\x01\0\x04\0\x12mark-end-operation\x01D\x01@\0\0\
+\x11\x04\0\x10get-retry-policy\x01E\x01@\x01\x10new-retry-policy\x11\x01\0\x04\0\
+\x10set-retry-policy\x01F\x01@\0\0\x13\x04\0\x1bget-oplog-persistence-level\x01G\
+\x01@\x01\x15new-persistence-level\x13\x01\0\x04\0\x1bset-oplog-persistence-leve\
+l\x01H\x01@\0\0\x7f\x04\0\x14get-idempotence-mode\x01I\x01@\x01\x0aidempotent\x7f\
+\x01\0\x04\0\x14set-idempotence-mode\x01J\x01@\0\0\x09\x04\0\x18generate-idempot\
+ency-key\x01K\x01@\x03\x09worker-id\x0d\x0etarget-version\x07\x04mode\x15\x01\0\x04\
+\0\x0dupdate-worker\x01L\x01@\0\02\x04\0\x11get-self-metadata\x01M\x01k2\x01@\x01\
+\x09worker-id\x0d\0\xce\0\x04\0\x13get-worker-metadata\x01O\x03\x01\x14golem:api\
+/host@0.2.0\x05\x0d\x01B\x14\x01m\x03\x03new\x09confirmed\x09cancelled\x04\0\x0c\
+order-status\x03\0\0\x01r\x04\x0aproduct-ids\x04names\x05pricev\x08quantityy\x04\
+\0\x0aorder-item\x03\0\x02\x01p\x03\x01r\x07\x08order-ids\x07user-ids\x0corder-s\
+tatus\x01\x05items\x04\x05totalv\x08currencys\x09timestampw\x04\0\x05order\x03\0\
+\x05\x01r\x05\x07user-ids\x05items\x04\x05totalv\x08currencys\x09timestampw\x04\0\
+\x0ccreate-order\x03\0\x07\x01@\x01\x04data\x08\x01\0\x04\0\x10initialize-order\x01\
+\x09\x01j\0\x01s\x01@\x02\x0aproduct-ids\x08quantityy\0\x0a\x04\0\x08add-item\x01\
+\x0b\x01@\x01\x0aproduct-ids\0\x0a\x04\0\x0bremove-item\x01\x0c\x04\0\x14update-\
+item-quantity\x01\x0b\x01k\x06\x01@\0\0\x0d\x04\0\x03get\x01\x0e\x04\x01\x18gole\
+m:shopping-order/api\x05\x0e\x04\x01#golem:shopping-order/shopping-order\x04\0\x0b\
+\x14\x01\0\x0eshopping-order\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0d\
+wit-component\x070.208.1\x10wit-bindgen-rust\x060.25.0";
 
 #[inline(never)]
 #[doc(hidden)]

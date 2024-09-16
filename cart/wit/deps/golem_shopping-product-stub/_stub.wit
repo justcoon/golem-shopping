@@ -1,0 +1,24 @@
+package golem:shopping-product-stub;
+
+interface stub-shopping-product {
+  use golem:rpc/types@0.1.0.{uri as golem-rpc-uri};
+  use wasi:io/poll@0.2.0.{pollable as wasi-io-pollable};
+  use golem:shopping-product/api.{product};
+
+  resource future-get-result {
+    subscribe: func() -> wasi-io-pollable;
+    get: func() -> option<option<product>>;
+  }
+  resource api {
+    constructor(location: golem-rpc-uri);
+    blocking-initialize-product: func(name: string, description: string);
+    initialize-product: func(name: string, description: string);
+    blocking-get: func() -> option<product>;
+    get: func() -> future-get-result;
+  }
+
+}
+
+world wasm-rpc-stub-shopping-product {
+  export stub-shopping-product;
+}
