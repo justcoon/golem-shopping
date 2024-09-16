@@ -20,8 +20,7 @@ pub struct FutureGetResult {
 }
 struct Component;
 impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::Guest
-    for Component
-{
+for Component {
     type Api = crate::Api;
     type FutureAddItemResult = crate::FutureAddItemResult;
     type FutureRemoveItemResult = crate::FutureRemoveItemResult;
@@ -155,12 +154,12 @@ for FutureUpdateItemQuantityResult {
     }
 }
 impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::GuestFutureGetResult
-    for FutureGetResult
-{
+for FutureGetResult {
     fn subscribe(&self) -> bindings::wasi::io::poll::Pollable {
         let pollable = self.future_invoke_result.subscribe();
-        let pollable =
-            unsafe { bindings::wasi::io::poll::Pollable::from_handle(pollable.take_handle()) };
+        let pollable = unsafe {
+            bindings::wasi::io::poll::Pollable::from_handle(pollable.take_handle())
+        };
         pollable
     }
     fn get(&self) -> Option<Option<crate::bindings::golem::shopping_order::api::Order>> {
@@ -265,10 +264,15 @@ impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::
             })
     }
 }
-impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::GuestApi for Api {
+impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::GuestApi
+for Api {
     fn new(location: crate::bindings::golem::rpc::types::Uri) -> Self {
-        let location = golem_wasm_rpc::Uri { value: location.value };
-        Self { rpc: WasmRpc::new(&location) }
+        let location = golem_wasm_rpc::Uri {
+            value: location.value,
+        };
+        Self {
+            rpc: WasmRpc::new(&location),
+        }
     }
     fn blocking_initialize_order(
         &self,
@@ -278,36 +282,43 @@ impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::
             .rpc
             .invoke_and_await(
                 "golem:shopping-order/api.{initialize-order}",
-                &[WitValue::builder()
-                    .record()
-                    .item()
-                    .string(&data.user_id)
-                    .item()
-                    .list_fn(&data.items, |item, item_builder| {
-                        item_builder
-                            .record()
-                            .item()
-                            .string(&item.product_id)
-                            .item()
-                            .string(&item.name)
-                            .item()
-                            .f32(item.price)
-                            .item()
-                            .u32(item.quantity)
-                            .finish()
-                    })
-                    .item()
-                    .f32(data.total)
-                    .item()
-                    .string(&data.currency)
-                    .item()
-                    .u64(data.timestamp)
-                    .finish()],
+                &[
+                    WitValue::builder()
+                        .record()
+                        .item()
+                        .string(&data.user_id)
+                        .item()
+                        .list_fn(
+                            &data.items,
+                            |item, item_builder| {
+                                item_builder
+                                    .record()
+                                    .item()
+                                    .string(&item.product_id)
+                                    .item()
+                                    .string(&item.name)
+                                    .item()
+                                    .f32(item.price)
+                                    .item()
+                                    .u32(item.quantity)
+                                    .finish()
+                            },
+                        )
+                        .item()
+                        .f32(data.total)
+                        .item()
+                        .string(&data.currency)
+                        .item()
+                        .u64(data.timestamp)
+                        .finish(),
+                ],
             )
-            .expect(&format!(
-                "Failed to invoke-and-await remote {}",
-                "golem:shopping-order/api.{initialize-order}"
-            ));
+            .expect(
+                &format!(
+                    "Failed to invoke-and-await remote {}",
+                    "golem:shopping-order/api.{initialize-order}"
+                ),
+            );
         ()
     }
     fn initialize_order(
@@ -318,49 +329,65 @@ impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::
             .rpc
             .invoke(
                 "golem:shopping-order/api.{initialize-order}",
-                &[WitValue::builder()
-                    .record()
-                    .item()
-                    .string(&data.user_id)
-                    .item()
-                    .list_fn(&data.items, |item, item_builder| {
-                        item_builder
-                            .record()
-                            .item()
-                            .string(&item.product_id)
-                            .item()
-                            .string(&item.name)
-                            .item()
-                            .f32(item.price)
-                            .item()
-                            .u32(item.quantity)
-                            .finish()
-                    })
-                    .item()
-                    .f32(data.total)
-                    .item()
-                    .string(&data.currency)
-                    .item()
-                    .u64(data.timestamp)
-                    .finish()],
+                &[
+                    WitValue::builder()
+                        .record()
+                        .item()
+                        .string(&data.user_id)
+                        .item()
+                        .list_fn(
+                            &data.items,
+                            |item, item_builder| {
+                                item_builder
+                                    .record()
+                                    .item()
+                                    .string(&item.product_id)
+                                    .item()
+                                    .string(&item.name)
+                                    .item()
+                                    .f32(item.price)
+                                    .item()
+                                    .u32(item.quantity)
+                                    .finish()
+                            },
+                        )
+                        .item()
+                        .f32(data.total)
+                        .item()
+                        .string(&data.currency)
+                        .item()
+                        .u64(data.timestamp)
+                        .finish(),
+                ],
             )
-            .expect(&format!(
-                "Failed to invoke remote {}",
-                "golem:shopping-order/api.{initialize-order}"
-            ));
+            .expect(
+                &format!(
+                    "Failed to invoke remote {}",
+                    "golem:shopping-order/api.{initialize-order}"
+                ),
+            );
         ()
     }
-    fn blocking_add_item(&self, product_id: String, quantity: u32) -> Result<(), String> {
+    fn blocking_add_item(
+        &self,
+        product_id: String,
+        quantity: u32,
+    ) -> Result<(), String> {
         let result = self
             .rpc
             .invoke_and_await(
                 "golem:shopping-order/api.{add-item}",
-                &[WitValue::builder().string(&product_id), WitValue::builder().u32(quantity)],
+                &[
+                    WitValue::builder().string(&product_id),
+                    WitValue::builder().u32(quantity),
+                ],
             )
-            .expect(&format!(
-                "Failed to invoke-and-await remote {}",
-                "golem:shopping-order/api.{add-item}"
-            ));
+            .expect(
+                &format!(
+                    "Failed to invoke-and-await remote {}",
+                    "golem:shopping-order/api.{add-item}"
+                ),
+            );
         ({
             let result = result
                 .tuple_element(0)
@@ -369,11 +396,15 @@ impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::
                 .expect("result not found");
             match result {
                 Ok(ok_value) => Ok(()),
-                Err(err_value) => Err(err_value
-                    .expect("result err value not found")
-                    .string()
-                    .expect("string not found")
-                    .to_string()),
+                Err(err_value) => {
+                    Err(
+                        err_value
+                            .expect("result err value not found")
+                            .string()
+                            .expect("string not found")
+                            .to_string(),
+                    )
+                }
             }
         })
     }
@@ -381,11 +412,16 @@ impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::
         &self,
         product_id: String,
         quantity: u32,
-    ) -> crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureAddItemResult{
-        let result = self.rpc.async_invoke_and_await(
-            "golem:shopping-order/api.{add-item}",
-            &[WitValue::builder().string(&product_id), WitValue::builder().u32(quantity)],
-        );
+    ) -> crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureAddItemResult {
+        let result = self
+            .rpc
+            .async_invoke_and_await(
+                "golem:shopping-order/api.{add-item}",
+                &[
+                    WitValue::builder().string(&product_id),
+                    WitValue::builder().u32(quantity),
+                ],
+            );
         crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureAddItemResult::new(FutureAddItemResult {
             future_invoke_result: result,
         })
@@ -397,10 +433,12 @@ impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::
                 "golem:shopping-order/api.{remove-item}",
                 &[WitValue::builder().string(&product_id)],
             )
-            .expect(&format!(
-                "Failed to invoke-and-await remote {}",
-                "golem:shopping-order/api.{remove-item}"
-            ));
+            .expect(
+                &format!(
+                    "Failed to invoke-and-await remote {}",
+                    "golem:shopping-order/api.{remove-item}"
+                ),
+            );
         ({
             let result = result
                 .tuple_element(0)
@@ -409,22 +447,28 @@ impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::
                 .expect("result not found");
             match result {
                 Ok(ok_value) => Ok(()),
-                Err(err_value) => Err(err_value
-                    .expect("result err value not found")
-                    .string()
-                    .expect("string not found")
-                    .to_string()),
+                Err(err_value) => {
+                    Err(
+                        err_value
+                            .expect("result err value not found")
+                            .string()
+                            .expect("string not found")
+                            .to_string(),
+                    )
+                }
             }
         })
     }
     fn remove_item(
         &self,
         product_id: String,
-    ) -> crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureRemoveItemResult{
-        let result = self.rpc.async_invoke_and_await(
-            "golem:shopping-order/api.{remove-item}",
-            &[WitValue::builder().string(&product_id)],
-        );
+    ) -> crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureRemoveItemResult {
+        let result = self
+            .rpc
+            .async_invoke_and_await(
+                "golem:shopping-order/api.{remove-item}",
+                &[WitValue::builder().string(&product_id)],
+            );
         crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureRemoveItemResult::new(FutureRemoveItemResult {
             future_invoke_result: result,
         })
@@ -438,12 +482,17 @@ impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::
             .rpc
             .invoke_and_await(
                 "golem:shopping-order/api.{update-item-quantity}",
-                &[WitValue::builder().string(&product_id), WitValue::builder().u32(quantity)],
+                &[
+                    WitValue::builder().string(&product_id),
+                    WitValue::builder().u32(quantity),
+                ],
             )
-            .expect(&format!(
-                "Failed to invoke-and-await remote {}",
-                "golem:shopping-order/api.{update-item-quantity}"
-            ));
+            .expect(
+                &format!(
+                    "Failed to invoke-and-await remote {}",
+                    "golem:shopping-order/api.{update-item-quantity}"
+                ),
+            );
         ({
             let result = result
                 .tuple_element(0)
@@ -452,11 +501,15 @@ impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::
                 .expect("result not found");
             match result {
                 Ok(ok_value) => Ok(()),
-                Err(err_value) => Err(err_value
-                    .expect("result err value not found")
-                    .string()
-                    .expect("string not found")
-                    .to_string()),
+                Err(err_value) => {
+                    Err(
+                        err_value
+                            .expect("result err value not found")
+                            .string()
+                            .expect("string not found")
+                            .to_string(),
+                    )
+                }
             }
         })
     }
@@ -464,21 +517,38 @@ impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::
         &self,
         product_id: String,
         quantity: u32,
-    ) -> crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureUpdateItemQuantityResult{
-        let result = self.rpc.async_invoke_and_await(
-            "golem:shopping-order/api.{update-item-quantity}",
-            &[WitValue::builder().string(&product_id), WitValue::builder().u32(quantity)],
-        );
+    ) -> crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureUpdateItemQuantityResult {
+        let result = self
+            .rpc
+            .async_invoke_and_await(
+                "golem:shopping-order/api.{update-item-quantity}",
+                &[
+                    WitValue::builder().string(&product_id),
+                    WitValue::builder().u32(quantity),
+                ],
+            );
         crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureUpdateItemQuantityResult::new(FutureUpdateItemQuantityResult {
             future_invoke_result: result,
         })
     }
-    fn blocking_get(&self) -> Option<crate::bindings::golem::shopping_order::api::Order> {
-        let result = self.rpc.invoke_and_await("golem:shopping-order/api.{get}", &[]).expect(
-            &format!("Failed to invoke-and-await remote {}", "golem:shopping-order/api.{get}"),
-        );
-        (result.tuple_element(0).expect("tuple not found").option().expect("option not found").map(
-            |inner| {
+    fn blocking_get(
+        &self,
+    ) -> Option<crate::bindings::golem::shopping_order::api::Order> {
+        let result = self
+            .rpc
+            .invoke_and_await("golem:shopping-order/api.{get}", &[])
+            .expect(
+                &format!(
+                    "Failed to invoke-and-await remote {}",
+                    "golem:shopping-order/api.{get}"
+                ),
+            );
+        (result
+            .tuple_element(0)
+            .expect("tuple not found")
+            .option()
+            .expect("option not found")
+            .map(|inner| {
                 let record = inner;
                 crate::bindings::golem::shopping_order::api::Order {
                     order_id: record
@@ -500,7 +570,9 @@ impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::
                             .enum_value()
                             .expect("enum not found");
                         match case_idx {
-                            0u32 => crate::bindings::golem::shopping_order::api::OrderStatus::New,
+                            0u32 => {
+                                crate::bindings::golem::shopping_order::api::OrderStatus::New
+                            }
                             1u32 => {
                                 crate::bindings::golem::shopping_order::api::OrderStatus::Confirmed
                             }
@@ -558,14 +630,14 @@ impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::
                         .u64()
                         .expect("u64 not found"),
                 }
-            },
-        ))
+            }))
     }
     fn get(
         &self,
-    ) -> crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureGetResult
-    {
-        let result = self.rpc.async_invoke_and_await("golem:shopping-order/api.{get}", &[]);
+    ) -> crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureGetResult {
+        let result = self
+            .rpc
+            .async_invoke_and_await("golem:shopping-order/api.{get}", &[]);
         crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureGetResult::new(FutureGetResult {
             future_invoke_result: result,
         })

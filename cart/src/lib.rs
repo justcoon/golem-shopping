@@ -5,6 +5,10 @@ use crate::bindings::golem::api::host::*;
 use std::cell::RefCell;
 use std::env;
 
+use crate::bindings::golem::shopping_pricing_stub::stub_shopping_pricing::Pricing;
+use crate::bindings::golem::shopping_product_stub::stub_shopping_product::Product;
+
+use crate::bindings::golem::shopping_order::api::OrderItem;
 use rand::prelude::*;
 use uuid::Uuid;
 
@@ -16,13 +20,6 @@ fn generate_order_id() -> String {
     Uuid::new_v4().to_string()
 }
 
-fn dispatch_order() -> Result<(), &'static str> {
-    // Dispatch the order to the warehouse.
-    // If the order cannot be dispatched, return an error.
-    // Otherwise, return a success result.
-    Ok(())
-}
-
 fn get_total_price(items: Vec<CartItem>) -> f32 {
     let mut total = 0f32;
 
@@ -31,6 +28,91 @@ fn get_total_price(items: Vec<CartItem>) -> f32 {
     }
 
     total
+}
+
+fn get_product_worker_urn(product_id: String) -> String {
+    let component_id = std::env::var("PRODUCT_COMPONENT_ID").expect("PRODUCT_COMPONENT_ID not set");
+    format!("urn:worker:{component_id}/{}", product_id)
+}
+
+fn get_pricing_worker_urn(product_id: String) -> String {
+    let component_id = std::env::var("PRICING_COMPONENT_ID").expect("PRICING_COMPONENT_ID not set");
+    format!("urn:worker:{component_id}/{}", product_id)
+}
+
+fn get_order_worker_urn(product_id: String) -> String {
+    let component_id = std::env::var("ORDER_COMPONENT_ID").expect("ORDER_COMPONENT_ID not set");
+    format!("urn:worker:{component_id}/{}", product_id)
+}
+
+fn get_product(product_id: String) -> Option<Product> {
+    println!("Getting product: {}", product_id);
+
+    use bindings::golem::rpc::types::Uri;
+    use bindings::golem::shopping_product_stub::stub_shopping_product::*;
+
+    let api = Api::new(&Uri { value: get_product_worker_urn(product_id) });
+
+    api.blocking_get()
+}
+
+fn get_pricing(product_id: String) -> Option<Pricing> {
+    println!("Getting pricing: {}", product_id);
+
+    use bindings::golem::rpc::types::Uri;
+    use bindings::golem::shopping_pricing_stub::stub_shopping_pricing::*;
+
+    let api = Api::new(&Uri { value: get_pricing_worker_urn(product_id) });
+
+    api.blocking_get()
+}
+
+fn get_price(zone: String, currency: String, pricing: Pricing) -> Option<f32> {
+    let list_price = pricing
+        .list_prices
+        .into_iter()
+        .find(|x| x.zone == zone && x.currency == currency)
+        .map(|x| x.price);
+
+    if list_price.is_some() {
+        list_price
+    } else {
+        pricing
+            .msrp_prices
+            .into_iter()
+            .find(|x| x.zone == zone && x.currency == currency)
+            .map(|x| x.price)
+    }
+}
+
+fn create_order(order_id: String, cart: Cart) -> Result<String, &'static str> {
+    println!("Creating order: {}", order_id);
+
+    use bindings::golem::rpc::types::Uri;
+    use bindings::golem::shopping_order_stub::stub_shopping_order::*;
+
+    let api = Api::new(&Uri { value: get_order_worker_urn(order_id.clone()) });
+
+    let order = CreateOrder {
+        user_id: cart.user_id,
+        items: cart
+            .items
+            .into_iter()
+            .map(|item| OrderItem {
+                product_id: item.product_id,
+                quantity: item.quantity,
+                price: item.price,
+                name: item.name,
+            })
+            .collect(),
+        total: cart.total,
+        currency: cart.currency,
+        timestamp: cart.timestamp,
+    };
+
+    api.blocking_initialize_order(&order);
+
+    Ok(order_id)
 }
 
 thread_local! {
@@ -72,12 +154,23 @@ impl Guest for Component {
             }
 
             if !updated {
-                state.items.push(CartItem {
-                    product_id,
-                    quantity,
-                    name: "undefined".to_string(),
-                    price: 0f32,
-                });
+                let product = get_product(product_id.clone());
+                let pricing = get_pricing(product_id.clone());
+                let price = pricing
+                    .and_then(|p| get_price("global".to_string(), state.currency.clone(), p));
+                match (product, price) {
+                    (Some(product), Some(price)) => {
+                        state.items.push(CartItem {
+                            product_id,
+                            name: product.name,
+                            price,
+                            quantity,
+                        });
+                    }
+                    _ => {
+                        return Err("Product or pricing not found".to_string());
+                    }
+                }
             }
 
             state.total = get_total_price(state.items.clone());
@@ -119,13 +212,12 @@ impl Guest for Component {
     fn checkout() -> CheckoutResult {
         let result: Result<OrderConfirmation, &'static str> = with_state(|state| {
             let order_id = generate_order_id();
+            println!("Checkout for order {}", order_id);
 
-            dispatch_order()?;
+            create_order(order_id.clone(), state.clone())?;
 
             state.items.clear();
             state.total = 0f32;
-
-            println!("Checkout for order {}", order_id);
 
             Ok(OrderConfirmation { order_id })
         });

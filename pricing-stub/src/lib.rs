@@ -11,8 +11,7 @@ pub struct FutureGetResult {
 }
 struct Component;
 impl crate::bindings::exports::golem::shopping_pricing_stub::stub_shopping_pricing::Guest
-    for Component
-{
+for Component {
     type Api = crate::Api;
     type FutureGetResult = crate::FutureGetResult;
 }
@@ -110,11 +109,14 @@ for FutureGetResult {
     }
 }
 impl crate::bindings::exports::golem::shopping_pricing_stub::stub_shopping_pricing::GuestApi
-    for Api
-{
+for Api {
     fn new(location: crate::bindings::golem::rpc::types::Uri) -> Self {
-        let location = golem_wasm_rpc::Uri { value: location.value };
-        Self { rpc: WasmRpc::new(&location) }
+        let location = golem_wasm_rpc::Uri {
+            value: location.value,
+        };
+        Self {
+            rpc: WasmRpc::new(&location),
+        }
     }
     fn blocking_initialize_pricing(
         &self,
@@ -126,34 +128,44 @@ impl crate::bindings::exports::golem::shopping_pricing_stub::stub_shopping_prici
             .invoke_and_await(
                 "golem:shopping-pricing/api.{initialize-pricing}",
                 &[
-                    WitValue::builder().list_fn(&msrp_prices, |item, item_builder| {
-                        item_builder
-                            .record()
-                            .item()
-                            .f32(item.price)
-                            .item()
-                            .string(&item.currency)
-                            .item()
-                            .string(&item.zone)
-                            .finish()
-                    }),
-                    WitValue::builder().list_fn(&list_prices, |item, item_builder| {
-                        item_builder
-                            .record()
-                            .item()
-                            .f32(item.price)
-                            .item()
-                            .string(&item.currency)
-                            .item()
-                            .string(&item.zone)
-                            .finish()
-                    }),
+                    WitValue::builder()
+                        .list_fn(
+                            &msrp_prices,
+                            |item, item_builder| {
+                                item_builder
+                                    .record()
+                                    .item()
+                                    .f32(item.price)
+                                    .item()
+                                    .string(&item.currency)
+                                    .item()
+                                    .string(&item.zone)
+                                    .finish()
+                            },
+                        ),
+                    WitValue::builder()
+                        .list_fn(
+                            &list_prices,
+                            |item, item_builder| {
+                                item_builder
+                                    .record()
+                                    .item()
+                                    .f32(item.price)
+                                    .item()
+                                    .string(&item.currency)
+                                    .item()
+                                    .string(&item.zone)
+                                    .finish()
+                            },
+                        ),
                 ],
             )
-            .expect(&format!(
-                "Failed to invoke-and-await remote {}",
-                "golem:shopping-pricing/api.{initialize-pricing}"
-            ));
+            .expect(
+                &format!(
+                    "Failed to invoke-and-await remote {}",
+                    "golem:shopping-pricing/api.{initialize-pricing}"
+                ),
+            );
         ()
     }
     fn initialize_pricing(
@@ -166,42 +178,64 @@ impl crate::bindings::exports::golem::shopping_pricing_stub::stub_shopping_prici
             .invoke(
                 "golem:shopping-pricing/api.{initialize-pricing}",
                 &[
-                    WitValue::builder().list_fn(&msrp_prices, |item, item_builder| {
-                        item_builder
-                            .record()
-                            .item()
-                            .f32(item.price)
-                            .item()
-                            .string(&item.currency)
-                            .item()
-                            .string(&item.zone)
-                            .finish()
-                    }),
-                    WitValue::builder().list_fn(&list_prices, |item, item_builder| {
-                        item_builder
-                            .record()
-                            .item()
-                            .f32(item.price)
-                            .item()
-                            .string(&item.currency)
-                            .item()
-                            .string(&item.zone)
-                            .finish()
-                    }),
+                    WitValue::builder()
+                        .list_fn(
+                            &msrp_prices,
+                            |item, item_builder| {
+                                item_builder
+                                    .record()
+                                    .item()
+                                    .f32(item.price)
+                                    .item()
+                                    .string(&item.currency)
+                                    .item()
+                                    .string(&item.zone)
+                                    .finish()
+                            },
+                        ),
+                    WitValue::builder()
+                        .list_fn(
+                            &list_prices,
+                            |item, item_builder| {
+                                item_builder
+                                    .record()
+                                    .item()
+                                    .f32(item.price)
+                                    .item()
+                                    .string(&item.currency)
+                                    .item()
+                                    .string(&item.zone)
+                                    .finish()
+                            },
+                        ),
                 ],
             )
-            .expect(&format!(
-                "Failed to invoke remote {}",
-                "golem:shopping-pricing/api.{initialize-pricing}"
-            ));
+            .expect(
+                &format!(
+                    "Failed to invoke remote {}",
+                    "golem:shopping-pricing/api.{initialize-pricing}"
+                ),
+            );
         ()
     }
-    fn blocking_get(&self) -> Option<crate::bindings::golem::shopping_pricing::api::Pricing> {
-        let result = self.rpc.invoke_and_await("golem:shopping-pricing/api.{get}", &[]).expect(
-            &format!("Failed to invoke-and-await remote {}", "golem:shopping-pricing/api.{get}"),
-        );
-        (result.tuple_element(0).expect("tuple not found").option().expect("option not found").map(
-            |inner| {
+    fn blocking_get(
+        &self,
+    ) -> Option<crate::bindings::golem::shopping_pricing::api::Pricing> {
+        let result = self
+            .rpc
+            .invoke_and_await("golem:shopping-pricing/api.{get}", &[])
+            .expect(
+                &format!(
+                    "Failed to invoke-and-await remote {}",
+                    "golem:shopping-pricing/api.{get}"
+                ),
+            );
+        (result
+            .tuple_element(0)
+            .expect("tuple not found")
+            .option()
+            .expect("option not found")
+            .map(|inner| {
                 let record = inner;
                 crate::bindings::golem::shopping_pricing::api::Pricing {
                     asset_id: record
@@ -263,13 +297,14 @@ impl crate::bindings::exports::golem::shopping_pricing_stub::stub_shopping_prici
                         })
                         .expect("list not found"),
                 }
-            },
-        ))
+            }))
     }
     fn get(
         &self,
-    ) -> crate::bindings::exports::golem::shopping_pricing_stub::stub_shopping_pricing::FutureGetResult{
-        let result = self.rpc.async_invoke_and_await("golem:shopping-pricing/api.{get}", &[]);
+    ) -> crate::bindings::exports::golem::shopping_pricing_stub::stub_shopping_pricing::FutureGetResult {
+        let result = self
+            .rpc
+            .async_invoke_and_await("golem:shopping-pricing/api.{get}", &[]);
         crate::bindings::exports::golem::shopping_pricing_stub::stub_shopping_pricing::FutureGetResult::new(FutureGetResult {
             future_invoke_result: result,
         })

@@ -5,6 +5,8 @@ use crate::bindings::golem::api::host::*;
 use std::cell::RefCell;
 use std::env;
 
+use crate::bindings::golem::shopping_pricing_stub::stub_shopping_pricing::Pricing;
+use crate::bindings::golem::shopping_product_stub::stub_shopping_product::Product;
 use rand::prelude::*;
 
 struct Component;
@@ -17,6 +19,56 @@ fn get_total_price(items: Vec<OrderItem>) -> f32 {
     }
 
     total
+}
+
+fn get_product_worker_urn(product_id: String) -> String {
+    let component_id = std::env::var("PRODUCT_COMPONENT_ID").expect("PRODUCT_COMPONENT_ID not set");
+    format!("urn:worker:{component_id}/{}", product_id)
+}
+
+fn get_pricing_worker_urn(product_id: String) -> String {
+    let component_id = std::env::var("PRICING_COMPONENT_ID").expect("PRICING_COMPONENT_ID not set");
+    format!("urn:worker:{component_id}/{}", product_id)
+}
+
+fn get_product(product_id: String) -> Option<Product> {
+    println!("Getting product: {}", product_id);
+
+    use bindings::golem::rpc::types::Uri;
+    use bindings::golem::shopping_product_stub::stub_shopping_product::*;
+
+    let api = Api::new(&Uri { value: get_product_worker_urn(product_id) });
+
+    api.blocking_get()
+}
+
+fn get_pricing(product_id: String) -> Option<Pricing> {
+    println!("Getting pricing: {}", product_id);
+
+    use bindings::golem::rpc::types::Uri;
+    use bindings::golem::shopping_pricing_stub::stub_shopping_pricing::*;
+
+    let api = Api::new(&Uri { value: get_pricing_worker_urn(product_id) });
+
+    api.blocking_get()
+}
+
+fn get_price(zone: String, currency: String, pricing: Pricing) -> Option<f32> {
+    let list_price = pricing
+        .list_prices
+        .into_iter()
+        .find(|x| x.zone == zone && x.currency == currency)
+        .map(|x| x.price);
+
+    if list_price.is_some() {
+        list_price
+    } else {
+        pricing
+            .msrp_prices
+            .into_iter()
+            .find(|x| x.zone == zone && x.currency == currency)
+            .map(|x| x.price)
+    }
 }
 
 thread_local! {
@@ -71,12 +123,23 @@ impl Guest for Component {
             }
 
             if !updated {
-                state.items.push(OrderItem {
-                    product_id,
-                    quantity,
-                    name: "undefined".to_string(),
-                    price: 0f32,
-                });
+                let product = get_product(product_id.clone());
+                let pricing = get_pricing(product_id.clone());
+                let price = pricing
+                    .and_then(|p| get_price("global".to_string(), state.currency.clone(), p));
+                match (product, price) {
+                    (Some(product), Some(price)) => {
+                        state.items.push(OrderItem {
+                            product_id,
+                            name: product.name,
+                            price,
+                            quantity,
+                        });
+                    }
+                    _ => {
+                        return Err("Product or pricing not found".to_string());
+                    }
+                }
             }
 
             state.total = get_total_price(state.items.clone());
