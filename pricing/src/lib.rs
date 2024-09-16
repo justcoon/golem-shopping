@@ -15,7 +15,7 @@ thread_local! {
 fn with_state<T>(f: impl FnOnce(&mut Pricing) -> T) -> T {
     STATE.with_borrow_mut(|state| {
         if state.is_none() {
-            let worker_name = env::var("WORKER_NAME").expect("WORKER_NAME must be set");
+            let worker_name = env::var("GOLEM_WORKER_NAME").expect("GOLEM_WORKER_NAME must be set");
             let value = Pricing { asset_id: worker_name, msrp_prices: vec![], list_prices: vec![] };
             *state = Some(value);
         }
