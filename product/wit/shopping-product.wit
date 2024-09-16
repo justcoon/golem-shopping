@@ -1,4 +1,4 @@
-package golem:it;
+package golem:shopping-product;
 
 interface api {
 

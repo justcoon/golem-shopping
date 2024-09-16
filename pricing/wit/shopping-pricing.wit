@@ -1,4 +1,4 @@
-package golem:it;
+package golem:shopping-pricing;
 
 interface api {
 

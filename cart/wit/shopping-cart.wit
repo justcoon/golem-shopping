@@ -1,4 +1,4 @@
-package golem:it;
+package golem:shopping-cart;
 
 interface api {
 
@@ -38,6 +38,10 @@ interface api {
 }
 
 world shopping-cart {
+//   import component: shopping-pricing-stub/stub-shopping-pricing;
+//   import component: shopping-product-stub/stub-shopping-product;
+//   import component: shopping-order-stub/stub-shopping-order;
+
   import golem:api/host@0.2.0;
 
   export api;

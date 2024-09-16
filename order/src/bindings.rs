@@ -3980,7 +3980,7 @@ pub mod exports {
     #[allow(dead_code)]
     pub mod golem {
         #[allow(dead_code)]
-        pub mod it {
+        pub mod shopping_order {
             #[allow(dead_code, clippy::all)]
             pub mod api {
                 #[used]
@@ -4400,49 +4400,49 @@ pub mod exports {
                 }
                 #[doc(hidden)]
 
-                macro_rules! __export_golem_it_api_cabi{
+                macro_rules! __export_golem_shopping_order_api_cabi{
                               ($ty:ident with_types_in $($path_to_types:tt)*) => (const _: () = {
 
-                                #[export_name = "golem:it/api#initialize-order"]
+                                #[export_name = "golem:shopping-order/api#initialize-order"]
                                 unsafe extern "C" fn export_initialize_order(arg0: *mut u8,arg1: usize,arg2: *mut u8,arg3: usize,arg4: f32,arg5: *mut u8,arg6: usize,arg7: i64,) {
                                   $($path_to_types)*::_export_initialize_order_cabi::<$ty>(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7)
                                 }
-                                #[export_name = "golem:it/api#add-item"]
+                                #[export_name = "golem:shopping-order/api#add-item"]
                                 unsafe extern "C" fn export_add_item(arg0: *mut u8,arg1: usize,arg2: i32,) -> *mut u8 {
                                   $($path_to_types)*::_export_add_item_cabi::<$ty>(arg0, arg1, arg2)
                                 }
-                                #[export_name = "cabi_post_golem:it/api#add-item"]
+                                #[export_name = "cabi_post_golem:shopping-order/api#add-item"]
                                 unsafe extern "C" fn _post_return_add_item(arg0: *mut u8,) {
                                   $($path_to_types)*::__post_return_add_item::<$ty>(arg0)
                                 }
-                                #[export_name = "golem:it/api#remove-item"]
+                                #[export_name = "golem:shopping-order/api#remove-item"]
                                 unsafe extern "C" fn export_remove_item(arg0: *mut u8,arg1: usize,) -> *mut u8 {
                                   $($path_to_types)*::_export_remove_item_cabi::<$ty>(arg0, arg1)
                                 }
-                                #[export_name = "cabi_post_golem:it/api#remove-item"]
+                                #[export_name = "cabi_post_golem:shopping-order/api#remove-item"]
                                 unsafe extern "C" fn _post_return_remove_item(arg0: *mut u8,) {
                                   $($path_to_types)*::__post_return_remove_item::<$ty>(arg0)
                                 }
-                                #[export_name = "golem:it/api#update-item-quantity"]
+                                #[export_name = "golem:shopping-order/api#update-item-quantity"]
                                 unsafe extern "C" fn export_update_item_quantity(arg0: *mut u8,arg1: usize,arg2: i32,) -> *mut u8 {
                                   $($path_to_types)*::_export_update_item_quantity_cabi::<$ty>(arg0, arg1, arg2)
                                 }
-                                #[export_name = "cabi_post_golem:it/api#update-item-quantity"]
+                                #[export_name = "cabi_post_golem:shopping-order/api#update-item-quantity"]
                                 unsafe extern "C" fn _post_return_update_item_quantity(arg0: *mut u8,) {
                                   $($path_to_types)*::__post_return_update_item_quantity::<$ty>(arg0)
                                 }
-                                #[export_name = "golem:it/api#get"]
+                                #[export_name = "golem:shopping-order/api#get"]
                                 unsafe extern "C" fn export_get() -> *mut u8 {
                                   $($path_to_types)*::_export_get_cabi::<$ty>()
                                 }
-                                #[export_name = "cabi_post_golem:it/api#get"]
+                                #[export_name = "cabi_post_golem:shopping-order/api#get"]
                                 unsafe extern "C" fn _post_return_get(arg0: *mut u8,) {
                                   $($path_to_types)*::__post_return_get::<$ty>(arg0)
                                 }
                               };);
                             }
                 #[doc(hidden)]
-                pub(crate) use __export_golem_it_api_cabi;
+                pub(crate) use __export_golem_shopping_order_api_cabi;
                 #[repr(align(8))]
                 struct _RetArea([::core::mem::MaybeUninit<u8>; 56]);
                 static mut _RET_AREA: _RetArea = _RetArea([::core::mem::MaybeUninit::uninit(); 56]);
@@ -4753,7 +4753,7 @@ mod _rt {
 macro_rules! __export_shopping_order_impl {
                       ($ty:ident) => (self::export!($ty with_types_in self););
                       ($ty:ident with_types_in $($path_to_types_root:tt)*) => (
-                      $($path_to_types_root)*::exports::golem::it::api::__export_golem_it_api_cabi!($ty with_types_in $($path_to_types_root)*::exports::golem::it::api);
+                      $($path_to_types_root)*::exports::golem::shopping_order::api::__export_golem_shopping_order_api_cabi!($ty with_types_in $($path_to_types_root)*::exports::golem::shopping_order::api);
                       )
                     }
 #[doc(inline)]
@@ -4762,8 +4762,8 @@ pub(crate) use __export_shopping_order_impl as export;
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.25.0:shopping-order:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 3991] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\x92\x1e\x01A\x02\x01\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 4015] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xaa\x1e\x01A\x02\x01\
 A\x0d\x01B\x0a\x04\0\x08pollable\x03\x01\x01h\0\x01@\x01\x04self\x01\0\x7f\x04\0\
 \x16[method]pollable.ready\x01\x02\x01@\x01\x04self\x01\x01\0\x04\0\x16[method]p\
 ollable.block\x01\x03\x01p\x01\x01py\x01@\x01\x02in\x04\0\x05\x04\0\x04poll\x01\x06\
@@ -4843,10 +4843,10 @@ der-item\x03\0\x02\x01p\x03\x01r\x07\x08order-ids\x07user-ids\x0corder-status\x0
 te-order\x03\0\x07\x01@\x01\x04data\x08\x01\0\x04\0\x10initialize-order\x01\x09\x01\
 j\0\x01s\x01@\x02\x0aproduct-ids\x08quantityy\0\x0a\x04\0\x08add-item\x01\x0b\x01\
 @\x01\x0aproduct-ids\0\x0a\x04\0\x0bremove-item\x01\x0c\x04\0\x14update-item-qua\
-ntity\x01\x0b\x01k\x06\x01@\0\0\x0d\x04\0\x03get\x01\x0e\x04\x01\x0cgolem:it/api\
-\x05\x07\x04\x01\x17golem:it/shopping-order\x04\0\x0b\x14\x01\0\x0eshopping-orde\
-r\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit-component\x070.208.1\x10\
-wit-bindgen-rust\x060.25.0";
+ntity\x01\x0b\x01k\x06\x01@\0\0\x0d\x04\0\x03get\x01\x0e\x04\x01\x18golem:shoppi\
+ng-order/api\x05\x07\x04\x01#golem:shopping-order/shopping-order\x04\0\x0b\x14\x01\
+\0\x0eshopping-order\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit-comp\
+onent\x070.208.1\x10wit-bindgen-rust\x060.25.0";
 
 #[inline(never)]
 #[doc(hidden)]
