@@ -1,0 +1,110 @@
+[config]
+default_to_workspace = false
+
+[tasks.add-stub-dependency-order-cart]
+args = ["stubgen", "add-stub-dependency", "--stub-wit-root", "order-stub/wit", "--dest-wit-root", "cart/wit", "--overwrite", "--update-cargo-toml"]
+command = "golem-cli"
+cwd = "."
+dependencies = ["generate-order-stub"]
+
+[tasks.add-stub-dependency-order-order]
+args = ["stubgen", "add-stub-dependency", "--stub-wit-root", "order-stub/wit", "--dest-wit-root", "order/wit", "--overwrite", "--update-cargo-toml"]
+command = "golem-cli"
+cwd = "."
+dependencies = ["generate-order-stub"]
+
+[tasks.add-stub-dependency-pricing-cart]
+args = ["stubgen", "add-stub-dependency", "--stub-wit-root", "pricing-stub/wit", "--dest-wit-root", "cart/wit", "--overwrite", "--update-cargo-toml"]
+command = "golem-cli"
+cwd = "."
+dependencies = ["generate-pricing-stub"]
+
+[tasks.add-stub-dependency-pricing-order]
+args = ["stubgen", "add-stub-dependency", "--stub-wit-root", "pricing-stub/wit", "--dest-wit-root", "order/wit", "--overwrite", "--update-cargo-toml"]
+command = "golem-cli"
+cwd = "."
+dependencies = ["generate-pricing-stub"]
+
+[tasks.add-stub-dependency-product-cart]
+args = ["stubgen", "add-stub-dependency", "--stub-wit-root", "product-stub/wit", "--dest-wit-root", "cart/wit", "--overwrite", "--update-cargo-toml"]
+command = "golem-cli"
+cwd = "."
+dependencies = ["generate-product-stub"]
+
+[tasks.add-stub-dependency-product-order]
+args = ["stubgen", "add-stub-dependency", "--stub-wit-root", "product-stub/wit", "--dest-wit-root", "order/wit", "--overwrite", "--update-cargo-toml"]
+command = "golem-cli"
+cwd = "."
+dependencies = ["generate-product-stub"]
+
+[tasks.build]
+args = ["build"]
+command = "cargo-component"
+dependencies = ["clean", "regenerate-stubs"]
+
+[tasks.build-flow]
+dependencies = ["build", "post-build"]
+
+[tasks.build-release]
+args = ["build", "--release"]
+command = "cargo-component"
+dependencies = ["clean", "regenerate-stubs"]
+
+[tasks.clean]
+args = ["clean"]
+command = "cargo-component"
+
+[tasks.compose-cart]
+args = ["stubgen", "compose", "--source-wasm", "target/wasm32-wasi/debug/cart.wasm", "--stub-wasm", "target/wasm32-wasi/debug/order_stub.wasm", "--stub-wasm", "target/wasm32-wasi/debug/product_stub.wasm", "--stub-wasm", "target/wasm32-wasi/debug/pricing_stub.wasm", "--dest-wasm", "target/wasm32-wasi/debug/cart_composed.wasm"]
+command = "golem-cli"
+cwd = "."
+
+[tasks.compose-order]
+args = ["stubgen", "compose", "--source-wasm", "target/wasm32-wasi/debug/order.wasm", "--stub-wasm", "target/wasm32-wasi/debug/order_stub.wasm", "--stub-wasm", "target/wasm32-wasi/debug/product_stub.wasm", "--stub-wasm", "target/wasm32-wasi/debug/pricing_stub.wasm", "--dest-wasm", "target/wasm32-wasi/debug/order_composed.wasm"]
+command = "golem-cli"
+cwd = "."
+
+[tasks.compose-release-cart]
+args = ["stubgen", "compose", "--source-wasm", "target/wasm32-wasi/release/cart.wasm", "--stub-wasm", "target/wasm32-wasi/release/order_stub.wasm", "--stub-wasm", "target/wasm32-wasi/release/product_stub.wasm", "--stub-wasm", "target/wasm32-wasi/release/pricing_stub.wasm", "--dest-wasm", "target/wasm32-wasi/release/cart_composed.wasm"]
+command = "golem-cli"
+cwd = "."
+
+[tasks.compose-release-order]
+args = ["stubgen", "compose", "--source-wasm", "target/wasm32-wasi/release/order.wasm", "--stub-wasm", "target/wasm32-wasi/release/order_stub.wasm", "--stub-wasm", "target/wasm32-wasi/release/product_stub.wasm", "--stub-wasm", "target/wasm32-wasi/release/pricing_stub.wasm", "--dest-wasm", "target/wasm32-wasi/release/order_composed.wasm"]
+command = "golem-cli"
+cwd = "."
+
+[tasks.default]
+alias = "build"
+
+[tasks.generate-order-stub]
+args = ["stubgen", "generate", "-s", "order/wit", "-d", "order-stub"]
+command = "golem-cli"
+cwd = "."
+
+[tasks.generate-pricing-stub]
+args = ["stubgen", "generate", "-s", "pricing/wit", "-d", "pricing-stub"]
+command = "golem-cli"
+cwd = "."
+
+[tasks.generate-product-stub]
+args = ["stubgen", "generate", "-s", "product/wit", "-d", "product-stub"]
+command = "golem-cli"
+cwd = "."
+
+[tasks.post-build]
+dependencies = ["compose-cart", "compose-order"]
+
+[tasks.post-build-release]
+dependencies = ["compose-release-cart", "compose-release-order"]
+
+[tasks.regenerate-stubs]
+dependencies = ["add-stub-dependency-order-cart", "add-stub-dependency-product-cart", "add-stub-dependency-product-order", "add-stub-dependency-pricing-cart", "add-stub-dependency-pricing-order"]
+
+[tasks.release-build-flow]
+dependencies = ["build-release", "post-build-release"]
+
+[tasks.test]
+args = ["test"]
+command = "cargo-component"
+dependencies = ["clean"]
