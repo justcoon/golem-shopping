@@ -54,6 +54,7 @@ impl Guest for Component {
 
     fn get_price(currency: String, zone: String) -> Option<PricingItem> {
         STATE.with_borrow(|state| {
+            println!("Getting pricing for currency: {} zone: {}", currency, zone);
             state.clone().and_then(|pricing| get_price(currency, zone, pricing))
         })
     }

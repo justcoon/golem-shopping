@@ -42,14 +42,14 @@ fn get_product(product_id: String) -> Option<Product> {
 }
 
 fn get_pricing(product_id: String, currency: String, zone: String) -> Option<PricingItem> {
-    println!("Getting pricing: {}", product_id);
+    println!("Getting pricing: {}, currency: {}, zone: {}", product_id, currency, zone);
 
     use bindings::golem::pricing_stub::stub_pricing::*;
     use bindings::golem::rpc::types::Uri;
 
     let api = Api::new(&Uri { value: get_pricing_worker_urn(product_id) });
 
-    api.blocking_get_price(currency.as_str(), zone.as_str())
+    api.blocking_get_price(&currency, &zone)
 }
 
 thread_local! {
@@ -123,9 +123,12 @@ impl Guest for Component {
                                 price: pricing.price,
                                 quantity,
                             });
-                        }
+                        },
+                        (None, _) => {
+                            return Err("Product not found".to_string());
+                        },
                         _ => {
-                            return Err("Product or pricing not found".to_string());
+                            return Err("Pricing not found".to_string());
                         }
                     }
                 }
