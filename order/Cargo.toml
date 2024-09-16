@@ -1,0 +1,77 @@
+[package]
+name = "order"
+version = "0.0.1"
+edition = "2021"
+
+[package.metadata.component.target]
+path = "wit"
+
+[package.metadata.component.target.dependencies."golem:api"]
+path = "wit/deps/golem"
+
+[package.metadata.component.target.dependencies."golem:pricing"]
+path = "wit/deps/golem_pricing"
+
+[package.metadata.component.target.dependencies."golem:pricing-stub"]
+path = "wit/deps/golem_pricing-stub"
+
+[package.metadata.component.target.dependencies."golem:product"]
+path = "wit/deps/golem_product"
+
+[package.metadata.component.target.dependencies."golem:product-stub"]
+path = "wit/deps/golem_product-stub"
+
+[package.metadata.component.target.dependencies."golem:rpc"]
+path = "wit/deps/wasm-rpc"
+
+[package.metadata.component.target.dependencies."unused:main"]
+path = "wit/deps/all"
+
+[package.metadata.component.target.dependencies."wasi:blobstore"]
+path = "wit/deps/blobstore"
+
+[package.metadata.component.target.dependencies."wasi:cli"]
+path = "wit/deps/cli"
+
+[package.metadata.component.target.dependencies."wasi:clocks"]
+path = "wit/deps/clocks"
+
+[package.metadata.component.target.dependencies."wasi:filesystem"]
+path = "wit/deps/filesystem"
+
+[package.metadata.component.target.dependencies."wasi:http"]
+path = "wit/deps/http"
+
+[package.metadata.component.target.dependencies."wasi:io"]
+path = "wit/deps/io"
+
+[package.metadata.component.target.dependencies."wasi:keyvalue"]
+path = "wit/deps/keyvalue"
+
+[package.metadata.component.target.dependencies."wasi:logging"]
+path = "wit/deps/logging"
+
+[package.metadata.component.target.dependencies."wasi:random"]
+path = "wit/deps/random"
+
+[package.metadata.component.target.dependencies."wasi:sockets"]
+path = "wit/deps/sockets"
+
+[dependencies]
+golem-rust = "1.1.0"
+once_cell = "1.17.1"
+rand = "0.8.5"
+
+[dependencies.wit-bindgen-rt]
+version = "0.26.0"
+features = ["bitflags"]
+
+[lib]
+path = "src/lib.rs"
+crate-type = ["cdylib"]
+required-features = []
+
+[profile.release]
+opt-level = "s"
+lto = true
+strip = true

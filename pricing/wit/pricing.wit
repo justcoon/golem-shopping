@@ -1,0 +1,30 @@
+package golem:pricing;
+
+interface api {
+
+  record pricing {
+    asset-id: string,
+    msrp-prices: list<pricing-item>,
+    list-prices: list<pricing-item>,
+  }
+
+  record pricing-item {
+    price: float32,
+    currency: string,
+    zone: string,
+  }
+
+  initialize-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>) -> ();
+
+  get-price: func(currency: string, zone: string) -> option<pricing-item>;
+
+//   update-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>) -> ();
+
+  get: func() -> option<pricing>;
+}
+
+world pricing {
+  import golem:api/host@0.2.0;
+
+  export api;
+}

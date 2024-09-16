@@ -1,0 +1,67 @@
+package golem: cart;
+
+interface api {
+
+  record address {
+    street1: string,
+    street2: option<string>,
+    city: string,
+    state-or-region: string,
+    country: string,
+    postal-code: string,
+    name: option<string>,
+    business-name: option<string>,
+    phone-number: option<string>
+  }
+
+
+  record cart-item {
+    product-id: string,
+    name: string,
+    price: float32,
+    quantity: u32,
+  }
+
+  record cart {
+    user-id: string,
+    items: list<cart-item>,
+    billing-address: option<address>,
+    shipping-address: option<address>,
+    total: float32,
+    currency: string,
+    timestamp: u64,
+  }
+
+  record order-confirmation {
+    order-id: string,
+  }
+
+  variant checkout-result {
+    error(string),
+    success(order-confirmation),
+  }
+
+  add-item: func(product-id: string, quantity: u32) -> result<_, string>;
+
+  remove-item: func(product-id: string) -> result<_, string>;
+
+  update-item-quantity: func(product-id: string, quantity: u32) -> result<_, string>;
+
+  update-shipping-address: func(address: address) -> result<_, string>;
+
+  update-billing-address: func(address: address) -> result<_, string>;
+
+  checkout: func() -> checkout-result;
+
+  get: func() -> option<cart>;
+}
+
+world cart {
+  import golem: pricing-stub/stub-pricing;
+  import golem: product-stub/stub-product;
+  import golem: order-stub/stub-order;
+
+  import golem: api/host@0.2.0;
+
+  export api;
+}

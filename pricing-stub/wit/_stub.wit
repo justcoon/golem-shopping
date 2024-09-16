@@ -1,0 +1,31 @@
+package golem:pricing-stub;
+
+interface stub-pricing {
+  use golem:rpc/types@0.1.0.{uri as golem-rpc-uri};
+  use wasi:io/poll@0.2.0.{pollable as wasi-io-pollable};
+  use golem:pricing/api.{pricing-item};
+  use golem:pricing/api.{pricing};
+
+  resource future-get-price-result {
+    subscribe: func() -> wasi-io-pollable;
+    get: func() -> option<option<pricing-item>>;
+  }
+  resource future-get-result {
+    subscribe: func() -> wasi-io-pollable;
+    get: func() -> option<option<pricing>>;
+  }
+  resource api {
+    constructor(location: golem-rpc-uri);
+    blocking-initialize-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>);
+    initialize-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>);
+    blocking-get-price: func(currency: string, zone: string) -> option<pricing-item>;
+    get-price: func(currency: string, zone: string) -> future-get-price-result;
+    blocking-get: func() -> option<pricing>;
+    get: func() -> future-get-result;
+  }
+
+}
+
+world wasm-rpc-stub-pricing {
+  export stub-pricing;
+}
