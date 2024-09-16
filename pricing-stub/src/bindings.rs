@@ -2308,6 +2308,58 @@ pub mod golem {
                 }
             }
             #[allow(unused_unsafe, clippy::all)]
+            pub fn get_price(currency: &str, zone: &str) -> Option<PricingItem> {
+                unsafe {
+                    #[repr(align(4))]
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 24]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 24]);
+                    let vec0 = currency;
+                    let ptr0 = vec0.as_ptr().cast::<u8>();
+                    let len0 = vec0.len();
+                    let vec1 = zone;
+                    let ptr1 = vec1.as_ptr().cast::<u8>();
+                    let len1 = vec1.len();
+                    let ptr2 = ret_area.0.as_mut_ptr().cast::<u8>();
+                    #[cfg(target_arch = "wasm32")]
+                    #[link(wasm_import_module = "golem:shopping-pricing/api")]
+                    extern "C" {
+                        #[link_name = "get-price"]
+                        fn wit_import(_: *mut u8, _: usize, _: *mut u8, _: usize, _: *mut u8);
+                    }
+
+                    #[cfg(not(target_arch = "wasm32"))]
+                    fn wit_import(_: *mut u8, _: usize, _: *mut u8, _: usize, _: *mut u8) {
+                        unreachable!()
+                    }
+                    wit_import(ptr0.cast_mut(), len0, ptr1.cast_mut(), len1, ptr2);
+                    let l3 = i32::from(*ptr2.add(0).cast::<u8>());
+                    match l3 {
+                        0 => None,
+                        1 => {
+                            let e = {
+                                let l4 = *ptr2.add(4).cast::<f32>();
+                                let l5 = *ptr2.add(8).cast::<*mut u8>();
+                                let l6 = *ptr2.add(12).cast::<usize>();
+                                let len7 = l6;
+                                let bytes7 = _rt::Vec::from_raw_parts(l5.cast(), len7, len7);
+                                let l8 = *ptr2.add(16).cast::<*mut u8>();
+                                let l9 = *ptr2.add(20).cast::<usize>();
+                                let len10 = l9;
+                                let bytes10 = _rt::Vec::from_raw_parts(l8.cast(), len10, len10);
+
+                                PricingItem {
+                                    price: l4,
+                                    currency: _rt::string_lift(bytes7),
+                                    zone: _rt::string_lift(bytes10),
+                                }
+                            };
+                            Some(e)
+                        }
+                        _ => _rt::invalid_enum_discriminant(),
+                    }
+                }
+            }
+            #[allow(unused_unsafe, clippy::all)]
             /// update-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>) -> ();
             pub fn get() -> Option<Pricing> {
                 unsafe {
@@ -2605,6 +2657,146 @@ pub mod exports {
 
                 #[derive(Debug)]
                 #[repr(transparent)]
+                pub struct FutureGetPriceResult {
+                    handle: _rt::Resource<FutureGetPriceResult>,
+                }
+
+                type _FutureGetPriceResultRep<T> = Option<T>;
+
+                impl FutureGetPriceResult {
+                    /// Creates a new resource from the specified representation.
+                    ///
+                    /// This function will create a new resource handle by moving `val` onto
+                    /// the heap and then passing that heap pointer to the component model to
+                    /// create a handle. The owned handle is then returned as `FutureGetPriceResult`.
+                    pub fn new<T: GuestFutureGetPriceResult>(val: T) -> Self {
+                        Self::type_guard::<T>();
+                        let val: _FutureGetPriceResultRep<T> = Some(val);
+                        let ptr: *mut _FutureGetPriceResultRep<T> =
+                            _rt::Box::into_raw(_rt::Box::new(val));
+                        unsafe { Self::from_handle(T::_resource_new(ptr.cast())) }
+                    }
+
+                    /// Gets access to the underlying `T` which represents this resource.
+                    pub fn get<T: GuestFutureGetPriceResult>(&self) -> &T {
+                        let ptr = unsafe { &*self.as_ptr::<T>() };
+                        ptr.as_ref().unwrap()
+                    }
+
+                    /// Gets mutable access to the underlying `T` which represents this
+                    /// resource.
+                    pub fn get_mut<T: GuestFutureGetPriceResult>(&mut self) -> &mut T {
+                        let ptr = unsafe { &mut *self.as_ptr::<T>() };
+                        ptr.as_mut().unwrap()
+                    }
+
+                    /// Consumes this resource and returns the underlying `T`.
+                    pub fn into_inner<T: GuestFutureGetPriceResult>(self) -> T {
+                        let ptr = unsafe { &mut *self.as_ptr::<T>() };
+                        ptr.take().unwrap()
+                    }
+
+                    #[doc(hidden)]
+                    pub unsafe fn from_handle(handle: u32) -> Self {
+                        Self { handle: _rt::Resource::from_handle(handle) }
+                    }
+
+                    #[doc(hidden)]
+                    pub fn take_handle(&self) -> u32 {
+                        _rt::Resource::take_handle(&self.handle)
+                    }
+
+                    #[doc(hidden)]
+                    pub fn handle(&self) -> u32 {
+                        _rt::Resource::handle(&self.handle)
+                    }
+
+                    // It's theoretically possible to implement the `GuestFutureGetPriceResult` trait twice
+                    // so guard against using it with two different types here.
+                    #[doc(hidden)]
+                    fn type_guard<T: 'static>() {
+                        use core::any::TypeId;
+                        static mut LAST_TYPE: Option<TypeId> = None;
+                        unsafe {
+                            assert!(!cfg!(target_feature = "threads"));
+                            let id = TypeId::of::<T>();
+                            match LAST_TYPE {
+                                Some(ty) => assert!(
+                                    ty == id,
+                                    "cannot use two types with this resource type"
+                                ),
+                                None => LAST_TYPE = Some(id),
+                            }
+                        }
+                    }
+
+                    #[doc(hidden)]
+                    pub unsafe fn dtor<T: 'static>(handle: *mut u8) {
+                        Self::type_guard::<T>();
+                        let _ = _rt::Box::from_raw(handle as *mut _FutureGetPriceResultRep<T>);
+                    }
+
+                    fn as_ptr<T: GuestFutureGetPriceResult>(
+                        &self,
+                    ) -> *mut _FutureGetPriceResultRep<T> {
+                        FutureGetPriceResult::type_guard::<T>();
+                        T::_resource_rep(self.handle()).cast()
+                    }
+                }
+
+                /// A borrowed version of [`FutureGetPriceResult`] which represents a borrowed value
+                /// with the lifetime `'a`.
+                #[derive(Debug)]
+                #[repr(transparent)]
+                pub struct FutureGetPriceResultBorrow<'a> {
+                    rep: *mut u8,
+                    _marker: core::marker::PhantomData<&'a FutureGetPriceResult>,
+                }
+
+                impl<'a> FutureGetPriceResultBorrow<'a> {
+                    #[doc(hidden)]
+                    pub unsafe fn lift(rep: usize) -> Self {
+                        Self { rep: rep as *mut u8, _marker: core::marker::PhantomData }
+                    }
+
+                    /// Gets access to the underlying `T` in this resource.
+                    pub fn get<T: GuestFutureGetPriceResult>(&self) -> &T {
+                        let ptr = unsafe { &mut *self.as_ptr::<T>() };
+                        ptr.as_ref().unwrap()
+                    }
+
+                    // NB: mutable access is not allowed due to the component model allowing
+                    // multiple borrows of the same resource.
+
+                    fn as_ptr<T: 'static>(&self) -> *mut _FutureGetPriceResultRep<T> {
+                        FutureGetPriceResult::type_guard::<T>();
+                        self.rep.cast()
+                    }
+                }
+
+                unsafe impl _rt::WasmResource for FutureGetPriceResult {
+                    #[inline]
+                    unsafe fn drop(_handle: u32) {
+                        #[cfg(not(target_arch = "wasm32"))]
+                        unreachable!();
+
+                        #[cfg(target_arch = "wasm32")]
+                        {
+                            #[link(
+                                wasm_import_module = "[export]golem:shopping-pricing-stub/stub-shopping-pricing"
+                            )]
+                            extern "C" {
+                                #[link_name = "[resource-drop]future-get-price-result"]
+                                fn drop(_: u32);
+                            }
+
+                            drop(_handle);
+                        }
+                    }
+                }
+
+                #[derive(Debug)]
+                #[repr(transparent)]
                 pub struct FutureGetResult {
                     handle: _rt::Resource<FutureGetResult>,
                 }
@@ -2878,6 +3070,89 @@ pub mod exports {
                     }
                 }
 
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn _export_method_future_get_price_result_subscribe_cabi<
+                    T: GuestFutureGetPriceResult,
+                >(
+                    arg0: *mut u8,
+                ) -> i32 {
+                    #[cfg(target_arch = "wasm32")]
+                    _rt::run_ctors_once();
+                    let result0 =
+                        T::subscribe(FutureGetPriceResultBorrow::lift(arg0 as u32 as usize).get());
+                    (result0).take_handle() as i32
+                }
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn _export_method_future_get_price_result_get_cabi<
+                    T: GuestFutureGetPriceResult,
+                >(
+                    arg0: *mut u8,
+                ) -> *mut u8 {
+                    #[cfg(target_arch = "wasm32")]
+                    _rt::run_ctors_once();
+                    let result0 =
+                        T::get(FutureGetPriceResultBorrow::lift(arg0 as u32 as usize).get());
+                    let ptr1 = _RET_AREA.0.as_mut_ptr().cast::<u8>();
+                    match result0 {
+                        Some(e) => {
+                            *ptr1.add(0).cast::<u8>() = (1i32) as u8;
+                            match e {
+                                Some(e) => {
+                                    *ptr1.add(4).cast::<u8>() = (1i32) as u8;
+                                    let super::super::super::super::golem::shopping_pricing::api::PricingItem{ price:price2, currency:currency2, zone:zone2, } = e;
+                                    *ptr1.add(8).cast::<f32>() = _rt::as_f32(price2);
+                                    let vec3 = (currency2.into_bytes()).into_boxed_slice();
+                                    let ptr3 = vec3.as_ptr().cast::<u8>();
+                                    let len3 = vec3.len();
+                                    ::core::mem::forget(vec3);
+                                    *ptr1.add(16).cast::<usize>() = len3;
+                                    *ptr1.add(12).cast::<*mut u8>() = ptr3.cast_mut();
+                                    let vec4 = (zone2.into_bytes()).into_boxed_slice();
+                                    let ptr4 = vec4.as_ptr().cast::<u8>();
+                                    let len4 = vec4.len();
+                                    ::core::mem::forget(vec4);
+                                    *ptr1.add(24).cast::<usize>() = len4;
+                                    *ptr1.add(20).cast::<*mut u8>() = ptr4.cast_mut();
+                                }
+                                None => {
+                                    *ptr1.add(4).cast::<u8>() = (0i32) as u8;
+                                }
+                            };
+                        }
+                        None => {
+                            *ptr1.add(0).cast::<u8>() = (0i32) as u8;
+                        }
+                    };
+                    ptr1
+                }
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn __post_return_method_future_get_price_result_get<
+                    T: GuestFutureGetPriceResult,
+                >(
+                    arg0: *mut u8,
+                ) {
+                    let l0 = i32::from(*arg0.add(0).cast::<u8>());
+                    match l0 {
+                        0 => (),
+                        _ => {
+                            let l1 = i32::from(*arg0.add(4).cast::<u8>());
+                            match l1 {
+                                0 => (),
+                                _ => {
+                                    let l2 = *arg0.add(12).cast::<*mut u8>();
+                                    let l3 = *arg0.add(16).cast::<usize>();
+                                    _rt::cabi_dealloc(l2, l3, 1);
+                                    let l4 = *arg0.add(20).cast::<*mut u8>();
+                                    let l5 = *arg0.add(24).cast::<usize>();
+                                    _rt::cabi_dealloc(l4, l5, 1);
+                                }
+                            }
+                        }
+                    }
+                }
                 #[doc(hidden)]
                 #[allow(non_snake_case)]
                 pub unsafe fn _export_method_future_get_result_subscribe_cabi<
@@ -3208,6 +3483,91 @@ pub mod exports {
                 }
                 #[doc(hidden)]
                 #[allow(non_snake_case)]
+                pub unsafe fn _export_method_api_blocking_get_price_cabi<T: GuestApi>(
+                    arg0: *mut u8,
+                    arg1: *mut u8,
+                    arg2: usize,
+                    arg3: *mut u8,
+                    arg4: usize,
+                ) -> *mut u8 {
+                    #[cfg(target_arch = "wasm32")]
+                    _rt::run_ctors_once();
+                    let len0 = arg2;
+                    let bytes0 = _rt::Vec::from_raw_parts(arg1.cast(), len0, len0);
+                    let len1 = arg4;
+                    let bytes1 = _rt::Vec::from_raw_parts(arg3.cast(), len1, len1);
+                    let result2 = T::blocking_get_price(
+                        ApiBorrow::lift(arg0 as u32 as usize).get(),
+                        _rt::string_lift(bytes0),
+                        _rt::string_lift(bytes1),
+                    );
+                    let ptr3 = _RET_AREA.0.as_mut_ptr().cast::<u8>();
+                    match result2 {
+                        Some(e) => {
+                            *ptr3.add(0).cast::<u8>() = (1i32) as u8;
+                            let super::super::super::super::golem::shopping_pricing::api::PricingItem{ price:price4, currency:currency4, zone:zone4, } = e;
+                            *ptr3.add(4).cast::<f32>() = _rt::as_f32(price4);
+                            let vec5 = (currency4.into_bytes()).into_boxed_slice();
+                            let ptr5 = vec5.as_ptr().cast::<u8>();
+                            let len5 = vec5.len();
+                            ::core::mem::forget(vec5);
+                            *ptr3.add(12).cast::<usize>() = len5;
+                            *ptr3.add(8).cast::<*mut u8>() = ptr5.cast_mut();
+                            let vec6 = (zone4.into_bytes()).into_boxed_slice();
+                            let ptr6 = vec6.as_ptr().cast::<u8>();
+                            let len6 = vec6.len();
+                            ::core::mem::forget(vec6);
+                            *ptr3.add(20).cast::<usize>() = len6;
+                            *ptr3.add(16).cast::<*mut u8>() = ptr6.cast_mut();
+                        }
+                        None => {
+                            *ptr3.add(0).cast::<u8>() = (0i32) as u8;
+                        }
+                    };
+                    ptr3
+                }
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn __post_return_method_api_blocking_get_price<T: GuestApi>(
+                    arg0: *mut u8,
+                ) {
+                    let l0 = i32::from(*arg0.add(0).cast::<u8>());
+                    match l0 {
+                        0 => (),
+                        _ => {
+                            let l1 = *arg0.add(8).cast::<*mut u8>();
+                            let l2 = *arg0.add(12).cast::<usize>();
+                            _rt::cabi_dealloc(l1, l2, 1);
+                            let l3 = *arg0.add(16).cast::<*mut u8>();
+                            let l4 = *arg0.add(20).cast::<usize>();
+                            _rt::cabi_dealloc(l3, l4, 1);
+                        }
+                    }
+                }
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn _export_method_api_get_price_cabi<T: GuestApi>(
+                    arg0: *mut u8,
+                    arg1: *mut u8,
+                    arg2: usize,
+                    arg3: *mut u8,
+                    arg4: usize,
+                ) -> i32 {
+                    #[cfg(target_arch = "wasm32")]
+                    _rt::run_ctors_once();
+                    let len0 = arg2;
+                    let bytes0 = _rt::Vec::from_raw_parts(arg1.cast(), len0, len0);
+                    let len1 = arg4;
+                    let bytes1 = _rt::Vec::from_raw_parts(arg3.cast(), len1, len1);
+                    let result2 = T::get_price(
+                        ApiBorrow::lift(arg0 as u32 as usize).get(),
+                        _rt::string_lift(bytes0),
+                        _rt::string_lift(bytes1),
+                    );
+                    (result2).take_handle() as i32
+                }
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
                 pub unsafe fn _export_method_api_blocking_get_cabi<T: GuestApi>(
                     arg0: *mut u8,
                 ) -> *mut u8 {
@@ -3362,8 +3722,61 @@ pub mod exports {
                     (result0).take_handle() as i32
                 }
                 pub trait Guest {
+                    type FutureGetPriceResult: GuestFutureGetPriceResult;
                     type FutureGetResult: GuestFutureGetResult;
                     type Api: GuestApi;
+                }
+                pub trait GuestFutureGetPriceResult: 'static {
+                    #[doc(hidden)]
+                    unsafe fn _resource_new(val: *mut u8) -> u32
+                    where
+                        Self: Sized,
+                    {
+                        #[cfg(not(target_arch = "wasm32"))]
+                        {
+                            let _ = val;
+                            unreachable!();
+                        }
+
+                        #[cfg(target_arch = "wasm32")]
+                        {
+                            #[link(
+                                wasm_import_module = "[export]golem:shopping-pricing-stub/stub-shopping-pricing"
+                            )]
+                            extern "C" {
+                                #[link_name = "[resource-new]future-get-price-result"]
+                                fn new(_: *mut u8) -> u32;
+                            }
+                            new(val)
+                        }
+                    }
+
+                    #[doc(hidden)]
+                    fn _resource_rep(handle: u32) -> *mut u8
+                    where
+                        Self: Sized,
+                    {
+                        #[cfg(not(target_arch = "wasm32"))]
+                        {
+                            let _ = handle;
+                            unreachable!();
+                        }
+
+                        #[cfg(target_arch = "wasm32")]
+                        {
+                            #[link(
+                                wasm_import_module = "[export]golem:shopping-pricing-stub/stub-shopping-pricing"
+                            )]
+                            extern "C" {
+                                #[link_name = "[resource-rep]future-get-price-result"]
+                                fn rep(_: u32) -> *mut u8;
+                            }
+                            unsafe { rep(handle) }
+                        }
+                    }
+
+                    fn subscribe(&self) -> WasiIoPollable;
+                    fn get(&self) -> Option<Option<PricingItem>>;
                 }
                 pub trait GuestFutureGetResult: 'static {
                     #[doc(hidden)]
@@ -3477,76 +3890,122 @@ pub mod exports {
                         msrp_prices: _rt::Vec<PricingItem>,
                         list_prices: _rt::Vec<PricingItem>,
                     );
+                    fn blocking_get_price(
+                        &self,
+                        currency: _rt::String,
+                        zone: _rt::String,
+                    ) -> Option<PricingItem>;
+                    fn get_price(
+                        &self,
+                        currency: _rt::String,
+                        zone: _rt::String,
+                    ) -> FutureGetPriceResult;
                     fn blocking_get(&self) -> Option<Pricing>;
                     fn get(&self) -> FutureGetResult;
                 }
                 #[doc(hidden)]
 
                 macro_rules! __export_golem_shopping_pricing_stub_stub_shopping_pricing_cabi{
-                            ($ty:ident with_types_in $($path_to_types:tt)*) => (const _: () = {
+                      ($ty:ident with_types_in $($path_to_types:tt)*) => (const _: () = {
 
-                              #[export_name = "golem:shopping-pricing-stub/stub-shopping-pricing#[method]future-get-result.subscribe"]
-                              unsafe extern "C" fn export_method_future_get_result_subscribe(arg0: *mut u8,) -> i32 {
-                                $($path_to_types)*::_export_method_future_get_result_subscribe_cabi::<<$ty as $($path_to_types)*::Guest>::FutureGetResult>(arg0)
-                              }
-                              #[export_name = "golem:shopping-pricing-stub/stub-shopping-pricing#[method]future-get-result.get"]
-                              unsafe extern "C" fn export_method_future_get_result_get(arg0: *mut u8,) -> *mut u8 {
-                                $($path_to_types)*::_export_method_future_get_result_get_cabi::<<$ty as $($path_to_types)*::Guest>::FutureGetResult>(arg0)
-                              }
-                              #[export_name = "cabi_post_golem:shopping-pricing-stub/stub-shopping-pricing#[method]future-get-result.get"]
-                              unsafe extern "C" fn _post_return_method_future_get_result_get(arg0: *mut u8,) {
-                                $($path_to_types)*::__post_return_method_future_get_result_get::<<$ty as $($path_to_types)*::Guest>::FutureGetResult>(arg0)
-                              }
-                              #[export_name = "golem:shopping-pricing-stub/stub-shopping-pricing#[constructor]api"]
-                              unsafe extern "C" fn export_constructor_api(arg0: *mut u8,arg1: usize,) -> i32 {
-                                $($path_to_types)*::_export_constructor_api_cabi::<<$ty as $($path_to_types)*::Guest>::Api>(arg0, arg1)
-                              }
-                              #[export_name = "golem:shopping-pricing-stub/stub-shopping-pricing#[method]api.blocking-initialize-pricing"]
-                              unsafe extern "C" fn export_method_api_blocking_initialize_pricing(arg0: *mut u8,arg1: *mut u8,arg2: usize,arg3: *mut u8,arg4: usize,) {
-                                $($path_to_types)*::_export_method_api_blocking_initialize_pricing_cabi::<<$ty as $($path_to_types)*::Guest>::Api>(arg0, arg1, arg2, arg3, arg4)
-                              }
-                              #[export_name = "golem:shopping-pricing-stub/stub-shopping-pricing#[method]api.initialize-pricing"]
-                              unsafe extern "C" fn export_method_api_initialize_pricing(arg0: *mut u8,arg1: *mut u8,arg2: usize,arg3: *mut u8,arg4: usize,) {
-                                $($path_to_types)*::_export_method_api_initialize_pricing_cabi::<<$ty as $($path_to_types)*::Guest>::Api>(arg0, arg1, arg2, arg3, arg4)
-                              }
-                              #[export_name = "golem:shopping-pricing-stub/stub-shopping-pricing#[method]api.blocking-get"]
-                              unsafe extern "C" fn export_method_api_blocking_get(arg0: *mut u8,) -> *mut u8 {
-                                $($path_to_types)*::_export_method_api_blocking_get_cabi::<<$ty as $($path_to_types)*::Guest>::Api>(arg0)
-                              }
-                              #[export_name = "cabi_post_golem:shopping-pricing-stub/stub-shopping-pricing#[method]api.blocking-get"]
-                              unsafe extern "C" fn _post_return_method_api_blocking_get(arg0: *mut u8,) {
-                                $($path_to_types)*::__post_return_method_api_blocking_get::<<$ty as $($path_to_types)*::Guest>::Api>(arg0)
-                              }
-                              #[export_name = "golem:shopping-pricing-stub/stub-shopping-pricing#[method]api.get"]
-                              unsafe extern "C" fn export_method_api_get(arg0: *mut u8,) -> i32 {
-                                $($path_to_types)*::_export_method_api_get_cabi::<<$ty as $($path_to_types)*::Guest>::Api>(arg0)
-                              }
+                        #[export_name = "golem:shopping-pricing-stub/stub-shopping-pricing#[method]future-get-price-result.subscribe"]
+                        unsafe extern "C" fn export_method_future_get_price_result_subscribe(arg0: *mut u8,) -> i32 {
+                          $($path_to_types)*::_export_method_future_get_price_result_subscribe_cabi::<<$ty as $($path_to_types)*::Guest>::FutureGetPriceResult>(arg0)
+                        }
+                        #[export_name = "golem:shopping-pricing-stub/stub-shopping-pricing#[method]future-get-price-result.get"]
+                        unsafe extern "C" fn export_method_future_get_price_result_get(arg0: *mut u8,) -> *mut u8 {
+                          $($path_to_types)*::_export_method_future_get_price_result_get_cabi::<<$ty as $($path_to_types)*::Guest>::FutureGetPriceResult>(arg0)
+                        }
+                        #[export_name = "cabi_post_golem:shopping-pricing-stub/stub-shopping-pricing#[method]future-get-price-result.get"]
+                        unsafe extern "C" fn _post_return_method_future_get_price_result_get(arg0: *mut u8,) {
+                          $($path_to_types)*::__post_return_method_future_get_price_result_get::<<$ty as $($path_to_types)*::Guest>::FutureGetPriceResult>(arg0)
+                        }
+                        #[export_name = "golem:shopping-pricing-stub/stub-shopping-pricing#[method]future-get-result.subscribe"]
+                        unsafe extern "C" fn export_method_future_get_result_subscribe(arg0: *mut u8,) -> i32 {
+                          $($path_to_types)*::_export_method_future_get_result_subscribe_cabi::<<$ty as $($path_to_types)*::Guest>::FutureGetResult>(arg0)
+                        }
+                        #[export_name = "golem:shopping-pricing-stub/stub-shopping-pricing#[method]future-get-result.get"]
+                        unsafe extern "C" fn export_method_future_get_result_get(arg0: *mut u8,) -> *mut u8 {
+                          $($path_to_types)*::_export_method_future_get_result_get_cabi::<<$ty as $($path_to_types)*::Guest>::FutureGetResult>(arg0)
+                        }
+                        #[export_name = "cabi_post_golem:shopping-pricing-stub/stub-shopping-pricing#[method]future-get-result.get"]
+                        unsafe extern "C" fn _post_return_method_future_get_result_get(arg0: *mut u8,) {
+                          $($path_to_types)*::__post_return_method_future_get_result_get::<<$ty as $($path_to_types)*::Guest>::FutureGetResult>(arg0)
+                        }
+                        #[export_name = "golem:shopping-pricing-stub/stub-shopping-pricing#[constructor]api"]
+                        unsafe extern "C" fn export_constructor_api(arg0: *mut u8,arg1: usize,) -> i32 {
+                          $($path_to_types)*::_export_constructor_api_cabi::<<$ty as $($path_to_types)*::Guest>::Api>(arg0, arg1)
+                        }
+                        #[export_name = "golem:shopping-pricing-stub/stub-shopping-pricing#[method]api.blocking-initialize-pricing"]
+                        unsafe extern "C" fn export_method_api_blocking_initialize_pricing(arg0: *mut u8,arg1: *mut u8,arg2: usize,arg3: *mut u8,arg4: usize,) {
+                          $($path_to_types)*::_export_method_api_blocking_initialize_pricing_cabi::<<$ty as $($path_to_types)*::Guest>::Api>(arg0, arg1, arg2, arg3, arg4)
+                        }
+                        #[export_name = "golem:shopping-pricing-stub/stub-shopping-pricing#[method]api.initialize-pricing"]
+                        unsafe extern "C" fn export_method_api_initialize_pricing(arg0: *mut u8,arg1: *mut u8,arg2: usize,arg3: *mut u8,arg4: usize,) {
+                          $($path_to_types)*::_export_method_api_initialize_pricing_cabi::<<$ty as $($path_to_types)*::Guest>::Api>(arg0, arg1, arg2, arg3, arg4)
+                        }
+                        #[export_name = "golem:shopping-pricing-stub/stub-shopping-pricing#[method]api.blocking-get-price"]
+                        unsafe extern "C" fn export_method_api_blocking_get_price(arg0: *mut u8,arg1: *mut u8,arg2: usize,arg3: *mut u8,arg4: usize,) -> *mut u8 {
+                          $($path_to_types)*::_export_method_api_blocking_get_price_cabi::<<$ty as $($path_to_types)*::Guest>::Api>(arg0, arg1, arg2, arg3, arg4)
+                        }
+                        #[export_name = "cabi_post_golem:shopping-pricing-stub/stub-shopping-pricing#[method]api.blocking-get-price"]
+                        unsafe extern "C" fn _post_return_method_api_blocking_get_price(arg0: *mut u8,) {
+                          $($path_to_types)*::__post_return_method_api_blocking_get_price::<<$ty as $($path_to_types)*::Guest>::Api>(arg0)
+                        }
+                        #[export_name = "golem:shopping-pricing-stub/stub-shopping-pricing#[method]api.get-price"]
+                        unsafe extern "C" fn export_method_api_get_price(arg0: *mut u8,arg1: *mut u8,arg2: usize,arg3: *mut u8,arg4: usize,) -> i32 {
+                          $($path_to_types)*::_export_method_api_get_price_cabi::<<$ty as $($path_to_types)*::Guest>::Api>(arg0, arg1, arg2, arg3, arg4)
+                        }
+                        #[export_name = "golem:shopping-pricing-stub/stub-shopping-pricing#[method]api.blocking-get"]
+                        unsafe extern "C" fn export_method_api_blocking_get(arg0: *mut u8,) -> *mut u8 {
+                          $($path_to_types)*::_export_method_api_blocking_get_cabi::<<$ty as $($path_to_types)*::Guest>::Api>(arg0)
+                        }
+                        #[export_name = "cabi_post_golem:shopping-pricing-stub/stub-shopping-pricing#[method]api.blocking-get"]
+                        unsafe extern "C" fn _post_return_method_api_blocking_get(arg0: *mut u8,) {
+                          $($path_to_types)*::__post_return_method_api_blocking_get::<<$ty as $($path_to_types)*::Guest>::Api>(arg0)
+                        }
+                        #[export_name = "golem:shopping-pricing-stub/stub-shopping-pricing#[method]api.get"]
+                        unsafe extern "C" fn export_method_api_get(arg0: *mut u8,) -> i32 {
+                          $($path_to_types)*::_export_method_api_get_cabi::<<$ty as $($path_to_types)*::Guest>::Api>(arg0)
+                        }
 
-                              const _: () = {
-                                #[doc(hidden)]
-                                #[export_name = "golem:shopping-pricing-stub/stub-shopping-pricing#[dtor]future-get-result"]
-                                #[allow(non_snake_case)]
-                                unsafe extern "C" fn dtor(rep: *mut u8) {
-                                  $($path_to_types)*::FutureGetResult::dtor::<
-                                  <$ty as $($path_to_types)*::Guest>::FutureGetResult
-                                  >(rep)
-                                }
-                              };
-
-
-                              const _: () = {
-                                #[doc(hidden)]
-                                #[export_name = "golem:shopping-pricing-stub/stub-shopping-pricing#[dtor]api"]
-                                #[allow(non_snake_case)]
-                                unsafe extern "C" fn dtor(rep: *mut u8) {
-                                  $($path_to_types)*::Api::dtor::<
-                                  <$ty as $($path_to_types)*::Guest>::Api
-                                  >(rep)
-                                }
-                              };
-
-                            };);
+                        const _: () = {
+                          #[doc(hidden)]
+                          #[export_name = "golem:shopping-pricing-stub/stub-shopping-pricing#[dtor]future-get-price-result"]
+                          #[allow(non_snake_case)]
+                          unsafe extern "C" fn dtor(rep: *mut u8) {
+                            $($path_to_types)*::FutureGetPriceResult::dtor::<
+                            <$ty as $($path_to_types)*::Guest>::FutureGetPriceResult
+                            >(rep)
                           }
+                        };
+
+
+                        const _: () = {
+                          #[doc(hidden)]
+                          #[export_name = "golem:shopping-pricing-stub/stub-shopping-pricing#[dtor]future-get-result"]
+                          #[allow(non_snake_case)]
+                          unsafe extern "C" fn dtor(rep: *mut u8) {
+                            $($path_to_types)*::FutureGetResult::dtor::<
+                            <$ty as $($path_to_types)*::Guest>::FutureGetResult
+                            >(rep)
+                          }
+                        };
+
+
+                        const _: () = {
+                          #[doc(hidden)]
+                          #[export_name = "golem:shopping-pricing-stub/stub-shopping-pricing#[dtor]api"]
+                          #[allow(non_snake_case)]
+                          unsafe extern "C" fn dtor(rep: *mut u8) {
+                            $($path_to_types)*::Api::dtor::<
+                            <$ty as $($path_to_types)*::Guest>::Api
+                            >(rep)
+                          }
+                        };
+
+                      };);
+                    }
                 #[doc(hidden)]
                 pub(crate) use __export_golem_shopping_pricing_stub_stub_shopping_pricing_cabi;
                 #[repr(align(4))]
@@ -3858,19 +4317,19 @@ mod _rt {
 #[doc(hidden)]
 
 macro_rules! __export_wasm_rpc_stub_shopping_pricing_impl {
-                    ($ty:ident) => (self::export!($ty with_types_in self););
-                    ($ty:ident with_types_in $($path_to_types_root:tt)*) => (
-                    $($path_to_types_root)*::exports::golem::shopping_pricing_stub::stub_shopping_pricing::__export_golem_shopping_pricing_stub_stub_shopping_pricing_cabi!($ty with_types_in $($path_to_types_root)*::exports::golem::shopping_pricing_stub::stub_shopping_pricing);
-                    )
-                  }
+              ($ty:ident) => (self::export!($ty with_types_in self););
+              ($ty:ident with_types_in $($path_to_types_root:tt)*) => (
+              $($path_to_types_root)*::exports::golem::shopping_pricing_stub::stub_shopping_pricing::__export_golem_shopping_pricing_stub_stub_shopping_pricing_cabi!($ty with_types_in $($path_to_types_root)*::exports::golem::shopping_pricing_stub::stub_shopping_pricing);
+              )
+            }
 #[doc(inline)]
 pub(crate) use __export_wasm_rpc_stub_shopping_pricing_impl as export;
 
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.25.0:wasm-rpc-stub-shopping-pricing:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 2126] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xb9\x0f\x01A\x02\x01\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 2427] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xe6\x11\x01A\x02\x01\
 A\x0c\x01B\x0a\x04\0\x08pollable\x03\x01\x01h\0\x01@\x01\x04self\x01\0\x7f\x04\0\
 \x16[method]pollable.ready\x01\x02\x01@\x01\x04self\x01\x01\0\x04\0\x16[method]p\
 ollable.block\x01\x03\x01p\x01\x01py\x01@\x01\x02in\x04\0\x05\x04\0\x04poll\x01\x06\
@@ -3895,23 +4354,29 @@ d]wasm-rpc.invoke\x01\x1c\x01i\x14\x01@\x03\x04self\x17\x0dfunction-names\x0ffun
 ction-params\x18\0\x1d\x04\0'[method]wasm-rpc.async-invoke-and-await\x01\x1e\x01\
 h\x14\x01i\x01\x01@\x01\x04self\x1f\0\x20\x04\0&[method]future-invoke-result.sub\
 scribe\x01!\x01k\x19\x01@\x01\x04self\x1f\0\"\x04\0\x20[method]future-invoke-res\
-ult.get\x01#\x03\x01\x15golem:rpc/types@0.1.0\x05\x02\x01B\x0a\x01r\x03\x05price\
+ult.get\x01#\x03\x01\x15golem:rpc/types@0.1.0\x05\x02\x01B\x0d\x01r\x03\x05price\
 v\x08currencys\x04zones\x04\0\x0cpricing-item\x03\0\0\x01p\x01\x01r\x03\x08asset\
 -ids\x0bmsrp-prices\x02\x0blist-prices\x02\x04\0\x07pricing\x03\0\x03\x01@\x02\x0b\
 msrp-prices\x02\x0blist-prices\x02\x01\0\x04\0\x12initialize-pricing\x01\x05\x01\
-k\x04\x01@\0\0\x06\x04\0\x03get\x01\x07\x03\x01\x1agolem:shopping-pricing/api\x05\
-\x03\x02\x03\0\x01\x03uri\x02\x03\0\x02\x0cpricing-item\x02\x03\0\x02\x07pricing\
-\x01B\x1f\x02\x03\x02\x01\x04\x04\0\x0dgolem-rpc-uri\x03\0\0\x02\x03\x02\x01\x01\
-\x04\0\x10wasi-io-pollable\x03\0\x02\x02\x03\x02\x01\x05\x04\0\x0cpricing-item\x03\
-\0\x04\x02\x03\x02\x01\x06\x04\0\x07pricing\x03\0\x06\x04\0\x11future-get-result\
-\x03\x01\x04\0\x03api\x03\x01\x01h\x08\x01i\x03\x01@\x01\x04self\x0a\0\x0b\x04\0\
-#[method]future-get-result.subscribe\x01\x0c\x01k\x07\x01k\x0d\x01@\x01\x04self\x0a\
-\0\x0e\x04\0\x1d[method]future-get-result.get\x01\x0f\x01i\x09\x01@\x01\x08locat\
-ion\x01\0\x10\x04\0\x10[constructor]api\x01\x11\x01h\x09\x01p\x05\x01@\x03\x04se\
-lf\x12\x0bmsrp-prices\x13\x0blist-prices\x13\x01\0\x04\0'[method]api.blocking-in\
-itialize-pricing\x01\x14\x04\0\x1e[method]api.initialize-pricing\x01\x14\x01@\x01\
-\x04self\x12\0\x0d\x04\0\x18[method]api.blocking-get\x01\x15\x01i\x08\x01@\x01\x04\
-self\x12\0\x16\x04\0\x0f[method]api.get\x01\x17\x04\x011golem:shopping-pricing-s\
+k\x01\x01@\x02\x08currencys\x04zones\0\x06\x04\0\x09get-price\x01\x07\x01k\x04\x01\
+@\0\0\x08\x04\0\x03get\x01\x09\x03\x01\x1agolem:shopping-pricing/api\x05\x03\x02\
+\x03\0\x01\x03uri\x02\x03\0\x02\x0cpricing-item\x02\x03\0\x02\x07pricing\x01B,\x02\
+\x03\x02\x01\x04\x04\0\x0dgolem-rpc-uri\x03\0\0\x02\x03\x02\x01\x01\x04\0\x10was\
+i-io-pollable\x03\0\x02\x02\x03\x02\x01\x05\x04\0\x0cpricing-item\x03\0\x04\x02\x03\
+\x02\x01\x06\x04\0\x07pricing\x03\0\x06\x04\0\x17future-get-price-result\x03\x01\
+\x04\0\x11future-get-result\x03\x01\x04\0\x03api\x03\x01\x01h\x08\x01i\x03\x01@\x01\
+\x04self\x0b\0\x0c\x04\0)[method]future-get-price-result.subscribe\x01\x0d\x01k\x05\
+\x01k\x0e\x01@\x01\x04self\x0b\0\x0f\x04\0#[method]future-get-price-result.get\x01\
+\x10\x01h\x09\x01@\x01\x04self\x11\0\x0c\x04\0#[method]future-get-result.subscri\
+be\x01\x12\x01k\x07\x01k\x13\x01@\x01\x04self\x11\0\x14\x04\0\x1d[method]future-\
+get-result.get\x01\x15\x01i\x0a\x01@\x01\x08location\x01\0\x16\x04\0\x10[constru\
+ctor]api\x01\x17\x01h\x0a\x01p\x05\x01@\x03\x04self\x18\x0bmsrp-prices\x19\x0bli\
+st-prices\x19\x01\0\x04\0'[method]api.blocking-initialize-pricing\x01\x1a\x04\0\x1e\
+[method]api.initialize-pricing\x01\x1a\x01@\x03\x04self\x18\x08currencys\x04zone\
+s\0\x0e\x04\0\x1e[method]api.blocking-get-price\x01\x1b\x01i\x08\x01@\x03\x04sel\
+f\x18\x08currencys\x04zones\0\x1c\x04\0\x15[method]api.get-price\x01\x1d\x01@\x01\
+\x04self\x18\0\x13\x04\0\x18[method]api.blocking-get\x01\x1e\x01i\x09\x01@\x01\x04\
+self\x18\0\x1f\x04\0\x0f[method]api.get\x01\x20\x04\x011golem:shopping-pricing-s\
 tub/stub-shopping-pricing\x05\x07\x04\x01:golem:shopping-pricing-stub/wasm-rpc-s\
 tub-shopping-pricing\x04\0\x0b$\x01\0\x1ewasm-rpc-stub-shopping-pricing\x03\0\0\0\
 G\x09producers\x01\x0cprocessed-by\x02\x0dwit-component\x070.208.1\x10wit-bindge\

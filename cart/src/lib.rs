@@ -5,7 +5,7 @@ use crate::bindings::golem::api::host::*;
 use std::cell::RefCell;
 use std::env;
 
-use crate::bindings::golem::shopping_pricing_stub::stub_shopping_pricing::Pricing;
+use crate::bindings::golem::shopping_pricing_stub::stub_shopping_pricing::PricingItem;
 use crate::bindings::golem::shopping_product_stub::stub_shopping_product::Product;
 
 use crate::bindings::golem::shopping_order::api::OrderItem;
@@ -15,8 +15,6 @@ use uuid::Uuid;
 struct Component;
 
 fn generate_order_id() -> String {
-    // Save the order to the database.
-    // Return the order ID.
     Uuid::new_v4().to_string()
 }
 
@@ -40,9 +38,9 @@ fn get_pricing_worker_urn(product_id: String) -> String {
     format!("urn:worker:{component_id}/{}", product_id)
 }
 
-fn get_order_worker_urn(product_id: String) -> String {
+fn get_order_worker_urn(oder_id: String) -> String {
     let component_id = std::env::var("ORDER_COMPONENT_ID").expect("ORDER_COMPONENT_ID not set");
-    format!("urn:worker:{component_id}/{}", product_id)
+    format!("urn:worker:{component_id}/{}", oder_id)
 }
 
 fn get_product(product_id: String) -> Option<Product> {
@@ -56,7 +54,7 @@ fn get_product(product_id: String) -> Option<Product> {
     api.blocking_get()
 }
 
-fn get_pricing(product_id: String) -> Option<Pricing> {
+fn get_pricing(product_id: String, currency: String, zone: String) -> Option<PricingItem> {
     println!("Getting pricing: {}", product_id);
 
     use bindings::golem::rpc::types::Uri;
@@ -64,25 +62,7 @@ fn get_pricing(product_id: String) -> Option<Pricing> {
 
     let api = Api::new(&Uri { value: get_pricing_worker_urn(product_id) });
 
-    api.blocking_get()
-}
-
-fn get_price(zone: String, currency: String, pricing: Pricing) -> Option<f32> {
-    let list_price = pricing
-        .list_prices
-        .into_iter()
-        .find(|x| x.zone == zone && x.currency == currency)
-        .map(|x| x.price);
-
-    if list_price.is_some() {
-        list_price
-    } else {
-        pricing
-            .msrp_prices
-            .into_iter()
-            .find(|x| x.zone == zone && x.currency == currency)
-            .map(|x| x.price)
-    }
+    api.blocking_get_price(&zone, &currency)
 }
 
 fn create_order(order_id: String, cart: Cart) -> Result<String, &'static str> {
@@ -92,6 +72,30 @@ fn create_order(order_id: String, cart: Cart) -> Result<String, &'static str> {
     use bindings::golem::shopping_order_stub::stub_shopping_order::*;
 
     let api = Api::new(&Uri { value: get_order_worker_urn(order_id.clone()) });
+
+    let shipping_address = cart.shipping_address.map(|x| Address {
+        street1: x.street1,
+        street2: x.street2,
+        state_or_region: x.state_or_region,
+        phone_number: x.phone_number,
+        postal_code: x.postal_code,
+        business_name: x.business_name,
+        name: x.name,
+        city: x.city,
+        country: x.country,
+    });
+
+    let billing_address = cart.billing_address.map(|x| Address {
+        street1: x.street1,
+        street2: x.street2,
+        state_or_region: x.state_or_region,
+        phone_number: x.phone_number,
+        postal_code: x.postal_code,
+        business_name: x.business_name,
+        name: x.name,
+        city: x.city,
+        country: x.country,
+    });
 
     let order = CreateOrder {
         user_id: cart.user_id,
@@ -108,6 +112,8 @@ fn create_order(order_id: String, cart: Cart) -> Result<String, &'static str> {
         total: cart.total,
         currency: cart.currency,
         timestamp: cart.timestamp,
+        shipping_address,
+        billing_address,
     };
 
     api.blocking_initialize_order(&order);
@@ -128,6 +134,8 @@ fn with_state<T>(f: impl FnOnce(&mut Cart) -> T) -> T {
                 items: vec![],
                 total: 0f32,
                 currency: "USD".to_string(),
+                shipping_address: None,
+                billing_address: None,
                 timestamp: 0,
             };
             *state = Some(value);
@@ -155,15 +163,14 @@ impl Guest for Component {
 
             if !updated {
                 let product = get_product(product_id.clone());
-                let pricing = get_pricing(product_id.clone());
-                let price = pricing
-                    .and_then(|p| get_price("global".to_string(), state.currency.clone(), p));
-                match (product, price) {
-                    (Some(product), Some(price)) => {
+                let pricing =
+                    get_pricing(product_id.clone(), state.currency.clone(), "global".to_string());
+                match (product, pricing) {
+                    (Some(product), Some(pricing)) => {
                         state.items.push(CartItem {
                             product_id,
                             name: product.name,
-                            price,
+                            price: pricing.price,
                             quantity,
                         });
                     }
@@ -218,6 +225,8 @@ impl Guest for Component {
 
             state.items.clear();
             state.total = 0f32;
+            state.shipping_address = None;
+            state.billing_address = None;
 
             Ok(OrderConfirmation { order_id })
         });
@@ -228,6 +237,24 @@ impl Guest for Component {
             }
             Err(err) => CheckoutResult::Error(err.to_string()),
         }
+    }
+
+    fn update_billing_address(address: Address) -> Result<(), String> {
+        with_state(|state| {
+            println!("Updating billing address in the cart of user {}", state.user_id);
+
+            state.billing_address = Some(address);
+            Ok(())
+        })
+    }
+
+    fn update_shipping_address(address: Address) -> Result<(), String> {
+        with_state(|state| {
+            println!("Updating shipping address in the cart of user {}", state.user_id);
+
+            state.shipping_address = Some(address);
+            Ok(())
+        })
     }
 
     fn get() -> Option<Cart> {

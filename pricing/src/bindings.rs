@@ -4083,6 +4083,62 @@ pub mod exports {
                 }
                 #[doc(hidden)]
                 #[allow(non_snake_case)]
+                pub unsafe fn _export_get_price_cabi<T: Guest>(
+                    arg0: *mut u8,
+                    arg1: usize,
+                    arg2: *mut u8,
+                    arg3: usize,
+                ) -> *mut u8 {
+                    #[cfg(target_arch = "wasm32")]
+                    _rt::run_ctors_once();
+                    let len0 = arg1;
+                    let bytes0 = _rt::Vec::from_raw_parts(arg0.cast(), len0, len0);
+                    let len1 = arg3;
+                    let bytes1 = _rt::Vec::from_raw_parts(arg2.cast(), len1, len1);
+                    let result2 = T::get_price(_rt::string_lift(bytes0), _rt::string_lift(bytes1));
+                    let ptr3 = _RET_AREA.0.as_mut_ptr().cast::<u8>();
+                    match result2 {
+                        Some(e) => {
+                            *ptr3.add(0).cast::<u8>() = (1i32) as u8;
+                            let PricingItem { price: price4, currency: currency4, zone: zone4 } = e;
+                            *ptr3.add(4).cast::<f32>() = _rt::as_f32(price4);
+                            let vec5 = (currency4.into_bytes()).into_boxed_slice();
+                            let ptr5 = vec5.as_ptr().cast::<u8>();
+                            let len5 = vec5.len();
+                            ::core::mem::forget(vec5);
+                            *ptr3.add(12).cast::<usize>() = len5;
+                            *ptr3.add(8).cast::<*mut u8>() = ptr5.cast_mut();
+                            let vec6 = (zone4.into_bytes()).into_boxed_slice();
+                            let ptr6 = vec6.as_ptr().cast::<u8>();
+                            let len6 = vec6.len();
+                            ::core::mem::forget(vec6);
+                            *ptr3.add(20).cast::<usize>() = len6;
+                            *ptr3.add(16).cast::<*mut u8>() = ptr6.cast_mut();
+                        }
+                        None => {
+                            *ptr3.add(0).cast::<u8>() = (0i32) as u8;
+                        }
+                    };
+                    ptr3
+                }
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn __post_return_get_price<T: Guest>(arg0: *mut u8) {
+                    let l0 = i32::from(*arg0.add(0).cast::<u8>());
+                    match l0 {
+                        0 => (),
+                        _ => {
+                            let l1 = *arg0.add(8).cast::<*mut u8>();
+                            let l2 = *arg0.add(12).cast::<usize>();
+                            _rt::cabi_dealloc(l1, l2, 1);
+                            let l3 = *arg0.add(16).cast::<*mut u8>();
+                            let l4 = *arg0.add(20).cast::<usize>();
+                            _rt::cabi_dealloc(l3, l4, 1);
+                        }
+                    }
+                }
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
                 pub unsafe fn _export_get_cabi<T: Guest>() -> *mut u8 {
                     #[cfg(target_arch = "wasm32")]
                     _rt::run_ctors_once();
@@ -4239,28 +4295,37 @@ pub mod exports {
                         msrp_prices: _rt::Vec<PricingItem>,
                         list_prices: _rt::Vec<PricingItem>,
                     );
+                    fn get_price(currency: _rt::String, zone: _rt::String) -> Option<PricingItem>;
                     /// update-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>) -> ();
                     fn get() -> Option<Pricing>;
                 }
                 #[doc(hidden)]
 
                 macro_rules! __export_golem_shopping_pricing_api_cabi{
-                                    ($ty:ident with_types_in $($path_to_types:tt)*) => (const _: () = {
+                                  ($ty:ident with_types_in $($path_to_types:tt)*) => (const _: () = {
 
-                                      #[export_name = "golem:shopping-pricing/api#initialize-pricing"]
-                                      unsafe extern "C" fn export_initialize_pricing(arg0: *mut u8,arg1: usize,arg2: *mut u8,arg3: usize,) {
-                                        $($path_to_types)*::_export_initialize_pricing_cabi::<$ty>(arg0, arg1, arg2, arg3)
-                                      }
-                                      #[export_name = "golem:shopping-pricing/api#get"]
-                                      unsafe extern "C" fn export_get() -> *mut u8 {
-                                        $($path_to_types)*::_export_get_cabi::<$ty>()
-                                      }
-                                      #[export_name = "cabi_post_golem:shopping-pricing/api#get"]
-                                      unsafe extern "C" fn _post_return_get(arg0: *mut u8,) {
-                                        $($path_to_types)*::__post_return_get::<$ty>(arg0)
-                                      }
-                                    };);
-                                  }
+                                    #[export_name = "golem:shopping-pricing/api#initialize-pricing"]
+                                    unsafe extern "C" fn export_initialize_pricing(arg0: *mut u8,arg1: usize,arg2: *mut u8,arg3: usize,) {
+                                      $($path_to_types)*::_export_initialize_pricing_cabi::<$ty>(arg0, arg1, arg2, arg3)
+                                    }
+                                    #[export_name = "golem:shopping-pricing/api#get-price"]
+                                    unsafe extern "C" fn export_get_price(arg0: *mut u8,arg1: usize,arg2: *mut u8,arg3: usize,) -> *mut u8 {
+                                      $($path_to_types)*::_export_get_price_cabi::<$ty>(arg0, arg1, arg2, arg3)
+                                    }
+                                    #[export_name = "cabi_post_golem:shopping-pricing/api#get-price"]
+                                    unsafe extern "C" fn _post_return_get_price(arg0: *mut u8,) {
+                                      $($path_to_types)*::__post_return_get_price::<$ty>(arg0)
+                                    }
+                                    #[export_name = "golem:shopping-pricing/api#get"]
+                                    unsafe extern "C" fn export_get() -> *mut u8 {
+                                      $($path_to_types)*::_export_get_cabi::<$ty>()
+                                    }
+                                    #[export_name = "cabi_post_golem:shopping-pricing/api#get"]
+                                    unsafe extern "C" fn _post_return_get(arg0: *mut u8,) {
+                                      $($path_to_types)*::__post_return_get::<$ty>(arg0)
+                                    }
+                                  };);
+                                }
                 #[doc(hidden)]
                 pub(crate) use __export_golem_shopping_pricing_api_cabi;
                 #[repr(align(4))]
@@ -4571,19 +4636,19 @@ mod _rt {
 #[doc(hidden)]
 
 macro_rules! __export_shopping_pricing_impl {
-                            ($ty:ident) => (self::export!($ty with_types_in self););
-                            ($ty:ident with_types_in $($path_to_types_root:tt)*) => (
-                            $($path_to_types_root)*::exports::golem::shopping_pricing::api::__export_golem_shopping_pricing_api_cabi!($ty with_types_in $($path_to_types_root)*::exports::golem::shopping_pricing::api);
-                            )
-                          }
+                          ($ty:ident) => (self::export!($ty with_types_in self););
+                          ($ty:ident with_types_in $($path_to_types_root:tt)*) => (
+                          $($path_to_types_root)*::exports::golem::shopping_pricing::api::__export_golem_shopping_pricing_api_cabi!($ty with_types_in $($path_to_types_root)*::exports::golem::shopping_pricing::api);
+                          )
+                        }
 #[doc(inline)]
 pub(crate) use __export_shopping_pricing_impl as export;
 
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.25.0:shopping-pricing:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 3792] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xc9\x1c\x01A\x02\x01\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 3830] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xef\x1c\x01A\x02\x01\
 A\x0d\x01B\x0a\x04\0\x08pollable\x03\x01\x01h\0\x01@\x01\x04self\x01\0\x7f\x04\0\
 \x16[method]pollable.ready\x01\x02\x01@\x01\x04self\x01\x01\0\x04\0\x16[method]p\
 ollable.block\x01\x03\x01p\x01\x01py\x01@\x01\x02in\x04\0\x05\x04\0\x04poll\x01\x06\
@@ -4655,13 +4720,14 @@ new-persistence-level\x13\x01\0\x04\0\x1bset-oplog-persistence-level\x01H\x01@\0
 K\x01@\x03\x09worker-id\x0d\x0etarget-version\x07\x04mode\x15\x01\0\x04\0\x0dupd\
 ate-worker\x01L\x01@\0\02\x04\0\x11get-self-metadata\x01M\x01k2\x01@\x01\x09work\
 er-id\x0d\0\xce\0\x04\0\x13get-worker-metadata\x01O\x03\x01\x14golem:api/host@0.\
-2.0\x05\x06\x01B\x0a\x01r\x03\x05pricev\x08currencys\x04zones\x04\0\x0cpricing-i\
+2.0\x05\x06\x01B\x0d\x01r\x03\x05pricev\x08currencys\x04zones\x04\0\x0cpricing-i\
 tem\x03\0\0\x01p\x01\x01r\x03\x08asset-ids\x0bmsrp-prices\x02\x0blist-prices\x02\
 \x04\0\x07pricing\x03\0\x03\x01@\x02\x0bmsrp-prices\x02\x0blist-prices\x02\x01\0\
-\x04\0\x12initialize-pricing\x01\x05\x01k\x04\x01@\0\0\x06\x04\0\x03get\x01\x07\x04\
-\x01\x1agolem:shopping-pricing/api\x05\x07\x04\x01'golem:shopping-pricing/shoppi\
-ng-pricing\x04\0\x0b\x16\x01\0\x10shopping-pricing\x03\0\0\0G\x09producers\x01\x0c\
-processed-by\x02\x0dwit-component\x070.208.1\x10wit-bindgen-rust\x060.25.0";
+\x04\0\x12initialize-pricing\x01\x05\x01k\x01\x01@\x02\x08currencys\x04zones\0\x06\
+\x04\0\x09get-price\x01\x07\x01k\x04\x01@\0\0\x08\x04\0\x03get\x01\x09\x04\x01\x1a\
+golem:shopping-pricing/api\x05\x07\x04\x01'golem:shopping-pricing/shopping-prici\
+ng\x04\0\x0b\x16\x01\0\x10shopping-pricing\x03\0\0\0G\x09producers\x01\x0cproces\
+sed-by\x02\x0dwit-component\x070.208.1\x10wit-bindgen-rust\x060.25.0";
 
 #[inline(never)]
 #[doc(hidden)]

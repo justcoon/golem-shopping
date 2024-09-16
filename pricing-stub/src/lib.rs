@@ -6,6 +6,9 @@ pub struct Api {
     rpc: WasmRpc,
 }
 impl Api {}
+pub struct FutureGetPriceResult {
+    pub future_invoke_result: FutureInvokeResult,
+}
 pub struct FutureGetResult {
     pub future_invoke_result: FutureInvokeResult,
 }
@@ -13,7 +16,60 @@ struct Component;
 impl crate::bindings::exports::golem::shopping_pricing_stub::stub_shopping_pricing::Guest
 for Component {
     type Api = crate::Api;
+    type FutureGetPriceResult = crate::FutureGetPriceResult;
     type FutureGetResult = crate::FutureGetResult;
+}
+impl crate::bindings::exports::golem::shopping_pricing_stub::stub_shopping_pricing::GuestFutureGetPriceResult
+for FutureGetPriceResult {
+    fn subscribe(&self) -> bindings::wasi::io::poll::Pollable {
+        let pollable = self.future_invoke_result.subscribe();
+        let pollable = unsafe {
+            bindings::wasi::io::poll::Pollable::from_handle(pollable.take_handle())
+        };
+        pollable
+    }
+    fn get(
+        &self,
+    ) -> Option<Option<crate::bindings::golem::shopping_pricing::api::PricingItem>> {
+        self.future_invoke_result
+            .get()
+            .map(|result| {
+                let result = result
+                    .expect(
+                        &format!(
+                            "Failed to invoke remote {}",
+                            "golem:shopping-pricing/api.{get-price}"
+                        ),
+                    );
+                (result
+                    .tuple_element(0)
+                    .expect("tuple not found")
+                    .option()
+                    .expect("option not found")
+                    .map(|inner| {
+                        let record = inner;
+                        crate::bindings::golem::shopping_pricing::api::PricingItem {
+                            price: record
+                                .field(0usize)
+                                .expect("record field not found")
+                                .f32()
+                                .expect("f32 not found"),
+                            currency: record
+                                .field(1usize)
+                                .expect("record field not found")
+                                .string()
+                                .expect("string not found")
+                                .to_string(),
+                            zone: record
+                                .field(2usize)
+                                .expect("record field not found")
+                                .string()
+                                .expect("string not found")
+                                .to_string(),
+                        }
+                    }))
+            })
+    }
 }
 impl crate::bindings::exports::golem::shopping_pricing_stub::stub_shopping_pricing::GuestFutureGetResult
 for FutureGetResult {
@@ -217,6 +273,72 @@ for Api {
                 ),
             );
         ()
+    }
+    fn blocking_get_price(
+        &self,
+        currency: String,
+        zone: String,
+    ) -> Option<crate::bindings::golem::shopping_pricing::api::PricingItem> {
+        let result = self
+            .rpc
+            .invoke_and_await(
+                "golem:shopping-pricing/api.{get-price}",
+                &[
+                    WitValue::builder().string(&currency),
+                    WitValue::builder().string(&zone),
+                ],
+            )
+            .expect(
+                &format!(
+                    "Failed to invoke-and-await remote {}",
+                    "golem:shopping-pricing/api.{get-price}"
+                ),
+            );
+        (result
+            .tuple_element(0)
+            .expect("tuple not found")
+            .option()
+            .expect("option not found")
+            .map(|inner| {
+                let record = inner;
+                crate::bindings::golem::shopping_pricing::api::PricingItem {
+                    price: record
+                        .field(0usize)
+                        .expect("record field not found")
+                        .f32()
+                        .expect("f32 not found"),
+                    currency: record
+                        .field(1usize)
+                        .expect("record field not found")
+                        .string()
+                        .expect("string not found")
+                        .to_string(),
+                    zone: record
+                        .field(2usize)
+                        .expect("record field not found")
+                        .string()
+                        .expect("string not found")
+                        .to_string(),
+                }
+            }))
+    }
+    fn get_price(
+        &self,
+        currency: String,
+        zone: String,
+    ) -> crate::bindings::exports::golem::shopping_pricing_stub::stub_shopping_pricing::FutureGetPriceResult {
+        let result = self
+            .rpc
+            .async_invoke_and_await(
+                "golem:shopping-pricing/api.{get-price}",
+                &[
+                    WitValue::builder().string(&currency),
+                    WitValue::builder().string(&zone),
+                ],
+            );
+        crate::bindings::exports::golem::shopping_pricing_stub::stub_shopping_pricing::FutureGetPriceResult::new(FutureGetPriceResult {
+            future_invoke_result: result,
+        })
     }
     fn blocking_get(
         &self,

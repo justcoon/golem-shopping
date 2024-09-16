@@ -15,6 +15,18 @@ pub struct FutureRemoveItemResult {
 pub struct FutureUpdateItemQuantityResult {
     pub future_invoke_result: FutureInvokeResult,
 }
+pub struct FutureUpdateShippingAddressResult {
+    pub future_invoke_result: FutureInvokeResult,
+}
+pub struct FutureUpdateBillingAddressResult {
+    pub future_invoke_result: FutureInvokeResult,
+}
+pub struct FutureShipOrderResult {
+    pub future_invoke_result: FutureInvokeResult,
+}
+pub struct FutureCancelOrderResult {
+    pub future_invoke_result: FutureInvokeResult,
+}
 pub struct FutureGetResult {
     pub future_invoke_result: FutureInvokeResult,
 }
@@ -25,6 +37,10 @@ for Component {
     type FutureAddItemResult = crate::FutureAddItemResult;
     type FutureRemoveItemResult = crate::FutureRemoveItemResult;
     type FutureUpdateItemQuantityResult = crate::FutureUpdateItemQuantityResult;
+    type FutureUpdateShippingAddressResult = crate::FutureUpdateShippingAddressResult;
+    type FutureUpdateBillingAddressResult = crate::FutureUpdateBillingAddressResult;
+    type FutureShipOrderResult = crate::FutureShipOrderResult;
+    type FutureCancelOrderResult = crate::FutureCancelOrderResult;
     type FutureGetResult = crate::FutureGetResult;
 }
 impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::GuestFutureAddItemResult
@@ -153,6 +169,174 @@ for FutureUpdateItemQuantityResult {
             })
     }
 }
+impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::GuestFutureUpdateShippingAddressResult
+for FutureUpdateShippingAddressResult {
+    fn subscribe(&self) -> bindings::wasi::io::poll::Pollable {
+        let pollable = self.future_invoke_result.subscribe();
+        let pollable = unsafe {
+            bindings::wasi::io::poll::Pollable::from_handle(pollable.take_handle())
+        };
+        pollable
+    }
+    fn get(&self) -> Option<Result<(), String>> {
+        self.future_invoke_result
+            .get()
+            .map(|result| {
+                let result = result
+                    .expect(
+                        &format!(
+                            "Failed to invoke remote {}",
+                            "golem:shopping-order/api.{update-shipping-address}"
+                        ),
+                    );
+                ({
+                    let result = result
+                        .tuple_element(0)
+                        .expect("tuple not found")
+                        .result()
+                        .expect("result not found");
+                    match result {
+                        Ok(ok_value) => Ok(()),
+                        Err(err_value) => {
+                            Err(
+                                err_value
+                                    .expect("result err value not found")
+                                    .string()
+                                    .expect("string not found")
+                                    .to_string(),
+                            )
+                        }
+                    }
+                })
+            })
+    }
+}
+impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::GuestFutureUpdateBillingAddressResult
+for FutureUpdateBillingAddressResult {
+    fn subscribe(&self) -> bindings::wasi::io::poll::Pollable {
+        let pollable = self.future_invoke_result.subscribe();
+        let pollable = unsafe {
+            bindings::wasi::io::poll::Pollable::from_handle(pollable.take_handle())
+        };
+        pollable
+    }
+    fn get(&self) -> Option<Result<(), String>> {
+        self.future_invoke_result
+            .get()
+            .map(|result| {
+                let result = result
+                    .expect(
+                        &format!(
+                            "Failed to invoke remote {}",
+                            "golem:shopping-order/api.{update-billing-address}"
+                        ),
+                    );
+                ({
+                    let result = result
+                        .tuple_element(0)
+                        .expect("tuple not found")
+                        .result()
+                        .expect("result not found");
+                    match result {
+                        Ok(ok_value) => Ok(()),
+                        Err(err_value) => {
+                            Err(
+                                err_value
+                                    .expect("result err value not found")
+                                    .string()
+                                    .expect("string not found")
+                                    .to_string(),
+                            )
+                        }
+                    }
+                })
+            })
+    }
+}
+impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::GuestFutureShipOrderResult
+for FutureShipOrderResult {
+    fn subscribe(&self) -> bindings::wasi::io::poll::Pollable {
+        let pollable = self.future_invoke_result.subscribe();
+        let pollable = unsafe {
+            bindings::wasi::io::poll::Pollable::from_handle(pollable.take_handle())
+        };
+        pollable
+    }
+    fn get(&self) -> Option<Result<(), String>> {
+        self.future_invoke_result
+            .get()
+            .map(|result| {
+                let result = result
+                    .expect(
+                        &format!(
+                            "Failed to invoke remote {}",
+                            "golem:shopping-order/api.{ship-order}"
+                        ),
+                    );
+                ({
+                    let result = result
+                        .tuple_element(0)
+                        .expect("tuple not found")
+                        .result()
+                        .expect("result not found");
+                    match result {
+                        Ok(ok_value) => Ok(()),
+                        Err(err_value) => {
+                            Err(
+                                err_value
+                                    .expect("result err value not found")
+                                    .string()
+                                    .expect("string not found")
+                                    .to_string(),
+                            )
+                        }
+                    }
+                })
+            })
+    }
+}
+impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::GuestFutureCancelOrderResult
+for FutureCancelOrderResult {
+    fn subscribe(&self) -> bindings::wasi::io::poll::Pollable {
+        let pollable = self.future_invoke_result.subscribe();
+        let pollable = unsafe {
+            bindings::wasi::io::poll::Pollable::from_handle(pollable.take_handle())
+        };
+        pollable
+    }
+    fn get(&self) -> Option<Result<(), String>> {
+        self.future_invoke_result
+            .get()
+            .map(|result| {
+                let result = result
+                    .expect(
+                        &format!(
+                            "Failed to invoke remote {}",
+                            "golem:shopping-order/api.{cancel-order}"
+                        ),
+                    );
+                ({
+                    let result = result
+                        .tuple_element(0)
+                        .expect("tuple not found")
+                        .result()
+                        .expect("result not found");
+                    match result {
+                        Ok(ok_value) => Ok(()),
+                        Err(err_value) => {
+                            Err(
+                                err_value
+                                    .expect("result err value not found")
+                                    .string()
+                                    .expect("string not found")
+                                    .to_string(),
+                            )
+                        }
+                    }
+                })
+            })
+    }
+}
 impl crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::GuestFutureGetResult
 for FutureGetResult {
     fn subscribe(&self) -> bindings::wasi::io::poll::Pollable {
@@ -204,7 +388,7 @@ for FutureGetResult {
                                         crate::bindings::golem::shopping_order::api::OrderStatus::New
                                     }
                                     1u32 => {
-                                        crate::bindings::golem::shopping_order::api::OrderStatus::Confirmed
+                                        crate::bindings::golem::shopping_order::api::OrderStatus::Shipped
                                     }
                                     2u32 => {
                                         crate::bindings::golem::shopping_order::api::OrderStatus::Cancelled
@@ -243,19 +427,163 @@ for FutureGetResult {
                                     }
                                 })
                                 .expect("list not found"),
-                            total: record
+                            billing_address: record
                                 .field(4usize)
+                                .expect("record field not found")
+                                .option()
+                                .expect("option not found")
+                                .map(|inner| {
+                                    let record = inner;
+                                    crate::bindings::golem::shopping_order::api::Address {
+                                        street1: record
+                                            .field(0usize)
+                                            .expect("record field not found")
+                                            .string()
+                                            .expect("string not found")
+                                            .to_string(),
+                                        street2: record
+                                            .field(1usize)
+                                            .expect("record field not found")
+                                            .option()
+                                            .expect("option not found")
+                                            .map(|inner| {
+                                                inner.string().expect("string not found").to_string()
+                                            }),
+                                        city: record
+                                            .field(2usize)
+                                            .expect("record field not found")
+                                            .string()
+                                            .expect("string not found")
+                                            .to_string(),
+                                        state_or_region: record
+                                            .field(3usize)
+                                            .expect("record field not found")
+                                            .string()
+                                            .expect("string not found")
+                                            .to_string(),
+                                        country: record
+                                            .field(4usize)
+                                            .expect("record field not found")
+                                            .string()
+                                            .expect("string not found")
+                                            .to_string(),
+                                        postal_code: record
+                                            .field(5usize)
+                                            .expect("record field not found")
+                                            .string()
+                                            .expect("string not found")
+                                            .to_string(),
+                                        name: record
+                                            .field(6usize)
+                                            .expect("record field not found")
+                                            .option()
+                                            .expect("option not found")
+                                            .map(|inner| {
+                                                inner.string().expect("string not found").to_string()
+                                            }),
+                                        business_name: record
+                                            .field(7usize)
+                                            .expect("record field not found")
+                                            .option()
+                                            .expect("option not found")
+                                            .map(|inner| {
+                                                inner.string().expect("string not found").to_string()
+                                            }),
+                                        phone_number: record
+                                            .field(8usize)
+                                            .expect("record field not found")
+                                            .option()
+                                            .expect("option not found")
+                                            .map(|inner| {
+                                                inner.string().expect("string not found").to_string()
+                                            }),
+                                    }
+                                }),
+                            shipping_address: record
+                                .field(5usize)
+                                .expect("record field not found")
+                                .option()
+                                .expect("option not found")
+                                .map(|inner| {
+                                    let record = inner;
+                                    crate::bindings::golem::shopping_order::api::Address {
+                                        street1: record
+                                            .field(0usize)
+                                            .expect("record field not found")
+                                            .string()
+                                            .expect("string not found")
+                                            .to_string(),
+                                        street2: record
+                                            .field(1usize)
+                                            .expect("record field not found")
+                                            .option()
+                                            .expect("option not found")
+                                            .map(|inner| {
+                                                inner.string().expect("string not found").to_string()
+                                            }),
+                                        city: record
+                                            .field(2usize)
+                                            .expect("record field not found")
+                                            .string()
+                                            .expect("string not found")
+                                            .to_string(),
+                                        state_or_region: record
+                                            .field(3usize)
+                                            .expect("record field not found")
+                                            .string()
+                                            .expect("string not found")
+                                            .to_string(),
+                                        country: record
+                                            .field(4usize)
+                                            .expect("record field not found")
+                                            .string()
+                                            .expect("string not found")
+                                            .to_string(),
+                                        postal_code: record
+                                            .field(5usize)
+                                            .expect("record field not found")
+                                            .string()
+                                            .expect("string not found")
+                                            .to_string(),
+                                        name: record
+                                            .field(6usize)
+                                            .expect("record field not found")
+                                            .option()
+                                            .expect("option not found")
+                                            .map(|inner| {
+                                                inner.string().expect("string not found").to_string()
+                                            }),
+                                        business_name: record
+                                            .field(7usize)
+                                            .expect("record field not found")
+                                            .option()
+                                            .expect("option not found")
+                                            .map(|inner| {
+                                                inner.string().expect("string not found").to_string()
+                                            }),
+                                        phone_number: record
+                                            .field(8usize)
+                                            .expect("record field not found")
+                                            .option()
+                                            .expect("option not found")
+                                            .map(|inner| {
+                                                inner.string().expect("string not found").to_string()
+                                            }),
+                                    }
+                                }),
+                            total: record
+                                .field(6usize)
                                 .expect("record field not found")
                                 .f32()
                                 .expect("f32 not found"),
                             currency: record
-                                .field(5usize)
+                                .field(7usize)
                                 .expect("record field not found")
                                 .string()
                                 .expect("string not found")
                                 .to_string(),
                             timestamp: record
-                                .field(6usize)
+                                .field(8usize)
                                 .expect("record field not found")
                                 .u64()
                                 .expect("u64 not found"),
@@ -305,6 +633,198 @@ for Api {
                             },
                         )
                         .item()
+                        .option_fn(
+                            data.billing_address.is_some(),
+                            |some_builder| {
+                                some_builder
+                                    .record()
+                                    .item()
+                                    .string(&data.billing_address.as_ref().unwrap().street1)
+                                    .item()
+                                    .option_fn(
+                                        data.billing_address.as_ref().unwrap().street2.is_some(),
+                                        |some_builder| {
+                                            some_builder
+                                                .string(
+                                                    data
+                                                        .billing_address
+                                                        .as_ref()
+                                                        .unwrap()
+                                                        .street2
+                                                        .as_ref()
+                                                        .unwrap(),
+                                                )
+                                        },
+                                    )
+                                    .item()
+                                    .string(&data.billing_address.as_ref().unwrap().city)
+                                    .item()
+                                    .string(
+                                        &data.billing_address.as_ref().unwrap().state_or_region,
+                                    )
+                                    .item()
+                                    .string(&data.billing_address.as_ref().unwrap().country)
+                                    .item()
+                                    .string(&data.billing_address.as_ref().unwrap().postal_code)
+                                    .item()
+                                    .option_fn(
+                                        data.billing_address.as_ref().unwrap().name.is_some(),
+                                        |some_builder| {
+                                            some_builder
+                                                .string(
+                                                    data
+                                                        .billing_address
+                                                        .as_ref()
+                                                        .unwrap()
+                                                        .name
+                                                        .as_ref()
+                                                        .unwrap(),
+                                                )
+                                        },
+                                    )
+                                    .item()
+                                    .option_fn(
+                                        data
+                                            .billing_address
+                                            .as_ref()
+                                            .unwrap()
+                                            .business_name
+                                            .is_some(),
+                                        |some_builder| {
+                                            some_builder
+                                                .string(
+                                                    data
+                                                        .billing_address
+                                                        .as_ref()
+                                                        .unwrap()
+                                                        .business_name
+                                                        .as_ref()
+                                                        .unwrap(),
+                                                )
+                                        },
+                                    )
+                                    .item()
+                                    .option_fn(
+                                        data
+                                            .billing_address
+                                            .as_ref()
+                                            .unwrap()
+                                            .phone_number
+                                            .is_some(),
+                                        |some_builder| {
+                                            some_builder
+                                                .string(
+                                                    data
+                                                        .billing_address
+                                                        .as_ref()
+                                                        .unwrap()
+                                                        .phone_number
+                                                        .as_ref()
+                                                        .unwrap(),
+                                                )
+                                        },
+                                    )
+                                    .finish()
+                            },
+                        )
+                        .item()
+                        .option_fn(
+                            data.shipping_address.is_some(),
+                            |some_builder| {
+                                some_builder
+                                    .record()
+                                    .item()
+                                    .string(&data.shipping_address.as_ref().unwrap().street1)
+                                    .item()
+                                    .option_fn(
+                                        data.shipping_address.as_ref().unwrap().street2.is_some(),
+                                        |some_builder| {
+                                            some_builder
+                                                .string(
+                                                    data
+                                                        .shipping_address
+                                                        .as_ref()
+                                                        .unwrap()
+                                                        .street2
+                                                        .as_ref()
+                                                        .unwrap(),
+                                                )
+                                        },
+                                    )
+                                    .item()
+                                    .string(&data.shipping_address.as_ref().unwrap().city)
+                                    .item()
+                                    .string(
+                                        &data.shipping_address.as_ref().unwrap().state_or_region,
+                                    )
+                                    .item()
+                                    .string(&data.shipping_address.as_ref().unwrap().country)
+                                    .item()
+                                    .string(
+                                        &data.shipping_address.as_ref().unwrap().postal_code,
+                                    )
+                                    .item()
+                                    .option_fn(
+                                        data.shipping_address.as_ref().unwrap().name.is_some(),
+                                        |some_builder| {
+                                            some_builder
+                                                .string(
+                                                    data
+                                                        .shipping_address
+                                                        .as_ref()
+                                                        .unwrap()
+                                                        .name
+                                                        .as_ref()
+                                                        .unwrap(),
+                                                )
+                                        },
+                                    )
+                                    .item()
+                                    .option_fn(
+                                        data
+                                            .shipping_address
+                                            .as_ref()
+                                            .unwrap()
+                                            .business_name
+                                            .is_some(),
+                                        |some_builder| {
+                                            some_builder
+                                                .string(
+                                                    data
+                                                        .shipping_address
+                                                        .as_ref()
+                                                        .unwrap()
+                                                        .business_name
+                                                        .as_ref()
+                                                        .unwrap(),
+                                                )
+                                        },
+                                    )
+                                    .item()
+                                    .option_fn(
+                                        data
+                                            .shipping_address
+                                            .as_ref()
+                                            .unwrap()
+                                            .phone_number
+                                            .is_some(),
+                                        |some_builder| {
+                                            some_builder
+                                                .string(
+                                                    data
+                                                        .shipping_address
+                                                        .as_ref()
+                                                        .unwrap()
+                                                        .phone_number
+                                                        .as_ref()
+                                                        .unwrap(),
+                                                )
+                                        },
+                                    )
+                                    .finish()
+                            },
+                        )
+                        .item()
                         .f32(data.total)
                         .item()
                         .string(&data.currency)
@@ -348,6 +868,198 @@ for Api {
                                     .f32(item.price)
                                     .item()
                                     .u32(item.quantity)
+                                    .finish()
+                            },
+                        )
+                        .item()
+                        .option_fn(
+                            data.billing_address.is_some(),
+                            |some_builder| {
+                                some_builder
+                                    .record()
+                                    .item()
+                                    .string(&data.billing_address.as_ref().unwrap().street1)
+                                    .item()
+                                    .option_fn(
+                                        data.billing_address.as_ref().unwrap().street2.is_some(),
+                                        |some_builder| {
+                                            some_builder
+                                                .string(
+                                                    data
+                                                        .billing_address
+                                                        .as_ref()
+                                                        .unwrap()
+                                                        .street2
+                                                        .as_ref()
+                                                        .unwrap(),
+                                                )
+                                        },
+                                    )
+                                    .item()
+                                    .string(&data.billing_address.as_ref().unwrap().city)
+                                    .item()
+                                    .string(
+                                        &data.billing_address.as_ref().unwrap().state_or_region,
+                                    )
+                                    .item()
+                                    .string(&data.billing_address.as_ref().unwrap().country)
+                                    .item()
+                                    .string(&data.billing_address.as_ref().unwrap().postal_code)
+                                    .item()
+                                    .option_fn(
+                                        data.billing_address.as_ref().unwrap().name.is_some(),
+                                        |some_builder| {
+                                            some_builder
+                                                .string(
+                                                    data
+                                                        .billing_address
+                                                        .as_ref()
+                                                        .unwrap()
+                                                        .name
+                                                        .as_ref()
+                                                        .unwrap(),
+                                                )
+                                        },
+                                    )
+                                    .item()
+                                    .option_fn(
+                                        data
+                                            .billing_address
+                                            .as_ref()
+                                            .unwrap()
+                                            .business_name
+                                            .is_some(),
+                                        |some_builder| {
+                                            some_builder
+                                                .string(
+                                                    data
+                                                        .billing_address
+                                                        .as_ref()
+                                                        .unwrap()
+                                                        .business_name
+                                                        .as_ref()
+                                                        .unwrap(),
+                                                )
+                                        },
+                                    )
+                                    .item()
+                                    .option_fn(
+                                        data
+                                            .billing_address
+                                            .as_ref()
+                                            .unwrap()
+                                            .phone_number
+                                            .is_some(),
+                                        |some_builder| {
+                                            some_builder
+                                                .string(
+                                                    data
+                                                        .billing_address
+                                                        .as_ref()
+                                                        .unwrap()
+                                                        .phone_number
+                                                        .as_ref()
+                                                        .unwrap(),
+                                                )
+                                        },
+                                    )
+                                    .finish()
+                            },
+                        )
+                        .item()
+                        .option_fn(
+                            data.shipping_address.is_some(),
+                            |some_builder| {
+                                some_builder
+                                    .record()
+                                    .item()
+                                    .string(&data.shipping_address.as_ref().unwrap().street1)
+                                    .item()
+                                    .option_fn(
+                                        data.shipping_address.as_ref().unwrap().street2.is_some(),
+                                        |some_builder| {
+                                            some_builder
+                                                .string(
+                                                    data
+                                                        .shipping_address
+                                                        .as_ref()
+                                                        .unwrap()
+                                                        .street2
+                                                        .as_ref()
+                                                        .unwrap(),
+                                                )
+                                        },
+                                    )
+                                    .item()
+                                    .string(&data.shipping_address.as_ref().unwrap().city)
+                                    .item()
+                                    .string(
+                                        &data.shipping_address.as_ref().unwrap().state_or_region,
+                                    )
+                                    .item()
+                                    .string(&data.shipping_address.as_ref().unwrap().country)
+                                    .item()
+                                    .string(
+                                        &data.shipping_address.as_ref().unwrap().postal_code,
+                                    )
+                                    .item()
+                                    .option_fn(
+                                        data.shipping_address.as_ref().unwrap().name.is_some(),
+                                        |some_builder| {
+                                            some_builder
+                                                .string(
+                                                    data
+                                                        .shipping_address
+                                                        .as_ref()
+                                                        .unwrap()
+                                                        .name
+                                                        .as_ref()
+                                                        .unwrap(),
+                                                )
+                                        },
+                                    )
+                                    .item()
+                                    .option_fn(
+                                        data
+                                            .shipping_address
+                                            .as_ref()
+                                            .unwrap()
+                                            .business_name
+                                            .is_some(),
+                                        |some_builder| {
+                                            some_builder
+                                                .string(
+                                                    data
+                                                        .shipping_address
+                                                        .as_ref()
+                                                        .unwrap()
+                                                        .business_name
+                                                        .as_ref()
+                                                        .unwrap(),
+                                                )
+                                        },
+                                    )
+                                    .item()
+                                    .option_fn(
+                                        data
+                                            .shipping_address
+                                            .as_ref()
+                                            .unwrap()
+                                            .phone_number
+                                            .is_some(),
+                                        |some_builder| {
+                                            some_builder
+                                                .string(
+                                                    data
+                                                        .shipping_address
+                                                        .as_ref()
+                                                        .unwrap()
+                                                        .phone_number
+                                                        .as_ref()
+                                                        .unwrap(),
+                                                )
+                                        },
+                                    )
                                     .finish()
                             },
                         )
@@ -531,6 +1243,354 @@ for Api {
             future_invoke_result: result,
         })
     }
+    fn blocking_update_shipping_address(
+        &self,
+        address: crate::bindings::golem::shopping_order::api::Address,
+    ) -> Result<(), String> {
+        let result = self
+            .rpc
+            .invoke_and_await(
+                "golem:shopping-order/api.{update-shipping-address}",
+                &[
+                    WitValue::builder()
+                        .record()
+                        .item()
+                        .string(&address.street1)
+                        .item()
+                        .option_fn(
+                            address.street2.is_some(),
+                            |some_builder| {
+                                some_builder.string(address.street2.as_ref().unwrap())
+                            },
+                        )
+                        .item()
+                        .string(&address.city)
+                        .item()
+                        .string(&address.state_or_region)
+                        .item()
+                        .string(&address.country)
+                        .item()
+                        .string(&address.postal_code)
+                        .item()
+                        .option_fn(
+                            address.name.is_some(),
+                            |some_builder| {
+                                some_builder.string(address.name.as_ref().unwrap())
+                            },
+                        )
+                        .item()
+                        .option_fn(
+                            address.business_name.is_some(),
+                            |some_builder| {
+                                some_builder.string(address.business_name.as_ref().unwrap())
+                            },
+                        )
+                        .item()
+                        .option_fn(
+                            address.phone_number.is_some(),
+                            |some_builder| {
+                                some_builder.string(address.phone_number.as_ref().unwrap())
+                            },
+                        )
+                        .finish(),
+                ],
+            )
+            .expect(
+                &format!(
+                    "Failed to invoke-and-await remote {}",
+                    "golem:shopping-order/api.{update-shipping-address}"
+                ),
+            );
+        ({
+            let result = result
+                .tuple_element(0)
+                .expect("tuple not found")
+                .result()
+                .expect("result not found");
+            match result {
+                Ok(ok_value) => Ok(()),
+                Err(err_value) => {
+                    Err(
+                        err_value
+                            .expect("result err value not found")
+                            .string()
+                            .expect("string not found")
+                            .to_string(),
+                    )
+                }
+            }
+        })
+    }
+    fn update_shipping_address(
+        &self,
+        address: crate::bindings::golem::shopping_order::api::Address,
+    ) -> crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureUpdateShippingAddressResult {
+        let result = self
+            .rpc
+            .async_invoke_and_await(
+                "golem:shopping-order/api.{update-shipping-address}",
+                &[
+                    WitValue::builder()
+                        .record()
+                        .item()
+                        .string(&address.street1)
+                        .item()
+                        .option_fn(
+                            address.street2.is_some(),
+                            |some_builder| {
+                                some_builder.string(address.street2.as_ref().unwrap())
+                            },
+                        )
+                        .item()
+                        .string(&address.city)
+                        .item()
+                        .string(&address.state_or_region)
+                        .item()
+                        .string(&address.country)
+                        .item()
+                        .string(&address.postal_code)
+                        .item()
+                        .option_fn(
+                            address.name.is_some(),
+                            |some_builder| {
+                                some_builder.string(address.name.as_ref().unwrap())
+                            },
+                        )
+                        .item()
+                        .option_fn(
+                            address.business_name.is_some(),
+                            |some_builder| {
+                                some_builder.string(address.business_name.as_ref().unwrap())
+                            },
+                        )
+                        .item()
+                        .option_fn(
+                            address.phone_number.is_some(),
+                            |some_builder| {
+                                some_builder.string(address.phone_number.as_ref().unwrap())
+                            },
+                        )
+                        .finish(),
+                ],
+            );
+        crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureUpdateShippingAddressResult::new(FutureUpdateShippingAddressResult {
+            future_invoke_result: result,
+        })
+    }
+    fn blocking_update_billing_address(
+        &self,
+        address: crate::bindings::golem::shopping_order::api::Address,
+    ) -> Result<(), String> {
+        let result = self
+            .rpc
+            .invoke_and_await(
+                "golem:shopping-order/api.{update-billing-address}",
+                &[
+                    WitValue::builder()
+                        .record()
+                        .item()
+                        .string(&address.street1)
+                        .item()
+                        .option_fn(
+                            address.street2.is_some(),
+                            |some_builder| {
+                                some_builder.string(address.street2.as_ref().unwrap())
+                            },
+                        )
+                        .item()
+                        .string(&address.city)
+                        .item()
+                        .string(&address.state_or_region)
+                        .item()
+                        .string(&address.country)
+                        .item()
+                        .string(&address.postal_code)
+                        .item()
+                        .option_fn(
+                            address.name.is_some(),
+                            |some_builder| {
+                                some_builder.string(address.name.as_ref().unwrap())
+                            },
+                        )
+                        .item()
+                        .option_fn(
+                            address.business_name.is_some(),
+                            |some_builder| {
+                                some_builder.string(address.business_name.as_ref().unwrap())
+                            },
+                        )
+                        .item()
+                        .option_fn(
+                            address.phone_number.is_some(),
+                            |some_builder| {
+                                some_builder.string(address.phone_number.as_ref().unwrap())
+                            },
+                        )
+                        .finish(),
+                ],
+            )
+            .expect(
+                &format!(
+                    "Failed to invoke-and-await remote {}",
+                    "golem:shopping-order/api.{update-billing-address}"
+                ),
+            );
+        ({
+            let result = result
+                .tuple_element(0)
+                .expect("tuple not found")
+                .result()
+                .expect("result not found");
+            match result {
+                Ok(ok_value) => Ok(()),
+                Err(err_value) => {
+                    Err(
+                        err_value
+                            .expect("result err value not found")
+                            .string()
+                            .expect("string not found")
+                            .to_string(),
+                    )
+                }
+            }
+        })
+    }
+    fn update_billing_address(
+        &self,
+        address: crate::bindings::golem::shopping_order::api::Address,
+    ) -> crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureUpdateBillingAddressResult {
+        let result = self
+            .rpc
+            .async_invoke_and_await(
+                "golem:shopping-order/api.{update-billing-address}",
+                &[
+                    WitValue::builder()
+                        .record()
+                        .item()
+                        .string(&address.street1)
+                        .item()
+                        .option_fn(
+                            address.street2.is_some(),
+                            |some_builder| {
+                                some_builder.string(address.street2.as_ref().unwrap())
+                            },
+                        )
+                        .item()
+                        .string(&address.city)
+                        .item()
+                        .string(&address.state_or_region)
+                        .item()
+                        .string(&address.country)
+                        .item()
+                        .string(&address.postal_code)
+                        .item()
+                        .option_fn(
+                            address.name.is_some(),
+                            |some_builder| {
+                                some_builder.string(address.name.as_ref().unwrap())
+                            },
+                        )
+                        .item()
+                        .option_fn(
+                            address.business_name.is_some(),
+                            |some_builder| {
+                                some_builder.string(address.business_name.as_ref().unwrap())
+                            },
+                        )
+                        .item()
+                        .option_fn(
+                            address.phone_number.is_some(),
+                            |some_builder| {
+                                some_builder.string(address.phone_number.as_ref().unwrap())
+                            },
+                        )
+                        .finish(),
+                ],
+            );
+        crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureUpdateBillingAddressResult::new(FutureUpdateBillingAddressResult {
+            future_invoke_result: result,
+        })
+    }
+    fn blocking_ship_order(&self) -> Result<(), String> {
+        let result = self
+            .rpc
+            .invoke_and_await("golem:shopping-order/api.{ship-order}", &[])
+            .expect(
+                &format!(
+                    "Failed to invoke-and-await remote {}",
+                    "golem:shopping-order/api.{ship-order}"
+                ),
+            );
+        ({
+            let result = result
+                .tuple_element(0)
+                .expect("tuple not found")
+                .result()
+                .expect("result not found");
+            match result {
+                Ok(ok_value) => Ok(()),
+                Err(err_value) => {
+                    Err(
+                        err_value
+                            .expect("result err value not found")
+                            .string()
+                            .expect("string not found")
+                            .to_string(),
+                    )
+                }
+            }
+        })
+    }
+    fn ship_order(
+        &self,
+    ) -> crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureShipOrderResult {
+        let result = self
+            .rpc
+            .async_invoke_and_await("golem:shopping-order/api.{ship-order}", &[]);
+        crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureShipOrderResult::new(FutureShipOrderResult {
+            future_invoke_result: result,
+        })
+    }
+    fn blocking_cancel_order(&self) -> Result<(), String> {
+        let result = self
+            .rpc
+            .invoke_and_await("golem:shopping-order/api.{cancel-order}", &[])
+            .expect(
+                &format!(
+                    "Failed to invoke-and-await remote {}",
+                    "golem:shopping-order/api.{cancel-order}"
+                ),
+            );
+        ({
+            let result = result
+                .tuple_element(0)
+                .expect("tuple not found")
+                .result()
+                .expect("result not found");
+            match result {
+                Ok(ok_value) => Ok(()),
+                Err(err_value) => {
+                    Err(
+                        err_value
+                            .expect("result err value not found")
+                            .string()
+                            .expect("string not found")
+                            .to_string(),
+                    )
+                }
+            }
+        })
+    }
+    fn cancel_order(
+        &self,
+    ) -> crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureCancelOrderResult {
+        let result = self
+            .rpc
+            .async_invoke_and_await("golem:shopping-order/api.{cancel-order}", &[]);
+        crate::bindings::exports::golem::shopping_order_stub::stub_shopping_order::FutureCancelOrderResult::new(FutureCancelOrderResult {
+            future_invoke_result: result,
+        })
+    }
     fn blocking_get(
         &self,
     ) -> Option<crate::bindings::golem::shopping_order::api::Order> {
@@ -574,7 +1634,7 @@ for Api {
                                 crate::bindings::golem::shopping_order::api::OrderStatus::New
                             }
                             1u32 => {
-                                crate::bindings::golem::shopping_order::api::OrderStatus::Confirmed
+                                crate::bindings::golem::shopping_order::api::OrderStatus::Shipped
                             }
                             2u32 => {
                                 crate::bindings::golem::shopping_order::api::OrderStatus::Cancelled
@@ -613,19 +1673,163 @@ for Api {
                             }
                         })
                         .expect("list not found"),
-                    total: record
+                    billing_address: record
                         .field(4usize)
+                        .expect("record field not found")
+                        .option()
+                        .expect("option not found")
+                        .map(|inner| {
+                            let record = inner;
+                            crate::bindings::golem::shopping_order::api::Address {
+                                street1: record
+                                    .field(0usize)
+                                    .expect("record field not found")
+                                    .string()
+                                    .expect("string not found")
+                                    .to_string(),
+                                street2: record
+                                    .field(1usize)
+                                    .expect("record field not found")
+                                    .option()
+                                    .expect("option not found")
+                                    .map(|inner| {
+                                        inner.string().expect("string not found").to_string()
+                                    }),
+                                city: record
+                                    .field(2usize)
+                                    .expect("record field not found")
+                                    .string()
+                                    .expect("string not found")
+                                    .to_string(),
+                                state_or_region: record
+                                    .field(3usize)
+                                    .expect("record field not found")
+                                    .string()
+                                    .expect("string not found")
+                                    .to_string(),
+                                country: record
+                                    .field(4usize)
+                                    .expect("record field not found")
+                                    .string()
+                                    .expect("string not found")
+                                    .to_string(),
+                                postal_code: record
+                                    .field(5usize)
+                                    .expect("record field not found")
+                                    .string()
+                                    .expect("string not found")
+                                    .to_string(),
+                                name: record
+                                    .field(6usize)
+                                    .expect("record field not found")
+                                    .option()
+                                    .expect("option not found")
+                                    .map(|inner| {
+                                        inner.string().expect("string not found").to_string()
+                                    }),
+                                business_name: record
+                                    .field(7usize)
+                                    .expect("record field not found")
+                                    .option()
+                                    .expect("option not found")
+                                    .map(|inner| {
+                                        inner.string().expect("string not found").to_string()
+                                    }),
+                                phone_number: record
+                                    .field(8usize)
+                                    .expect("record field not found")
+                                    .option()
+                                    .expect("option not found")
+                                    .map(|inner| {
+                                        inner.string().expect("string not found").to_string()
+                                    }),
+                            }
+                        }),
+                    shipping_address: record
+                        .field(5usize)
+                        .expect("record field not found")
+                        .option()
+                        .expect("option not found")
+                        .map(|inner| {
+                            let record = inner;
+                            crate::bindings::golem::shopping_order::api::Address {
+                                street1: record
+                                    .field(0usize)
+                                    .expect("record field not found")
+                                    .string()
+                                    .expect("string not found")
+                                    .to_string(),
+                                street2: record
+                                    .field(1usize)
+                                    .expect("record field not found")
+                                    .option()
+                                    .expect("option not found")
+                                    .map(|inner| {
+                                        inner.string().expect("string not found").to_string()
+                                    }),
+                                city: record
+                                    .field(2usize)
+                                    .expect("record field not found")
+                                    .string()
+                                    .expect("string not found")
+                                    .to_string(),
+                                state_or_region: record
+                                    .field(3usize)
+                                    .expect("record field not found")
+                                    .string()
+                                    .expect("string not found")
+                                    .to_string(),
+                                country: record
+                                    .field(4usize)
+                                    .expect("record field not found")
+                                    .string()
+                                    .expect("string not found")
+                                    .to_string(),
+                                postal_code: record
+                                    .field(5usize)
+                                    .expect("record field not found")
+                                    .string()
+                                    .expect("string not found")
+                                    .to_string(),
+                                name: record
+                                    .field(6usize)
+                                    .expect("record field not found")
+                                    .option()
+                                    .expect("option not found")
+                                    .map(|inner| {
+                                        inner.string().expect("string not found").to_string()
+                                    }),
+                                business_name: record
+                                    .field(7usize)
+                                    .expect("record field not found")
+                                    .option()
+                                    .expect("option not found")
+                                    .map(|inner| {
+                                        inner.string().expect("string not found").to_string()
+                                    }),
+                                phone_number: record
+                                    .field(8usize)
+                                    .expect("record field not found")
+                                    .option()
+                                    .expect("option not found")
+                                    .map(|inner| {
+                                        inner.string().expect("string not found").to_string()
+                                    }),
+                            }
+                        }),
+                    total: record
+                        .field(6usize)
                         .expect("record field not found")
                         .f32()
                         .expect("f32 not found"),
                     currency: record
-                        .field(5usize)
+                        .field(7usize)
                         .expect("record field not found")
                         .string()
                         .expect("string not found")
                         .to_string(),
                     timestamp: record
-                        .field(6usize)
+                        .field(8usize)
                         .expect("record field not found")
                         .u64()
                         .expect("u64 not found"),

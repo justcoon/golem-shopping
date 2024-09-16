@@ -4,6 +4,7 @@ interface stub-shopping-order {
   use golem:rpc/types@0.1.0.{uri as golem-rpc-uri};
   use wasi:io/poll@0.2.0.{pollable as wasi-io-pollable};
   use golem:shopping-order/api.{order-status};
+  use golem:shopping-order/api.{address};
   use golem:shopping-order/api.{order-item};
   use golem:shopping-order/api.{order};
   use golem:shopping-order/api.{create-order};
@@ -17,6 +18,22 @@ interface stub-shopping-order {
     get: func() -> option<result<_, string>>;
   }
   resource future-update-item-quantity-result {
+    subscribe: func() -> wasi-io-pollable;
+    get: func() -> option<result<_, string>>;
+  }
+  resource future-update-shipping-address-result {
+    subscribe: func() -> wasi-io-pollable;
+    get: func() -> option<result<_, string>>;
+  }
+  resource future-update-billing-address-result {
+    subscribe: func() -> wasi-io-pollable;
+    get: func() -> option<result<_, string>>;
+  }
+  resource future-ship-order-result {
+    subscribe: func() -> wasi-io-pollable;
+    get: func() -> option<result<_, string>>;
+  }
+  resource future-cancel-order-result {
     subscribe: func() -> wasi-io-pollable;
     get: func() -> option<result<_, string>>;
   }
@@ -34,6 +51,14 @@ interface stub-shopping-order {
     remove-item: func(product-id: string) -> future-remove-item-result;
     blocking-update-item-quantity: func(product-id: string, quantity: u32) -> result<_, string>;
     update-item-quantity: func(product-id: string, quantity: u32) -> future-update-item-quantity-result;
+    blocking-update-shipping-address: func(address: address) -> result<_, string>;
+    update-shipping-address: func(address: address) -> future-update-shipping-address-result;
+    blocking-update-billing-address: func(address: address) -> result<_, string>;
+    update-billing-address: func(address: address) -> future-update-billing-address-result;
+    blocking-ship-order: func() -> result<_, string>;
+    ship-order: func() -> future-ship-order-result;
+    blocking-cancel-order: func() -> result<_, string>;
+    cancel-order: func() -> future-cancel-order-result;
     blocking-get: func() -> option<order>;
     get: func() -> future-get-result;
   }

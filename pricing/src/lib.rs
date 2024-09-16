@@ -25,6 +25,17 @@ fn with_state<T>(f: impl FnOnce(&mut Pricing) -> T) -> T {
     })
 }
 
+fn get_price(currency: String, zone: String, pricing: Pricing) -> Option<PricingItem> {
+    let list_price =
+        pricing.list_prices.into_iter().find(|x| x.zone == zone && x.currency == currency);
+
+    if list_price.is_some() {
+        list_price
+    } else {
+        pricing.msrp_prices.into_iter().find(|x| x.zone == zone && x.currency == currency)
+    }
+}
+
 impl Guest for Component {
     fn initialize_pricing(msrp_prices: Vec<PricingItem>, list_prices: Vec<PricingItem>) -> () {
         with_state(|state| {
@@ -41,6 +52,12 @@ impl Guest for Component {
     //         state.list_prices = list_prices;
     //     });
     // }
+
+    fn get_price(currency: String, zone: String) -> Option<PricingItem> {
+        STATE.with_borrow(|state| {
+            state.clone().and_then(|pricing| get_price(currency, zone, pricing))
+        })
+    }
 
     fn get() -> Option<Pricing> {
         STATE.with_borrow(|state| {
