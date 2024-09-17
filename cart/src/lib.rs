@@ -8,7 +8,6 @@ use crate::bindings::golem::pricing_stub::stub_pricing::PricingItem;
 use crate::bindings::golem::product_stub::stub_product::Product;
 
 use crate::bindings::golem::order::api::OrderItem;
-use rand::prelude::*;
 use uuid::Uuid;
 
 struct Component;
@@ -64,8 +63,23 @@ fn get_pricing(product_id: String, currency: String, zone: String) -> Option<Pri
     api.blocking_get_price(&currency, &zone)
 }
 
-fn create_order(order_id: String, cart: Cart) -> Result<String, &'static str> {
+fn validate_cart(cart: Cart) -> Result<(), Error> {
+    if cart.items.is_empty() {
+        Err(Error { code: ErrorCode::EmptyItems, message: "Empty items".to_string() })
+    } else if cart.billing_address.is_none() {
+        Err(Error {
+            code: ErrorCode::BillingAddressNotSet,
+            message: "Billing address not set".to_string(),
+        })
+    } else {
+        Ok(())
+    }
+}
+
+fn create_order(order_id: String, cart: Cart) -> Result<String, Error> {
     println!("Creating order: {}", order_id);
+
+    validate_cart(cart.clone())?;
 
     use bindings::golem::order_stub::stub_order::*;
     use bindings::golem::rpc::types::Uri;
@@ -136,6 +150,7 @@ fn with_state<T>(f: impl FnOnce(&mut Cart) -> T) -> T {
                 shipping_address: None,
                 billing_address: None,
                 timestamp: 0,
+                previous_order_ids: vec![],
             };
             *state = Some(value);
         }
@@ -145,10 +160,10 @@ fn with_state<T>(f: impl FnOnce(&mut Cart) -> T) -> T {
 }
 
 impl Guest for Component {
-    fn add_item(product_id: String, quantity: u32) -> Result<(), String> {
+    fn add_item(product_id: String, quantity: u32) -> Result<(), Error> {
         with_state(|state| {
             println!(
-                "Adding item with product ID {} to the cart of user {}",
+                "Adding item with product {} to the cart of user {}",
                 product_id, state.user_id
             );
 
@@ -172,12 +187,18 @@ impl Guest for Component {
                             price: pricing.price,
                             quantity,
                         });
-                    },
+                    }
                     (None, _) => {
-                        return Err("Product not found".to_string());
-                    },
+                        return Err(Error {
+                            code: ErrorCode::ProductNotFound,
+                            message: "Product not found".to_string(),
+                        });
+                    }
                     _ => {
-                        return Err("Pricing not found".to_string());
+                        return Err(Error {
+                            code: ErrorCode::PricingNotFound,
+                            message: "Pricing not found".to_string(),
+                        });
                     }
                 }
             }
@@ -188,38 +209,51 @@ impl Guest for Component {
         })
     }
 
-    fn remove_item(product_id: String) -> Result<(), String> {
+    fn remove_item(product_id: String) -> Result<(), Error> {
         with_state(|state| {
             println!(
-                "Removing item with product ID {} from the cart of user {}",
+                "Removing item with product {} from the cart of user {}",
                 product_id, state.user_id
             );
 
-            state.items.retain(|item| item.product_id != product_id);
-            state.total = get_total_price(state.items.clone());
-            Ok(())
+            if state.items.iter().any(|item| item.product_id == product_id) {
+                state.items.retain(|item| item.product_id != product_id);
+                state.total = get_total_price(state.items.clone());
+                Ok(())
+            } else {
+                Err(Error { code: ErrorCode::ItemNotFound, message: "Item not found".to_string() })
+            }
         })
     }
 
-    fn update_item_quantity(product_id: String, quantity: u32) -> Result<(), String> {
+    fn update_item_quantity(product_id: String, quantity: u32) -> Result<(), Error> {
         with_state(|state| {
             println!(
-                "Updating quantity of item with product ID {} to {} in the cart of user {}",
+                "Updating quantity of item with product {} to {} in the cart of user {}",
                 product_id, quantity, state.user_id
             );
+
+            let mut updated = false;
 
             for item in &mut state.items {
                 if item.product_id == product_id {
                     item.quantity = quantity;
+                    updated = true;
                 }
             }
-            state.total = get_total_price(state.items.clone());
-            Ok(())
+
+            if updated {
+                state.total = get_total_price(state.items.clone());
+
+                Ok(())
+            } else {
+                Err(Error { code: ErrorCode::ItemNotFound, message: "Item not found".to_string() })
+            }
         })
     }
 
-    fn checkout() -> CheckoutResult {
-        let result: Result<OrderConfirmation, &'static str> = with_state(|state| {
+    fn checkout() -> Result<OrderConfirmation, Error> {
+        with_state(|state| {
             let order_id = generate_order_id();
             println!("Checkout for order {}", order_id);
 
@@ -229,19 +263,13 @@ impl Guest for Component {
             state.total = 0f32;
             state.shipping_address = None;
             state.billing_address = None;
+            state.previous_order_ids.push(order_id.clone());
 
             Ok(OrderConfirmation { order_id })
-        });
-
-        match result {
-            Ok(OrderConfirmation { order_id }) => {
-                CheckoutResult::Success(OrderConfirmation { order_id })
-            }
-            Err(err) => CheckoutResult::Error(err.to_string()),
-        }
+        })
     }
 
-    fn update_billing_address(address: Address) -> Result<(), String> {
+    fn update_billing_address(address: Address) -> Result<(), Error> {
         with_state(|state| {
             println!("Updating billing address in the cart of user {}", state.user_id);
 
@@ -250,7 +278,7 @@ impl Guest for Component {
         })
     }
 
-    fn update_shipping_address(address: Address) -> Result<(), String> {
+    fn update_shipping_address(address: Address) -> Result<(), Error> {
         with_state(|state| {
             println!("Updating shipping address in the cart of user {}", state.user_id);
 

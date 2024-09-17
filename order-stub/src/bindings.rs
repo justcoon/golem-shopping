@@ -140,6 +140,75 @@ pub mod golem {
                         .finish()
                 }
             }
+            #[repr(u8)]
+            #[derive(Clone, Copy, Eq, PartialEq)]
+            pub enum ErrorCode {
+                ProductNotFound,
+                PricingNotFound,
+                AddressNotValid,
+                ItemNotFound,
+                ActionNotAllowed,
+            }
+            impl ::core::fmt::Debug for ErrorCode {
+                fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+                    match self {
+                        ErrorCode::ProductNotFound => {
+                            f.debug_tuple("ErrorCode::ProductNotFound").finish()
+                        }
+                        ErrorCode::PricingNotFound => {
+                            f.debug_tuple("ErrorCode::PricingNotFound").finish()
+                        }
+                        ErrorCode::AddressNotValid => {
+                            f.debug_tuple("ErrorCode::AddressNotValid").finish()
+                        }
+                        ErrorCode::ItemNotFound => {
+                            f.debug_tuple("ErrorCode::ItemNotFound").finish()
+                        }
+                        ErrorCode::ActionNotAllowed => {
+                            f.debug_tuple("ErrorCode::ActionNotAllowed").finish()
+                        }
+                    }
+                }
+            }
+
+            impl ErrorCode {
+                #[doc(hidden)]
+                pub unsafe fn _lift(val: u8) -> ErrorCode {
+                    if !cfg!(debug_assertions) {
+                        return ::core::mem::transmute(val);
+                    }
+
+                    match val {
+                        0 => ErrorCode::ProductNotFound,
+                        1 => ErrorCode::PricingNotFound,
+                        2 => ErrorCode::AddressNotValid,
+                        3 => ErrorCode::ItemNotFound,
+                        4 => ErrorCode::ActionNotAllowed,
+
+                        _ => panic!("invalid enum discriminant"),
+                    }
+                }
+            }
+
+            #[derive(Clone)]
+            pub struct Error {
+                pub code: ErrorCode,
+                pub message: _rt::String,
+            }
+            impl ::core::fmt::Debug for Error {
+                fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+                    f.debug_struct("Error")
+                        .field("code", &self.code)
+                        .field("message", &self.message)
+                        .finish()
+                }
+            }
+            impl ::core::fmt::Display for Error {
+                fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+                    write!(f, "{:?}", self)
+                }
+            }
+            impl std::error::Error for Error {}
             #[allow(unused_unsafe, clippy::all)]
             pub fn initialize_order(data: &CreateOrder) {
                 unsafe {
@@ -418,11 +487,11 @@ pub mod golem {
                 }
             }
             #[allow(unused_unsafe, clippy::all)]
-            pub fn add_item(product_id: &str, quantity: u32) -> Result<(), _rt::String> {
+            pub fn add_item(product_id: &str, quantity: u32) -> Result<(), Error> {
                 unsafe {
                     #[repr(align(4))]
-                    struct RetArea([::core::mem::MaybeUninit<u8>; 12]);
-                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 12]);
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 16]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 16]);
                     let vec0 = product_id;
                     let ptr0 = vec0.as_ptr().cast::<u8>();
                     let len0 = vec0.len();
@@ -447,12 +516,16 @@ pub mod golem {
                         }
                         1 => {
                             let e = {
-                                let l3 = *ptr1.add(4).cast::<*mut u8>();
-                                let l4 = *ptr1.add(8).cast::<usize>();
-                                let len5 = l4;
-                                let bytes5 = _rt::Vec::from_raw_parts(l3.cast(), len5, len5);
+                                let l3 = i32::from(*ptr1.add(4).cast::<u8>());
+                                let l4 = *ptr1.add(8).cast::<*mut u8>();
+                                let l5 = *ptr1.add(12).cast::<usize>();
+                                let len6 = l5;
+                                let bytes6 = _rt::Vec::from_raw_parts(l4.cast(), len6, len6);
 
-                                _rt::string_lift(bytes5)
+                                Error {
+                                    code: ErrorCode::_lift(l3 as u8),
+                                    message: _rt::string_lift(bytes6),
+                                }
                             };
                             Err(e)
                         }
@@ -461,11 +534,11 @@ pub mod golem {
                 }
             }
             #[allow(unused_unsafe, clippy::all)]
-            pub fn remove_item(product_id: &str) -> Result<(), _rt::String> {
+            pub fn remove_item(product_id: &str) -> Result<(), Error> {
                 unsafe {
                     #[repr(align(4))]
-                    struct RetArea([::core::mem::MaybeUninit<u8>; 12]);
-                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 12]);
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 16]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 16]);
                     let vec0 = product_id;
                     let ptr0 = vec0.as_ptr().cast::<u8>();
                     let len0 = vec0.len();
@@ -490,12 +563,16 @@ pub mod golem {
                         }
                         1 => {
                             let e = {
-                                let l3 = *ptr1.add(4).cast::<*mut u8>();
-                                let l4 = *ptr1.add(8).cast::<usize>();
-                                let len5 = l4;
-                                let bytes5 = _rt::Vec::from_raw_parts(l3.cast(), len5, len5);
+                                let l3 = i32::from(*ptr1.add(4).cast::<u8>());
+                                let l4 = *ptr1.add(8).cast::<*mut u8>();
+                                let l5 = *ptr1.add(12).cast::<usize>();
+                                let len6 = l5;
+                                let bytes6 = _rt::Vec::from_raw_parts(l4.cast(), len6, len6);
 
-                                _rt::string_lift(bytes5)
+                                Error {
+                                    code: ErrorCode::_lift(l3 as u8),
+                                    message: _rt::string_lift(bytes6),
+                                }
                             };
                             Err(e)
                         }
@@ -504,14 +581,11 @@ pub mod golem {
                 }
             }
             #[allow(unused_unsafe, clippy::all)]
-            pub fn update_item_quantity(
-                product_id: &str,
-                quantity: u32,
-            ) -> Result<(), _rt::String> {
+            pub fn update_item_quantity(product_id: &str, quantity: u32) -> Result<(), Error> {
                 unsafe {
                     #[repr(align(4))]
-                    struct RetArea([::core::mem::MaybeUninit<u8>; 12]);
-                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 12]);
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 16]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 16]);
                     let vec0 = product_id;
                     let ptr0 = vec0.as_ptr().cast::<u8>();
                     let len0 = vec0.len();
@@ -536,12 +610,16 @@ pub mod golem {
                         }
                         1 => {
                             let e = {
-                                let l3 = *ptr1.add(4).cast::<*mut u8>();
-                                let l4 = *ptr1.add(8).cast::<usize>();
-                                let len5 = l4;
-                                let bytes5 = _rt::Vec::from_raw_parts(l3.cast(), len5, len5);
+                                let l3 = i32::from(*ptr1.add(4).cast::<u8>());
+                                let l4 = *ptr1.add(8).cast::<*mut u8>();
+                                let l5 = *ptr1.add(12).cast::<usize>();
+                                let len6 = l5;
+                                let bytes6 = _rt::Vec::from_raw_parts(l4.cast(), len6, len6);
 
-                                _rt::string_lift(bytes5)
+                                Error {
+                                    code: ErrorCode::_lift(l3 as u8),
+                                    message: _rt::string_lift(bytes6),
+                                }
                             };
                             Err(e)
                         }
@@ -550,7 +628,7 @@ pub mod golem {
                 }
             }
             #[allow(unused_unsafe, clippy::all)]
-            pub fn update_shipping_address(address: &Address) -> Result<(), _rt::String> {
+            pub fn update_shipping_address(address: &Address) -> Result<(), Error> {
                 unsafe {
                     #[repr(align(4))]
                     struct RetArea([::core::mem::MaybeUninit<u8>; 88]);
@@ -665,12 +743,16 @@ pub mod golem {
                         }
                         1 => {
                             let e = {
-                                let l13 = *ptr11.add(4).cast::<*mut u8>();
-                                let l14 = *ptr11.add(8).cast::<usize>();
-                                let len15 = l14;
-                                let bytes15 = _rt::Vec::from_raw_parts(l13.cast(), len15, len15);
+                                let l13 = i32::from(*ptr11.add(4).cast::<u8>());
+                                let l14 = *ptr11.add(8).cast::<*mut u8>();
+                                let l15 = *ptr11.add(12).cast::<usize>();
+                                let len16 = l15;
+                                let bytes16 = _rt::Vec::from_raw_parts(l14.cast(), len16, len16);
 
-                                _rt::string_lift(bytes15)
+                                Error {
+                                    code: ErrorCode::_lift(l13 as u8),
+                                    message: _rt::string_lift(bytes16),
+                                }
                             };
                             Err(e)
                         }
@@ -679,7 +761,7 @@ pub mod golem {
                 }
             }
             #[allow(unused_unsafe, clippy::all)]
-            pub fn update_billing_address(address: &Address) -> Result<(), _rt::String> {
+            pub fn update_billing_address(address: &Address) -> Result<(), Error> {
                 unsafe {
                     #[repr(align(4))]
                     struct RetArea([::core::mem::MaybeUninit<u8>; 88]);
@@ -794,12 +876,16 @@ pub mod golem {
                         }
                         1 => {
                             let e = {
-                                let l13 = *ptr11.add(4).cast::<*mut u8>();
-                                let l14 = *ptr11.add(8).cast::<usize>();
-                                let len15 = l14;
-                                let bytes15 = _rt::Vec::from_raw_parts(l13.cast(), len15, len15);
+                                let l13 = i32::from(*ptr11.add(4).cast::<u8>());
+                                let l14 = *ptr11.add(8).cast::<*mut u8>();
+                                let l15 = *ptr11.add(12).cast::<usize>();
+                                let len16 = l15;
+                                let bytes16 = _rt::Vec::from_raw_parts(l14.cast(), len16, len16);
 
-                                _rt::string_lift(bytes15)
+                                Error {
+                                    code: ErrorCode::_lift(l13 as u8),
+                                    message: _rt::string_lift(bytes16),
+                                }
                             };
                             Err(e)
                         }
@@ -808,11 +894,11 @@ pub mod golem {
                 }
             }
             #[allow(unused_unsafe, clippy::all)]
-            pub fn ship_order() -> Result<(), _rt::String> {
+            pub fn ship_order() -> Result<(), Error> {
                 unsafe {
                     #[repr(align(4))]
-                    struct RetArea([::core::mem::MaybeUninit<u8>; 12]);
-                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 12]);
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 16]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 16]);
                     let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                     #[cfg(target_arch = "wasm32")]
                     #[link(wasm_import_module = "golem:order/api")]
@@ -834,12 +920,16 @@ pub mod golem {
                         }
                         1 => {
                             let e = {
-                                let l2 = *ptr0.add(4).cast::<*mut u8>();
-                                let l3 = *ptr0.add(8).cast::<usize>();
-                                let len4 = l3;
-                                let bytes4 = _rt::Vec::from_raw_parts(l2.cast(), len4, len4);
+                                let l2 = i32::from(*ptr0.add(4).cast::<u8>());
+                                let l3 = *ptr0.add(8).cast::<*mut u8>();
+                                let l4 = *ptr0.add(12).cast::<usize>();
+                                let len5 = l4;
+                                let bytes5 = _rt::Vec::from_raw_parts(l3.cast(), len5, len5);
 
-                                _rt::string_lift(bytes4)
+                                Error {
+                                    code: ErrorCode::_lift(l2 as u8),
+                                    message: _rt::string_lift(bytes5),
+                                }
                             };
                             Err(e)
                         }
@@ -848,11 +938,11 @@ pub mod golem {
                 }
             }
             #[allow(unused_unsafe, clippy::all)]
-            pub fn cancel_order() -> Result<(), _rt::String> {
+            pub fn cancel_order() -> Result<(), Error> {
                 unsafe {
                     #[repr(align(4))]
-                    struct RetArea([::core::mem::MaybeUninit<u8>; 12]);
-                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 12]);
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 16]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 16]);
                     let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                     #[cfg(target_arch = "wasm32")]
                     #[link(wasm_import_module = "golem:order/api")]
@@ -874,12 +964,16 @@ pub mod golem {
                         }
                         1 => {
                             let e = {
-                                let l2 = *ptr0.add(4).cast::<*mut u8>();
-                                let l3 = *ptr0.add(8).cast::<usize>();
-                                let len4 = l3;
-                                let bytes4 = _rt::Vec::from_raw_parts(l2.cast(), len4, len4);
+                                let l2 = i32::from(*ptr0.add(4).cast::<u8>());
+                                let l3 = *ptr0.add(8).cast::<*mut u8>();
+                                let l4 = *ptr0.add(12).cast::<usize>();
+                                let len5 = l4;
+                                let bytes5 = _rt::Vec::from_raw_parts(l3.cast(), len5, len5);
 
-                                _rt::string_lift(bytes4)
+                                Error {
+                                    code: ErrorCode::_lift(l2 as u8),
+                                    message: _rt::string_lift(bytes5),
+                                }
                             };
                             Err(e)
                         }
@@ -3653,6 +3747,7 @@ pub mod exports {
                 pub type Address = super::super::super::super::golem::order::api::Address;
                 pub type Order = super::super::super::super::golem::order::api::Order;
                 pub type CreateOrder = super::super::super::super::golem::order::api::CreateOrder;
+                pub type Error = super::super::super::super::golem::order::api::Error;
 
                 #[derive(Debug)]
                 #[repr(transparent)]
@@ -4931,12 +5026,17 @@ pub mod exports {
                                 }
                                 Err(e) => {
                                     *ptr1.add(4).cast::<u8>() = (1i32) as u8;
-                                    let vec2 = (e.into_bytes()).into_boxed_slice();
-                                    let ptr2 = vec2.as_ptr().cast::<u8>();
-                                    let len2 = vec2.len();
-                                    ::core::mem::forget(vec2);
-                                    *ptr1.add(12).cast::<usize>() = len2;
-                                    *ptr1.add(8).cast::<*mut u8>() = ptr2.cast_mut();
+                                    let super::super::super::super::golem::order::api::Error {
+                                        code: code2,
+                                        message: message2,
+                                    } = e;
+                                    *ptr1.add(8).cast::<u8>() = (code2.clone() as i32) as u8;
+                                    let vec3 = (message2.into_bytes()).into_boxed_slice();
+                                    let ptr3 = vec3.as_ptr().cast::<u8>();
+                                    let len3 = vec3.len();
+                                    ::core::mem::forget(vec3);
+                                    *ptr1.add(16).cast::<usize>() = len3;
+                                    *ptr1.add(12).cast::<*mut u8>() = ptr3.cast_mut();
                                 }
                             };
                         }
@@ -4961,8 +5061,8 @@ pub mod exports {
                             match l1 {
                                 0 => (),
                                 _ => {
-                                    let l2 = *arg0.add(8).cast::<*mut u8>();
-                                    let l3 = *arg0.add(12).cast::<usize>();
+                                    let l2 = *arg0.add(12).cast::<*mut u8>();
+                                    let l3 = *arg0.add(16).cast::<usize>();
                                     _rt::cabi_dealloc(l2, l3, 1);
                                 }
                             }
@@ -5004,12 +5104,17 @@ pub mod exports {
                                 }
                                 Err(e) => {
                                     *ptr1.add(4).cast::<u8>() = (1i32) as u8;
-                                    let vec2 = (e.into_bytes()).into_boxed_slice();
-                                    let ptr2 = vec2.as_ptr().cast::<u8>();
-                                    let len2 = vec2.len();
-                                    ::core::mem::forget(vec2);
-                                    *ptr1.add(12).cast::<usize>() = len2;
-                                    *ptr1.add(8).cast::<*mut u8>() = ptr2.cast_mut();
+                                    let super::super::super::super::golem::order::api::Error {
+                                        code: code2,
+                                        message: message2,
+                                    } = e;
+                                    *ptr1.add(8).cast::<u8>() = (code2.clone() as i32) as u8;
+                                    let vec3 = (message2.into_bytes()).into_boxed_slice();
+                                    let ptr3 = vec3.as_ptr().cast::<u8>();
+                                    let len3 = vec3.len();
+                                    ::core::mem::forget(vec3);
+                                    *ptr1.add(16).cast::<usize>() = len3;
+                                    *ptr1.add(12).cast::<*mut u8>() = ptr3.cast_mut();
                                 }
                             };
                         }
@@ -5034,8 +5139,8 @@ pub mod exports {
                             match l1 {
                                 0 => (),
                                 _ => {
-                                    let l2 = *arg0.add(8).cast::<*mut u8>();
-                                    let l3 = *arg0.add(12).cast::<usize>();
+                                    let l2 = *arg0.add(12).cast::<*mut u8>();
+                                    let l3 = *arg0.add(16).cast::<usize>();
                                     _rt::cabi_dealloc(l2, l3, 1);
                                 }
                             }
@@ -5078,12 +5183,17 @@ pub mod exports {
                                 }
                                 Err(e) => {
                                     *ptr1.add(4).cast::<u8>() = (1i32) as u8;
-                                    let vec2 = (e.into_bytes()).into_boxed_slice();
-                                    let ptr2 = vec2.as_ptr().cast::<u8>();
-                                    let len2 = vec2.len();
-                                    ::core::mem::forget(vec2);
-                                    *ptr1.add(12).cast::<usize>() = len2;
-                                    *ptr1.add(8).cast::<*mut u8>() = ptr2.cast_mut();
+                                    let super::super::super::super::golem::order::api::Error {
+                                        code: code2,
+                                        message: message2,
+                                    } = e;
+                                    *ptr1.add(8).cast::<u8>() = (code2.clone() as i32) as u8;
+                                    let vec3 = (message2.into_bytes()).into_boxed_slice();
+                                    let ptr3 = vec3.as_ptr().cast::<u8>();
+                                    let len3 = vec3.len();
+                                    ::core::mem::forget(vec3);
+                                    *ptr1.add(16).cast::<usize>() = len3;
+                                    *ptr1.add(12).cast::<*mut u8>() = ptr3.cast_mut();
                                 }
                             };
                         }
@@ -5108,8 +5218,8 @@ pub mod exports {
                             match l1 {
                                 0 => (),
                                 _ => {
-                                    let l2 = *arg0.add(8).cast::<*mut u8>();
-                                    let l3 = *arg0.add(12).cast::<usize>();
+                                    let l2 = *arg0.add(12).cast::<*mut u8>();
+                                    let l3 = *arg0.add(16).cast::<usize>();
                                     _rt::cabi_dealloc(l2, l3, 1);
                                 }
                             }
@@ -5152,12 +5262,17 @@ pub mod exports {
                                 }
                                 Err(e) => {
                                     *ptr1.add(4).cast::<u8>() = (1i32) as u8;
-                                    let vec2 = (e.into_bytes()).into_boxed_slice();
-                                    let ptr2 = vec2.as_ptr().cast::<u8>();
-                                    let len2 = vec2.len();
-                                    ::core::mem::forget(vec2);
-                                    *ptr1.add(12).cast::<usize>() = len2;
-                                    *ptr1.add(8).cast::<*mut u8>() = ptr2.cast_mut();
+                                    let super::super::super::super::golem::order::api::Error {
+                                        code: code2,
+                                        message: message2,
+                                    } = e;
+                                    *ptr1.add(8).cast::<u8>() = (code2.clone() as i32) as u8;
+                                    let vec3 = (message2.into_bytes()).into_boxed_slice();
+                                    let ptr3 = vec3.as_ptr().cast::<u8>();
+                                    let len3 = vec3.len();
+                                    ::core::mem::forget(vec3);
+                                    *ptr1.add(16).cast::<usize>() = len3;
+                                    *ptr1.add(12).cast::<*mut u8>() = ptr3.cast_mut();
                                 }
                             };
                         }
@@ -5182,8 +5297,8 @@ pub mod exports {
                             match l1 {
                                 0 => (),
                                 _ => {
-                                    let l2 = *arg0.add(8).cast::<*mut u8>();
-                                    let l3 = *arg0.add(12).cast::<usize>();
+                                    let l2 = *arg0.add(12).cast::<*mut u8>();
+                                    let l3 = *arg0.add(16).cast::<usize>();
                                     _rt::cabi_dealloc(l2, l3, 1);
                                 }
                             }
@@ -5226,12 +5341,17 @@ pub mod exports {
                                 }
                                 Err(e) => {
                                     *ptr1.add(4).cast::<u8>() = (1i32) as u8;
-                                    let vec2 = (e.into_bytes()).into_boxed_slice();
-                                    let ptr2 = vec2.as_ptr().cast::<u8>();
-                                    let len2 = vec2.len();
-                                    ::core::mem::forget(vec2);
-                                    *ptr1.add(12).cast::<usize>() = len2;
-                                    *ptr1.add(8).cast::<*mut u8>() = ptr2.cast_mut();
+                                    let super::super::super::super::golem::order::api::Error {
+                                        code: code2,
+                                        message: message2,
+                                    } = e;
+                                    *ptr1.add(8).cast::<u8>() = (code2.clone() as i32) as u8;
+                                    let vec3 = (message2.into_bytes()).into_boxed_slice();
+                                    let ptr3 = vec3.as_ptr().cast::<u8>();
+                                    let len3 = vec3.len();
+                                    ::core::mem::forget(vec3);
+                                    *ptr1.add(16).cast::<usize>() = len3;
+                                    *ptr1.add(12).cast::<*mut u8>() = ptr3.cast_mut();
                                 }
                             };
                         }
@@ -5256,8 +5376,8 @@ pub mod exports {
                             match l1 {
                                 0 => (),
                                 _ => {
-                                    let l2 = *arg0.add(8).cast::<*mut u8>();
-                                    let l3 = *arg0.add(12).cast::<usize>();
+                                    let l2 = *arg0.add(12).cast::<*mut u8>();
+                                    let l3 = *arg0.add(16).cast::<usize>();
                                     _rt::cabi_dealloc(l2, l3, 1);
                                 }
                             }
@@ -5298,12 +5418,17 @@ pub mod exports {
                                 }
                                 Err(e) => {
                                     *ptr1.add(4).cast::<u8>() = (1i32) as u8;
-                                    let vec2 = (e.into_bytes()).into_boxed_slice();
-                                    let ptr2 = vec2.as_ptr().cast::<u8>();
-                                    let len2 = vec2.len();
-                                    ::core::mem::forget(vec2);
-                                    *ptr1.add(12).cast::<usize>() = len2;
-                                    *ptr1.add(8).cast::<*mut u8>() = ptr2.cast_mut();
+                                    let super::super::super::super::golem::order::api::Error {
+                                        code: code2,
+                                        message: message2,
+                                    } = e;
+                                    *ptr1.add(8).cast::<u8>() = (code2.clone() as i32) as u8;
+                                    let vec3 = (message2.into_bytes()).into_boxed_slice();
+                                    let ptr3 = vec3.as_ptr().cast::<u8>();
+                                    let len3 = vec3.len();
+                                    ::core::mem::forget(vec3);
+                                    *ptr1.add(16).cast::<usize>() = len3;
+                                    *ptr1.add(12).cast::<*mut u8>() = ptr3.cast_mut();
                                 }
                             };
                         }
@@ -5328,8 +5453,8 @@ pub mod exports {
                             match l1 {
                                 0 => (),
                                 _ => {
-                                    let l2 = *arg0.add(8).cast::<*mut u8>();
-                                    let l3 = *arg0.add(12).cast::<usize>();
+                                    let l2 = *arg0.add(12).cast::<*mut u8>();
+                                    let l3 = *arg0.add(16).cast::<usize>();
                                     _rt::cabi_dealloc(l2, l3, 1);
                                 }
                             }
@@ -5371,12 +5496,17 @@ pub mod exports {
                                 }
                                 Err(e) => {
                                     *ptr1.add(4).cast::<u8>() = (1i32) as u8;
-                                    let vec2 = (e.into_bytes()).into_boxed_slice();
-                                    let ptr2 = vec2.as_ptr().cast::<u8>();
-                                    let len2 = vec2.len();
-                                    ::core::mem::forget(vec2);
-                                    *ptr1.add(12).cast::<usize>() = len2;
-                                    *ptr1.add(8).cast::<*mut u8>() = ptr2.cast_mut();
+                                    let super::super::super::super::golem::order::api::Error {
+                                        code: code2,
+                                        message: message2,
+                                    } = e;
+                                    *ptr1.add(8).cast::<u8>() = (code2.clone() as i32) as u8;
+                                    let vec3 = (message2.into_bytes()).into_boxed_slice();
+                                    let ptr3 = vec3.as_ptr().cast::<u8>();
+                                    let len3 = vec3.len();
+                                    ::core::mem::forget(vec3);
+                                    *ptr1.add(16).cast::<usize>() = len3;
+                                    *ptr1.add(12).cast::<*mut u8>() = ptr3.cast_mut();
                                 }
                             };
                         }
@@ -5401,8 +5531,8 @@ pub mod exports {
                             match l1 {
                                 0 => (),
                                 _ => {
-                                    let l2 = *arg0.add(8).cast::<*mut u8>();
-                                    let l3 = *arg0.add(12).cast::<usize>();
+                                    let l2 = *arg0.add(12).cast::<*mut u8>();
+                                    let l3 = *arg0.add(16).cast::<usize>();
                                     _rt::cabi_dealloc(l2, l3, 1);
                                 }
                             }
@@ -6531,12 +6661,17 @@ pub mod exports {
                         }
                         Err(e) => {
                             *ptr2.add(0).cast::<u8>() = (1i32) as u8;
-                            let vec3 = (e.into_bytes()).into_boxed_slice();
-                            let ptr3 = vec3.as_ptr().cast::<u8>();
-                            let len3 = vec3.len();
-                            ::core::mem::forget(vec3);
-                            *ptr2.add(8).cast::<usize>() = len3;
-                            *ptr2.add(4).cast::<*mut u8>() = ptr3.cast_mut();
+                            let super::super::super::super::golem::order::api::Error {
+                                code: code3,
+                                message: message3,
+                            } = e;
+                            *ptr2.add(4).cast::<u8>() = (code3.clone() as i32) as u8;
+                            let vec4 = (message3.into_bytes()).into_boxed_slice();
+                            let ptr4 = vec4.as_ptr().cast::<u8>();
+                            let len4 = vec4.len();
+                            ::core::mem::forget(vec4);
+                            *ptr2.add(12).cast::<usize>() = len4;
+                            *ptr2.add(8).cast::<*mut u8>() = ptr4.cast_mut();
                         }
                     };
                     ptr2
@@ -6550,8 +6685,8 @@ pub mod exports {
                     match l0 {
                         0 => (),
                         _ => {
-                            let l1 = *arg0.add(4).cast::<*mut u8>();
-                            let l2 = *arg0.add(8).cast::<usize>();
+                            let l1 = *arg0.add(8).cast::<*mut u8>();
+                            let l2 = *arg0.add(12).cast::<usize>();
                             _rt::cabi_dealloc(l1, l2, 1);
                         }
                     }
@@ -6597,12 +6732,17 @@ pub mod exports {
                         }
                         Err(e) => {
                             *ptr2.add(0).cast::<u8>() = (1i32) as u8;
-                            let vec3 = (e.into_bytes()).into_boxed_slice();
-                            let ptr3 = vec3.as_ptr().cast::<u8>();
-                            let len3 = vec3.len();
-                            ::core::mem::forget(vec3);
-                            *ptr2.add(8).cast::<usize>() = len3;
-                            *ptr2.add(4).cast::<*mut u8>() = ptr3.cast_mut();
+                            let super::super::super::super::golem::order::api::Error {
+                                code: code3,
+                                message: message3,
+                            } = e;
+                            *ptr2.add(4).cast::<u8>() = (code3.clone() as i32) as u8;
+                            let vec4 = (message3.into_bytes()).into_boxed_slice();
+                            let ptr4 = vec4.as_ptr().cast::<u8>();
+                            let len4 = vec4.len();
+                            ::core::mem::forget(vec4);
+                            *ptr2.add(12).cast::<usize>() = len4;
+                            *ptr2.add(8).cast::<*mut u8>() = ptr4.cast_mut();
                         }
                     };
                     ptr2
@@ -6616,8 +6756,8 @@ pub mod exports {
                     match l0 {
                         0 => (),
                         _ => {
-                            let l1 = *arg0.add(4).cast::<*mut u8>();
-                            let l2 = *arg0.add(8).cast::<usize>();
+                            let l1 = *arg0.add(8).cast::<*mut u8>();
+                            let l2 = *arg0.add(12).cast::<usize>();
                             _rt::cabi_dealloc(l1, l2, 1);
                         }
                     }
@@ -6663,12 +6803,17 @@ pub mod exports {
                         }
                         Err(e) => {
                             *ptr2.add(0).cast::<u8>() = (1i32) as u8;
-                            let vec3 = (e.into_bytes()).into_boxed_slice();
-                            let ptr3 = vec3.as_ptr().cast::<u8>();
-                            let len3 = vec3.len();
-                            ::core::mem::forget(vec3);
-                            *ptr2.add(8).cast::<usize>() = len3;
-                            *ptr2.add(4).cast::<*mut u8>() = ptr3.cast_mut();
+                            let super::super::super::super::golem::order::api::Error {
+                                code: code3,
+                                message: message3,
+                            } = e;
+                            *ptr2.add(4).cast::<u8>() = (code3.clone() as i32) as u8;
+                            let vec4 = (message3.into_bytes()).into_boxed_slice();
+                            let ptr4 = vec4.as_ptr().cast::<u8>();
+                            let len4 = vec4.len();
+                            ::core::mem::forget(vec4);
+                            *ptr2.add(12).cast::<usize>() = len4;
+                            *ptr2.add(8).cast::<*mut u8>() = ptr4.cast_mut();
                         }
                     };
                     ptr2
@@ -6684,8 +6829,8 @@ pub mod exports {
                     match l0 {
                         0 => (),
                         _ => {
-                            let l1 = *arg0.add(4).cast::<*mut u8>();
-                            let l2 = *arg0.add(8).cast::<usize>();
+                            let l1 = *arg0.add(8).cast::<*mut u8>();
+                            let l2 = *arg0.add(12).cast::<usize>();
                             _rt::cabi_dealloc(l1, l2, 1);
                         }
                     }
@@ -6825,12 +6970,17 @@ pub mod exports {
                         }
                         Err(e) => {
                             *ptr33.add(0).cast::<u8>() = (1i32) as u8;
-                            let vec34 = (e.into_bytes()).into_boxed_slice();
-                            let ptr34 = vec34.as_ptr().cast::<u8>();
-                            let len34 = vec34.len();
-                            ::core::mem::forget(vec34);
-                            *ptr33.add(8).cast::<usize>() = len34;
-                            *ptr33.add(4).cast::<*mut u8>() = ptr34.cast_mut();
+                            let super::super::super::super::golem::order::api::Error {
+                                code: code34,
+                                message: message34,
+                            } = e;
+                            *ptr33.add(4).cast::<u8>() = (code34.clone() as i32) as u8;
+                            let vec35 = (message34.into_bytes()).into_boxed_slice();
+                            let ptr35 = vec35.as_ptr().cast::<u8>();
+                            let len35 = vec35.len();
+                            ::core::mem::forget(vec35);
+                            *ptr33.add(12).cast::<usize>() = len35;
+                            *ptr33.add(8).cast::<*mut u8>() = ptr35.cast_mut();
                         }
                     };
                     ptr33
@@ -6846,8 +6996,8 @@ pub mod exports {
                     match l0 {
                         0 => (),
                         _ => {
-                            let l1 = *arg0.add(4).cast::<*mut u8>();
-                            let l2 = *arg0.add(8).cast::<usize>();
+                            let l1 = *arg0.add(8).cast::<*mut u8>();
+                            let l2 = *arg0.add(12).cast::<usize>();
                             _rt::cabi_dealloc(l1, l2, 1);
                         }
                     }
@@ -7077,12 +7227,17 @@ pub mod exports {
                         }
                         Err(e) => {
                             *ptr33.add(0).cast::<u8>() = (1i32) as u8;
-                            let vec34 = (e.into_bytes()).into_boxed_slice();
-                            let ptr34 = vec34.as_ptr().cast::<u8>();
-                            let len34 = vec34.len();
-                            ::core::mem::forget(vec34);
-                            *ptr33.add(8).cast::<usize>() = len34;
-                            *ptr33.add(4).cast::<*mut u8>() = ptr34.cast_mut();
+                            let super::super::super::super::golem::order::api::Error {
+                                code: code34,
+                                message: message34,
+                            } = e;
+                            *ptr33.add(4).cast::<u8>() = (code34.clone() as i32) as u8;
+                            let vec35 = (message34.into_bytes()).into_boxed_slice();
+                            let ptr35 = vec35.as_ptr().cast::<u8>();
+                            let len35 = vec35.len();
+                            ::core::mem::forget(vec35);
+                            *ptr33.add(12).cast::<usize>() = len35;
+                            *ptr33.add(8).cast::<*mut u8>() = ptr35.cast_mut();
                         }
                     };
                     ptr33
@@ -7098,8 +7253,8 @@ pub mod exports {
                     match l0 {
                         0 => (),
                         _ => {
-                            let l1 = *arg0.add(4).cast::<*mut u8>();
-                            let l2 = *arg0.add(8).cast::<usize>();
+                            let l1 = *arg0.add(8).cast::<*mut u8>();
+                            let l2 = *arg0.add(12).cast::<usize>();
                             _rt::cabi_dealloc(l1, l2, 1);
                         }
                     }
@@ -7229,12 +7384,17 @@ pub mod exports {
                         }
                         Err(e) => {
                             *ptr1.add(0).cast::<u8>() = (1i32) as u8;
-                            let vec2 = (e.into_bytes()).into_boxed_slice();
-                            let ptr2 = vec2.as_ptr().cast::<u8>();
-                            let len2 = vec2.len();
-                            ::core::mem::forget(vec2);
-                            *ptr1.add(8).cast::<usize>() = len2;
-                            *ptr1.add(4).cast::<*mut u8>() = ptr2.cast_mut();
+                            let super::super::super::super::golem::order::api::Error {
+                                code: code2,
+                                message: message2,
+                            } = e;
+                            *ptr1.add(4).cast::<u8>() = (code2.clone() as i32) as u8;
+                            let vec3 = (message2.into_bytes()).into_boxed_slice();
+                            let ptr3 = vec3.as_ptr().cast::<u8>();
+                            let len3 = vec3.len();
+                            ::core::mem::forget(vec3);
+                            *ptr1.add(12).cast::<usize>() = len3;
+                            *ptr1.add(8).cast::<*mut u8>() = ptr3.cast_mut();
                         }
                     };
                     ptr1
@@ -7248,8 +7408,8 @@ pub mod exports {
                     match l0 {
                         0 => (),
                         _ => {
-                            let l1 = *arg0.add(4).cast::<*mut u8>();
-                            let l2 = *arg0.add(8).cast::<usize>();
+                            let l1 = *arg0.add(8).cast::<*mut u8>();
+                            let l2 = *arg0.add(12).cast::<usize>();
                             _rt::cabi_dealloc(l1, l2, 1);
                         }
                     }
@@ -7280,12 +7440,17 @@ pub mod exports {
                         }
                         Err(e) => {
                             *ptr1.add(0).cast::<u8>() = (1i32) as u8;
-                            let vec2 = (e.into_bytes()).into_boxed_slice();
-                            let ptr2 = vec2.as_ptr().cast::<u8>();
-                            let len2 = vec2.len();
-                            ::core::mem::forget(vec2);
-                            *ptr1.add(8).cast::<usize>() = len2;
-                            *ptr1.add(4).cast::<*mut u8>() = ptr2.cast_mut();
+                            let super::super::super::super::golem::order::api::Error {
+                                code: code2,
+                                message: message2,
+                            } = e;
+                            *ptr1.add(4).cast::<u8>() = (code2.clone() as i32) as u8;
+                            let vec3 = (message2.into_bytes()).into_boxed_slice();
+                            let ptr3 = vec3.as_ptr().cast::<u8>();
+                            let len3 = vec3.len();
+                            ::core::mem::forget(vec3);
+                            *ptr1.add(12).cast::<usize>() = len3;
+                            *ptr1.add(8).cast::<*mut u8>() = ptr3.cast_mut();
                         }
                     };
                     ptr1
@@ -7299,8 +7464,8 @@ pub mod exports {
                     match l0 {
                         0 => (),
                         _ => {
-                            let l1 = *arg0.add(4).cast::<*mut u8>();
-                            let l2 = *arg0.add(8).cast::<usize>();
+                            let l1 = *arg0.add(8).cast::<*mut u8>();
+                            let l2 = *arg0.add(12).cast::<usize>();
                             _rt::cabi_dealloc(l1, l2, 1);
                         }
                     }
@@ -7832,7 +7997,7 @@ pub mod exports {
                     }
 
                     fn subscribe(&self) -> WasiIoPollable;
-                    fn get(&self) -> Option<Result<(), _rt::String>>;
+                    fn get(&self) -> Option<Result<(), Error>>;
                 }
                 pub trait GuestFutureRemoveItemResult: 'static {
                     #[doc(hidden)]
@@ -7880,7 +8045,7 @@ pub mod exports {
                     }
 
                     fn subscribe(&self) -> WasiIoPollable;
-                    fn get(&self) -> Option<Result<(), _rt::String>>;
+                    fn get(&self) -> Option<Result<(), Error>>;
                 }
                 pub trait GuestFutureUpdateItemQuantityResult: 'static {
                     #[doc(hidden)]
@@ -7928,7 +8093,7 @@ pub mod exports {
                     }
 
                     fn subscribe(&self) -> WasiIoPollable;
-                    fn get(&self) -> Option<Result<(), _rt::String>>;
+                    fn get(&self) -> Option<Result<(), Error>>;
                 }
                 pub trait GuestFutureUpdateShippingAddressResult: 'static {
                     #[doc(hidden)]
@@ -7976,7 +8141,7 @@ pub mod exports {
                     }
 
                     fn subscribe(&self) -> WasiIoPollable;
-                    fn get(&self) -> Option<Result<(), _rt::String>>;
+                    fn get(&self) -> Option<Result<(), Error>>;
                 }
                 pub trait GuestFutureUpdateBillingAddressResult: 'static {
                     #[doc(hidden)]
@@ -8024,7 +8189,7 @@ pub mod exports {
                     }
 
                     fn subscribe(&self) -> WasiIoPollable;
-                    fn get(&self) -> Option<Result<(), _rt::String>>;
+                    fn get(&self) -> Option<Result<(), Error>>;
                 }
                 pub trait GuestFutureShipOrderResult: 'static {
                     #[doc(hidden)]
@@ -8072,7 +8237,7 @@ pub mod exports {
                     }
 
                     fn subscribe(&self) -> WasiIoPollable;
-                    fn get(&self) -> Option<Result<(), _rt::String>>;
+                    fn get(&self) -> Option<Result<(), Error>>;
                 }
                 pub trait GuestFutureCancelOrderResult: 'static {
                     #[doc(hidden)]
@@ -8120,7 +8285,7 @@ pub mod exports {
                     }
 
                     fn subscribe(&self) -> WasiIoPollable;
-                    fn get(&self) -> Option<Result<(), _rt::String>>;
+                    fn get(&self) -> Option<Result<(), Error>>;
                 }
                 pub trait GuestFutureGetResult: 'static {
                     #[doc(hidden)]
@@ -8222,22 +8387,19 @@ pub mod exports {
                         &self,
                         product_id: _rt::String,
                         quantity: u32,
-                    ) -> Result<(), _rt::String>;
+                    ) -> Result<(), Error>;
                     fn add_item(
                         &self,
                         product_id: _rt::String,
                         quantity: u32,
                     ) -> FutureAddItemResult;
-                    fn blocking_remove_item(
-                        &self,
-                        product_id: _rt::String,
-                    ) -> Result<(), _rt::String>;
+                    fn blocking_remove_item(&self, product_id: _rt::String) -> Result<(), Error>;
                     fn remove_item(&self, product_id: _rt::String) -> FutureRemoveItemResult;
                     fn blocking_update_item_quantity(
                         &self,
                         product_id: _rt::String,
                         quantity: u32,
-                    ) -> Result<(), _rt::String>;
+                    ) -> Result<(), Error>;
                     fn update_item_quantity(
                         &self,
                         product_id: _rt::String,
@@ -8246,7 +8408,7 @@ pub mod exports {
                     fn blocking_update_shipping_address(
                         &self,
                         address: Address,
-                    ) -> Result<(), _rt::String>;
+                    ) -> Result<(), Error>;
                     fn update_shipping_address(
                         &self,
                         address: Address,
@@ -8254,14 +8416,14 @@ pub mod exports {
                     fn blocking_update_billing_address(
                         &self,
                         address: Address,
-                    ) -> Result<(), _rt::String>;
+                    ) -> Result<(), Error>;
                     fn update_billing_address(
                         &self,
                         address: Address,
                     ) -> FutureUpdateBillingAddressResult;
-                    fn blocking_ship_order(&self) -> Result<(), _rt::String>;
+                    fn blocking_ship_order(&self) -> Result<(), Error>;
                     fn ship_order(&self) -> FutureShipOrderResult;
-                    fn blocking_cancel_order(&self) -> Result<(), _rt::String>;
+                    fn blocking_cancel_order(&self) -> Result<(), Error>;
                     fn cancel_order(&self) -> FutureCancelOrderResult;
                     fn blocking_get(&self) -> Option<Order>;
                     fn get(&self) -> FutureGetResult;
@@ -8908,8 +9070,8 @@ pub(crate) use __export_wasm_rpc_stub_order_impl as export;
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.25.0:wasm-rpc-stub-order:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 4547] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xb9\"\x01A\x02\x01A\x0f\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 4747] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\x81$\x01A\x02\x01A\x11\
 \x01B\x0a\x04\0\x08pollable\x03\x01\x01h\0\x01@\x01\x04self\x01\0\x7f\x04\0\x16[\
 method]pollable.ready\x01\x02\x01@\x01\x04self\x01\x01\0\x04\0\x16[method]pollab\
 le.block\x01\x03\x01p\x01\x01py\x01@\x01\x02in\x04\0\x05\x04\0\x04poll\x01\x06\x03\
@@ -8934,7 +9096,7 @@ c.invoke\x01\x1c\x01i\x14\x01@\x03\x04self\x17\x0dfunction-names\x0ffunction-par
 ams\x18\0\x1d\x04\0'[method]wasm-rpc.async-invoke-and-await\x01\x1e\x01h\x14\x01\
 i\x01\x01@\x01\x04self\x1f\0\x20\x04\0&[method]future-invoke-result.subscribe\x01\
 !\x01k\x19\x01@\x01\x04self\x1f\0\"\x04\0\x20[method]future-invoke-result.get\x01\
-#\x03\x01\x15golem:rpc/types@0.1.0\x05\x02\x01B\x1e\x01m\x03\x03new\x07shipped\x09\
+#\x03\x01\x15golem:rpc/types@0.1.0\x05\x02\x01B\"\x01m\x03\x03new\x07shipped\x09\
 cancelled\x04\0\x0corder-status\x03\0\0\x01ks\x01r\x09\x07street1s\x07street2\x02\
 \x04citys\x0fstate-or-regions\x07countrys\x0bpostal-codes\x04name\x02\x0dbusines\
 s-name\x02\x0cphone-number\x02\x04\0\x07address\x03\0\x03\x01r\x04\x0aproduct-id\
@@ -8943,62 +9105,66 @@ s\x04names\x05pricev\x08quantityy\x04\0\x0aorder-item\x03\0\x05\x01p\x06\x01k\x0
 ddress\x08\x10shipping-address\x08\x05totalv\x08currencys\x09timestampw\x04\0\x05\
 order\x03\0\x09\x01r\x07\x07user-ids\x05items\x07\x0fbilling-address\x08\x10ship\
 ping-address\x08\x05totalv\x08currencys\x09timestampw\x04\0\x0ccreate-order\x03\0\
-\x0b\x01@\x01\x04data\x0c\x01\0\x04\0\x10initialize-order\x01\x0d\x01j\0\x01s\x01\
-@\x02\x0aproduct-ids\x08quantityy\0\x0e\x04\0\x08add-item\x01\x0f\x01@\x01\x0apr\
-oduct-ids\0\x0e\x04\0\x0bremove-item\x01\x10\x04\0\x14update-item-quantity\x01\x0f\
-\x01@\x01\x07address\x04\0\x0e\x04\0\x17update-shipping-address\x01\x11\x04\0\x16\
-update-billing-address\x01\x11\x01@\0\0\x0e\x04\0\x0aship-order\x01\x12\x04\0\x0c\
-cancel-order\x01\x12\x01k\x0a\x01@\0\0\x13\x04\0\x03get\x01\x14\x03\x01\x0fgolem\
-:order/api\x05\x03\x02\x03\0\x01\x03uri\x02\x03\0\x02\x0corder-status\x02\x03\0\x02\
-\x07address\x02\x03\0\x02\x0aorder-item\x02\x03\0\x02\x05order\x02\x03\0\x02\x0c\
-create-order\x01Bp\x02\x03\x02\x01\x04\x04\0\x0dgolem-rpc-uri\x03\0\0\x02\x03\x02\
-\x01\x01\x04\0\x10wasi-io-pollable\x03\0\x02\x02\x03\x02\x01\x05\x04\0\x0corder-\
-status\x03\0\x04\x02\x03\x02\x01\x06\x04\0\x07address\x03\0\x06\x02\x03\x02\x01\x07\
-\x04\0\x0aorder-item\x03\0\x08\x02\x03\x02\x01\x08\x04\0\x05order\x03\0\x0a\x02\x03\
-\x02\x01\x09\x04\0\x0ccreate-order\x03\0\x0c\x04\0\x16future-add-item-result\x03\
-\x01\x04\0\x19future-remove-item-result\x03\x01\x04\0\"future-update-item-quanti\
-ty-result\x03\x01\x04\0%future-update-shipping-address-result\x03\x01\x04\0$futu\
-re-update-billing-address-result\x03\x01\x04\0\x18future-ship-order-result\x03\x01\
-\x04\0\x1afuture-cancel-order-result\x03\x01\x04\0\x11future-get-result\x03\x01\x04\
-\0\x03api\x03\x01\x01h\x0e\x01i\x03\x01@\x01\x04self\x17\0\x18\x04\0([method]fut\
-ure-add-item-result.subscribe\x01\x19\x01j\0\x01s\x01k\x1a\x01@\x01\x04self\x17\0\
-\x1b\x04\0\"[method]future-add-item-result.get\x01\x1c\x01h\x0f\x01@\x01\x04self\
-\x1d\0\x18\x04\0+[method]future-remove-item-result.subscribe\x01\x1e\x01@\x01\x04\
-self\x1d\0\x1b\x04\0%[method]future-remove-item-result.get\x01\x1f\x01h\x10\x01@\
-\x01\x04self\x20\0\x18\x04\04[method]future-update-item-quantity-result.subscrib\
-e\x01!\x01@\x01\x04self\x20\0\x1b\x04\0.[method]future-update-item-quantity-resu\
-lt.get\x01\"\x01h\x11\x01@\x01\x04self#\0\x18\x04\07[method]future-update-shippi\
-ng-address-result.subscribe\x01$\x01@\x01\x04self#\0\x1b\x04\01[method]future-up\
-date-shipping-address-result.get\x01%\x01h\x12\x01@\x01\x04self&\0\x18\x04\06[me\
-thod]future-update-billing-address-result.subscribe\x01'\x01@\x01\x04self&\0\x1b\
-\x04\00[method]future-update-billing-address-result.get\x01(\x01h\x13\x01@\x01\x04\
-self)\0\x18\x04\0*[method]future-ship-order-result.subscribe\x01*\x01@\x01\x04se\
-lf)\0\x1b\x04\0$[method]future-ship-order-result.get\x01+\x01h\x14\x01@\x01\x04s\
-elf,\0\x18\x04\0,[method]future-cancel-order-result.subscribe\x01-\x01@\x01\x04s\
-elf,\0\x1b\x04\0&[method]future-cancel-order-result.get\x01.\x01h\x15\x01@\x01\x04\
-self/\0\x18\x04\0#[method]future-get-result.subscribe\x010\x01k\x0b\x01k1\x01@\x01\
-\x04self/\02\x04\0\x1d[method]future-get-result.get\x013\x01i\x16\x01@\x01\x08lo\
-cation\x01\04\x04\0\x10[constructor]api\x015\x01h\x16\x01@\x02\x04self6\x04data\x0d\
-\x01\0\x04\0%[method]api.blocking-initialize-order\x017\x04\0\x1c[method]api.ini\
-tialize-order\x017\x01@\x03\x04self6\x0aproduct-ids\x08quantityy\0\x1a\x04\0\x1d\
-[method]api.blocking-add-item\x018\x01i\x0e\x01@\x03\x04self6\x0aproduct-ids\x08\
-quantityy\09\x04\0\x14[method]api.add-item\x01:\x01@\x02\x04self6\x0aproduct-ids\
-\0\x1a\x04\0\x20[method]api.blocking-remove-item\x01;\x01i\x0f\x01@\x02\x04self6\
-\x0aproduct-ids\0<\x04\0\x17[method]api.remove-item\x01=\x04\0)[method]api.block\
-ing-update-item-quantity\x018\x01i\x10\x01@\x03\x04self6\x0aproduct-ids\x08quant\
-ityy\0>\x04\0\x20[method]api.update-item-quantity\x01?\x01@\x02\x04self6\x07addr\
-ess\x07\0\x1a\x04\0,[method]api.blocking-update-shipping-address\x01@\x01i\x11\x01\
-@\x02\x04self6\x07address\x07\0\xc1\0\x04\0#[method]api.update-shipping-address\x01\
-B\x04\0+[method]api.blocking-update-billing-address\x01@\x01i\x12\x01@\x02\x04se\
-lf6\x07address\x07\0\xc3\0\x04\0\"[method]api.update-billing-address\x01D\x01@\x01\
-\x04self6\0\x1a\x04\0\x1f[method]api.blocking-ship-order\x01E\x01i\x13\x01@\x01\x04\
-self6\0\xc6\0\x04\0\x16[method]api.ship-order\x01G\x04\0![method]api.blocking-ca\
-ncel-order\x01E\x01i\x14\x01@\x01\x04self6\0\xc8\0\x04\0\x18[method]api.cancel-o\
-rder\x01I\x01@\x01\x04self6\01\x04\0\x18[method]api.blocking-get\x01J\x01i\x15\x01\
-@\x01\x04self6\0\xcb\0\x04\0\x0f[method]api.get\x01L\x04\x01\x1bgolem:order-stub\
-/stub-order\x05\x0a\x04\x01$golem:order-stub/wasm-rpc-stub-order\x04\0\x0b\x19\x01\
-\0\x13wasm-rpc-stub-order\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit\
--component\x070.208.1\x10wit-bindgen-rust\x060.25.0";
+\x0b\x01m\x05\x11product-not-found\x11pricing-not-found\x11address-not-valid\x0e\
+item-not-found\x12action-not-allowed\x04\0\x0aerror-code\x03\0\x0d\x01r\x02\x04c\
+ode\x0e\x07messages\x04\0\x05error\x03\0\x0f\x01@\x01\x04data\x0c\x01\0\x04\0\x10\
+initialize-order\x01\x11\x01j\0\x01\x10\x01@\x02\x0aproduct-ids\x08quantityy\0\x12\
+\x04\0\x08add-item\x01\x13\x01@\x01\x0aproduct-ids\0\x12\x04\0\x0bremove-item\x01\
+\x14\x04\0\x14update-item-quantity\x01\x13\x01@\x01\x07address\x04\0\x12\x04\0\x17\
+update-shipping-address\x01\x15\x04\0\x16update-billing-address\x01\x15\x01@\0\0\
+\x12\x04\0\x0aship-order\x01\x16\x04\0\x0ccancel-order\x01\x16\x01k\x0a\x01@\0\0\
+\x17\x04\0\x03get\x01\x18\x03\x01\x0fgolem:order/api\x05\x03\x02\x03\0\x01\x03ur\
+i\x02\x03\0\x02\x0corder-status\x02\x03\0\x02\x07address\x02\x03\0\x02\x0aorder-\
+item\x02\x03\0\x02\x05order\x02\x03\0\x02\x0ccreate-order\x02\x03\0\x02\x0aerror\
+-code\x02\x03\0\x02\x05error\x01Bt\x02\x03\x02\x01\x04\x04\0\x0dgolem-rpc-uri\x03\
+\0\0\x02\x03\x02\x01\x01\x04\0\x10wasi-io-pollable\x03\0\x02\x02\x03\x02\x01\x05\
+\x04\0\x0corder-status\x03\0\x04\x02\x03\x02\x01\x06\x04\0\x07address\x03\0\x06\x02\
+\x03\x02\x01\x07\x04\0\x0aorder-item\x03\0\x08\x02\x03\x02\x01\x08\x04\0\x05orde\
+r\x03\0\x0a\x02\x03\x02\x01\x09\x04\0\x0ccreate-order\x03\0\x0c\x02\x03\x02\x01\x0a\
+\x04\0\x0aerror-code\x03\0\x0e\x02\x03\x02\x01\x0b\x04\0\x05error\x03\0\x10\x04\0\
+\x16future-add-item-result\x03\x01\x04\0\x19future-remove-item-result\x03\x01\x04\
+\0\"future-update-item-quantity-result\x03\x01\x04\0%future-update-shipping-addr\
+ess-result\x03\x01\x04\0$future-update-billing-address-result\x03\x01\x04\0\x18f\
+uture-ship-order-result\x03\x01\x04\0\x1afuture-cancel-order-result\x03\x01\x04\0\
+\x11future-get-result\x03\x01\x04\0\x03api\x03\x01\x01h\x12\x01i\x03\x01@\x01\x04\
+self\x1b\0\x1c\x04\0([method]future-add-item-result.subscribe\x01\x1d\x01j\0\x01\
+\x11\x01k\x1e\x01@\x01\x04self\x1b\0\x1f\x04\0\"[method]future-add-item-result.g\
+et\x01\x20\x01h\x13\x01@\x01\x04self!\0\x1c\x04\0+[method]future-remove-item-res\
+ult.subscribe\x01\"\x01@\x01\x04self!\0\x1f\x04\0%[method]future-remove-item-res\
+ult.get\x01#\x01h\x14\x01@\x01\x04self$\0\x1c\x04\04[method]future-update-item-q\
+uantity-result.subscribe\x01%\x01@\x01\x04self$\0\x1f\x04\0.[method]future-updat\
+e-item-quantity-result.get\x01&\x01h\x15\x01@\x01\x04self'\0\x1c\x04\07[method]f\
+uture-update-shipping-address-result.subscribe\x01(\x01@\x01\x04self'\0\x1f\x04\0\
+1[method]future-update-shipping-address-result.get\x01)\x01h\x16\x01@\x01\x04sel\
+f*\0\x1c\x04\06[method]future-update-billing-address-result.subscribe\x01+\x01@\x01\
+\x04self*\0\x1f\x04\00[method]future-update-billing-address-result.get\x01,\x01h\
+\x17\x01@\x01\x04self-\0\x1c\x04\0*[method]future-ship-order-result.subscribe\x01\
+.\x01@\x01\x04self-\0\x1f\x04\0$[method]future-ship-order-result.get\x01/\x01h\x18\
+\x01@\x01\x04self0\0\x1c\x04\0,[method]future-cancel-order-result.subscribe\x011\
+\x01@\x01\x04self0\0\x1f\x04\0&[method]future-cancel-order-result.get\x012\x01h\x19\
+\x01@\x01\x04self3\0\x1c\x04\0#[method]future-get-result.subscribe\x014\x01k\x0b\
+\x01k5\x01@\x01\x04self3\06\x04\0\x1d[method]future-get-result.get\x017\x01i\x1a\
+\x01@\x01\x08location\x01\08\x04\0\x10[constructor]api\x019\x01h\x1a\x01@\x02\x04\
+self:\x04data\x0d\x01\0\x04\0%[method]api.blocking-initialize-order\x01;\x04\0\x1c\
+[method]api.initialize-order\x01;\x01@\x03\x04self:\x0aproduct-ids\x08quantityy\0\
+\x1e\x04\0\x1d[method]api.blocking-add-item\x01<\x01i\x12\x01@\x03\x04self:\x0ap\
+roduct-ids\x08quantityy\0=\x04\0\x14[method]api.add-item\x01>\x01@\x02\x04self:\x0a\
+product-ids\0\x1e\x04\0\x20[method]api.blocking-remove-item\x01?\x01i\x13\x01@\x02\
+\x04self:\x0aproduct-ids\0\xc0\0\x04\0\x17[method]api.remove-item\x01A\x04\0)[me\
+thod]api.blocking-update-item-quantity\x01<\x01i\x14\x01@\x03\x04self:\x0aproduc\
+t-ids\x08quantityy\0\xc2\0\x04\0\x20[method]api.update-item-quantity\x01C\x01@\x02\
+\x04self:\x07address\x07\0\x1e\x04\0,[method]api.blocking-update-shipping-addres\
+s\x01D\x01i\x15\x01@\x02\x04self:\x07address\x07\0\xc5\0\x04\0#[method]api.updat\
+e-shipping-address\x01F\x04\0+[method]api.blocking-update-billing-address\x01D\x01\
+i\x16\x01@\x02\x04self:\x07address\x07\0\xc7\0\x04\0\"[method]api.update-billing\
+-address\x01H\x01@\x01\x04self:\0\x1e\x04\0\x1f[method]api.blocking-ship-order\x01\
+I\x01i\x17\x01@\x01\x04self:\0\xca\0\x04\0\x16[method]api.ship-order\x01K\x04\0!\
+[method]api.blocking-cancel-order\x01I\x01i\x18\x01@\x01\x04self:\0\xcc\0\x04\0\x18\
+[method]api.cancel-order\x01M\x01@\x01\x04self:\05\x04\0\x18[method]api.blocking\
+-get\x01N\x01i\x19\x01@\x01\x04self:\0\xcf\0\x04\0\x0f[method]api.get\x01P\x04\x01\
+\x1bgolem:order-stub/stub-order\x05\x0c\x04\x01$golem:order-stub/wasm-rpc-stub-o\
+rder\x04\0\x0b\x19\x01\0\x13wasm-rpc-stub-order\x03\0\0\0G\x09producers\x01\x0cp\
+rocessed-by\x02\x0dwit-component\x070.208.1\x10wit-bindgen-rust\x060.25.0";
 
 #[inline(never)]
 #[doc(hidden)]

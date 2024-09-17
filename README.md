@@ -3,7 +3,7 @@
 ## Components and Workers
 
 * pricing
-  -worker - per product, worker name: id of product
+  - worker - per product, worker name: id of product
   
 * product
   - worker - per product, worker name: id of product
@@ -11,8 +11,8 @@
 * cart 
   - worker - per user/customer (there is always only one cart per user), worker name: id of user/customer
   - dependencies: 
-    - pricing, 
-    - product, 
+    - pricing 
+    - product 
     - order
   - env:
     - PRODUCT_COMPONENT_ID
@@ -21,12 +21,11 @@
 * order
   - worker - per order, worker name: id of order
   - dependencies:
-      - pricing, 
+      - pricing 
       - product
   - env:
       - PRODUCT_COMPONENT_ID
       - PRICING_COMPONENT_ID
-      - ORDER_COMPONENT_ID
 
 ## Commands
 

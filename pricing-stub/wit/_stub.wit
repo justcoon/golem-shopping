@@ -20,6 +20,8 @@ interface stub-pricing {
     initialize-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>);
     blocking-get-price: func(currency: string, zone: string) -> option<pricing-item>;
     get-price: func(currency: string, zone: string) -> future-get-price-result;
+    blocking-update-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>);
+    update-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>);
     blocking-get: func() -> option<pricing>;
     get: func() -> future-get-result;
   }

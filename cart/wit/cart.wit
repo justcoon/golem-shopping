@@ -30,28 +30,38 @@ interface api {
     total: float32,
     currency: string,
     timestamp: u64,
+    previous-order-ids: list<string>,
   }
 
   record order-confirmation {
     order-id: string,
   }
 
-  variant checkout-result {
-    error(string),
-    success(order-confirmation),
+  enum error-code {
+    product-not-found,
+    pricing-not-found,
+    address-not-valid,
+    item-not-found,
+    empty-items,
+    billing-address-not-set,
   }
 
-  add-item: func(product-id: string, quantity: u32) -> result<_, string>;
+  record error {
+    code: error-code,
+    message: string,
+  }
 
-  remove-item: func(product-id: string) -> result<_, string>;
+  add-item: func(product-id: string, quantity: u32) -> result<_, error>;
 
-  update-item-quantity: func(product-id: string, quantity: u32) -> result<_, string>;
+  remove-item: func(product-id: string) -> result<_, error>;
 
-  update-shipping-address: func(address: address) -> result<_, string>;
+  update-item-quantity: func(product-id: string, quantity: u32) -> result<_, error>;
 
-  update-billing-address: func(address: address) -> result<_, string>;
+  update-shipping-address: func(address: address) -> result<_, error>;
 
-  checkout: func() -> checkout-result;
+  update-billing-address: func(address: address) -> result<_, error>;
+
+  checkout: func() -> result<order-confirmation, error>;
 
   get: func() -> option<cart>;
 }

@@ -6,7 +6,6 @@ use std::env;
 
 use crate::bindings::golem::pricing::api::PricingItem;
 use crate::bindings::golem::product_stub::stub_product::Product;
-use rand::prelude::*;
 
 struct Component;
 
@@ -92,10 +91,10 @@ impl Guest for Component {
         });
     }
 
-    fn add_item(product_id: String, quantity: u32) -> Result<(), String> {
+    fn add_item(product_id: String, quantity: u32) -> Result<(), Error> {
         with_state(|state| {
             println!(
-                "Adding item with product ID {} to the order {} of user {}",
+                "Adding item with product {} to the order {} of user {}",
                 product_id, state.order_id, state.user_id
             );
 
@@ -123,12 +122,18 @@ impl Guest for Component {
                                 price: pricing.price,
                                 quantity,
                             });
-                        },
+                        }
                         (None, _) => {
-                            return Err("Product not found".to_string());
-                        },
+                            return Err(Error {
+                                code: ErrorCode::ProductNotFound,
+                                message: "Product not found".to_string(),
+                            });
+                        }
                         _ => {
-                            return Err("Pricing not found".to_string());
+                            return Err(Error {
+                                code: ErrorCode::PricingNotFound,
+                                message: "Pricing not found".to_string(),
+                            });
                         }
                     }
                 }
@@ -137,52 +142,75 @@ impl Guest for Component {
 
                 Ok(())
             } else {
-                Err(format!("Can not update order with status {:?}", state.order_status))
+                Err(Error {
+                    code: ErrorCode::ActionNotAllowed,
+                    message: format!("Can not update order with status {:?}", state.order_status),
+                })
             }
         })
     }
 
-    fn remove_item(product_id: String) -> Result<(), String> {
+    fn remove_item(product_id: String) -> Result<(), Error> {
         with_state(|state| {
             println!(
-                "Removing item with product ID {} from the order {} of user {}",
+                "Removing item with product {} from the order {} of user {}",
                 product_id, state.order_id, state.user_id
             );
             if state.order_status == OrderStatus::New {
-                state.items.retain(|item| item.product_id != product_id);
-
-                state.total = get_total_price(state.items.clone());
-
-                Ok(())
+                if state.items.iter().any(|item| item.product_id == product_id) {
+                    state.items.retain(|item| item.product_id != product_id);
+                    state.total = get_total_price(state.items.clone());
+                    Ok(())
+                } else {
+                    Err(Error {
+                        code: ErrorCode::ItemNotFound,
+                        message: "Item not found".to_string(),
+                    })
+                }
             } else {
-                Err(format!("Can not update order with status {:?}", state.order_status))
+                Err(Error {
+                    code: ErrorCode::ActionNotAllowed,
+                    message: format!("Can not update order with status {:?}", state.order_status),
+                })
             }
         })
     }
 
-    fn update_item_quantity(product_id: String, quantity: u32) -> Result<(), String> {
+    fn update_item_quantity(product_id: String, quantity: u32) -> Result<(), Error> {
         with_state(|state| {
             println!(
-                "Updating quantity of item with product ID {} to {} in the order {} of user {}",
+                "Updating quantity of item with product {} to {} in the order {} of user {}",
                 product_id, quantity, state.order_id, state.user_id
             );
             if state.order_status == OrderStatus::New {
+                let mut updated = false;
                 for item in &mut state.items {
                     if item.product_id == product_id {
                         item.quantity = quantity;
+                        updated = true;
                     }
                 }
 
-                state.total = get_total_price(state.items.clone());
+                if updated {
+                    state.total = get_total_price(state.items.clone());
 
-                Ok(())
+                    Ok(())
+                } else {
+                    Err(Error {
+                        code: ErrorCode::ItemNotFound,
+                        message: "Item not found".to_string(),
+                    })
+                }
             } else {
-                Err(format!("Can not update order with status {:?}", state.order_status))
+                Err(Error {
+                    code: ErrorCode::ActionNotAllowed,
+                    message: format!("Can not update order with status {:?}", state.order_status),
+                })
             }
         })
     }
 
-    fn cancel_order() -> Result<(), String> {
+    fn cancel_order() -> Result<(), Error> {
         with_state(|state| {
             println!("Cancelling order {} of user {}", state.order_id, state.user_id);
 
@@ -193,12 +221,15 @@ impl Guest for Component {
             } else {
                 println!("Cancelling order {} of user {}", state.order_id, state.user_id);
 
-                Err(format!("Can not cancel order with status {:?}", state.order_status))
+                Err(Error {
+                    code: ErrorCode::ActionNotAllowed,
+                    message: format!("Can not update order with status {:?}", state.order_status),
+                })
             }
         })
     }
 
-    fn ship_order() -> Result<(), String> {
+    fn ship_order() -> Result<(), Error> {
         with_state(|state| {
             if state.order_status == OrderStatus::New {
                 println!("Shipping order {} of user {}", state.order_id, state.user_id);
@@ -207,12 +238,15 @@ impl Guest for Component {
             } else {
                 println!("Shipping order {} of user {}", state.order_id, state.user_id);
 
-                Err(format!("Can not cancel order with status {:?}", state.order_status))
+                Err(Error {
+                    code: ErrorCode::ActionNotAllowed,
+                    message: format!("Can not update order with status {:?}", state.order_status),
+                })
             }
         })
     }
 
-    fn update_billing_address(address: Address) -> Result<(), String> {
+    fn update_billing_address(address: Address) -> Result<(), Error> {
         with_state(|state| {
             println!(
                 "Updating billing address in the order {} of user {}",
@@ -222,12 +256,15 @@ impl Guest for Component {
                 state.billing_address = Some(address);
                 Ok(())
             } else {
-                Err(format!("Can not update order with status {:?}", state.order_status))
+                Err(Error {
+                    code: ErrorCode::ActionNotAllowed,
+                    message: format!("Can not update order with status {:?}", state.order_status),
+                })
             }
         })
     }
 
-    fn update_shipping_address(address: Address) -> Result<(), String> {
+    fn update_shipping_address(address: Address) -> Result<(), Error> {
         with_state(|state| {
             println!(
                 "Updating shipping address in the order {} of user {}",
@@ -237,7 +274,10 @@ impl Guest for Component {
                 state.shipping_address = Some(address);
                 Ok(())
             } else {
-                Err(format!("Can not update order with status {:?}", state.order_status))
+                Err(Error {
+                    code: ErrorCode::ActionNotAllowed,
+                    message: format!("Can not update order with status {:?}", state.order_status),
+                })
             }
         })
     }

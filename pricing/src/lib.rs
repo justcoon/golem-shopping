@@ -2,9 +2,8 @@ mod bindings;
 
 use crate::bindings::exports::golem::pricing::api::*;
 use std::cell::RefCell;
+use std::collections::HashMap;
 use std::env;
-
-use rand::prelude::*;
 
 struct Component;
 
@@ -35,6 +34,28 @@ fn get_price(currency: String, zone: String, pricing: Pricing) -> Option<Pricing
     }
 }
 
+fn merge_items(updates: Vec<PricingItem>, current: Vec<PricingItem>) -> Vec<PricingItem> {
+    if updates.is_empty() {
+        current
+    } else if current.is_empty() {
+        updates
+    } else {
+        let mut merge_map: HashMap<(String, String), PricingItem> = HashMap::new();
+
+        for item in updates {
+            merge_map.insert((item.zone.clone(), item.currency.clone()), item);
+        }
+
+        for item in current {
+            if !merge_map.contains_key(&(item.zone.clone(), item.currency.clone())) {
+                merge_map.insert((item.zone.clone(), item.currency.clone()), item);
+            }
+        }
+
+        merge_map.into_values().collect()
+    }
+}
+
 impl Guest for Component {
     fn initialize_pricing(msrp_prices: Vec<PricingItem>, list_prices: Vec<PricingItem>) -> () {
         with_state(|state| {
@@ -44,13 +65,13 @@ impl Guest for Component {
         });
     }
 
-    // fn update_pricing(msrp_prices: Vec<PricingItem>, list_prices: Vec<PricingItem>) {
-    //     with_state(|state| {
-    //         println!("Update pricing {}", state.asset_id);
-    //         state.msrp_prices = msrp_prices;
-    //         state.list_prices = list_prices;
-    //     });
-    // }
+    fn update_pricing(msrp_prices: Vec<PricingItem>, list_prices: Vec<PricingItem>) -> () {
+        with_state(|state| {
+            println!("Update pricing {}", state.asset_id);
+            state.msrp_prices = merge_items(msrp_prices, state.msrp_prices.clone());
+            state.list_prices = merge_items(list_prices, state.list_prices.clone());
+        });
+    }
 
     fn get_price(currency: String, zone: String) -> Option<PricingItem> {
         STATE.with_borrow(|state| {

@@ -49,21 +49,34 @@ interface api {
     timestamp: u64,
   }
 
+  enum error-code {
+    product-not-found,
+    pricing-not-found,
+    address-not-valid,
+    item-not-found,
+    action-not-allowed,
+  }
+
+  record error {
+    code: error-code,
+    message: string,
+  }
+
   initialize-order: func(data: create-order) -> ();
 
-  add-item: func(product-id: string, quantity: u32) -> result<_, string>;
+  add-item: func(product-id: string, quantity: u32) -> result<_, error>;
 
-  remove-item: func(product-id: string) -> result<_, string>;
+  remove-item: func(product-id: string) -> result<_, error>;
 
-  update-item-quantity: func(product-id: string, quantity: u32) -> result<_, string>;
+  update-item-quantity: func(product-id: string, quantity: u32) -> result<_, error>;
 
-  update-shipping-address: func(address: address) -> result<_, string>;
+  update-shipping-address: func(address: address) -> result<_, error>;
 
-  update-billing-address: func(address: address) -> result<_, string>;
+  update-billing-address: func(address: address) -> result<_, error>;
 
-  ship-order: func() -> result<_, string>;
+  ship-order: func() -> result<_, error>;
 
-  cancel-order: func() -> result<_, string>;
+  cancel-order: func() -> result<_, error>;
 
   get: func() -> option<order>;
 }

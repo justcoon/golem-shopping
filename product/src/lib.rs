@@ -4,8 +4,6 @@ use crate::bindings::exports::golem::product::api::*;
 use std::cell::RefCell;
 use std::env;
 
-use rand::prelude::*;
-
 struct Component;
 
 thread_local! {
