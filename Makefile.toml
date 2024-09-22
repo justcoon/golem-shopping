@@ -99,7 +99,7 @@ dependencies = ["compose-cart", "compose-order"]
 dependencies = ["compose-release-cart", "compose-release-order"]
 
 [tasks.regenerate-stubs]
-dependencies = ["add-stub-dependency-order-cart", "add-stub-dependency-product-cart", "add-stub-dependency-product-order", "add-stub-dependency-pricing-cart", "add-stub-dependency-pricing-order"]
+dependencies = ["add-stub-dependency-order-cart", "add-stub-dependency-order-order", "add-stub-dependency-product-cart", "add-stub-dependency-product-order", "add-stub-dependency-pricing-cart", "add-stub-dependency-pricing-order"]
 
 [tasks.release-build-flow]
 dependencies = ["build-release", "post-build-release"]
