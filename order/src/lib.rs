@@ -51,6 +51,31 @@ fn get_pricing(product_id: String, currency: String, zone: String) -> Option<Pri
     api.blocking_get_price(&currency, &zone)
 }
 
+fn action_not_allowed_error(status: OrderStatus) -> Error {
+    Error::ActionNotAllowed(ActionNotAllowedError {
+        message: "Can not update order with status".to_string(),
+        status,
+    })
+}
+
+fn item_not_found_error(product_id: String) -> Error {
+    Error::ItemNotFound(ItemNotFoundError { message: "Item not found".to_string(), product_id })
+}
+
+fn pricing_not_found_error(product_id: String) -> Error {
+    Error::PricingNotFound(PricingNotFoundError {
+        message: "Pricing not found".to_string(),
+        product_id,
+    })
+}
+
+fn product_not_found_error(product_id: String) -> Error {
+    Error::ProductNotFound(ProductNotFoundError {
+        message: "Product not found".to_string(),
+        product_id,
+    })
+}
+
 thread_local! {
     static STATE: RefCell<Option<Order>> = const { RefCell::new(None) };
 }
@@ -123,18 +148,8 @@ impl Guest for Component {
                                 quantity,
                             });
                         }
-                        (None, _) => {
-                            return Err(Error {
-                                code: ErrorCode::ProductNotFound,
-                                message: "Product not found".to_string(),
-                            });
-                        }
-                        _ => {
-                            return Err(Error {
-                                code: ErrorCode::PricingNotFound,
-                                message: "Pricing not found".to_string(),
-                            });
-                        }
+                        (None, _) => return Err(product_not_found_error(product_id)),
+                        _ => return Err(pricing_not_found_error(product_id)),
                     }
                 }
 
@@ -142,10 +157,7 @@ impl Guest for Component {
 
                 Ok(())
             } else {
-                Err(Error {
-                    code: ErrorCode::ActionNotAllowed,
-                    message: format!("Can not update order with status {:?}", state.order_status),
-                })
+                Err(action_not_allowed_error(state.order_status))
             }
         })
     }
@@ -162,16 +174,10 @@ impl Guest for Component {
                     state.total = get_total_price(state.items.clone());
                     Ok(())
                 } else {
-                    Err(Error {
-                        code: ErrorCode::ItemNotFound,
-                        message: "Item not found".to_string(),
-                    })
+                    Err(item_not_found_error(product_id))
                 }
             } else {
-                Err(Error {
-                    code: ErrorCode::ActionNotAllowed,
-                    message: format!("Can not update order with status {:?}", state.order_status),
-                })
+                Err(action_not_allowed_error(state.order_status))
             }
         })
     }
@@ -196,16 +202,10 @@ impl Guest for Component {
 
                     Ok(())
                 } else {
-                    Err(Error {
-                        code: ErrorCode::ItemNotFound,
-                        message: "Item not found".to_string(),
-                    })
+                    Err(item_not_found_error(product_id))
                 }
             } else {
-                Err(Error {
-                    code: ErrorCode::ActionNotAllowed,
-                    message: format!("Can not update order with status {:?}", state.order_status),
-                })
+                Err(action_not_allowed_error(state.order_status))
             }
         })
     }
@@ -221,10 +221,7 @@ impl Guest for Component {
             } else {
                 println!("Cancelling order {} of user {}", state.order_id, state.user_id);
 
-                Err(Error {
-                    code: ErrorCode::ActionNotAllowed,
-                    message: format!("Can not update order with status {:?}", state.order_status),
-                })
+                Err(action_not_allowed_error(state.order_status))
             }
         })
     }
@@ -237,11 +234,7 @@ impl Guest for Component {
                 Ok(())
             } else {
                 println!("Shipping order {} of user {}", state.order_id, state.user_id);
-
-                Err(Error {
-                    code: ErrorCode::ActionNotAllowed,
-                    message: format!("Can not update order with status {:?}", state.order_status),
-                })
+                Err(action_not_allowed_error(state.order_status))
             }
         })
     }
@@ -256,10 +249,7 @@ impl Guest for Component {
                 state.billing_address = Some(address);
                 Ok(())
             } else {
-                Err(Error {
-                    code: ErrorCode::ActionNotAllowed,
-                    message: format!("Can not update order with status {:?}", state.order_status),
-                })
+                Err(action_not_allowed_error(state.order_status))
             }
         })
     }
@@ -274,10 +264,7 @@ impl Guest for Component {
                 state.shipping_address = Some(address);
                 Ok(())
             } else {
-                Err(Error {
-                    code: ErrorCode::ActionNotAllowed,
-                    message: format!("Can not update order with status {:?}", state.order_status),
-                })
+                Err(action_not_allowed_error(state.order_status))
             }
         })
     }

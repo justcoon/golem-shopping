@@ -1659,67 +1659,107 @@ pub mod golem {
                         .finish()
                 }
             }
-            #[repr(u8)]
-            #[derive(Clone, Copy, Eq, PartialEq)]
-            pub enum ErrorCode {
-                ProductNotFound,
-                PricingNotFound,
-                AddressNotValid,
-                ItemNotFound,
-                ActionNotAllowed,
-            }
-            impl ::core::fmt::Debug for ErrorCode {
-                fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
-                    match self {
-                        ErrorCode::ProductNotFound => {
-                            f.debug_tuple("ErrorCode::ProductNotFound").finish()
-                        }
-                        ErrorCode::PricingNotFound => {
-                            f.debug_tuple("ErrorCode::PricingNotFound").finish()
-                        }
-                        ErrorCode::AddressNotValid => {
-                            f.debug_tuple("ErrorCode::AddressNotValid").finish()
-                        }
-                        ErrorCode::ItemNotFound => {
-                            f.debug_tuple("ErrorCode::ItemNotFound").finish()
-                        }
-                        ErrorCode::ActionNotAllowed => {
-                            f.debug_tuple("ErrorCode::ActionNotAllowed").finish()
-                        }
-                    }
-                }
-            }
-
-            impl ErrorCode {
-                #[doc(hidden)]
-                pub unsafe fn _lift(val: u8) -> ErrorCode {
-                    if !cfg!(debug_assertions) {
-                        return ::core::mem::transmute(val);
-                    }
-
-                    match val {
-                        0 => ErrorCode::ProductNotFound,
-                        1 => ErrorCode::PricingNotFound,
-                        2 => ErrorCode::AddressNotValid,
-                        3 => ErrorCode::ItemNotFound,
-                        4 => ErrorCode::ActionNotAllowed,
-
-                        _ => panic!("invalid enum discriminant"),
-                    }
-                }
-            }
-
             #[derive(Clone)]
-            pub struct Error {
-                pub code: ErrorCode,
+            pub struct ProductNotFoundError {
                 pub message: _rt::String,
+                pub product_id: _rt::String,
+            }
+            impl ::core::fmt::Debug for ProductNotFoundError {
+                fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+                    f.debug_struct("ProductNotFoundError")
+                        .field("message", &self.message)
+                        .field("product-id", &self.product_id)
+                        .finish()
+                }
+            }
+            #[derive(Clone)]
+            pub struct PricingNotFoundError {
+                pub message: _rt::String,
+                pub product_id: _rt::String,
+            }
+            impl ::core::fmt::Debug for PricingNotFoundError {
+                fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+                    f.debug_struct("PricingNotFoundError")
+                        .field("message", &self.message)
+                        .field("product-id", &self.product_id)
+                        .finish()
+                }
+            }
+            #[derive(Clone)]
+            pub struct AddressNotValidError {
+                pub message: _rt::String,
+            }
+            impl ::core::fmt::Debug for AddressNotValidError {
+                fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+                    f.debug_struct("AddressNotValidError").field("message", &self.message).finish()
+                }
+            }
+            #[derive(Clone)]
+            pub struct ItemNotFoundError {
+                pub message: _rt::String,
+                pub product_id: _rt::String,
+            }
+            impl ::core::fmt::Debug for ItemNotFoundError {
+                fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+                    f.debug_struct("ItemNotFoundError")
+                        .field("message", &self.message)
+                        .field("product-id", &self.product_id)
+                        .finish()
+                }
+            }
+            #[derive(Clone)]
+            pub struct EmptyItemsError {
+                pub message: _rt::String,
+            }
+            impl ::core::fmt::Debug for EmptyItemsError {
+                fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+                    f.debug_struct("EmptyItemsError").field("message", &self.message).finish()
+                }
+            }
+            #[derive(Clone)]
+            pub struct ActionNotAllowedError {
+                pub message: _rt::String,
+                pub status: OrderStatus,
+            }
+            impl ::core::fmt::Debug for ActionNotAllowedError {
+                fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+                    f.debug_struct("ActionNotAllowedError")
+                        .field("message", &self.message)
+                        .field("status", &self.status)
+                        .finish()
+                }
+            }
+            #[derive(Clone)]
+            pub enum Error {
+                ProductNotFound(ProductNotFoundError),
+                PricingNotFound(PricingNotFoundError),
+                AddressNotValid(AddressNotValidError),
+                ItemNotFound(ItemNotFoundError),
+                EmptyItems(EmptyItemsError),
+                ActionNotAllowed(ActionNotAllowedError),
             }
             impl ::core::fmt::Debug for Error {
                 fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
-                    f.debug_struct("Error")
-                        .field("code", &self.code)
-                        .field("message", &self.message)
-                        .finish()
+                    match self {
+                        Error::ProductNotFound(e) => {
+                            f.debug_tuple("Error::ProductNotFound").field(e).finish()
+                        }
+                        Error::PricingNotFound(e) => {
+                            f.debug_tuple("Error::PricingNotFound").field(e).finish()
+                        }
+                        Error::AddressNotValid(e) => {
+                            f.debug_tuple("Error::AddressNotValid").field(e).finish()
+                        }
+                        Error::ItemNotFound(e) => {
+                            f.debug_tuple("Error::ItemNotFound").field(e).finish()
+                        }
+                        Error::EmptyItems(e) => {
+                            f.debug_tuple("Error::EmptyItems").field(e).finish()
+                        }
+                        Error::ActionNotAllowed(e) => {
+                            f.debug_tuple("Error::ActionNotAllowed").field(e).finish()
+                        }
+                    }
                 }
             }
             impl ::core::fmt::Display for Error {
@@ -1727,6 +1767,7 @@ pub mod golem {
                     write!(f, "{:?}", self)
                 }
             }
+
             impl std::error::Error for Error {}
             #[allow(unused_unsafe, clippy::all)]
             pub fn initialize_order(data: &CreateOrder) {
@@ -2009,8 +2050,8 @@ pub mod golem {
             pub fn add_item(product_id: &str, quantity: u32) -> Result<(), Error> {
                 unsafe {
                     #[repr(align(4))]
-                    struct RetArea([::core::mem::MaybeUninit<u8>; 16]);
-                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 16]);
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 24]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 24]);
                     let vec0 = product_id;
                     let ptr0 = vec0.as_ptr().cast::<u8>();
                     let len0 = vec0.len();
@@ -2036,15 +2077,113 @@ pub mod golem {
                         1 => {
                             let e = {
                                 let l3 = i32::from(*ptr1.add(4).cast::<u8>());
-                                let l4 = *ptr1.add(8).cast::<*mut u8>();
-                                let l5 = *ptr1.add(12).cast::<usize>();
-                                let len6 = l5;
-                                let bytes6 = _rt::Vec::from_raw_parts(l4.cast(), len6, len6);
+                                let v32 = match l3 {
+                                    0 => {
+                                        let e32 = {
+                                            let l4 = *ptr1.add(8).cast::<*mut u8>();
+                                            let l5 = *ptr1.add(12).cast::<usize>();
+                                            let len6 = l5;
+                                            let bytes6 =
+                                                _rt::Vec::from_raw_parts(l4.cast(), len6, len6);
+                                            let l7 = *ptr1.add(16).cast::<*mut u8>();
+                                            let l8 = *ptr1.add(20).cast::<usize>();
+                                            let len9 = l8;
+                                            let bytes9 =
+                                                _rt::Vec::from_raw_parts(l7.cast(), len9, len9);
 
-                                Error {
-                                    code: ErrorCode::_lift(l3 as u8),
-                                    message: _rt::string_lift(bytes6),
-                                }
+                                            ProductNotFoundError {
+                                                message: _rt::string_lift(bytes6),
+                                                product_id: _rt::string_lift(bytes9),
+                                            }
+                                        };
+                                        Error::ProductNotFound(e32)
+                                    }
+                                    1 => {
+                                        let e32 = {
+                                            let l10 = *ptr1.add(8).cast::<*mut u8>();
+                                            let l11 = *ptr1.add(12).cast::<usize>();
+                                            let len12 = l11;
+                                            let bytes12 =
+                                                _rt::Vec::from_raw_parts(l10.cast(), len12, len12);
+                                            let l13 = *ptr1.add(16).cast::<*mut u8>();
+                                            let l14 = *ptr1.add(20).cast::<usize>();
+                                            let len15 = l14;
+                                            let bytes15 =
+                                                _rt::Vec::from_raw_parts(l13.cast(), len15, len15);
+
+                                            PricingNotFoundError {
+                                                message: _rt::string_lift(bytes12),
+                                                product_id: _rt::string_lift(bytes15),
+                                            }
+                                        };
+                                        Error::PricingNotFound(e32)
+                                    }
+                                    2 => {
+                                        let e32 = {
+                                            let l16 = *ptr1.add(8).cast::<*mut u8>();
+                                            let l17 = *ptr1.add(12).cast::<usize>();
+                                            let len18 = l17;
+                                            let bytes18 =
+                                                _rt::Vec::from_raw_parts(l16.cast(), len18, len18);
+
+                                            AddressNotValidError {
+                                                message: _rt::string_lift(bytes18),
+                                            }
+                                        };
+                                        Error::AddressNotValid(e32)
+                                    }
+                                    3 => {
+                                        let e32 = {
+                                            let l19 = *ptr1.add(8).cast::<*mut u8>();
+                                            let l20 = *ptr1.add(12).cast::<usize>();
+                                            let len21 = l20;
+                                            let bytes21 =
+                                                _rt::Vec::from_raw_parts(l19.cast(), len21, len21);
+                                            let l22 = *ptr1.add(16).cast::<*mut u8>();
+                                            let l23 = *ptr1.add(20).cast::<usize>();
+                                            let len24 = l23;
+                                            let bytes24 =
+                                                _rt::Vec::from_raw_parts(l22.cast(), len24, len24);
+
+                                            ItemNotFoundError {
+                                                message: _rt::string_lift(bytes21),
+                                                product_id: _rt::string_lift(bytes24),
+                                            }
+                                        };
+                                        Error::ItemNotFound(e32)
+                                    }
+                                    4 => {
+                                        let e32 = {
+                                            let l25 = *ptr1.add(8).cast::<*mut u8>();
+                                            let l26 = *ptr1.add(12).cast::<usize>();
+                                            let len27 = l26;
+                                            let bytes27 =
+                                                _rt::Vec::from_raw_parts(l25.cast(), len27, len27);
+
+                                            EmptyItemsError { message: _rt::string_lift(bytes27) }
+                                        };
+                                        Error::EmptyItems(e32)
+                                    }
+                                    n => {
+                                        debug_assert_eq!(n, 5, "invalid enum discriminant");
+                                        let e32 = {
+                                            let l28 = *ptr1.add(8).cast::<*mut u8>();
+                                            let l29 = *ptr1.add(12).cast::<usize>();
+                                            let len30 = l29;
+                                            let bytes30 =
+                                                _rt::Vec::from_raw_parts(l28.cast(), len30, len30);
+                                            let l31 = i32::from(*ptr1.add(16).cast::<u8>());
+
+                                            ActionNotAllowedError {
+                                                message: _rt::string_lift(bytes30),
+                                                status: OrderStatus::_lift(l31 as u8),
+                                            }
+                                        };
+                                        Error::ActionNotAllowed(e32)
+                                    }
+                                };
+
+                                v32
                             };
                             Err(e)
                         }
@@ -2056,8 +2195,8 @@ pub mod golem {
             pub fn remove_item(product_id: &str) -> Result<(), Error> {
                 unsafe {
                     #[repr(align(4))]
-                    struct RetArea([::core::mem::MaybeUninit<u8>; 16]);
-                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 16]);
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 24]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 24]);
                     let vec0 = product_id;
                     let ptr0 = vec0.as_ptr().cast::<u8>();
                     let len0 = vec0.len();
@@ -2083,15 +2222,113 @@ pub mod golem {
                         1 => {
                             let e = {
                                 let l3 = i32::from(*ptr1.add(4).cast::<u8>());
-                                let l4 = *ptr1.add(8).cast::<*mut u8>();
-                                let l5 = *ptr1.add(12).cast::<usize>();
-                                let len6 = l5;
-                                let bytes6 = _rt::Vec::from_raw_parts(l4.cast(), len6, len6);
+                                let v32 = match l3 {
+                                    0 => {
+                                        let e32 = {
+                                            let l4 = *ptr1.add(8).cast::<*mut u8>();
+                                            let l5 = *ptr1.add(12).cast::<usize>();
+                                            let len6 = l5;
+                                            let bytes6 =
+                                                _rt::Vec::from_raw_parts(l4.cast(), len6, len6);
+                                            let l7 = *ptr1.add(16).cast::<*mut u8>();
+                                            let l8 = *ptr1.add(20).cast::<usize>();
+                                            let len9 = l8;
+                                            let bytes9 =
+                                                _rt::Vec::from_raw_parts(l7.cast(), len9, len9);
 
-                                Error {
-                                    code: ErrorCode::_lift(l3 as u8),
-                                    message: _rt::string_lift(bytes6),
-                                }
+                                            ProductNotFoundError {
+                                                message: _rt::string_lift(bytes6),
+                                                product_id: _rt::string_lift(bytes9),
+                                            }
+                                        };
+                                        Error::ProductNotFound(e32)
+                                    }
+                                    1 => {
+                                        let e32 = {
+                                            let l10 = *ptr1.add(8).cast::<*mut u8>();
+                                            let l11 = *ptr1.add(12).cast::<usize>();
+                                            let len12 = l11;
+                                            let bytes12 =
+                                                _rt::Vec::from_raw_parts(l10.cast(), len12, len12);
+                                            let l13 = *ptr1.add(16).cast::<*mut u8>();
+                                            let l14 = *ptr1.add(20).cast::<usize>();
+                                            let len15 = l14;
+                                            let bytes15 =
+                                                _rt::Vec::from_raw_parts(l13.cast(), len15, len15);
+
+                                            PricingNotFoundError {
+                                                message: _rt::string_lift(bytes12),
+                                                product_id: _rt::string_lift(bytes15),
+                                            }
+                                        };
+                                        Error::PricingNotFound(e32)
+                                    }
+                                    2 => {
+                                        let e32 = {
+                                            let l16 = *ptr1.add(8).cast::<*mut u8>();
+                                            let l17 = *ptr1.add(12).cast::<usize>();
+                                            let len18 = l17;
+                                            let bytes18 =
+                                                _rt::Vec::from_raw_parts(l16.cast(), len18, len18);
+
+                                            AddressNotValidError {
+                                                message: _rt::string_lift(bytes18),
+                                            }
+                                        };
+                                        Error::AddressNotValid(e32)
+                                    }
+                                    3 => {
+                                        let e32 = {
+                                            let l19 = *ptr1.add(8).cast::<*mut u8>();
+                                            let l20 = *ptr1.add(12).cast::<usize>();
+                                            let len21 = l20;
+                                            let bytes21 =
+                                                _rt::Vec::from_raw_parts(l19.cast(), len21, len21);
+                                            let l22 = *ptr1.add(16).cast::<*mut u8>();
+                                            let l23 = *ptr1.add(20).cast::<usize>();
+                                            let len24 = l23;
+                                            let bytes24 =
+                                                _rt::Vec::from_raw_parts(l22.cast(), len24, len24);
+
+                                            ItemNotFoundError {
+                                                message: _rt::string_lift(bytes21),
+                                                product_id: _rt::string_lift(bytes24),
+                                            }
+                                        };
+                                        Error::ItemNotFound(e32)
+                                    }
+                                    4 => {
+                                        let e32 = {
+                                            let l25 = *ptr1.add(8).cast::<*mut u8>();
+                                            let l26 = *ptr1.add(12).cast::<usize>();
+                                            let len27 = l26;
+                                            let bytes27 =
+                                                _rt::Vec::from_raw_parts(l25.cast(), len27, len27);
+
+                                            EmptyItemsError { message: _rt::string_lift(bytes27) }
+                                        };
+                                        Error::EmptyItems(e32)
+                                    }
+                                    n => {
+                                        debug_assert_eq!(n, 5, "invalid enum discriminant");
+                                        let e32 = {
+                                            let l28 = *ptr1.add(8).cast::<*mut u8>();
+                                            let l29 = *ptr1.add(12).cast::<usize>();
+                                            let len30 = l29;
+                                            let bytes30 =
+                                                _rt::Vec::from_raw_parts(l28.cast(), len30, len30);
+                                            let l31 = i32::from(*ptr1.add(16).cast::<u8>());
+
+                                            ActionNotAllowedError {
+                                                message: _rt::string_lift(bytes30),
+                                                status: OrderStatus::_lift(l31 as u8),
+                                            }
+                                        };
+                                        Error::ActionNotAllowed(e32)
+                                    }
+                                };
+
+                                v32
                             };
                             Err(e)
                         }
@@ -2103,8 +2340,8 @@ pub mod golem {
             pub fn update_item_quantity(product_id: &str, quantity: u32) -> Result<(), Error> {
                 unsafe {
                     #[repr(align(4))]
-                    struct RetArea([::core::mem::MaybeUninit<u8>; 16]);
-                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 16]);
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 24]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 24]);
                     let vec0 = product_id;
                     let ptr0 = vec0.as_ptr().cast::<u8>();
                     let len0 = vec0.len();
@@ -2130,15 +2367,113 @@ pub mod golem {
                         1 => {
                             let e = {
                                 let l3 = i32::from(*ptr1.add(4).cast::<u8>());
-                                let l4 = *ptr1.add(8).cast::<*mut u8>();
-                                let l5 = *ptr1.add(12).cast::<usize>();
-                                let len6 = l5;
-                                let bytes6 = _rt::Vec::from_raw_parts(l4.cast(), len6, len6);
+                                let v32 = match l3 {
+                                    0 => {
+                                        let e32 = {
+                                            let l4 = *ptr1.add(8).cast::<*mut u8>();
+                                            let l5 = *ptr1.add(12).cast::<usize>();
+                                            let len6 = l5;
+                                            let bytes6 =
+                                                _rt::Vec::from_raw_parts(l4.cast(), len6, len6);
+                                            let l7 = *ptr1.add(16).cast::<*mut u8>();
+                                            let l8 = *ptr1.add(20).cast::<usize>();
+                                            let len9 = l8;
+                                            let bytes9 =
+                                                _rt::Vec::from_raw_parts(l7.cast(), len9, len9);
 
-                                Error {
-                                    code: ErrorCode::_lift(l3 as u8),
-                                    message: _rt::string_lift(bytes6),
-                                }
+                                            ProductNotFoundError {
+                                                message: _rt::string_lift(bytes6),
+                                                product_id: _rt::string_lift(bytes9),
+                                            }
+                                        };
+                                        Error::ProductNotFound(e32)
+                                    }
+                                    1 => {
+                                        let e32 = {
+                                            let l10 = *ptr1.add(8).cast::<*mut u8>();
+                                            let l11 = *ptr1.add(12).cast::<usize>();
+                                            let len12 = l11;
+                                            let bytes12 =
+                                                _rt::Vec::from_raw_parts(l10.cast(), len12, len12);
+                                            let l13 = *ptr1.add(16).cast::<*mut u8>();
+                                            let l14 = *ptr1.add(20).cast::<usize>();
+                                            let len15 = l14;
+                                            let bytes15 =
+                                                _rt::Vec::from_raw_parts(l13.cast(), len15, len15);
+
+                                            PricingNotFoundError {
+                                                message: _rt::string_lift(bytes12),
+                                                product_id: _rt::string_lift(bytes15),
+                                            }
+                                        };
+                                        Error::PricingNotFound(e32)
+                                    }
+                                    2 => {
+                                        let e32 = {
+                                            let l16 = *ptr1.add(8).cast::<*mut u8>();
+                                            let l17 = *ptr1.add(12).cast::<usize>();
+                                            let len18 = l17;
+                                            let bytes18 =
+                                                _rt::Vec::from_raw_parts(l16.cast(), len18, len18);
+
+                                            AddressNotValidError {
+                                                message: _rt::string_lift(bytes18),
+                                            }
+                                        };
+                                        Error::AddressNotValid(e32)
+                                    }
+                                    3 => {
+                                        let e32 = {
+                                            let l19 = *ptr1.add(8).cast::<*mut u8>();
+                                            let l20 = *ptr1.add(12).cast::<usize>();
+                                            let len21 = l20;
+                                            let bytes21 =
+                                                _rt::Vec::from_raw_parts(l19.cast(), len21, len21);
+                                            let l22 = *ptr1.add(16).cast::<*mut u8>();
+                                            let l23 = *ptr1.add(20).cast::<usize>();
+                                            let len24 = l23;
+                                            let bytes24 =
+                                                _rt::Vec::from_raw_parts(l22.cast(), len24, len24);
+
+                                            ItemNotFoundError {
+                                                message: _rt::string_lift(bytes21),
+                                                product_id: _rt::string_lift(bytes24),
+                                            }
+                                        };
+                                        Error::ItemNotFound(e32)
+                                    }
+                                    4 => {
+                                        let e32 = {
+                                            let l25 = *ptr1.add(8).cast::<*mut u8>();
+                                            let l26 = *ptr1.add(12).cast::<usize>();
+                                            let len27 = l26;
+                                            let bytes27 =
+                                                _rt::Vec::from_raw_parts(l25.cast(), len27, len27);
+
+                                            EmptyItemsError { message: _rt::string_lift(bytes27) }
+                                        };
+                                        Error::EmptyItems(e32)
+                                    }
+                                    n => {
+                                        debug_assert_eq!(n, 5, "invalid enum discriminant");
+                                        let e32 = {
+                                            let l28 = *ptr1.add(8).cast::<*mut u8>();
+                                            let l29 = *ptr1.add(12).cast::<usize>();
+                                            let len30 = l29;
+                                            let bytes30 =
+                                                _rt::Vec::from_raw_parts(l28.cast(), len30, len30);
+                                            let l31 = i32::from(*ptr1.add(16).cast::<u8>());
+
+                                            ActionNotAllowedError {
+                                                message: _rt::string_lift(bytes30),
+                                                status: OrderStatus::_lift(l31 as u8),
+                                            }
+                                        };
+                                        Error::ActionNotAllowed(e32)
+                                    }
+                                };
+
+                                v32
                             };
                             Err(e)
                         }
@@ -2263,15 +2598,113 @@ pub mod golem {
                         1 => {
                             let e = {
                                 let l13 = i32::from(*ptr11.add(4).cast::<u8>());
-                                let l14 = *ptr11.add(8).cast::<*mut u8>();
-                                let l15 = *ptr11.add(12).cast::<usize>();
-                                let len16 = l15;
-                                let bytes16 = _rt::Vec::from_raw_parts(l14.cast(), len16, len16);
+                                let v42 = match l13 {
+                                    0 => {
+                                        let e42 = {
+                                            let l14 = *ptr11.add(8).cast::<*mut u8>();
+                                            let l15 = *ptr11.add(12).cast::<usize>();
+                                            let len16 = l15;
+                                            let bytes16 =
+                                                _rt::Vec::from_raw_parts(l14.cast(), len16, len16);
+                                            let l17 = *ptr11.add(16).cast::<*mut u8>();
+                                            let l18 = *ptr11.add(20).cast::<usize>();
+                                            let len19 = l18;
+                                            let bytes19 =
+                                                _rt::Vec::from_raw_parts(l17.cast(), len19, len19);
 
-                                Error {
-                                    code: ErrorCode::_lift(l13 as u8),
-                                    message: _rt::string_lift(bytes16),
-                                }
+                                            ProductNotFoundError {
+                                                message: _rt::string_lift(bytes16),
+                                                product_id: _rt::string_lift(bytes19),
+                                            }
+                                        };
+                                        Error::ProductNotFound(e42)
+                                    }
+                                    1 => {
+                                        let e42 = {
+                                            let l20 = *ptr11.add(8).cast::<*mut u8>();
+                                            let l21 = *ptr11.add(12).cast::<usize>();
+                                            let len22 = l21;
+                                            let bytes22 =
+                                                _rt::Vec::from_raw_parts(l20.cast(), len22, len22);
+                                            let l23 = *ptr11.add(16).cast::<*mut u8>();
+                                            let l24 = *ptr11.add(20).cast::<usize>();
+                                            let len25 = l24;
+                                            let bytes25 =
+                                                _rt::Vec::from_raw_parts(l23.cast(), len25, len25);
+
+                                            PricingNotFoundError {
+                                                message: _rt::string_lift(bytes22),
+                                                product_id: _rt::string_lift(bytes25),
+                                            }
+                                        };
+                                        Error::PricingNotFound(e42)
+                                    }
+                                    2 => {
+                                        let e42 = {
+                                            let l26 = *ptr11.add(8).cast::<*mut u8>();
+                                            let l27 = *ptr11.add(12).cast::<usize>();
+                                            let len28 = l27;
+                                            let bytes28 =
+                                                _rt::Vec::from_raw_parts(l26.cast(), len28, len28);
+
+                                            AddressNotValidError {
+                                                message: _rt::string_lift(bytes28),
+                                            }
+                                        };
+                                        Error::AddressNotValid(e42)
+                                    }
+                                    3 => {
+                                        let e42 = {
+                                            let l29 = *ptr11.add(8).cast::<*mut u8>();
+                                            let l30 = *ptr11.add(12).cast::<usize>();
+                                            let len31 = l30;
+                                            let bytes31 =
+                                                _rt::Vec::from_raw_parts(l29.cast(), len31, len31);
+                                            let l32 = *ptr11.add(16).cast::<*mut u8>();
+                                            let l33 = *ptr11.add(20).cast::<usize>();
+                                            let len34 = l33;
+                                            let bytes34 =
+                                                _rt::Vec::from_raw_parts(l32.cast(), len34, len34);
+
+                                            ItemNotFoundError {
+                                                message: _rt::string_lift(bytes31),
+                                                product_id: _rt::string_lift(bytes34),
+                                            }
+                                        };
+                                        Error::ItemNotFound(e42)
+                                    }
+                                    4 => {
+                                        let e42 = {
+                                            let l35 = *ptr11.add(8).cast::<*mut u8>();
+                                            let l36 = *ptr11.add(12).cast::<usize>();
+                                            let len37 = l36;
+                                            let bytes37 =
+                                                _rt::Vec::from_raw_parts(l35.cast(), len37, len37);
+
+                                            EmptyItemsError { message: _rt::string_lift(bytes37) }
+                                        };
+                                        Error::EmptyItems(e42)
+                                    }
+                                    n => {
+                                        debug_assert_eq!(n, 5, "invalid enum discriminant");
+                                        let e42 = {
+                                            let l38 = *ptr11.add(8).cast::<*mut u8>();
+                                            let l39 = *ptr11.add(12).cast::<usize>();
+                                            let len40 = l39;
+                                            let bytes40 =
+                                                _rt::Vec::from_raw_parts(l38.cast(), len40, len40);
+                                            let l41 = i32::from(*ptr11.add(16).cast::<u8>());
+
+                                            ActionNotAllowedError {
+                                                message: _rt::string_lift(bytes40),
+                                                status: OrderStatus::_lift(l41 as u8),
+                                            }
+                                        };
+                                        Error::ActionNotAllowed(e42)
+                                    }
+                                };
+
+                                v42
                             };
                             Err(e)
                         }
@@ -2396,15 +2829,113 @@ pub mod golem {
                         1 => {
                             let e = {
                                 let l13 = i32::from(*ptr11.add(4).cast::<u8>());
-                                let l14 = *ptr11.add(8).cast::<*mut u8>();
-                                let l15 = *ptr11.add(12).cast::<usize>();
-                                let len16 = l15;
-                                let bytes16 = _rt::Vec::from_raw_parts(l14.cast(), len16, len16);
+                                let v42 = match l13 {
+                                    0 => {
+                                        let e42 = {
+                                            let l14 = *ptr11.add(8).cast::<*mut u8>();
+                                            let l15 = *ptr11.add(12).cast::<usize>();
+                                            let len16 = l15;
+                                            let bytes16 =
+                                                _rt::Vec::from_raw_parts(l14.cast(), len16, len16);
+                                            let l17 = *ptr11.add(16).cast::<*mut u8>();
+                                            let l18 = *ptr11.add(20).cast::<usize>();
+                                            let len19 = l18;
+                                            let bytes19 =
+                                                _rt::Vec::from_raw_parts(l17.cast(), len19, len19);
 
-                                Error {
-                                    code: ErrorCode::_lift(l13 as u8),
-                                    message: _rt::string_lift(bytes16),
-                                }
+                                            ProductNotFoundError {
+                                                message: _rt::string_lift(bytes16),
+                                                product_id: _rt::string_lift(bytes19),
+                                            }
+                                        };
+                                        Error::ProductNotFound(e42)
+                                    }
+                                    1 => {
+                                        let e42 = {
+                                            let l20 = *ptr11.add(8).cast::<*mut u8>();
+                                            let l21 = *ptr11.add(12).cast::<usize>();
+                                            let len22 = l21;
+                                            let bytes22 =
+                                                _rt::Vec::from_raw_parts(l20.cast(), len22, len22);
+                                            let l23 = *ptr11.add(16).cast::<*mut u8>();
+                                            let l24 = *ptr11.add(20).cast::<usize>();
+                                            let len25 = l24;
+                                            let bytes25 =
+                                                _rt::Vec::from_raw_parts(l23.cast(), len25, len25);
+
+                                            PricingNotFoundError {
+                                                message: _rt::string_lift(bytes22),
+                                                product_id: _rt::string_lift(bytes25),
+                                            }
+                                        };
+                                        Error::PricingNotFound(e42)
+                                    }
+                                    2 => {
+                                        let e42 = {
+                                            let l26 = *ptr11.add(8).cast::<*mut u8>();
+                                            let l27 = *ptr11.add(12).cast::<usize>();
+                                            let len28 = l27;
+                                            let bytes28 =
+                                                _rt::Vec::from_raw_parts(l26.cast(), len28, len28);
+
+                                            AddressNotValidError {
+                                                message: _rt::string_lift(bytes28),
+                                            }
+                                        };
+                                        Error::AddressNotValid(e42)
+                                    }
+                                    3 => {
+                                        let e42 = {
+                                            let l29 = *ptr11.add(8).cast::<*mut u8>();
+                                            let l30 = *ptr11.add(12).cast::<usize>();
+                                            let len31 = l30;
+                                            let bytes31 =
+                                                _rt::Vec::from_raw_parts(l29.cast(), len31, len31);
+                                            let l32 = *ptr11.add(16).cast::<*mut u8>();
+                                            let l33 = *ptr11.add(20).cast::<usize>();
+                                            let len34 = l33;
+                                            let bytes34 =
+                                                _rt::Vec::from_raw_parts(l32.cast(), len34, len34);
+
+                                            ItemNotFoundError {
+                                                message: _rt::string_lift(bytes31),
+                                                product_id: _rt::string_lift(bytes34),
+                                            }
+                                        };
+                                        Error::ItemNotFound(e42)
+                                    }
+                                    4 => {
+                                        let e42 = {
+                                            let l35 = *ptr11.add(8).cast::<*mut u8>();
+                                            let l36 = *ptr11.add(12).cast::<usize>();
+                                            let len37 = l36;
+                                            let bytes37 =
+                                                _rt::Vec::from_raw_parts(l35.cast(), len37, len37);
+
+                                            EmptyItemsError { message: _rt::string_lift(bytes37) }
+                                        };
+                                        Error::EmptyItems(e42)
+                                    }
+                                    n => {
+                                        debug_assert_eq!(n, 5, "invalid enum discriminant");
+                                        let e42 = {
+                                            let l38 = *ptr11.add(8).cast::<*mut u8>();
+                                            let l39 = *ptr11.add(12).cast::<usize>();
+                                            let len40 = l39;
+                                            let bytes40 =
+                                                _rt::Vec::from_raw_parts(l38.cast(), len40, len40);
+                                            let l41 = i32::from(*ptr11.add(16).cast::<u8>());
+
+                                            ActionNotAllowedError {
+                                                message: _rt::string_lift(bytes40),
+                                                status: OrderStatus::_lift(l41 as u8),
+                                            }
+                                        };
+                                        Error::ActionNotAllowed(e42)
+                                    }
+                                };
+
+                                v42
                             };
                             Err(e)
                         }
@@ -2416,8 +2947,8 @@ pub mod golem {
             pub fn ship_order() -> Result<(), Error> {
                 unsafe {
                     #[repr(align(4))]
-                    struct RetArea([::core::mem::MaybeUninit<u8>; 16]);
-                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 16]);
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 24]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 24]);
                     let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                     #[cfg(target_arch = "wasm32")]
                     #[link(wasm_import_module = "golem:order/api")]
@@ -2440,15 +2971,113 @@ pub mod golem {
                         1 => {
                             let e = {
                                 let l2 = i32::from(*ptr0.add(4).cast::<u8>());
-                                let l3 = *ptr0.add(8).cast::<*mut u8>();
-                                let l4 = *ptr0.add(12).cast::<usize>();
-                                let len5 = l4;
-                                let bytes5 = _rt::Vec::from_raw_parts(l3.cast(), len5, len5);
+                                let v31 = match l2 {
+                                    0 => {
+                                        let e31 = {
+                                            let l3 = *ptr0.add(8).cast::<*mut u8>();
+                                            let l4 = *ptr0.add(12).cast::<usize>();
+                                            let len5 = l4;
+                                            let bytes5 =
+                                                _rt::Vec::from_raw_parts(l3.cast(), len5, len5);
+                                            let l6 = *ptr0.add(16).cast::<*mut u8>();
+                                            let l7 = *ptr0.add(20).cast::<usize>();
+                                            let len8 = l7;
+                                            let bytes8 =
+                                                _rt::Vec::from_raw_parts(l6.cast(), len8, len8);
 
-                                Error {
-                                    code: ErrorCode::_lift(l2 as u8),
-                                    message: _rt::string_lift(bytes5),
-                                }
+                                            ProductNotFoundError {
+                                                message: _rt::string_lift(bytes5),
+                                                product_id: _rt::string_lift(bytes8),
+                                            }
+                                        };
+                                        Error::ProductNotFound(e31)
+                                    }
+                                    1 => {
+                                        let e31 = {
+                                            let l9 = *ptr0.add(8).cast::<*mut u8>();
+                                            let l10 = *ptr0.add(12).cast::<usize>();
+                                            let len11 = l10;
+                                            let bytes11 =
+                                                _rt::Vec::from_raw_parts(l9.cast(), len11, len11);
+                                            let l12 = *ptr0.add(16).cast::<*mut u8>();
+                                            let l13 = *ptr0.add(20).cast::<usize>();
+                                            let len14 = l13;
+                                            let bytes14 =
+                                                _rt::Vec::from_raw_parts(l12.cast(), len14, len14);
+
+                                            PricingNotFoundError {
+                                                message: _rt::string_lift(bytes11),
+                                                product_id: _rt::string_lift(bytes14),
+                                            }
+                                        };
+                                        Error::PricingNotFound(e31)
+                                    }
+                                    2 => {
+                                        let e31 = {
+                                            let l15 = *ptr0.add(8).cast::<*mut u8>();
+                                            let l16 = *ptr0.add(12).cast::<usize>();
+                                            let len17 = l16;
+                                            let bytes17 =
+                                                _rt::Vec::from_raw_parts(l15.cast(), len17, len17);
+
+                                            AddressNotValidError {
+                                                message: _rt::string_lift(bytes17),
+                                            }
+                                        };
+                                        Error::AddressNotValid(e31)
+                                    }
+                                    3 => {
+                                        let e31 = {
+                                            let l18 = *ptr0.add(8).cast::<*mut u8>();
+                                            let l19 = *ptr0.add(12).cast::<usize>();
+                                            let len20 = l19;
+                                            let bytes20 =
+                                                _rt::Vec::from_raw_parts(l18.cast(), len20, len20);
+                                            let l21 = *ptr0.add(16).cast::<*mut u8>();
+                                            let l22 = *ptr0.add(20).cast::<usize>();
+                                            let len23 = l22;
+                                            let bytes23 =
+                                                _rt::Vec::from_raw_parts(l21.cast(), len23, len23);
+
+                                            ItemNotFoundError {
+                                                message: _rt::string_lift(bytes20),
+                                                product_id: _rt::string_lift(bytes23),
+                                            }
+                                        };
+                                        Error::ItemNotFound(e31)
+                                    }
+                                    4 => {
+                                        let e31 = {
+                                            let l24 = *ptr0.add(8).cast::<*mut u8>();
+                                            let l25 = *ptr0.add(12).cast::<usize>();
+                                            let len26 = l25;
+                                            let bytes26 =
+                                                _rt::Vec::from_raw_parts(l24.cast(), len26, len26);
+
+                                            EmptyItemsError { message: _rt::string_lift(bytes26) }
+                                        };
+                                        Error::EmptyItems(e31)
+                                    }
+                                    n => {
+                                        debug_assert_eq!(n, 5, "invalid enum discriminant");
+                                        let e31 = {
+                                            let l27 = *ptr0.add(8).cast::<*mut u8>();
+                                            let l28 = *ptr0.add(12).cast::<usize>();
+                                            let len29 = l28;
+                                            let bytes29 =
+                                                _rt::Vec::from_raw_parts(l27.cast(), len29, len29);
+                                            let l30 = i32::from(*ptr0.add(16).cast::<u8>());
+
+                                            ActionNotAllowedError {
+                                                message: _rt::string_lift(bytes29),
+                                                status: OrderStatus::_lift(l30 as u8),
+                                            }
+                                        };
+                                        Error::ActionNotAllowed(e31)
+                                    }
+                                };
+
+                                v31
                             };
                             Err(e)
                         }
@@ -2460,8 +3089,8 @@ pub mod golem {
             pub fn cancel_order() -> Result<(), Error> {
                 unsafe {
                     #[repr(align(4))]
-                    struct RetArea([::core::mem::MaybeUninit<u8>; 16]);
-                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 16]);
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 24]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 24]);
                     let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                     #[cfg(target_arch = "wasm32")]
                     #[link(wasm_import_module = "golem:order/api")]
@@ -2484,15 +3113,113 @@ pub mod golem {
                         1 => {
                             let e = {
                                 let l2 = i32::from(*ptr0.add(4).cast::<u8>());
-                                let l3 = *ptr0.add(8).cast::<*mut u8>();
-                                let l4 = *ptr0.add(12).cast::<usize>();
-                                let len5 = l4;
-                                let bytes5 = _rt::Vec::from_raw_parts(l3.cast(), len5, len5);
+                                let v31 = match l2 {
+                                    0 => {
+                                        let e31 = {
+                                            let l3 = *ptr0.add(8).cast::<*mut u8>();
+                                            let l4 = *ptr0.add(12).cast::<usize>();
+                                            let len5 = l4;
+                                            let bytes5 =
+                                                _rt::Vec::from_raw_parts(l3.cast(), len5, len5);
+                                            let l6 = *ptr0.add(16).cast::<*mut u8>();
+                                            let l7 = *ptr0.add(20).cast::<usize>();
+                                            let len8 = l7;
+                                            let bytes8 =
+                                                _rt::Vec::from_raw_parts(l6.cast(), len8, len8);
 
-                                Error {
-                                    code: ErrorCode::_lift(l2 as u8),
-                                    message: _rt::string_lift(bytes5),
-                                }
+                                            ProductNotFoundError {
+                                                message: _rt::string_lift(bytes5),
+                                                product_id: _rt::string_lift(bytes8),
+                                            }
+                                        };
+                                        Error::ProductNotFound(e31)
+                                    }
+                                    1 => {
+                                        let e31 = {
+                                            let l9 = *ptr0.add(8).cast::<*mut u8>();
+                                            let l10 = *ptr0.add(12).cast::<usize>();
+                                            let len11 = l10;
+                                            let bytes11 =
+                                                _rt::Vec::from_raw_parts(l9.cast(), len11, len11);
+                                            let l12 = *ptr0.add(16).cast::<*mut u8>();
+                                            let l13 = *ptr0.add(20).cast::<usize>();
+                                            let len14 = l13;
+                                            let bytes14 =
+                                                _rt::Vec::from_raw_parts(l12.cast(), len14, len14);
+
+                                            PricingNotFoundError {
+                                                message: _rt::string_lift(bytes11),
+                                                product_id: _rt::string_lift(bytes14),
+                                            }
+                                        };
+                                        Error::PricingNotFound(e31)
+                                    }
+                                    2 => {
+                                        let e31 = {
+                                            let l15 = *ptr0.add(8).cast::<*mut u8>();
+                                            let l16 = *ptr0.add(12).cast::<usize>();
+                                            let len17 = l16;
+                                            let bytes17 =
+                                                _rt::Vec::from_raw_parts(l15.cast(), len17, len17);
+
+                                            AddressNotValidError {
+                                                message: _rt::string_lift(bytes17),
+                                            }
+                                        };
+                                        Error::AddressNotValid(e31)
+                                    }
+                                    3 => {
+                                        let e31 = {
+                                            let l18 = *ptr0.add(8).cast::<*mut u8>();
+                                            let l19 = *ptr0.add(12).cast::<usize>();
+                                            let len20 = l19;
+                                            let bytes20 =
+                                                _rt::Vec::from_raw_parts(l18.cast(), len20, len20);
+                                            let l21 = *ptr0.add(16).cast::<*mut u8>();
+                                            let l22 = *ptr0.add(20).cast::<usize>();
+                                            let len23 = l22;
+                                            let bytes23 =
+                                                _rt::Vec::from_raw_parts(l21.cast(), len23, len23);
+
+                                            ItemNotFoundError {
+                                                message: _rt::string_lift(bytes20),
+                                                product_id: _rt::string_lift(bytes23),
+                                            }
+                                        };
+                                        Error::ItemNotFound(e31)
+                                    }
+                                    4 => {
+                                        let e31 = {
+                                            let l24 = *ptr0.add(8).cast::<*mut u8>();
+                                            let l25 = *ptr0.add(12).cast::<usize>();
+                                            let len26 = l25;
+                                            let bytes26 =
+                                                _rt::Vec::from_raw_parts(l24.cast(), len26, len26);
+
+                                            EmptyItemsError { message: _rt::string_lift(bytes26) }
+                                        };
+                                        Error::EmptyItems(e31)
+                                    }
+                                    n => {
+                                        debug_assert_eq!(n, 5, "invalid enum discriminant");
+                                        let e31 = {
+                                            let l27 = *ptr0.add(8).cast::<*mut u8>();
+                                            let l28 = *ptr0.add(12).cast::<usize>();
+                                            let len29 = l28;
+                                            let bytes29 =
+                                                _rt::Vec::from_raw_parts(l27.cast(), len29, len29);
+                                            let l30 = i32::from(*ptr0.add(16).cast::<u8>());
+
+                                            ActionNotAllowedError {
+                                                message: _rt::string_lift(bytes29),
+                                                status: OrderStatus::_lift(l30 as u8),
+                                            }
+                                        };
+                                        Error::ActionNotAllowed(e31)
+                                    }
+                                };
+
+                                v31
                             };
                             Err(e)
                         }
@@ -3315,8 +4042,8 @@ pub mod golem {
                 pub fn get(&self) -> Option<Result<(), Error>> {
                     unsafe {
                         #[repr(align(4))]
-                        struct RetArea([::core::mem::MaybeUninit<u8>; 20]);
-                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 20]);
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 28]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 28]);
                         let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
                         #[link(wasm_import_module = "golem:order-stub/stub-order")]
@@ -3345,16 +4072,157 @@ pub mod golem {
                                         1 => {
                                             let e = {
                                                 let l3 = i32::from(*ptr0.add(8).cast::<u8>());
-                                                let l4 = *ptr0.add(12).cast::<*mut u8>();
-                                                let l5 = *ptr0.add(16).cast::<usize>();
-                                                let len6 = l5;
-                                                let bytes6 =
-                                                    _rt::Vec::from_raw_parts(l4.cast(), len6, len6);
+                                                use super::super::super::golem::order::api::Error as V32;
+                                                let v32 = match l3 {
+                                                    0 => {
+                                                        let e32 = {
+                                                            let l4 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l5 = *ptr0.add(16).cast::<usize>();
+                                                            let len6 = l5;
+                                                            let bytes6 = _rt::Vec::from_raw_parts(
+                                                                l4.cast(),
+                                                                len6,
+                                                                len6,
+                                                            );
+                                                            let l7 =
+                                                                *ptr0.add(20).cast::<*mut u8>();
+                                                            let l8 = *ptr0.add(24).cast::<usize>();
+                                                            let len9 = l8;
+                                                            let bytes9 = _rt::Vec::from_raw_parts(
+                                                                l7.cast(),
+                                                                len9,
+                                                                len9,
+                                                            );
 
-                                                super::super::super::golem::order::api::Error{
-                              code: super::super::super::golem::order::api::ErrorCode::_lift(l3 as u8),
-                              message: _rt::string_lift(bytes6),
-                            }
+                                                            super::super::super::golem::order::api::ProductNotFoundError{
+                                    message: _rt::string_lift(bytes6),
+                                    product_id: _rt::string_lift(bytes9),
+                                  }
+                                                        };
+                                                        V32::ProductNotFound(e32)
+                                                    }
+                                                    1 => {
+                                                        let e32 = {
+                                                            let l10 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l11 = *ptr0.add(16).cast::<usize>();
+                                                            let len12 = l11;
+                                                            let bytes12 = _rt::Vec::from_raw_parts(
+                                                                l10.cast(),
+                                                                len12,
+                                                                len12,
+                                                            );
+                                                            let l13 =
+                                                                *ptr0.add(20).cast::<*mut u8>();
+                                                            let l14 = *ptr0.add(24).cast::<usize>();
+                                                            let len15 = l14;
+                                                            let bytes15 = _rt::Vec::from_raw_parts(
+                                                                l13.cast(),
+                                                                len15,
+                                                                len15,
+                                                            );
+
+                                                            super::super::super::golem::order::api::PricingNotFoundError{
+                                    message: _rt::string_lift(bytes12),
+                                    product_id: _rt::string_lift(bytes15),
+                                  }
+                                                        };
+                                                        V32::PricingNotFound(e32)
+                                                    }
+                                                    2 => {
+                                                        let e32 = {
+                                                            let l16 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l17 = *ptr0.add(16).cast::<usize>();
+                                                            let len18 = l17;
+                                                            let bytes18 = _rt::Vec::from_raw_parts(
+                                                                l16.cast(),
+                                                                len18,
+                                                                len18,
+                                                            );
+
+                                                            super::super::super::golem::order::api::AddressNotValidError{
+                                    message: _rt::string_lift(bytes18),
+                                  }
+                                                        };
+                                                        V32::AddressNotValid(e32)
+                                                    }
+                                                    3 => {
+                                                        let e32 = {
+                                                            let l19 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l20 = *ptr0.add(16).cast::<usize>();
+                                                            let len21 = l20;
+                                                            let bytes21 = _rt::Vec::from_raw_parts(
+                                                                l19.cast(),
+                                                                len21,
+                                                                len21,
+                                                            );
+                                                            let l22 =
+                                                                *ptr0.add(20).cast::<*mut u8>();
+                                                            let l23 = *ptr0.add(24).cast::<usize>();
+                                                            let len24 = l23;
+                                                            let bytes24 = _rt::Vec::from_raw_parts(
+                                                                l22.cast(),
+                                                                len24,
+                                                                len24,
+                                                            );
+
+                                                            super::super::super::golem::order::api::ItemNotFoundError{
+                                    message: _rt::string_lift(bytes21),
+                                    product_id: _rt::string_lift(bytes24),
+                                  }
+                                                        };
+                                                        V32::ItemNotFound(e32)
+                                                    }
+                                                    4 => {
+                                                        let e32 = {
+                                                            let l25 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l26 = *ptr0.add(16).cast::<usize>();
+                                                            let len27 = l26;
+                                                            let bytes27 = _rt::Vec::from_raw_parts(
+                                                                l25.cast(),
+                                                                len27,
+                                                                len27,
+                                                            );
+
+                                                            super::super::super::golem::order::api::EmptyItemsError{
+                                    message: _rt::string_lift(bytes27),
+                                  }
+                                                        };
+                                                        V32::EmptyItems(e32)
+                                                    }
+                                                    n => {
+                                                        debug_assert_eq!(
+                                                            n, 5,
+                                                            "invalid enum discriminant"
+                                                        );
+                                                        let e32 = {
+                                                            let l28 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l29 = *ptr0.add(16).cast::<usize>();
+                                                            let len30 = l29;
+                                                            let bytes30 = _rt::Vec::from_raw_parts(
+                                                                l28.cast(),
+                                                                len30,
+                                                                len30,
+                                                            );
+                                                            let l31 = i32::from(
+                                                                *ptr0.add(20).cast::<u8>(),
+                                                            );
+
+                                                            super::super::super::golem::order::api::ActionNotAllowedError{
+                                    message: _rt::string_lift(bytes30),
+                                    status: super::super::super::golem::order::api::OrderStatus::_lift(l31 as u8),
+                                  }
+                                                        };
+                                                        V32::ActionNotAllowed(e32)
+                                                    }
+                                                };
+
+                                                v32
                                             };
                                             Err(e)
                                         }
@@ -3393,8 +4261,8 @@ pub mod golem {
                 pub fn get(&self) -> Option<Result<(), Error>> {
                     unsafe {
                         #[repr(align(4))]
-                        struct RetArea([::core::mem::MaybeUninit<u8>; 20]);
-                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 20]);
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 28]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 28]);
                         let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
                         #[link(wasm_import_module = "golem:order-stub/stub-order")]
@@ -3423,16 +4291,157 @@ pub mod golem {
                                         1 => {
                                             let e = {
                                                 let l3 = i32::from(*ptr0.add(8).cast::<u8>());
-                                                let l4 = *ptr0.add(12).cast::<*mut u8>();
-                                                let l5 = *ptr0.add(16).cast::<usize>();
-                                                let len6 = l5;
-                                                let bytes6 =
-                                                    _rt::Vec::from_raw_parts(l4.cast(), len6, len6);
+                                                use super::super::super::golem::order::api::Error as V32;
+                                                let v32 = match l3 {
+                                                    0 => {
+                                                        let e32 = {
+                                                            let l4 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l5 = *ptr0.add(16).cast::<usize>();
+                                                            let len6 = l5;
+                                                            let bytes6 = _rt::Vec::from_raw_parts(
+                                                                l4.cast(),
+                                                                len6,
+                                                                len6,
+                                                            );
+                                                            let l7 =
+                                                                *ptr0.add(20).cast::<*mut u8>();
+                                                            let l8 = *ptr0.add(24).cast::<usize>();
+                                                            let len9 = l8;
+                                                            let bytes9 = _rt::Vec::from_raw_parts(
+                                                                l7.cast(),
+                                                                len9,
+                                                                len9,
+                                                            );
 
-                                                super::super::super::golem::order::api::Error{
-                              code: super::super::super::golem::order::api::ErrorCode::_lift(l3 as u8),
-                              message: _rt::string_lift(bytes6),
-                            }
+                                                            super::super::super::golem::order::api::ProductNotFoundError{
+                                    message: _rt::string_lift(bytes6),
+                                    product_id: _rt::string_lift(bytes9),
+                                  }
+                                                        };
+                                                        V32::ProductNotFound(e32)
+                                                    }
+                                                    1 => {
+                                                        let e32 = {
+                                                            let l10 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l11 = *ptr0.add(16).cast::<usize>();
+                                                            let len12 = l11;
+                                                            let bytes12 = _rt::Vec::from_raw_parts(
+                                                                l10.cast(),
+                                                                len12,
+                                                                len12,
+                                                            );
+                                                            let l13 =
+                                                                *ptr0.add(20).cast::<*mut u8>();
+                                                            let l14 = *ptr0.add(24).cast::<usize>();
+                                                            let len15 = l14;
+                                                            let bytes15 = _rt::Vec::from_raw_parts(
+                                                                l13.cast(),
+                                                                len15,
+                                                                len15,
+                                                            );
+
+                                                            super::super::super::golem::order::api::PricingNotFoundError{
+                                    message: _rt::string_lift(bytes12),
+                                    product_id: _rt::string_lift(bytes15),
+                                  }
+                                                        };
+                                                        V32::PricingNotFound(e32)
+                                                    }
+                                                    2 => {
+                                                        let e32 = {
+                                                            let l16 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l17 = *ptr0.add(16).cast::<usize>();
+                                                            let len18 = l17;
+                                                            let bytes18 = _rt::Vec::from_raw_parts(
+                                                                l16.cast(),
+                                                                len18,
+                                                                len18,
+                                                            );
+
+                                                            super::super::super::golem::order::api::AddressNotValidError{
+                                    message: _rt::string_lift(bytes18),
+                                  }
+                                                        };
+                                                        V32::AddressNotValid(e32)
+                                                    }
+                                                    3 => {
+                                                        let e32 = {
+                                                            let l19 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l20 = *ptr0.add(16).cast::<usize>();
+                                                            let len21 = l20;
+                                                            let bytes21 = _rt::Vec::from_raw_parts(
+                                                                l19.cast(),
+                                                                len21,
+                                                                len21,
+                                                            );
+                                                            let l22 =
+                                                                *ptr0.add(20).cast::<*mut u8>();
+                                                            let l23 = *ptr0.add(24).cast::<usize>();
+                                                            let len24 = l23;
+                                                            let bytes24 = _rt::Vec::from_raw_parts(
+                                                                l22.cast(),
+                                                                len24,
+                                                                len24,
+                                                            );
+
+                                                            super::super::super::golem::order::api::ItemNotFoundError{
+                                    message: _rt::string_lift(bytes21),
+                                    product_id: _rt::string_lift(bytes24),
+                                  }
+                                                        };
+                                                        V32::ItemNotFound(e32)
+                                                    }
+                                                    4 => {
+                                                        let e32 = {
+                                                            let l25 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l26 = *ptr0.add(16).cast::<usize>();
+                                                            let len27 = l26;
+                                                            let bytes27 = _rt::Vec::from_raw_parts(
+                                                                l25.cast(),
+                                                                len27,
+                                                                len27,
+                                                            );
+
+                                                            super::super::super::golem::order::api::EmptyItemsError{
+                                    message: _rt::string_lift(bytes27),
+                                  }
+                                                        };
+                                                        V32::EmptyItems(e32)
+                                                    }
+                                                    n => {
+                                                        debug_assert_eq!(
+                                                            n, 5,
+                                                            "invalid enum discriminant"
+                                                        );
+                                                        let e32 = {
+                                                            let l28 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l29 = *ptr0.add(16).cast::<usize>();
+                                                            let len30 = l29;
+                                                            let bytes30 = _rt::Vec::from_raw_parts(
+                                                                l28.cast(),
+                                                                len30,
+                                                                len30,
+                                                            );
+                                                            let l31 = i32::from(
+                                                                *ptr0.add(20).cast::<u8>(),
+                                                            );
+
+                                                            super::super::super::golem::order::api::ActionNotAllowedError{
+                                    message: _rt::string_lift(bytes30),
+                                    status: super::super::super::golem::order::api::OrderStatus::_lift(l31 as u8),
+                                  }
+                                                        };
+                                                        V32::ActionNotAllowed(e32)
+                                                    }
+                                                };
+
+                                                v32
                                             };
                                             Err(e)
                                         }
@@ -3471,8 +4480,8 @@ pub mod golem {
                 pub fn get(&self) -> Option<Result<(), Error>> {
                     unsafe {
                         #[repr(align(4))]
-                        struct RetArea([::core::mem::MaybeUninit<u8>; 20]);
-                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 20]);
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 28]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 28]);
                         let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
                         #[link(wasm_import_module = "golem:order-stub/stub-order")]
@@ -3501,16 +4510,157 @@ pub mod golem {
                                         1 => {
                                             let e = {
                                                 let l3 = i32::from(*ptr0.add(8).cast::<u8>());
-                                                let l4 = *ptr0.add(12).cast::<*mut u8>();
-                                                let l5 = *ptr0.add(16).cast::<usize>();
-                                                let len6 = l5;
-                                                let bytes6 =
-                                                    _rt::Vec::from_raw_parts(l4.cast(), len6, len6);
+                                                use super::super::super::golem::order::api::Error as V32;
+                                                let v32 = match l3 {
+                                                    0 => {
+                                                        let e32 = {
+                                                            let l4 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l5 = *ptr0.add(16).cast::<usize>();
+                                                            let len6 = l5;
+                                                            let bytes6 = _rt::Vec::from_raw_parts(
+                                                                l4.cast(),
+                                                                len6,
+                                                                len6,
+                                                            );
+                                                            let l7 =
+                                                                *ptr0.add(20).cast::<*mut u8>();
+                                                            let l8 = *ptr0.add(24).cast::<usize>();
+                                                            let len9 = l8;
+                                                            let bytes9 = _rt::Vec::from_raw_parts(
+                                                                l7.cast(),
+                                                                len9,
+                                                                len9,
+                                                            );
 
-                                                super::super::super::golem::order::api::Error{
-                              code: super::super::super::golem::order::api::ErrorCode::_lift(l3 as u8),
-                              message: _rt::string_lift(bytes6),
-                            }
+                                                            super::super::super::golem::order::api::ProductNotFoundError{
+                                    message: _rt::string_lift(bytes6),
+                                    product_id: _rt::string_lift(bytes9),
+                                  }
+                                                        };
+                                                        V32::ProductNotFound(e32)
+                                                    }
+                                                    1 => {
+                                                        let e32 = {
+                                                            let l10 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l11 = *ptr0.add(16).cast::<usize>();
+                                                            let len12 = l11;
+                                                            let bytes12 = _rt::Vec::from_raw_parts(
+                                                                l10.cast(),
+                                                                len12,
+                                                                len12,
+                                                            );
+                                                            let l13 =
+                                                                *ptr0.add(20).cast::<*mut u8>();
+                                                            let l14 = *ptr0.add(24).cast::<usize>();
+                                                            let len15 = l14;
+                                                            let bytes15 = _rt::Vec::from_raw_parts(
+                                                                l13.cast(),
+                                                                len15,
+                                                                len15,
+                                                            );
+
+                                                            super::super::super::golem::order::api::PricingNotFoundError{
+                                    message: _rt::string_lift(bytes12),
+                                    product_id: _rt::string_lift(bytes15),
+                                  }
+                                                        };
+                                                        V32::PricingNotFound(e32)
+                                                    }
+                                                    2 => {
+                                                        let e32 = {
+                                                            let l16 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l17 = *ptr0.add(16).cast::<usize>();
+                                                            let len18 = l17;
+                                                            let bytes18 = _rt::Vec::from_raw_parts(
+                                                                l16.cast(),
+                                                                len18,
+                                                                len18,
+                                                            );
+
+                                                            super::super::super::golem::order::api::AddressNotValidError{
+                                    message: _rt::string_lift(bytes18),
+                                  }
+                                                        };
+                                                        V32::AddressNotValid(e32)
+                                                    }
+                                                    3 => {
+                                                        let e32 = {
+                                                            let l19 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l20 = *ptr0.add(16).cast::<usize>();
+                                                            let len21 = l20;
+                                                            let bytes21 = _rt::Vec::from_raw_parts(
+                                                                l19.cast(),
+                                                                len21,
+                                                                len21,
+                                                            );
+                                                            let l22 =
+                                                                *ptr0.add(20).cast::<*mut u8>();
+                                                            let l23 = *ptr0.add(24).cast::<usize>();
+                                                            let len24 = l23;
+                                                            let bytes24 = _rt::Vec::from_raw_parts(
+                                                                l22.cast(),
+                                                                len24,
+                                                                len24,
+                                                            );
+
+                                                            super::super::super::golem::order::api::ItemNotFoundError{
+                                    message: _rt::string_lift(bytes21),
+                                    product_id: _rt::string_lift(bytes24),
+                                  }
+                                                        };
+                                                        V32::ItemNotFound(e32)
+                                                    }
+                                                    4 => {
+                                                        let e32 = {
+                                                            let l25 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l26 = *ptr0.add(16).cast::<usize>();
+                                                            let len27 = l26;
+                                                            let bytes27 = _rt::Vec::from_raw_parts(
+                                                                l25.cast(),
+                                                                len27,
+                                                                len27,
+                                                            );
+
+                                                            super::super::super::golem::order::api::EmptyItemsError{
+                                    message: _rt::string_lift(bytes27),
+                                  }
+                                                        };
+                                                        V32::EmptyItems(e32)
+                                                    }
+                                                    n => {
+                                                        debug_assert_eq!(
+                                                            n, 5,
+                                                            "invalid enum discriminant"
+                                                        );
+                                                        let e32 = {
+                                                            let l28 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l29 = *ptr0.add(16).cast::<usize>();
+                                                            let len30 = l29;
+                                                            let bytes30 = _rt::Vec::from_raw_parts(
+                                                                l28.cast(),
+                                                                len30,
+                                                                len30,
+                                                            );
+                                                            let l31 = i32::from(
+                                                                *ptr0.add(20).cast::<u8>(),
+                                                            );
+
+                                                            super::super::super::golem::order::api::ActionNotAllowedError{
+                                    message: _rt::string_lift(bytes30),
+                                    status: super::super::super::golem::order::api::OrderStatus::_lift(l31 as u8),
+                                  }
+                                                        };
+                                                        V32::ActionNotAllowed(e32)
+                                                    }
+                                                };
+
+                                                v32
                                             };
                                             Err(e)
                                         }
@@ -3549,8 +4699,8 @@ pub mod golem {
                 pub fn get(&self) -> Option<Result<(), Error>> {
                     unsafe {
                         #[repr(align(4))]
-                        struct RetArea([::core::mem::MaybeUninit<u8>; 20]);
-                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 20]);
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 28]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 28]);
                         let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
                         #[link(wasm_import_module = "golem:order-stub/stub-order")]
@@ -3579,16 +4729,157 @@ pub mod golem {
                                         1 => {
                                             let e = {
                                                 let l3 = i32::from(*ptr0.add(8).cast::<u8>());
-                                                let l4 = *ptr0.add(12).cast::<*mut u8>();
-                                                let l5 = *ptr0.add(16).cast::<usize>();
-                                                let len6 = l5;
-                                                let bytes6 =
-                                                    _rt::Vec::from_raw_parts(l4.cast(), len6, len6);
+                                                use super::super::super::golem::order::api::Error as V32;
+                                                let v32 = match l3 {
+                                                    0 => {
+                                                        let e32 = {
+                                                            let l4 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l5 = *ptr0.add(16).cast::<usize>();
+                                                            let len6 = l5;
+                                                            let bytes6 = _rt::Vec::from_raw_parts(
+                                                                l4.cast(),
+                                                                len6,
+                                                                len6,
+                                                            );
+                                                            let l7 =
+                                                                *ptr0.add(20).cast::<*mut u8>();
+                                                            let l8 = *ptr0.add(24).cast::<usize>();
+                                                            let len9 = l8;
+                                                            let bytes9 = _rt::Vec::from_raw_parts(
+                                                                l7.cast(),
+                                                                len9,
+                                                                len9,
+                                                            );
 
-                                                super::super::super::golem::order::api::Error{
-                              code: super::super::super::golem::order::api::ErrorCode::_lift(l3 as u8),
-                              message: _rt::string_lift(bytes6),
-                            }
+                                                            super::super::super::golem::order::api::ProductNotFoundError{
+                                    message: _rt::string_lift(bytes6),
+                                    product_id: _rt::string_lift(bytes9),
+                                  }
+                                                        };
+                                                        V32::ProductNotFound(e32)
+                                                    }
+                                                    1 => {
+                                                        let e32 = {
+                                                            let l10 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l11 = *ptr0.add(16).cast::<usize>();
+                                                            let len12 = l11;
+                                                            let bytes12 = _rt::Vec::from_raw_parts(
+                                                                l10.cast(),
+                                                                len12,
+                                                                len12,
+                                                            );
+                                                            let l13 =
+                                                                *ptr0.add(20).cast::<*mut u8>();
+                                                            let l14 = *ptr0.add(24).cast::<usize>();
+                                                            let len15 = l14;
+                                                            let bytes15 = _rt::Vec::from_raw_parts(
+                                                                l13.cast(),
+                                                                len15,
+                                                                len15,
+                                                            );
+
+                                                            super::super::super::golem::order::api::PricingNotFoundError{
+                                    message: _rt::string_lift(bytes12),
+                                    product_id: _rt::string_lift(bytes15),
+                                  }
+                                                        };
+                                                        V32::PricingNotFound(e32)
+                                                    }
+                                                    2 => {
+                                                        let e32 = {
+                                                            let l16 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l17 = *ptr0.add(16).cast::<usize>();
+                                                            let len18 = l17;
+                                                            let bytes18 = _rt::Vec::from_raw_parts(
+                                                                l16.cast(),
+                                                                len18,
+                                                                len18,
+                                                            );
+
+                                                            super::super::super::golem::order::api::AddressNotValidError{
+                                    message: _rt::string_lift(bytes18),
+                                  }
+                                                        };
+                                                        V32::AddressNotValid(e32)
+                                                    }
+                                                    3 => {
+                                                        let e32 = {
+                                                            let l19 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l20 = *ptr0.add(16).cast::<usize>();
+                                                            let len21 = l20;
+                                                            let bytes21 = _rt::Vec::from_raw_parts(
+                                                                l19.cast(),
+                                                                len21,
+                                                                len21,
+                                                            );
+                                                            let l22 =
+                                                                *ptr0.add(20).cast::<*mut u8>();
+                                                            let l23 = *ptr0.add(24).cast::<usize>();
+                                                            let len24 = l23;
+                                                            let bytes24 = _rt::Vec::from_raw_parts(
+                                                                l22.cast(),
+                                                                len24,
+                                                                len24,
+                                                            );
+
+                                                            super::super::super::golem::order::api::ItemNotFoundError{
+                                    message: _rt::string_lift(bytes21),
+                                    product_id: _rt::string_lift(bytes24),
+                                  }
+                                                        };
+                                                        V32::ItemNotFound(e32)
+                                                    }
+                                                    4 => {
+                                                        let e32 = {
+                                                            let l25 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l26 = *ptr0.add(16).cast::<usize>();
+                                                            let len27 = l26;
+                                                            let bytes27 = _rt::Vec::from_raw_parts(
+                                                                l25.cast(),
+                                                                len27,
+                                                                len27,
+                                                            );
+
+                                                            super::super::super::golem::order::api::EmptyItemsError{
+                                    message: _rt::string_lift(bytes27),
+                                  }
+                                                        };
+                                                        V32::EmptyItems(e32)
+                                                    }
+                                                    n => {
+                                                        debug_assert_eq!(
+                                                            n, 5,
+                                                            "invalid enum discriminant"
+                                                        );
+                                                        let e32 = {
+                                                            let l28 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l29 = *ptr0.add(16).cast::<usize>();
+                                                            let len30 = l29;
+                                                            let bytes30 = _rt::Vec::from_raw_parts(
+                                                                l28.cast(),
+                                                                len30,
+                                                                len30,
+                                                            );
+                                                            let l31 = i32::from(
+                                                                *ptr0.add(20).cast::<u8>(),
+                                                            );
+
+                                                            super::super::super::golem::order::api::ActionNotAllowedError{
+                                    message: _rt::string_lift(bytes30),
+                                    status: super::super::super::golem::order::api::OrderStatus::_lift(l31 as u8),
+                                  }
+                                                        };
+                                                        V32::ActionNotAllowed(e32)
+                                                    }
+                                                };
+
+                                                v32
                                             };
                                             Err(e)
                                         }
@@ -3627,8 +4918,8 @@ pub mod golem {
                 pub fn get(&self) -> Option<Result<(), Error>> {
                     unsafe {
                         #[repr(align(4))]
-                        struct RetArea([::core::mem::MaybeUninit<u8>; 20]);
-                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 20]);
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 28]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 28]);
                         let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
                         #[link(wasm_import_module = "golem:order-stub/stub-order")]
@@ -3657,16 +4948,157 @@ pub mod golem {
                                         1 => {
                                             let e = {
                                                 let l3 = i32::from(*ptr0.add(8).cast::<u8>());
-                                                let l4 = *ptr0.add(12).cast::<*mut u8>();
-                                                let l5 = *ptr0.add(16).cast::<usize>();
-                                                let len6 = l5;
-                                                let bytes6 =
-                                                    _rt::Vec::from_raw_parts(l4.cast(), len6, len6);
+                                                use super::super::super::golem::order::api::Error as V32;
+                                                let v32 = match l3 {
+                                                    0 => {
+                                                        let e32 = {
+                                                            let l4 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l5 = *ptr0.add(16).cast::<usize>();
+                                                            let len6 = l5;
+                                                            let bytes6 = _rt::Vec::from_raw_parts(
+                                                                l4.cast(),
+                                                                len6,
+                                                                len6,
+                                                            );
+                                                            let l7 =
+                                                                *ptr0.add(20).cast::<*mut u8>();
+                                                            let l8 = *ptr0.add(24).cast::<usize>();
+                                                            let len9 = l8;
+                                                            let bytes9 = _rt::Vec::from_raw_parts(
+                                                                l7.cast(),
+                                                                len9,
+                                                                len9,
+                                                            );
 
-                                                super::super::super::golem::order::api::Error{
-                              code: super::super::super::golem::order::api::ErrorCode::_lift(l3 as u8),
-                              message: _rt::string_lift(bytes6),
-                            }
+                                                            super::super::super::golem::order::api::ProductNotFoundError{
+                                    message: _rt::string_lift(bytes6),
+                                    product_id: _rt::string_lift(bytes9),
+                                  }
+                                                        };
+                                                        V32::ProductNotFound(e32)
+                                                    }
+                                                    1 => {
+                                                        let e32 = {
+                                                            let l10 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l11 = *ptr0.add(16).cast::<usize>();
+                                                            let len12 = l11;
+                                                            let bytes12 = _rt::Vec::from_raw_parts(
+                                                                l10.cast(),
+                                                                len12,
+                                                                len12,
+                                                            );
+                                                            let l13 =
+                                                                *ptr0.add(20).cast::<*mut u8>();
+                                                            let l14 = *ptr0.add(24).cast::<usize>();
+                                                            let len15 = l14;
+                                                            let bytes15 = _rt::Vec::from_raw_parts(
+                                                                l13.cast(),
+                                                                len15,
+                                                                len15,
+                                                            );
+
+                                                            super::super::super::golem::order::api::PricingNotFoundError{
+                                    message: _rt::string_lift(bytes12),
+                                    product_id: _rt::string_lift(bytes15),
+                                  }
+                                                        };
+                                                        V32::PricingNotFound(e32)
+                                                    }
+                                                    2 => {
+                                                        let e32 = {
+                                                            let l16 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l17 = *ptr0.add(16).cast::<usize>();
+                                                            let len18 = l17;
+                                                            let bytes18 = _rt::Vec::from_raw_parts(
+                                                                l16.cast(),
+                                                                len18,
+                                                                len18,
+                                                            );
+
+                                                            super::super::super::golem::order::api::AddressNotValidError{
+                                    message: _rt::string_lift(bytes18),
+                                  }
+                                                        };
+                                                        V32::AddressNotValid(e32)
+                                                    }
+                                                    3 => {
+                                                        let e32 = {
+                                                            let l19 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l20 = *ptr0.add(16).cast::<usize>();
+                                                            let len21 = l20;
+                                                            let bytes21 = _rt::Vec::from_raw_parts(
+                                                                l19.cast(),
+                                                                len21,
+                                                                len21,
+                                                            );
+                                                            let l22 =
+                                                                *ptr0.add(20).cast::<*mut u8>();
+                                                            let l23 = *ptr0.add(24).cast::<usize>();
+                                                            let len24 = l23;
+                                                            let bytes24 = _rt::Vec::from_raw_parts(
+                                                                l22.cast(),
+                                                                len24,
+                                                                len24,
+                                                            );
+
+                                                            super::super::super::golem::order::api::ItemNotFoundError{
+                                    message: _rt::string_lift(bytes21),
+                                    product_id: _rt::string_lift(bytes24),
+                                  }
+                                                        };
+                                                        V32::ItemNotFound(e32)
+                                                    }
+                                                    4 => {
+                                                        let e32 = {
+                                                            let l25 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l26 = *ptr0.add(16).cast::<usize>();
+                                                            let len27 = l26;
+                                                            let bytes27 = _rt::Vec::from_raw_parts(
+                                                                l25.cast(),
+                                                                len27,
+                                                                len27,
+                                                            );
+
+                                                            super::super::super::golem::order::api::EmptyItemsError{
+                                    message: _rt::string_lift(bytes27),
+                                  }
+                                                        };
+                                                        V32::EmptyItems(e32)
+                                                    }
+                                                    n => {
+                                                        debug_assert_eq!(
+                                                            n, 5,
+                                                            "invalid enum discriminant"
+                                                        );
+                                                        let e32 = {
+                                                            let l28 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l29 = *ptr0.add(16).cast::<usize>();
+                                                            let len30 = l29;
+                                                            let bytes30 = _rt::Vec::from_raw_parts(
+                                                                l28.cast(),
+                                                                len30,
+                                                                len30,
+                                                            );
+                                                            let l31 = i32::from(
+                                                                *ptr0.add(20).cast::<u8>(),
+                                                            );
+
+                                                            super::super::super::golem::order::api::ActionNotAllowedError{
+                                    message: _rt::string_lift(bytes30),
+                                    status: super::super::super::golem::order::api::OrderStatus::_lift(l31 as u8),
+                                  }
+                                                        };
+                                                        V32::ActionNotAllowed(e32)
+                                                    }
+                                                };
+
+                                                v32
                                             };
                                             Err(e)
                                         }
@@ -3705,8 +5137,8 @@ pub mod golem {
                 pub fn get(&self) -> Option<Result<(), Error>> {
                     unsafe {
                         #[repr(align(4))]
-                        struct RetArea([::core::mem::MaybeUninit<u8>; 20]);
-                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 20]);
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 28]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 28]);
                         let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
                         #[link(wasm_import_module = "golem:order-stub/stub-order")]
@@ -3735,16 +5167,157 @@ pub mod golem {
                                         1 => {
                                             let e = {
                                                 let l3 = i32::from(*ptr0.add(8).cast::<u8>());
-                                                let l4 = *ptr0.add(12).cast::<*mut u8>();
-                                                let l5 = *ptr0.add(16).cast::<usize>();
-                                                let len6 = l5;
-                                                let bytes6 =
-                                                    _rt::Vec::from_raw_parts(l4.cast(), len6, len6);
+                                                use super::super::super::golem::order::api::Error as V32;
+                                                let v32 = match l3 {
+                                                    0 => {
+                                                        let e32 = {
+                                                            let l4 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l5 = *ptr0.add(16).cast::<usize>();
+                                                            let len6 = l5;
+                                                            let bytes6 = _rt::Vec::from_raw_parts(
+                                                                l4.cast(),
+                                                                len6,
+                                                                len6,
+                                                            );
+                                                            let l7 =
+                                                                *ptr0.add(20).cast::<*mut u8>();
+                                                            let l8 = *ptr0.add(24).cast::<usize>();
+                                                            let len9 = l8;
+                                                            let bytes9 = _rt::Vec::from_raw_parts(
+                                                                l7.cast(),
+                                                                len9,
+                                                                len9,
+                                                            );
 
-                                                super::super::super::golem::order::api::Error{
-                              code: super::super::super::golem::order::api::ErrorCode::_lift(l3 as u8),
-                              message: _rt::string_lift(bytes6),
-                            }
+                                                            super::super::super::golem::order::api::ProductNotFoundError{
+                                    message: _rt::string_lift(bytes6),
+                                    product_id: _rt::string_lift(bytes9),
+                                  }
+                                                        };
+                                                        V32::ProductNotFound(e32)
+                                                    }
+                                                    1 => {
+                                                        let e32 = {
+                                                            let l10 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l11 = *ptr0.add(16).cast::<usize>();
+                                                            let len12 = l11;
+                                                            let bytes12 = _rt::Vec::from_raw_parts(
+                                                                l10.cast(),
+                                                                len12,
+                                                                len12,
+                                                            );
+                                                            let l13 =
+                                                                *ptr0.add(20).cast::<*mut u8>();
+                                                            let l14 = *ptr0.add(24).cast::<usize>();
+                                                            let len15 = l14;
+                                                            let bytes15 = _rt::Vec::from_raw_parts(
+                                                                l13.cast(),
+                                                                len15,
+                                                                len15,
+                                                            );
+
+                                                            super::super::super::golem::order::api::PricingNotFoundError{
+                                    message: _rt::string_lift(bytes12),
+                                    product_id: _rt::string_lift(bytes15),
+                                  }
+                                                        };
+                                                        V32::PricingNotFound(e32)
+                                                    }
+                                                    2 => {
+                                                        let e32 = {
+                                                            let l16 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l17 = *ptr0.add(16).cast::<usize>();
+                                                            let len18 = l17;
+                                                            let bytes18 = _rt::Vec::from_raw_parts(
+                                                                l16.cast(),
+                                                                len18,
+                                                                len18,
+                                                            );
+
+                                                            super::super::super::golem::order::api::AddressNotValidError{
+                                    message: _rt::string_lift(bytes18),
+                                  }
+                                                        };
+                                                        V32::AddressNotValid(e32)
+                                                    }
+                                                    3 => {
+                                                        let e32 = {
+                                                            let l19 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l20 = *ptr0.add(16).cast::<usize>();
+                                                            let len21 = l20;
+                                                            let bytes21 = _rt::Vec::from_raw_parts(
+                                                                l19.cast(),
+                                                                len21,
+                                                                len21,
+                                                            );
+                                                            let l22 =
+                                                                *ptr0.add(20).cast::<*mut u8>();
+                                                            let l23 = *ptr0.add(24).cast::<usize>();
+                                                            let len24 = l23;
+                                                            let bytes24 = _rt::Vec::from_raw_parts(
+                                                                l22.cast(),
+                                                                len24,
+                                                                len24,
+                                                            );
+
+                                                            super::super::super::golem::order::api::ItemNotFoundError{
+                                    message: _rt::string_lift(bytes21),
+                                    product_id: _rt::string_lift(bytes24),
+                                  }
+                                                        };
+                                                        V32::ItemNotFound(e32)
+                                                    }
+                                                    4 => {
+                                                        let e32 = {
+                                                            let l25 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l26 = *ptr0.add(16).cast::<usize>();
+                                                            let len27 = l26;
+                                                            let bytes27 = _rt::Vec::from_raw_parts(
+                                                                l25.cast(),
+                                                                len27,
+                                                                len27,
+                                                            );
+
+                                                            super::super::super::golem::order::api::EmptyItemsError{
+                                    message: _rt::string_lift(bytes27),
+                                  }
+                                                        };
+                                                        V32::EmptyItems(e32)
+                                                    }
+                                                    n => {
+                                                        debug_assert_eq!(
+                                                            n, 5,
+                                                            "invalid enum discriminant"
+                                                        );
+                                                        let e32 = {
+                                                            let l28 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l29 = *ptr0.add(16).cast::<usize>();
+                                                            let len30 = l29;
+                                                            let bytes30 = _rt::Vec::from_raw_parts(
+                                                                l28.cast(),
+                                                                len30,
+                                                                len30,
+                                                            );
+                                                            let l31 = i32::from(
+                                                                *ptr0.add(20).cast::<u8>(),
+                                                            );
+
+                                                            super::super::super::golem::order::api::ActionNotAllowedError{
+                                    message: _rt::string_lift(bytes30),
+                                    status: super::super::super::golem::order::api::OrderStatus::_lift(l31 as u8),
+                                  }
+                                                        };
+                                                        V32::ActionNotAllowed(e32)
+                                                    }
+                                                };
+
+                                                v32
                                             };
                                             Err(e)
                                         }
@@ -3783,8 +5356,8 @@ pub mod golem {
                 pub fn get(&self) -> Option<Result<(), Error>> {
                     unsafe {
                         #[repr(align(4))]
-                        struct RetArea([::core::mem::MaybeUninit<u8>; 20]);
-                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 20]);
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 28]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 28]);
                         let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
                         #[link(wasm_import_module = "golem:order-stub/stub-order")]
@@ -3813,16 +5386,157 @@ pub mod golem {
                                         1 => {
                                             let e = {
                                                 let l3 = i32::from(*ptr0.add(8).cast::<u8>());
-                                                let l4 = *ptr0.add(12).cast::<*mut u8>();
-                                                let l5 = *ptr0.add(16).cast::<usize>();
-                                                let len6 = l5;
-                                                let bytes6 =
-                                                    _rt::Vec::from_raw_parts(l4.cast(), len6, len6);
+                                                use super::super::super::golem::order::api::Error as V32;
+                                                let v32 = match l3 {
+                                                    0 => {
+                                                        let e32 = {
+                                                            let l4 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l5 = *ptr0.add(16).cast::<usize>();
+                                                            let len6 = l5;
+                                                            let bytes6 = _rt::Vec::from_raw_parts(
+                                                                l4.cast(),
+                                                                len6,
+                                                                len6,
+                                                            );
+                                                            let l7 =
+                                                                *ptr0.add(20).cast::<*mut u8>();
+                                                            let l8 = *ptr0.add(24).cast::<usize>();
+                                                            let len9 = l8;
+                                                            let bytes9 = _rt::Vec::from_raw_parts(
+                                                                l7.cast(),
+                                                                len9,
+                                                                len9,
+                                                            );
 
-                                                super::super::super::golem::order::api::Error{
-                              code: super::super::super::golem::order::api::ErrorCode::_lift(l3 as u8),
-                              message: _rt::string_lift(bytes6),
-                            }
+                                                            super::super::super::golem::order::api::ProductNotFoundError{
+                                    message: _rt::string_lift(bytes6),
+                                    product_id: _rt::string_lift(bytes9),
+                                  }
+                                                        };
+                                                        V32::ProductNotFound(e32)
+                                                    }
+                                                    1 => {
+                                                        let e32 = {
+                                                            let l10 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l11 = *ptr0.add(16).cast::<usize>();
+                                                            let len12 = l11;
+                                                            let bytes12 = _rt::Vec::from_raw_parts(
+                                                                l10.cast(),
+                                                                len12,
+                                                                len12,
+                                                            );
+                                                            let l13 =
+                                                                *ptr0.add(20).cast::<*mut u8>();
+                                                            let l14 = *ptr0.add(24).cast::<usize>();
+                                                            let len15 = l14;
+                                                            let bytes15 = _rt::Vec::from_raw_parts(
+                                                                l13.cast(),
+                                                                len15,
+                                                                len15,
+                                                            );
+
+                                                            super::super::super::golem::order::api::PricingNotFoundError{
+                                    message: _rt::string_lift(bytes12),
+                                    product_id: _rt::string_lift(bytes15),
+                                  }
+                                                        };
+                                                        V32::PricingNotFound(e32)
+                                                    }
+                                                    2 => {
+                                                        let e32 = {
+                                                            let l16 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l17 = *ptr0.add(16).cast::<usize>();
+                                                            let len18 = l17;
+                                                            let bytes18 = _rt::Vec::from_raw_parts(
+                                                                l16.cast(),
+                                                                len18,
+                                                                len18,
+                                                            );
+
+                                                            super::super::super::golem::order::api::AddressNotValidError{
+                                    message: _rt::string_lift(bytes18),
+                                  }
+                                                        };
+                                                        V32::AddressNotValid(e32)
+                                                    }
+                                                    3 => {
+                                                        let e32 = {
+                                                            let l19 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l20 = *ptr0.add(16).cast::<usize>();
+                                                            let len21 = l20;
+                                                            let bytes21 = _rt::Vec::from_raw_parts(
+                                                                l19.cast(),
+                                                                len21,
+                                                                len21,
+                                                            );
+                                                            let l22 =
+                                                                *ptr0.add(20).cast::<*mut u8>();
+                                                            let l23 = *ptr0.add(24).cast::<usize>();
+                                                            let len24 = l23;
+                                                            let bytes24 = _rt::Vec::from_raw_parts(
+                                                                l22.cast(),
+                                                                len24,
+                                                                len24,
+                                                            );
+
+                                                            super::super::super::golem::order::api::ItemNotFoundError{
+                                    message: _rt::string_lift(bytes21),
+                                    product_id: _rt::string_lift(bytes24),
+                                  }
+                                                        };
+                                                        V32::ItemNotFound(e32)
+                                                    }
+                                                    4 => {
+                                                        let e32 = {
+                                                            let l25 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l26 = *ptr0.add(16).cast::<usize>();
+                                                            let len27 = l26;
+                                                            let bytes27 = _rt::Vec::from_raw_parts(
+                                                                l25.cast(),
+                                                                len27,
+                                                                len27,
+                                                            );
+
+                                                            super::super::super::golem::order::api::EmptyItemsError{
+                                    message: _rt::string_lift(bytes27),
+                                  }
+                                                        };
+                                                        V32::EmptyItems(e32)
+                                                    }
+                                                    n => {
+                                                        debug_assert_eq!(
+                                                            n, 5,
+                                                            "invalid enum discriminant"
+                                                        );
+                                                        let e32 = {
+                                                            let l28 =
+                                                                *ptr0.add(12).cast::<*mut u8>();
+                                                            let l29 = *ptr0.add(16).cast::<usize>();
+                                                            let len30 = l29;
+                                                            let bytes30 = _rt::Vec::from_raw_parts(
+                                                                l28.cast(),
+                                                                len30,
+                                                                len30,
+                                                            );
+                                                            let l31 = i32::from(
+                                                                *ptr0.add(20).cast::<u8>(),
+                                                            );
+
+                                                            super::super::super::golem::order::api::ActionNotAllowedError{
+                                    message: _rt::string_lift(bytes30),
+                                    status: super::super::super::golem::order::api::OrderStatus::_lift(l31 as u8),
+                                  }
+                                                        };
+                                                        V32::ActionNotAllowed(e32)
+                                                    }
+                                                };
+
+                                                v32
                                             };
                                             Err(e)
                                         }
@@ -4769,8 +6483,8 @@ pub mod golem {
                 ) -> Result<(), Error> {
                     unsafe {
                         #[repr(align(4))]
-                        struct RetArea([::core::mem::MaybeUninit<u8>; 16]);
-                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 16]);
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 24]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 24]);
                         let vec0 = product_id;
                         let ptr0 = vec0.as_ptr().cast::<u8>();
                         let len0 = vec0.len();
@@ -4802,18 +6516,137 @@ pub mod golem {
                             1 => {
                                 let e = {
                                     let l3 = i32::from(*ptr1.add(4).cast::<u8>());
-                                    let l4 = *ptr1.add(8).cast::<*mut u8>();
-                                    let l5 = *ptr1.add(12).cast::<usize>();
-                                    let len6 = l5;
-                                    let bytes6 = _rt::Vec::from_raw_parts(l4.cast(), len6, len6);
+                                    use super::super::super::golem::order::api::Error as V32;
+                                    let v32 = match l3 {
+                                        0 => {
+                                            let e32 = {
+                                                let l4 = *ptr1.add(8).cast::<*mut u8>();
+                                                let l5 = *ptr1.add(12).cast::<usize>();
+                                                let len6 = l5;
+                                                let bytes6 =
+                                                    _rt::Vec::from_raw_parts(l4.cast(), len6, len6);
+                                                let l7 = *ptr1.add(16).cast::<*mut u8>();
+                                                let l8 = *ptr1.add(20).cast::<usize>();
+                                                let len9 = l8;
+                                                let bytes9 =
+                                                    _rt::Vec::from_raw_parts(l7.cast(), len9, len9);
 
-                                    super::super::super::golem::order::api::Error {
-                                        code:
-                                            super::super::super::golem::order::api::ErrorCode::_lift(
-                                                l3 as u8,
-                                            ),
-                                        message: _rt::string_lift(bytes6),
+                                                super::super::super::golem::order::api::ProductNotFoundError{
+                                      message: _rt::string_lift(bytes6),
+                                      product_id: _rt::string_lift(bytes9),
                                     }
+                                            };
+                                            V32::ProductNotFound(e32)
+                                        }
+                                        1 => {
+                                            let e32 = {
+                                                let l10 = *ptr1.add(8).cast::<*mut u8>();
+                                                let l11 = *ptr1.add(12).cast::<usize>();
+                                                let len12 = l11;
+                                                let bytes12 = _rt::Vec::from_raw_parts(
+                                                    l10.cast(),
+                                                    len12,
+                                                    len12,
+                                                );
+                                                let l13 = *ptr1.add(16).cast::<*mut u8>();
+                                                let l14 = *ptr1.add(20).cast::<usize>();
+                                                let len15 = l14;
+                                                let bytes15 = _rt::Vec::from_raw_parts(
+                                                    l13.cast(),
+                                                    len15,
+                                                    len15,
+                                                );
+
+                                                super::super::super::golem::order::api::PricingNotFoundError{
+                                      message: _rt::string_lift(bytes12),
+                                      product_id: _rt::string_lift(bytes15),
+                                    }
+                                            };
+                                            V32::PricingNotFound(e32)
+                                        }
+                                        2 => {
+                                            let e32 = {
+                                                let l16 = *ptr1.add(8).cast::<*mut u8>();
+                                                let l17 = *ptr1.add(12).cast::<usize>();
+                                                let len18 = l17;
+                                                let bytes18 = _rt::Vec::from_raw_parts(
+                                                    l16.cast(),
+                                                    len18,
+                                                    len18,
+                                                );
+
+                                                super::super::super::golem::order::api::AddressNotValidError{
+                                      message: _rt::string_lift(bytes18),
+                                    }
+                                            };
+                                            V32::AddressNotValid(e32)
+                                        }
+                                        3 => {
+                                            let e32 = {
+                                                let l19 = *ptr1.add(8).cast::<*mut u8>();
+                                                let l20 = *ptr1.add(12).cast::<usize>();
+                                                let len21 = l20;
+                                                let bytes21 = _rt::Vec::from_raw_parts(
+                                                    l19.cast(),
+                                                    len21,
+                                                    len21,
+                                                );
+                                                let l22 = *ptr1.add(16).cast::<*mut u8>();
+                                                let l23 = *ptr1.add(20).cast::<usize>();
+                                                let len24 = l23;
+                                                let bytes24 = _rt::Vec::from_raw_parts(
+                                                    l22.cast(),
+                                                    len24,
+                                                    len24,
+                                                );
+
+                                                super::super::super::golem::order::api::ItemNotFoundError{
+                                      message: _rt::string_lift(bytes21),
+                                      product_id: _rt::string_lift(bytes24),
+                                    }
+                                            };
+                                            V32::ItemNotFound(e32)
+                                        }
+                                        4 => {
+                                            let e32 = {
+                                                let l25 = *ptr1.add(8).cast::<*mut u8>();
+                                                let l26 = *ptr1.add(12).cast::<usize>();
+                                                let len27 = l26;
+                                                let bytes27 = _rt::Vec::from_raw_parts(
+                                                    l25.cast(),
+                                                    len27,
+                                                    len27,
+                                                );
+
+                                                super::super::super::golem::order::api::EmptyItemsError{
+                                      message: _rt::string_lift(bytes27),
+                                    }
+                                            };
+                                            V32::EmptyItems(e32)
+                                        }
+                                        n => {
+                                            debug_assert_eq!(n, 5, "invalid enum discriminant");
+                                            let e32 = {
+                                                let l28 = *ptr1.add(8).cast::<*mut u8>();
+                                                let l29 = *ptr1.add(12).cast::<usize>();
+                                                let len30 = l29;
+                                                let bytes30 = _rt::Vec::from_raw_parts(
+                                                    l28.cast(),
+                                                    len30,
+                                                    len30,
+                                                );
+                                                let l31 = i32::from(*ptr1.add(16).cast::<u8>());
+
+                                                super::super::super::golem::order::api::ActionNotAllowedError{
+                                      message: _rt::string_lift(bytes30),
+                                      status: super::super::super::golem::order::api::OrderStatus::_lift(l31 as u8),
+                                    }
+                                            };
+                                            V32::ActionNotAllowed(e32)
+                                        }
+                                    };
+
+                                    v32
                                 };
                                 Err(e)
                             }
@@ -4856,8 +6689,8 @@ pub mod golem {
                 pub fn blocking_remove_item(&self, product_id: &str) -> Result<(), Error> {
                     unsafe {
                         #[repr(align(4))]
-                        struct RetArea([::core::mem::MaybeUninit<u8>; 16]);
-                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 16]);
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 24]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 24]);
                         let vec0 = product_id;
                         let ptr0 = vec0.as_ptr().cast::<u8>();
                         let len0 = vec0.len();
@@ -4883,18 +6716,137 @@ pub mod golem {
                             1 => {
                                 let e = {
                                     let l3 = i32::from(*ptr1.add(4).cast::<u8>());
-                                    let l4 = *ptr1.add(8).cast::<*mut u8>();
-                                    let l5 = *ptr1.add(12).cast::<usize>();
-                                    let len6 = l5;
-                                    let bytes6 = _rt::Vec::from_raw_parts(l4.cast(), len6, len6);
+                                    use super::super::super::golem::order::api::Error as V32;
+                                    let v32 = match l3 {
+                                        0 => {
+                                            let e32 = {
+                                                let l4 = *ptr1.add(8).cast::<*mut u8>();
+                                                let l5 = *ptr1.add(12).cast::<usize>();
+                                                let len6 = l5;
+                                                let bytes6 =
+                                                    _rt::Vec::from_raw_parts(l4.cast(), len6, len6);
+                                                let l7 = *ptr1.add(16).cast::<*mut u8>();
+                                                let l8 = *ptr1.add(20).cast::<usize>();
+                                                let len9 = l8;
+                                                let bytes9 =
+                                                    _rt::Vec::from_raw_parts(l7.cast(), len9, len9);
 
-                                    super::super::super::golem::order::api::Error {
-                                        code:
-                                            super::super::super::golem::order::api::ErrorCode::_lift(
-                                                l3 as u8,
-                                            ),
-                                        message: _rt::string_lift(bytes6),
+                                                super::super::super::golem::order::api::ProductNotFoundError{
+                                      message: _rt::string_lift(bytes6),
+                                      product_id: _rt::string_lift(bytes9),
                                     }
+                                            };
+                                            V32::ProductNotFound(e32)
+                                        }
+                                        1 => {
+                                            let e32 = {
+                                                let l10 = *ptr1.add(8).cast::<*mut u8>();
+                                                let l11 = *ptr1.add(12).cast::<usize>();
+                                                let len12 = l11;
+                                                let bytes12 = _rt::Vec::from_raw_parts(
+                                                    l10.cast(),
+                                                    len12,
+                                                    len12,
+                                                );
+                                                let l13 = *ptr1.add(16).cast::<*mut u8>();
+                                                let l14 = *ptr1.add(20).cast::<usize>();
+                                                let len15 = l14;
+                                                let bytes15 = _rt::Vec::from_raw_parts(
+                                                    l13.cast(),
+                                                    len15,
+                                                    len15,
+                                                );
+
+                                                super::super::super::golem::order::api::PricingNotFoundError{
+                                      message: _rt::string_lift(bytes12),
+                                      product_id: _rt::string_lift(bytes15),
+                                    }
+                                            };
+                                            V32::PricingNotFound(e32)
+                                        }
+                                        2 => {
+                                            let e32 = {
+                                                let l16 = *ptr1.add(8).cast::<*mut u8>();
+                                                let l17 = *ptr1.add(12).cast::<usize>();
+                                                let len18 = l17;
+                                                let bytes18 = _rt::Vec::from_raw_parts(
+                                                    l16.cast(),
+                                                    len18,
+                                                    len18,
+                                                );
+
+                                                super::super::super::golem::order::api::AddressNotValidError{
+                                      message: _rt::string_lift(bytes18),
+                                    }
+                                            };
+                                            V32::AddressNotValid(e32)
+                                        }
+                                        3 => {
+                                            let e32 = {
+                                                let l19 = *ptr1.add(8).cast::<*mut u8>();
+                                                let l20 = *ptr1.add(12).cast::<usize>();
+                                                let len21 = l20;
+                                                let bytes21 = _rt::Vec::from_raw_parts(
+                                                    l19.cast(),
+                                                    len21,
+                                                    len21,
+                                                );
+                                                let l22 = *ptr1.add(16).cast::<*mut u8>();
+                                                let l23 = *ptr1.add(20).cast::<usize>();
+                                                let len24 = l23;
+                                                let bytes24 = _rt::Vec::from_raw_parts(
+                                                    l22.cast(),
+                                                    len24,
+                                                    len24,
+                                                );
+
+                                                super::super::super::golem::order::api::ItemNotFoundError{
+                                      message: _rt::string_lift(bytes21),
+                                      product_id: _rt::string_lift(bytes24),
+                                    }
+                                            };
+                                            V32::ItemNotFound(e32)
+                                        }
+                                        4 => {
+                                            let e32 = {
+                                                let l25 = *ptr1.add(8).cast::<*mut u8>();
+                                                let l26 = *ptr1.add(12).cast::<usize>();
+                                                let len27 = l26;
+                                                let bytes27 = _rt::Vec::from_raw_parts(
+                                                    l25.cast(),
+                                                    len27,
+                                                    len27,
+                                                );
+
+                                                super::super::super::golem::order::api::EmptyItemsError{
+                                      message: _rt::string_lift(bytes27),
+                                    }
+                                            };
+                                            V32::EmptyItems(e32)
+                                        }
+                                        n => {
+                                            debug_assert_eq!(n, 5, "invalid enum discriminant");
+                                            let e32 = {
+                                                let l28 = *ptr1.add(8).cast::<*mut u8>();
+                                                let l29 = *ptr1.add(12).cast::<usize>();
+                                                let len30 = l29;
+                                                let bytes30 = _rt::Vec::from_raw_parts(
+                                                    l28.cast(),
+                                                    len30,
+                                                    len30,
+                                                );
+                                                let l31 = i32::from(*ptr1.add(16).cast::<u8>());
+
+                                                super::super::super::golem::order::api::ActionNotAllowedError{
+                                      message: _rt::string_lift(bytes30),
+                                      status: super::super::super::golem::order::api::OrderStatus::_lift(l31 as u8),
+                                    }
+                                            };
+                                            V32::ActionNotAllowed(e32)
+                                        }
+                                    };
+
+                                    v32
                                 };
                                 Err(e)
                             }
@@ -4936,8 +6888,8 @@ pub mod golem {
                 ) -> Result<(), Error> {
                     unsafe {
                         #[repr(align(4))]
-                        struct RetArea([::core::mem::MaybeUninit<u8>; 16]);
-                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 16]);
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 24]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 24]);
                         let vec0 = product_id;
                         let ptr0 = vec0.as_ptr().cast::<u8>();
                         let len0 = vec0.len();
@@ -4969,18 +6921,137 @@ pub mod golem {
                             1 => {
                                 let e = {
                                     let l3 = i32::from(*ptr1.add(4).cast::<u8>());
-                                    let l4 = *ptr1.add(8).cast::<*mut u8>();
-                                    let l5 = *ptr1.add(12).cast::<usize>();
-                                    let len6 = l5;
-                                    let bytes6 = _rt::Vec::from_raw_parts(l4.cast(), len6, len6);
+                                    use super::super::super::golem::order::api::Error as V32;
+                                    let v32 = match l3 {
+                                        0 => {
+                                            let e32 = {
+                                                let l4 = *ptr1.add(8).cast::<*mut u8>();
+                                                let l5 = *ptr1.add(12).cast::<usize>();
+                                                let len6 = l5;
+                                                let bytes6 =
+                                                    _rt::Vec::from_raw_parts(l4.cast(), len6, len6);
+                                                let l7 = *ptr1.add(16).cast::<*mut u8>();
+                                                let l8 = *ptr1.add(20).cast::<usize>();
+                                                let len9 = l8;
+                                                let bytes9 =
+                                                    _rt::Vec::from_raw_parts(l7.cast(), len9, len9);
 
-                                    super::super::super::golem::order::api::Error {
-                                        code:
-                                            super::super::super::golem::order::api::ErrorCode::_lift(
-                                                l3 as u8,
-                                            ),
-                                        message: _rt::string_lift(bytes6),
+                                                super::super::super::golem::order::api::ProductNotFoundError{
+                                      message: _rt::string_lift(bytes6),
+                                      product_id: _rt::string_lift(bytes9),
                                     }
+                                            };
+                                            V32::ProductNotFound(e32)
+                                        }
+                                        1 => {
+                                            let e32 = {
+                                                let l10 = *ptr1.add(8).cast::<*mut u8>();
+                                                let l11 = *ptr1.add(12).cast::<usize>();
+                                                let len12 = l11;
+                                                let bytes12 = _rt::Vec::from_raw_parts(
+                                                    l10.cast(),
+                                                    len12,
+                                                    len12,
+                                                );
+                                                let l13 = *ptr1.add(16).cast::<*mut u8>();
+                                                let l14 = *ptr1.add(20).cast::<usize>();
+                                                let len15 = l14;
+                                                let bytes15 = _rt::Vec::from_raw_parts(
+                                                    l13.cast(),
+                                                    len15,
+                                                    len15,
+                                                );
+
+                                                super::super::super::golem::order::api::PricingNotFoundError{
+                                      message: _rt::string_lift(bytes12),
+                                      product_id: _rt::string_lift(bytes15),
+                                    }
+                                            };
+                                            V32::PricingNotFound(e32)
+                                        }
+                                        2 => {
+                                            let e32 = {
+                                                let l16 = *ptr1.add(8).cast::<*mut u8>();
+                                                let l17 = *ptr1.add(12).cast::<usize>();
+                                                let len18 = l17;
+                                                let bytes18 = _rt::Vec::from_raw_parts(
+                                                    l16.cast(),
+                                                    len18,
+                                                    len18,
+                                                );
+
+                                                super::super::super::golem::order::api::AddressNotValidError{
+                                      message: _rt::string_lift(bytes18),
+                                    }
+                                            };
+                                            V32::AddressNotValid(e32)
+                                        }
+                                        3 => {
+                                            let e32 = {
+                                                let l19 = *ptr1.add(8).cast::<*mut u8>();
+                                                let l20 = *ptr1.add(12).cast::<usize>();
+                                                let len21 = l20;
+                                                let bytes21 = _rt::Vec::from_raw_parts(
+                                                    l19.cast(),
+                                                    len21,
+                                                    len21,
+                                                );
+                                                let l22 = *ptr1.add(16).cast::<*mut u8>();
+                                                let l23 = *ptr1.add(20).cast::<usize>();
+                                                let len24 = l23;
+                                                let bytes24 = _rt::Vec::from_raw_parts(
+                                                    l22.cast(),
+                                                    len24,
+                                                    len24,
+                                                );
+
+                                                super::super::super::golem::order::api::ItemNotFoundError{
+                                      message: _rt::string_lift(bytes21),
+                                      product_id: _rt::string_lift(bytes24),
+                                    }
+                                            };
+                                            V32::ItemNotFound(e32)
+                                        }
+                                        4 => {
+                                            let e32 = {
+                                                let l25 = *ptr1.add(8).cast::<*mut u8>();
+                                                let l26 = *ptr1.add(12).cast::<usize>();
+                                                let len27 = l26;
+                                                let bytes27 = _rt::Vec::from_raw_parts(
+                                                    l25.cast(),
+                                                    len27,
+                                                    len27,
+                                                );
+
+                                                super::super::super::golem::order::api::EmptyItemsError{
+                                      message: _rt::string_lift(bytes27),
+                                    }
+                                            };
+                                            V32::EmptyItems(e32)
+                                        }
+                                        n => {
+                                            debug_assert_eq!(n, 5, "invalid enum discriminant");
+                                            let e32 = {
+                                                let l28 = *ptr1.add(8).cast::<*mut u8>();
+                                                let l29 = *ptr1.add(12).cast::<usize>();
+                                                let len30 = l29;
+                                                let bytes30 = _rt::Vec::from_raw_parts(
+                                                    l28.cast(),
+                                                    len30,
+                                                    len30,
+                                                );
+                                                let l31 = i32::from(*ptr1.add(16).cast::<u8>());
+
+                                                super::super::super::golem::order::api::ActionNotAllowedError{
+                                      message: _rt::string_lift(bytes30),
+                                      status: super::super::super::golem::order::api::OrderStatus::_lift(l31 as u8),
+                                    }
+                                            };
+                                            V32::ActionNotAllowed(e32)
+                                        }
+                                    };
+
+                                    v32
                                 };
                                 Err(e)
                             }
@@ -5144,19 +7215,143 @@ pub mod golem {
                             1 => {
                                 let e = {
                                     let l13 = i32::from(*ptr11.add(4).cast::<u8>());
-                                    let l14 = *ptr11.add(8).cast::<*mut u8>();
-                                    let l15 = *ptr11.add(12).cast::<usize>();
-                                    let len16 = l15;
-                                    let bytes16 =
-                                        _rt::Vec::from_raw_parts(l14.cast(), len16, len16);
+                                    use super::super::super::golem::order::api::Error as V42;
+                                    let v42 = match l13 {
+                                        0 => {
+                                            let e42 = {
+                                                let l14 = *ptr11.add(8).cast::<*mut u8>();
+                                                let l15 = *ptr11.add(12).cast::<usize>();
+                                                let len16 = l15;
+                                                let bytes16 = _rt::Vec::from_raw_parts(
+                                                    l14.cast(),
+                                                    len16,
+                                                    len16,
+                                                );
+                                                let l17 = *ptr11.add(16).cast::<*mut u8>();
+                                                let l18 = *ptr11.add(20).cast::<usize>();
+                                                let len19 = l18;
+                                                let bytes19 = _rt::Vec::from_raw_parts(
+                                                    l17.cast(),
+                                                    len19,
+                                                    len19,
+                                                );
 
-                                    super::super::super::golem::order::api::Error {
-                                        code:
-                                            super::super::super::golem::order::api::ErrorCode::_lift(
-                                                l13 as u8,
-                                            ),
-                                        message: _rt::string_lift(bytes16),
+                                                super::super::super::golem::order::api::ProductNotFoundError{
+                                      message: _rt::string_lift(bytes16),
+                                      product_id: _rt::string_lift(bytes19),
                                     }
+                                            };
+                                            V42::ProductNotFound(e42)
+                                        }
+                                        1 => {
+                                            let e42 = {
+                                                let l20 = *ptr11.add(8).cast::<*mut u8>();
+                                                let l21 = *ptr11.add(12).cast::<usize>();
+                                                let len22 = l21;
+                                                let bytes22 = _rt::Vec::from_raw_parts(
+                                                    l20.cast(),
+                                                    len22,
+                                                    len22,
+                                                );
+                                                let l23 = *ptr11.add(16).cast::<*mut u8>();
+                                                let l24 = *ptr11.add(20).cast::<usize>();
+                                                let len25 = l24;
+                                                let bytes25 = _rt::Vec::from_raw_parts(
+                                                    l23.cast(),
+                                                    len25,
+                                                    len25,
+                                                );
+
+                                                super::super::super::golem::order::api::PricingNotFoundError{
+                                      message: _rt::string_lift(bytes22),
+                                      product_id: _rt::string_lift(bytes25),
+                                    }
+                                            };
+                                            V42::PricingNotFound(e42)
+                                        }
+                                        2 => {
+                                            let e42 = {
+                                                let l26 = *ptr11.add(8).cast::<*mut u8>();
+                                                let l27 = *ptr11.add(12).cast::<usize>();
+                                                let len28 = l27;
+                                                let bytes28 = _rt::Vec::from_raw_parts(
+                                                    l26.cast(),
+                                                    len28,
+                                                    len28,
+                                                );
+
+                                                super::super::super::golem::order::api::AddressNotValidError{
+                                      message: _rt::string_lift(bytes28),
+                                    }
+                                            };
+                                            V42::AddressNotValid(e42)
+                                        }
+                                        3 => {
+                                            let e42 = {
+                                                let l29 = *ptr11.add(8).cast::<*mut u8>();
+                                                let l30 = *ptr11.add(12).cast::<usize>();
+                                                let len31 = l30;
+                                                let bytes31 = _rt::Vec::from_raw_parts(
+                                                    l29.cast(),
+                                                    len31,
+                                                    len31,
+                                                );
+                                                let l32 = *ptr11.add(16).cast::<*mut u8>();
+                                                let l33 = *ptr11.add(20).cast::<usize>();
+                                                let len34 = l33;
+                                                let bytes34 = _rt::Vec::from_raw_parts(
+                                                    l32.cast(),
+                                                    len34,
+                                                    len34,
+                                                );
+
+                                                super::super::super::golem::order::api::ItemNotFoundError{
+                                      message: _rt::string_lift(bytes31),
+                                      product_id: _rt::string_lift(bytes34),
+                                    }
+                                            };
+                                            V42::ItemNotFound(e42)
+                                        }
+                                        4 => {
+                                            let e42 = {
+                                                let l35 = *ptr11.add(8).cast::<*mut u8>();
+                                                let l36 = *ptr11.add(12).cast::<usize>();
+                                                let len37 = l36;
+                                                let bytes37 = _rt::Vec::from_raw_parts(
+                                                    l35.cast(),
+                                                    len37,
+                                                    len37,
+                                                );
+
+                                                super::super::super::golem::order::api::EmptyItemsError{
+                                      message: _rt::string_lift(bytes37),
+                                    }
+                                            };
+                                            V42::EmptyItems(e42)
+                                        }
+                                        n => {
+                                            debug_assert_eq!(n, 5, "invalid enum discriminant");
+                                            let e42 = {
+                                                let l38 = *ptr11.add(8).cast::<*mut u8>();
+                                                let l39 = *ptr11.add(12).cast::<usize>();
+                                                let len40 = l39;
+                                                let bytes40 = _rt::Vec::from_raw_parts(
+                                                    l38.cast(),
+                                                    len40,
+                                                    len40,
+                                                );
+                                                let l41 = i32::from(*ptr11.add(16).cast::<u8>());
+
+                                                super::super::super::golem::order::api::ActionNotAllowedError{
+                                      message: _rt::string_lift(bytes40),
+                                      status: super::super::super::golem::order::api::OrderStatus::_lift(l41 as u8),
+                                    }
+                                            };
+                                            V42::ActionNotAllowed(e42)
+                                        }
+                                    };
+
+                                    v42
                                 };
                                 Err(e)
                             }
@@ -5403,19 +7598,143 @@ pub mod golem {
                             1 => {
                                 let e = {
                                     let l13 = i32::from(*ptr11.add(4).cast::<u8>());
-                                    let l14 = *ptr11.add(8).cast::<*mut u8>();
-                                    let l15 = *ptr11.add(12).cast::<usize>();
-                                    let len16 = l15;
-                                    let bytes16 =
-                                        _rt::Vec::from_raw_parts(l14.cast(), len16, len16);
+                                    use super::super::super::golem::order::api::Error as V42;
+                                    let v42 = match l13 {
+                                        0 => {
+                                            let e42 = {
+                                                let l14 = *ptr11.add(8).cast::<*mut u8>();
+                                                let l15 = *ptr11.add(12).cast::<usize>();
+                                                let len16 = l15;
+                                                let bytes16 = _rt::Vec::from_raw_parts(
+                                                    l14.cast(),
+                                                    len16,
+                                                    len16,
+                                                );
+                                                let l17 = *ptr11.add(16).cast::<*mut u8>();
+                                                let l18 = *ptr11.add(20).cast::<usize>();
+                                                let len19 = l18;
+                                                let bytes19 = _rt::Vec::from_raw_parts(
+                                                    l17.cast(),
+                                                    len19,
+                                                    len19,
+                                                );
 
-                                    super::super::super::golem::order::api::Error {
-                                        code:
-                                            super::super::super::golem::order::api::ErrorCode::_lift(
-                                                l13 as u8,
-                                            ),
-                                        message: _rt::string_lift(bytes16),
+                                                super::super::super::golem::order::api::ProductNotFoundError{
+                                      message: _rt::string_lift(bytes16),
+                                      product_id: _rt::string_lift(bytes19),
                                     }
+                                            };
+                                            V42::ProductNotFound(e42)
+                                        }
+                                        1 => {
+                                            let e42 = {
+                                                let l20 = *ptr11.add(8).cast::<*mut u8>();
+                                                let l21 = *ptr11.add(12).cast::<usize>();
+                                                let len22 = l21;
+                                                let bytes22 = _rt::Vec::from_raw_parts(
+                                                    l20.cast(),
+                                                    len22,
+                                                    len22,
+                                                );
+                                                let l23 = *ptr11.add(16).cast::<*mut u8>();
+                                                let l24 = *ptr11.add(20).cast::<usize>();
+                                                let len25 = l24;
+                                                let bytes25 = _rt::Vec::from_raw_parts(
+                                                    l23.cast(),
+                                                    len25,
+                                                    len25,
+                                                );
+
+                                                super::super::super::golem::order::api::PricingNotFoundError{
+                                      message: _rt::string_lift(bytes22),
+                                      product_id: _rt::string_lift(bytes25),
+                                    }
+                                            };
+                                            V42::PricingNotFound(e42)
+                                        }
+                                        2 => {
+                                            let e42 = {
+                                                let l26 = *ptr11.add(8).cast::<*mut u8>();
+                                                let l27 = *ptr11.add(12).cast::<usize>();
+                                                let len28 = l27;
+                                                let bytes28 = _rt::Vec::from_raw_parts(
+                                                    l26.cast(),
+                                                    len28,
+                                                    len28,
+                                                );
+
+                                                super::super::super::golem::order::api::AddressNotValidError{
+                                      message: _rt::string_lift(bytes28),
+                                    }
+                                            };
+                                            V42::AddressNotValid(e42)
+                                        }
+                                        3 => {
+                                            let e42 = {
+                                                let l29 = *ptr11.add(8).cast::<*mut u8>();
+                                                let l30 = *ptr11.add(12).cast::<usize>();
+                                                let len31 = l30;
+                                                let bytes31 = _rt::Vec::from_raw_parts(
+                                                    l29.cast(),
+                                                    len31,
+                                                    len31,
+                                                );
+                                                let l32 = *ptr11.add(16).cast::<*mut u8>();
+                                                let l33 = *ptr11.add(20).cast::<usize>();
+                                                let len34 = l33;
+                                                let bytes34 = _rt::Vec::from_raw_parts(
+                                                    l32.cast(),
+                                                    len34,
+                                                    len34,
+                                                );
+
+                                                super::super::super::golem::order::api::ItemNotFoundError{
+                                      message: _rt::string_lift(bytes31),
+                                      product_id: _rt::string_lift(bytes34),
+                                    }
+                                            };
+                                            V42::ItemNotFound(e42)
+                                        }
+                                        4 => {
+                                            let e42 = {
+                                                let l35 = *ptr11.add(8).cast::<*mut u8>();
+                                                let l36 = *ptr11.add(12).cast::<usize>();
+                                                let len37 = l36;
+                                                let bytes37 = _rt::Vec::from_raw_parts(
+                                                    l35.cast(),
+                                                    len37,
+                                                    len37,
+                                                );
+
+                                                super::super::super::golem::order::api::EmptyItemsError{
+                                      message: _rt::string_lift(bytes37),
+                                    }
+                                            };
+                                            V42::EmptyItems(e42)
+                                        }
+                                        n => {
+                                            debug_assert_eq!(n, 5, "invalid enum discriminant");
+                                            let e42 = {
+                                                let l38 = *ptr11.add(8).cast::<*mut u8>();
+                                                let l39 = *ptr11.add(12).cast::<usize>();
+                                                let len40 = l39;
+                                                let bytes40 = _rt::Vec::from_raw_parts(
+                                                    l38.cast(),
+                                                    len40,
+                                                    len40,
+                                                );
+                                                let l41 = i32::from(*ptr11.add(16).cast::<u8>());
+
+                                                super::super::super::golem::order::api::ActionNotAllowedError{
+                                      message: _rt::string_lift(bytes40),
+                                      status: super::super::super::golem::order::api::OrderStatus::_lift(l41 as u8),
+                                    }
+                                            };
+                                            V42::ActionNotAllowed(e42)
+                                        }
+                                    };
+
+                                    v42
                                 };
                                 Err(e)
                             }
@@ -5545,8 +7864,8 @@ pub mod golem {
                 pub fn blocking_ship_order(&self) -> Result<(), Error> {
                     unsafe {
                         #[repr(align(4))]
-                        struct RetArea([::core::mem::MaybeUninit<u8>; 16]);
-                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 16]);
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 24]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 24]);
                         let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
                         #[link(wasm_import_module = "golem:order-stub/stub-order")]
@@ -5569,18 +7888,137 @@ pub mod golem {
                             1 => {
                                 let e = {
                                     let l2 = i32::from(*ptr0.add(4).cast::<u8>());
-                                    let l3 = *ptr0.add(8).cast::<*mut u8>();
-                                    let l4 = *ptr0.add(12).cast::<usize>();
-                                    let len5 = l4;
-                                    let bytes5 = _rt::Vec::from_raw_parts(l3.cast(), len5, len5);
+                                    use super::super::super::golem::order::api::Error as V31;
+                                    let v31 = match l2 {
+                                        0 => {
+                                            let e31 = {
+                                                let l3 = *ptr0.add(8).cast::<*mut u8>();
+                                                let l4 = *ptr0.add(12).cast::<usize>();
+                                                let len5 = l4;
+                                                let bytes5 =
+                                                    _rt::Vec::from_raw_parts(l3.cast(), len5, len5);
+                                                let l6 = *ptr0.add(16).cast::<*mut u8>();
+                                                let l7 = *ptr0.add(20).cast::<usize>();
+                                                let len8 = l7;
+                                                let bytes8 =
+                                                    _rt::Vec::from_raw_parts(l6.cast(), len8, len8);
 
-                                    super::super::super::golem::order::api::Error {
-                                        code:
-                                            super::super::super::golem::order::api::ErrorCode::_lift(
-                                                l2 as u8,
-                                            ),
-                                        message: _rt::string_lift(bytes5),
+                                                super::super::super::golem::order::api::ProductNotFoundError{
+                                      message: _rt::string_lift(bytes5),
+                                      product_id: _rt::string_lift(bytes8),
                                     }
+                                            };
+                                            V31::ProductNotFound(e31)
+                                        }
+                                        1 => {
+                                            let e31 = {
+                                                let l9 = *ptr0.add(8).cast::<*mut u8>();
+                                                let l10 = *ptr0.add(12).cast::<usize>();
+                                                let len11 = l10;
+                                                let bytes11 = _rt::Vec::from_raw_parts(
+                                                    l9.cast(),
+                                                    len11,
+                                                    len11,
+                                                );
+                                                let l12 = *ptr0.add(16).cast::<*mut u8>();
+                                                let l13 = *ptr0.add(20).cast::<usize>();
+                                                let len14 = l13;
+                                                let bytes14 = _rt::Vec::from_raw_parts(
+                                                    l12.cast(),
+                                                    len14,
+                                                    len14,
+                                                );
+
+                                                super::super::super::golem::order::api::PricingNotFoundError{
+                                      message: _rt::string_lift(bytes11),
+                                      product_id: _rt::string_lift(bytes14),
+                                    }
+                                            };
+                                            V31::PricingNotFound(e31)
+                                        }
+                                        2 => {
+                                            let e31 = {
+                                                let l15 = *ptr0.add(8).cast::<*mut u8>();
+                                                let l16 = *ptr0.add(12).cast::<usize>();
+                                                let len17 = l16;
+                                                let bytes17 = _rt::Vec::from_raw_parts(
+                                                    l15.cast(),
+                                                    len17,
+                                                    len17,
+                                                );
+
+                                                super::super::super::golem::order::api::AddressNotValidError{
+                                      message: _rt::string_lift(bytes17),
+                                    }
+                                            };
+                                            V31::AddressNotValid(e31)
+                                        }
+                                        3 => {
+                                            let e31 = {
+                                                let l18 = *ptr0.add(8).cast::<*mut u8>();
+                                                let l19 = *ptr0.add(12).cast::<usize>();
+                                                let len20 = l19;
+                                                let bytes20 = _rt::Vec::from_raw_parts(
+                                                    l18.cast(),
+                                                    len20,
+                                                    len20,
+                                                );
+                                                let l21 = *ptr0.add(16).cast::<*mut u8>();
+                                                let l22 = *ptr0.add(20).cast::<usize>();
+                                                let len23 = l22;
+                                                let bytes23 = _rt::Vec::from_raw_parts(
+                                                    l21.cast(),
+                                                    len23,
+                                                    len23,
+                                                );
+
+                                                super::super::super::golem::order::api::ItemNotFoundError{
+                                      message: _rt::string_lift(bytes20),
+                                      product_id: _rt::string_lift(bytes23),
+                                    }
+                                            };
+                                            V31::ItemNotFound(e31)
+                                        }
+                                        4 => {
+                                            let e31 = {
+                                                let l24 = *ptr0.add(8).cast::<*mut u8>();
+                                                let l25 = *ptr0.add(12).cast::<usize>();
+                                                let len26 = l25;
+                                                let bytes26 = _rt::Vec::from_raw_parts(
+                                                    l24.cast(),
+                                                    len26,
+                                                    len26,
+                                                );
+
+                                                super::super::super::golem::order::api::EmptyItemsError{
+                                      message: _rt::string_lift(bytes26),
+                                    }
+                                            };
+                                            V31::EmptyItems(e31)
+                                        }
+                                        n => {
+                                            debug_assert_eq!(n, 5, "invalid enum discriminant");
+                                            let e31 = {
+                                                let l27 = *ptr0.add(8).cast::<*mut u8>();
+                                                let l28 = *ptr0.add(12).cast::<usize>();
+                                                let len29 = l28;
+                                                let bytes29 = _rt::Vec::from_raw_parts(
+                                                    l27.cast(),
+                                                    len29,
+                                                    len29,
+                                                );
+                                                let l30 = i32::from(*ptr0.add(16).cast::<u8>());
+
+                                                super::super::super::golem::order::api::ActionNotAllowedError{
+                                      message: _rt::string_lift(bytes29),
+                                      status: super::super::super::golem::order::api::OrderStatus::_lift(l30 as u8),
+                                    }
+                                            };
+                                            V31::ActionNotAllowed(e31)
+                                        }
+                                    };
+
+                                    v31
                                 };
                                 Err(e)
                             }
@@ -5614,8 +8052,8 @@ pub mod golem {
                 pub fn blocking_cancel_order(&self) -> Result<(), Error> {
                     unsafe {
                         #[repr(align(4))]
-                        struct RetArea([::core::mem::MaybeUninit<u8>; 16]);
-                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 16]);
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 24]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 24]);
                         let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
                         #[link(wasm_import_module = "golem:order-stub/stub-order")]
@@ -5638,18 +8076,137 @@ pub mod golem {
                             1 => {
                                 let e = {
                                     let l2 = i32::from(*ptr0.add(4).cast::<u8>());
-                                    let l3 = *ptr0.add(8).cast::<*mut u8>();
-                                    let l4 = *ptr0.add(12).cast::<usize>();
-                                    let len5 = l4;
-                                    let bytes5 = _rt::Vec::from_raw_parts(l3.cast(), len5, len5);
+                                    use super::super::super::golem::order::api::Error as V31;
+                                    let v31 = match l2 {
+                                        0 => {
+                                            let e31 = {
+                                                let l3 = *ptr0.add(8).cast::<*mut u8>();
+                                                let l4 = *ptr0.add(12).cast::<usize>();
+                                                let len5 = l4;
+                                                let bytes5 =
+                                                    _rt::Vec::from_raw_parts(l3.cast(), len5, len5);
+                                                let l6 = *ptr0.add(16).cast::<*mut u8>();
+                                                let l7 = *ptr0.add(20).cast::<usize>();
+                                                let len8 = l7;
+                                                let bytes8 =
+                                                    _rt::Vec::from_raw_parts(l6.cast(), len8, len8);
 
-                                    super::super::super::golem::order::api::Error {
-                                        code:
-                                            super::super::super::golem::order::api::ErrorCode::_lift(
-                                                l2 as u8,
-                                            ),
-                                        message: _rt::string_lift(bytes5),
+                                                super::super::super::golem::order::api::ProductNotFoundError{
+                                      message: _rt::string_lift(bytes5),
+                                      product_id: _rt::string_lift(bytes8),
                                     }
+                                            };
+                                            V31::ProductNotFound(e31)
+                                        }
+                                        1 => {
+                                            let e31 = {
+                                                let l9 = *ptr0.add(8).cast::<*mut u8>();
+                                                let l10 = *ptr0.add(12).cast::<usize>();
+                                                let len11 = l10;
+                                                let bytes11 = _rt::Vec::from_raw_parts(
+                                                    l9.cast(),
+                                                    len11,
+                                                    len11,
+                                                );
+                                                let l12 = *ptr0.add(16).cast::<*mut u8>();
+                                                let l13 = *ptr0.add(20).cast::<usize>();
+                                                let len14 = l13;
+                                                let bytes14 = _rt::Vec::from_raw_parts(
+                                                    l12.cast(),
+                                                    len14,
+                                                    len14,
+                                                );
+
+                                                super::super::super::golem::order::api::PricingNotFoundError{
+                                      message: _rt::string_lift(bytes11),
+                                      product_id: _rt::string_lift(bytes14),
+                                    }
+                                            };
+                                            V31::PricingNotFound(e31)
+                                        }
+                                        2 => {
+                                            let e31 = {
+                                                let l15 = *ptr0.add(8).cast::<*mut u8>();
+                                                let l16 = *ptr0.add(12).cast::<usize>();
+                                                let len17 = l16;
+                                                let bytes17 = _rt::Vec::from_raw_parts(
+                                                    l15.cast(),
+                                                    len17,
+                                                    len17,
+                                                );
+
+                                                super::super::super::golem::order::api::AddressNotValidError{
+                                      message: _rt::string_lift(bytes17),
+                                    }
+                                            };
+                                            V31::AddressNotValid(e31)
+                                        }
+                                        3 => {
+                                            let e31 = {
+                                                let l18 = *ptr0.add(8).cast::<*mut u8>();
+                                                let l19 = *ptr0.add(12).cast::<usize>();
+                                                let len20 = l19;
+                                                let bytes20 = _rt::Vec::from_raw_parts(
+                                                    l18.cast(),
+                                                    len20,
+                                                    len20,
+                                                );
+                                                let l21 = *ptr0.add(16).cast::<*mut u8>();
+                                                let l22 = *ptr0.add(20).cast::<usize>();
+                                                let len23 = l22;
+                                                let bytes23 = _rt::Vec::from_raw_parts(
+                                                    l21.cast(),
+                                                    len23,
+                                                    len23,
+                                                );
+
+                                                super::super::super::golem::order::api::ItemNotFoundError{
+                                      message: _rt::string_lift(bytes20),
+                                      product_id: _rt::string_lift(bytes23),
+                                    }
+                                            };
+                                            V31::ItemNotFound(e31)
+                                        }
+                                        4 => {
+                                            let e31 = {
+                                                let l24 = *ptr0.add(8).cast::<*mut u8>();
+                                                let l25 = *ptr0.add(12).cast::<usize>();
+                                                let len26 = l25;
+                                                let bytes26 = _rt::Vec::from_raw_parts(
+                                                    l24.cast(),
+                                                    len26,
+                                                    len26,
+                                                );
+
+                                                super::super::super::golem::order::api::EmptyItemsError{
+                                      message: _rt::string_lift(bytes26),
+                                    }
+                                            };
+                                            V31::EmptyItems(e31)
+                                        }
+                                        n => {
+                                            debug_assert_eq!(n, 5, "invalid enum discriminant");
+                                            let e31 = {
+                                                let l27 = *ptr0.add(8).cast::<*mut u8>();
+                                                let l28 = *ptr0.add(12).cast::<usize>();
+                                                let len29 = l28;
+                                                let bytes29 = _rt::Vec::from_raw_parts(
+                                                    l27.cast(),
+                                                    len29,
+                                                    len29,
+                                                );
+                                                let l30 = i32::from(*ptr0.add(16).cast::<u8>());
+
+                                                super::super::super::golem::order::api::ActionNotAllowedError{
+                                      message: _rt::string_lift(bytes29),
+                                      status: super::super::super::golem::order::api::OrderStatus::_lift(l30 as u8),
+                                    }
+                                            };
+                                            V31::ActionNotAllowed(e31)
+                                        }
+                                    };
+
+                                    v31
                                 };
                                 Err(e)
                             }
@@ -10398,72 +12955,107 @@ pub mod exports {
                             .finish()
                     }
                 }
-                #[repr(u8)]
-                #[derive(Clone, Copy, Eq, PartialEq)]
-                pub enum ErrorCode {
-                    ProductNotFound,
-                    PricingNotFound,
-                    AddressNotValid,
-                    ItemNotFound,
-                    EmptyItems,
-                    BillingAddressNotSet,
-                }
-                impl ::core::fmt::Debug for ErrorCode {
-                    fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
-                        match self {
-                            ErrorCode::ProductNotFound => {
-                                f.debug_tuple("ErrorCode::ProductNotFound").finish()
-                            }
-                            ErrorCode::PricingNotFound => {
-                                f.debug_tuple("ErrorCode::PricingNotFound").finish()
-                            }
-                            ErrorCode::AddressNotValid => {
-                                f.debug_tuple("ErrorCode::AddressNotValid").finish()
-                            }
-                            ErrorCode::ItemNotFound => {
-                                f.debug_tuple("ErrorCode::ItemNotFound").finish()
-                            }
-                            ErrorCode::EmptyItems => {
-                                f.debug_tuple("ErrorCode::EmptyItems").finish()
-                            }
-                            ErrorCode::BillingAddressNotSet => {
-                                f.debug_tuple("ErrorCode::BillingAddressNotSet").finish()
-                            }
-                        }
-                    }
-                }
-
-                impl ErrorCode {
-                    #[doc(hidden)]
-                    pub unsafe fn _lift(val: u8) -> ErrorCode {
-                        if !cfg!(debug_assertions) {
-                            return ::core::mem::transmute(val);
-                        }
-
-                        match val {
-                            0 => ErrorCode::ProductNotFound,
-                            1 => ErrorCode::PricingNotFound,
-                            2 => ErrorCode::AddressNotValid,
-                            3 => ErrorCode::ItemNotFound,
-                            4 => ErrorCode::EmptyItems,
-                            5 => ErrorCode::BillingAddressNotSet,
-
-                            _ => panic!("invalid enum discriminant"),
-                        }
-                    }
-                }
-
                 #[derive(Clone)]
-                pub struct Error {
-                    pub code: ErrorCode,
+                pub struct ProductNotFoundError {
                     pub message: _rt::String,
+                    pub product_id: _rt::String,
+                }
+                impl ::core::fmt::Debug for ProductNotFoundError {
+                    fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+                        f.debug_struct("ProductNotFoundError")
+                            .field("message", &self.message)
+                            .field("product-id", &self.product_id)
+                            .finish()
+                    }
+                }
+                #[derive(Clone)]
+                pub struct PricingNotFoundError {
+                    pub message: _rt::String,
+                    pub product_id: _rt::String,
+                }
+                impl ::core::fmt::Debug for PricingNotFoundError {
+                    fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+                        f.debug_struct("PricingNotFoundError")
+                            .field("message", &self.message)
+                            .field("product-id", &self.product_id)
+                            .finish()
+                    }
+                }
+                #[derive(Clone)]
+                pub struct AddressNotValidError {
+                    pub message: _rt::String,
+                }
+                impl ::core::fmt::Debug for AddressNotValidError {
+                    fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+                        f.debug_struct("AddressNotValidError")
+                            .field("message", &self.message)
+                            .finish()
+                    }
+                }
+                #[derive(Clone)]
+                pub struct ItemNotFoundError {
+                    pub message: _rt::String,
+                    pub product_id: _rt::String,
+                }
+                impl ::core::fmt::Debug for ItemNotFoundError {
+                    fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+                        f.debug_struct("ItemNotFoundError")
+                            .field("message", &self.message)
+                            .field("product-id", &self.product_id)
+                            .finish()
+                    }
+                }
+                #[derive(Clone)]
+                pub struct EmptyItemsError {
+                    pub message: _rt::String,
+                }
+                impl ::core::fmt::Debug for EmptyItemsError {
+                    fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+                        f.debug_struct("EmptyItemsError").field("message", &self.message).finish()
+                    }
+                }
+                #[derive(Clone)]
+                pub struct BillingAddressNotSetError {
+                    pub message: _rt::String,
+                }
+                impl ::core::fmt::Debug for BillingAddressNotSetError {
+                    fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+                        f.debug_struct("BillingAddressNotSetError")
+                            .field("message", &self.message)
+                            .finish()
+                    }
+                }
+                #[derive(Clone)]
+                pub enum Error {
+                    ProductNotFound(ProductNotFoundError),
+                    PricingNotFound(PricingNotFoundError),
+                    AddressNotValid(AddressNotValidError),
+                    ItemNotFound(ItemNotFoundError),
+                    EmptyItems(EmptyItemsError),
+                    BillingAddressNotSet(BillingAddressNotSetError),
                 }
                 impl ::core::fmt::Debug for Error {
                     fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
-                        f.debug_struct("Error")
-                            .field("code", &self.code)
-                            .field("message", &self.message)
-                            .finish()
+                        match self {
+                            Error::ProductNotFound(e) => {
+                                f.debug_tuple("Error::ProductNotFound").field(e).finish()
+                            }
+                            Error::PricingNotFound(e) => {
+                                f.debug_tuple("Error::PricingNotFound").field(e).finish()
+                            }
+                            Error::AddressNotValid(e) => {
+                                f.debug_tuple("Error::AddressNotValid").field(e).finish()
+                            }
+                            Error::ItemNotFound(e) => {
+                                f.debug_tuple("Error::ItemNotFound").field(e).finish()
+                            }
+                            Error::EmptyItems(e) => {
+                                f.debug_tuple("Error::EmptyItems").field(e).finish()
+                            }
+                            Error::BillingAddressNotSet(e) => {
+                                f.debug_tuple("Error::BillingAddressNotSet").field(e).finish()
+                            }
+                        }
                     }
                 }
                 impl ::core::fmt::Display for Error {
@@ -10471,6 +13063,7 @@ pub mod exports {
                         write!(f, "{:?}", self)
                     }
                 }
+
                 impl std::error::Error for Error {}
                 #[doc(hidden)]
                 #[allow(non_snake_case)]
@@ -10491,14 +13084,95 @@ pub mod exports {
                         }
                         Err(e) => {
                             *ptr2.add(0).cast::<u8>() = (1i32) as u8;
-                            let Error { code: code3, message: message3 } = e;
-                            *ptr2.add(4).cast::<u8>() = (code3.clone() as i32) as u8;
-                            let vec4 = (message3.into_bytes()).into_boxed_slice();
-                            let ptr4 = vec4.as_ptr().cast::<u8>();
-                            let len4 = vec4.len();
-                            ::core::mem::forget(vec4);
-                            *ptr2.add(12).cast::<usize>() = len4;
-                            *ptr2.add(8).cast::<*mut u8>() = ptr4.cast_mut();
+                            match e {
+                                Error::ProductNotFound(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (0i32) as u8;
+                                    let ProductNotFoundError {
+                                        message: message3,
+                                        product_id: product_id3,
+                                    } = e;
+                                    let vec4 = (message3.into_bytes()).into_boxed_slice();
+                                    let ptr4 = vec4.as_ptr().cast::<u8>();
+                                    let len4 = vec4.len();
+                                    ::core::mem::forget(vec4);
+                                    *ptr2.add(12).cast::<usize>() = len4;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr4.cast_mut();
+                                    let vec5 = (product_id3.into_bytes()).into_boxed_slice();
+                                    let ptr5 = vec5.as_ptr().cast::<u8>();
+                                    let len5 = vec5.len();
+                                    ::core::mem::forget(vec5);
+                                    *ptr2.add(20).cast::<usize>() = len5;
+                                    *ptr2.add(16).cast::<*mut u8>() = ptr5.cast_mut();
+                                }
+                                Error::PricingNotFound(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (1i32) as u8;
+                                    let PricingNotFoundError {
+                                        message: message6,
+                                        product_id: product_id6,
+                                    } = e;
+                                    let vec7 = (message6.into_bytes()).into_boxed_slice();
+                                    let ptr7 = vec7.as_ptr().cast::<u8>();
+                                    let len7 = vec7.len();
+                                    ::core::mem::forget(vec7);
+                                    *ptr2.add(12).cast::<usize>() = len7;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr7.cast_mut();
+                                    let vec8 = (product_id6.into_bytes()).into_boxed_slice();
+                                    let ptr8 = vec8.as_ptr().cast::<u8>();
+                                    let len8 = vec8.len();
+                                    ::core::mem::forget(vec8);
+                                    *ptr2.add(20).cast::<usize>() = len8;
+                                    *ptr2.add(16).cast::<*mut u8>() = ptr8.cast_mut();
+                                }
+                                Error::AddressNotValid(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (2i32) as u8;
+                                    let AddressNotValidError { message: message9 } = e;
+                                    let vec10 = (message9.into_bytes()).into_boxed_slice();
+                                    let ptr10 = vec10.as_ptr().cast::<u8>();
+                                    let len10 = vec10.len();
+                                    ::core::mem::forget(vec10);
+                                    *ptr2.add(12).cast::<usize>() = len10;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr10.cast_mut();
+                                }
+                                Error::ItemNotFound(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (3i32) as u8;
+                                    let ItemNotFoundError {
+                                        message: message11,
+                                        product_id: product_id11,
+                                    } = e;
+                                    let vec12 = (message11.into_bytes()).into_boxed_slice();
+                                    let ptr12 = vec12.as_ptr().cast::<u8>();
+                                    let len12 = vec12.len();
+                                    ::core::mem::forget(vec12);
+                                    *ptr2.add(12).cast::<usize>() = len12;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr12.cast_mut();
+                                    let vec13 = (product_id11.into_bytes()).into_boxed_slice();
+                                    let ptr13 = vec13.as_ptr().cast::<u8>();
+                                    let len13 = vec13.len();
+                                    ::core::mem::forget(vec13);
+                                    *ptr2.add(20).cast::<usize>() = len13;
+                                    *ptr2.add(16).cast::<*mut u8>() = ptr13.cast_mut();
+                                }
+                                Error::EmptyItems(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (4i32) as u8;
+                                    let EmptyItemsError { message: message14 } = e;
+                                    let vec15 = (message14.into_bytes()).into_boxed_slice();
+                                    let ptr15 = vec15.as_ptr().cast::<u8>();
+                                    let len15 = vec15.len();
+                                    ::core::mem::forget(vec15);
+                                    *ptr2.add(12).cast::<usize>() = len15;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr15.cast_mut();
+                                }
+                                Error::BillingAddressNotSet(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (5i32) as u8;
+                                    let BillingAddressNotSetError { message: message16 } = e;
+                                    let vec17 = (message16.into_bytes()).into_boxed_slice();
+                                    let ptr17 = vec17.as_ptr().cast::<u8>();
+                                    let len17 = vec17.len();
+                                    ::core::mem::forget(vec17);
+                                    *ptr2.add(12).cast::<usize>() = len17;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr17.cast_mut();
+                                }
+                            }
                         }
                     };
                     ptr2
@@ -10510,9 +13184,48 @@ pub mod exports {
                     match l0 {
                         0 => (),
                         _ => {
-                            let l1 = *arg0.add(8).cast::<*mut u8>();
-                            let l2 = *arg0.add(12).cast::<usize>();
-                            _rt::cabi_dealloc(l1, l2, 1);
+                            let l1 = i32::from(*arg0.add(4).cast::<u8>());
+                            match l1 {
+                                0 => {
+                                    let l2 = *arg0.add(8).cast::<*mut u8>();
+                                    let l3 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l2, l3, 1);
+                                    let l4 = *arg0.add(16).cast::<*mut u8>();
+                                    let l5 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l4, l5, 1);
+                                }
+                                1 => {
+                                    let l6 = *arg0.add(8).cast::<*mut u8>();
+                                    let l7 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l6, l7, 1);
+                                    let l8 = *arg0.add(16).cast::<*mut u8>();
+                                    let l9 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l8, l9, 1);
+                                }
+                                2 => {
+                                    let l10 = *arg0.add(8).cast::<*mut u8>();
+                                    let l11 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l10, l11, 1);
+                                }
+                                3 => {
+                                    let l12 = *arg0.add(8).cast::<*mut u8>();
+                                    let l13 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l12, l13, 1);
+                                    let l14 = *arg0.add(16).cast::<*mut u8>();
+                                    let l15 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l14, l15, 1);
+                                }
+                                4 => {
+                                    let l16 = *arg0.add(8).cast::<*mut u8>();
+                                    let l17 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l16, l17, 1);
+                                }
+                                _ => {
+                                    let l18 = *arg0.add(8).cast::<*mut u8>();
+                                    let l19 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l18, l19, 1);
+                                }
+                            }
                         }
                     }
                 }
@@ -10534,14 +13247,95 @@ pub mod exports {
                         }
                         Err(e) => {
                             *ptr2.add(0).cast::<u8>() = (1i32) as u8;
-                            let Error { code: code3, message: message3 } = e;
-                            *ptr2.add(4).cast::<u8>() = (code3.clone() as i32) as u8;
-                            let vec4 = (message3.into_bytes()).into_boxed_slice();
-                            let ptr4 = vec4.as_ptr().cast::<u8>();
-                            let len4 = vec4.len();
-                            ::core::mem::forget(vec4);
-                            *ptr2.add(12).cast::<usize>() = len4;
-                            *ptr2.add(8).cast::<*mut u8>() = ptr4.cast_mut();
+                            match e {
+                                Error::ProductNotFound(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (0i32) as u8;
+                                    let ProductNotFoundError {
+                                        message: message3,
+                                        product_id: product_id3,
+                                    } = e;
+                                    let vec4 = (message3.into_bytes()).into_boxed_slice();
+                                    let ptr4 = vec4.as_ptr().cast::<u8>();
+                                    let len4 = vec4.len();
+                                    ::core::mem::forget(vec4);
+                                    *ptr2.add(12).cast::<usize>() = len4;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr4.cast_mut();
+                                    let vec5 = (product_id3.into_bytes()).into_boxed_slice();
+                                    let ptr5 = vec5.as_ptr().cast::<u8>();
+                                    let len5 = vec5.len();
+                                    ::core::mem::forget(vec5);
+                                    *ptr2.add(20).cast::<usize>() = len5;
+                                    *ptr2.add(16).cast::<*mut u8>() = ptr5.cast_mut();
+                                }
+                                Error::PricingNotFound(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (1i32) as u8;
+                                    let PricingNotFoundError {
+                                        message: message6,
+                                        product_id: product_id6,
+                                    } = e;
+                                    let vec7 = (message6.into_bytes()).into_boxed_slice();
+                                    let ptr7 = vec7.as_ptr().cast::<u8>();
+                                    let len7 = vec7.len();
+                                    ::core::mem::forget(vec7);
+                                    *ptr2.add(12).cast::<usize>() = len7;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr7.cast_mut();
+                                    let vec8 = (product_id6.into_bytes()).into_boxed_slice();
+                                    let ptr8 = vec8.as_ptr().cast::<u8>();
+                                    let len8 = vec8.len();
+                                    ::core::mem::forget(vec8);
+                                    *ptr2.add(20).cast::<usize>() = len8;
+                                    *ptr2.add(16).cast::<*mut u8>() = ptr8.cast_mut();
+                                }
+                                Error::AddressNotValid(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (2i32) as u8;
+                                    let AddressNotValidError { message: message9 } = e;
+                                    let vec10 = (message9.into_bytes()).into_boxed_slice();
+                                    let ptr10 = vec10.as_ptr().cast::<u8>();
+                                    let len10 = vec10.len();
+                                    ::core::mem::forget(vec10);
+                                    *ptr2.add(12).cast::<usize>() = len10;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr10.cast_mut();
+                                }
+                                Error::ItemNotFound(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (3i32) as u8;
+                                    let ItemNotFoundError {
+                                        message: message11,
+                                        product_id: product_id11,
+                                    } = e;
+                                    let vec12 = (message11.into_bytes()).into_boxed_slice();
+                                    let ptr12 = vec12.as_ptr().cast::<u8>();
+                                    let len12 = vec12.len();
+                                    ::core::mem::forget(vec12);
+                                    *ptr2.add(12).cast::<usize>() = len12;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr12.cast_mut();
+                                    let vec13 = (product_id11.into_bytes()).into_boxed_slice();
+                                    let ptr13 = vec13.as_ptr().cast::<u8>();
+                                    let len13 = vec13.len();
+                                    ::core::mem::forget(vec13);
+                                    *ptr2.add(20).cast::<usize>() = len13;
+                                    *ptr2.add(16).cast::<*mut u8>() = ptr13.cast_mut();
+                                }
+                                Error::EmptyItems(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (4i32) as u8;
+                                    let EmptyItemsError { message: message14 } = e;
+                                    let vec15 = (message14.into_bytes()).into_boxed_slice();
+                                    let ptr15 = vec15.as_ptr().cast::<u8>();
+                                    let len15 = vec15.len();
+                                    ::core::mem::forget(vec15);
+                                    *ptr2.add(12).cast::<usize>() = len15;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr15.cast_mut();
+                                }
+                                Error::BillingAddressNotSet(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (5i32) as u8;
+                                    let BillingAddressNotSetError { message: message16 } = e;
+                                    let vec17 = (message16.into_bytes()).into_boxed_slice();
+                                    let ptr17 = vec17.as_ptr().cast::<u8>();
+                                    let len17 = vec17.len();
+                                    ::core::mem::forget(vec17);
+                                    *ptr2.add(12).cast::<usize>() = len17;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr17.cast_mut();
+                                }
+                            }
                         }
                     };
                     ptr2
@@ -10553,9 +13347,48 @@ pub mod exports {
                     match l0 {
                         0 => (),
                         _ => {
-                            let l1 = *arg0.add(8).cast::<*mut u8>();
-                            let l2 = *arg0.add(12).cast::<usize>();
-                            _rt::cabi_dealloc(l1, l2, 1);
+                            let l1 = i32::from(*arg0.add(4).cast::<u8>());
+                            match l1 {
+                                0 => {
+                                    let l2 = *arg0.add(8).cast::<*mut u8>();
+                                    let l3 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l2, l3, 1);
+                                    let l4 = *arg0.add(16).cast::<*mut u8>();
+                                    let l5 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l4, l5, 1);
+                                }
+                                1 => {
+                                    let l6 = *arg0.add(8).cast::<*mut u8>();
+                                    let l7 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l6, l7, 1);
+                                    let l8 = *arg0.add(16).cast::<*mut u8>();
+                                    let l9 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l8, l9, 1);
+                                }
+                                2 => {
+                                    let l10 = *arg0.add(8).cast::<*mut u8>();
+                                    let l11 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l10, l11, 1);
+                                }
+                                3 => {
+                                    let l12 = *arg0.add(8).cast::<*mut u8>();
+                                    let l13 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l12, l13, 1);
+                                    let l14 = *arg0.add(16).cast::<*mut u8>();
+                                    let l15 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l14, l15, 1);
+                                }
+                                4 => {
+                                    let l16 = *arg0.add(8).cast::<*mut u8>();
+                                    let l17 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l16, l17, 1);
+                                }
+                                _ => {
+                                    let l18 = *arg0.add(8).cast::<*mut u8>();
+                                    let l19 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l18, l19, 1);
+                                }
+                            }
                         }
                     }
                 }
@@ -10578,14 +13411,95 @@ pub mod exports {
                         }
                         Err(e) => {
                             *ptr2.add(0).cast::<u8>() = (1i32) as u8;
-                            let Error { code: code3, message: message3 } = e;
-                            *ptr2.add(4).cast::<u8>() = (code3.clone() as i32) as u8;
-                            let vec4 = (message3.into_bytes()).into_boxed_slice();
-                            let ptr4 = vec4.as_ptr().cast::<u8>();
-                            let len4 = vec4.len();
-                            ::core::mem::forget(vec4);
-                            *ptr2.add(12).cast::<usize>() = len4;
-                            *ptr2.add(8).cast::<*mut u8>() = ptr4.cast_mut();
+                            match e {
+                                Error::ProductNotFound(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (0i32) as u8;
+                                    let ProductNotFoundError {
+                                        message: message3,
+                                        product_id: product_id3,
+                                    } = e;
+                                    let vec4 = (message3.into_bytes()).into_boxed_slice();
+                                    let ptr4 = vec4.as_ptr().cast::<u8>();
+                                    let len4 = vec4.len();
+                                    ::core::mem::forget(vec4);
+                                    *ptr2.add(12).cast::<usize>() = len4;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr4.cast_mut();
+                                    let vec5 = (product_id3.into_bytes()).into_boxed_slice();
+                                    let ptr5 = vec5.as_ptr().cast::<u8>();
+                                    let len5 = vec5.len();
+                                    ::core::mem::forget(vec5);
+                                    *ptr2.add(20).cast::<usize>() = len5;
+                                    *ptr2.add(16).cast::<*mut u8>() = ptr5.cast_mut();
+                                }
+                                Error::PricingNotFound(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (1i32) as u8;
+                                    let PricingNotFoundError {
+                                        message: message6,
+                                        product_id: product_id6,
+                                    } = e;
+                                    let vec7 = (message6.into_bytes()).into_boxed_slice();
+                                    let ptr7 = vec7.as_ptr().cast::<u8>();
+                                    let len7 = vec7.len();
+                                    ::core::mem::forget(vec7);
+                                    *ptr2.add(12).cast::<usize>() = len7;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr7.cast_mut();
+                                    let vec8 = (product_id6.into_bytes()).into_boxed_slice();
+                                    let ptr8 = vec8.as_ptr().cast::<u8>();
+                                    let len8 = vec8.len();
+                                    ::core::mem::forget(vec8);
+                                    *ptr2.add(20).cast::<usize>() = len8;
+                                    *ptr2.add(16).cast::<*mut u8>() = ptr8.cast_mut();
+                                }
+                                Error::AddressNotValid(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (2i32) as u8;
+                                    let AddressNotValidError { message: message9 } = e;
+                                    let vec10 = (message9.into_bytes()).into_boxed_slice();
+                                    let ptr10 = vec10.as_ptr().cast::<u8>();
+                                    let len10 = vec10.len();
+                                    ::core::mem::forget(vec10);
+                                    *ptr2.add(12).cast::<usize>() = len10;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr10.cast_mut();
+                                }
+                                Error::ItemNotFound(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (3i32) as u8;
+                                    let ItemNotFoundError {
+                                        message: message11,
+                                        product_id: product_id11,
+                                    } = e;
+                                    let vec12 = (message11.into_bytes()).into_boxed_slice();
+                                    let ptr12 = vec12.as_ptr().cast::<u8>();
+                                    let len12 = vec12.len();
+                                    ::core::mem::forget(vec12);
+                                    *ptr2.add(12).cast::<usize>() = len12;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr12.cast_mut();
+                                    let vec13 = (product_id11.into_bytes()).into_boxed_slice();
+                                    let ptr13 = vec13.as_ptr().cast::<u8>();
+                                    let len13 = vec13.len();
+                                    ::core::mem::forget(vec13);
+                                    *ptr2.add(20).cast::<usize>() = len13;
+                                    *ptr2.add(16).cast::<*mut u8>() = ptr13.cast_mut();
+                                }
+                                Error::EmptyItems(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (4i32) as u8;
+                                    let EmptyItemsError { message: message14 } = e;
+                                    let vec15 = (message14.into_bytes()).into_boxed_slice();
+                                    let ptr15 = vec15.as_ptr().cast::<u8>();
+                                    let len15 = vec15.len();
+                                    ::core::mem::forget(vec15);
+                                    *ptr2.add(12).cast::<usize>() = len15;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr15.cast_mut();
+                                }
+                                Error::BillingAddressNotSet(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (5i32) as u8;
+                                    let BillingAddressNotSetError { message: message16 } = e;
+                                    let vec17 = (message16.into_bytes()).into_boxed_slice();
+                                    let ptr17 = vec17.as_ptr().cast::<u8>();
+                                    let len17 = vec17.len();
+                                    ::core::mem::forget(vec17);
+                                    *ptr2.add(12).cast::<usize>() = len17;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr17.cast_mut();
+                                }
+                            }
                         }
                     };
                     ptr2
@@ -10597,9 +13511,48 @@ pub mod exports {
                     match l0 {
                         0 => (),
                         _ => {
-                            let l1 = *arg0.add(8).cast::<*mut u8>();
-                            let l2 = *arg0.add(12).cast::<usize>();
-                            _rt::cabi_dealloc(l1, l2, 1);
+                            let l1 = i32::from(*arg0.add(4).cast::<u8>());
+                            match l1 {
+                                0 => {
+                                    let l2 = *arg0.add(8).cast::<*mut u8>();
+                                    let l3 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l2, l3, 1);
+                                    let l4 = *arg0.add(16).cast::<*mut u8>();
+                                    let l5 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l4, l5, 1);
+                                }
+                                1 => {
+                                    let l6 = *arg0.add(8).cast::<*mut u8>();
+                                    let l7 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l6, l7, 1);
+                                    let l8 = *arg0.add(16).cast::<*mut u8>();
+                                    let l9 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l8, l9, 1);
+                                }
+                                2 => {
+                                    let l10 = *arg0.add(8).cast::<*mut u8>();
+                                    let l11 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l10, l11, 1);
+                                }
+                                3 => {
+                                    let l12 = *arg0.add(8).cast::<*mut u8>();
+                                    let l13 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l12, l13, 1);
+                                    let l14 = *arg0.add(16).cast::<*mut u8>();
+                                    let l15 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l14, l15, 1);
+                                }
+                                4 => {
+                                    let l16 = *arg0.add(8).cast::<*mut u8>();
+                                    let l17 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l16, l17, 1);
+                                }
+                                _ => {
+                                    let l18 = *arg0.add(8).cast::<*mut u8>();
+                                    let l19 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l18, l19, 1);
+                                }
+                            }
                         }
                     }
                 }
@@ -10712,14 +13665,95 @@ pub mod exports {
                         }
                         Err(e) => {
                             *ptr32.add(0).cast::<u8>() = (1i32) as u8;
-                            let Error { code: code33, message: message33 } = e;
-                            *ptr32.add(4).cast::<u8>() = (code33.clone() as i32) as u8;
-                            let vec34 = (message33.into_bytes()).into_boxed_slice();
-                            let ptr34 = vec34.as_ptr().cast::<u8>();
-                            let len34 = vec34.len();
-                            ::core::mem::forget(vec34);
-                            *ptr32.add(12).cast::<usize>() = len34;
-                            *ptr32.add(8).cast::<*mut u8>() = ptr34.cast_mut();
+                            match e {
+                                Error::ProductNotFound(e) => {
+                                    *ptr32.add(4).cast::<u8>() = (0i32) as u8;
+                                    let ProductNotFoundError {
+                                        message: message33,
+                                        product_id: product_id33,
+                                    } = e;
+                                    let vec34 = (message33.into_bytes()).into_boxed_slice();
+                                    let ptr34 = vec34.as_ptr().cast::<u8>();
+                                    let len34 = vec34.len();
+                                    ::core::mem::forget(vec34);
+                                    *ptr32.add(12).cast::<usize>() = len34;
+                                    *ptr32.add(8).cast::<*mut u8>() = ptr34.cast_mut();
+                                    let vec35 = (product_id33.into_bytes()).into_boxed_slice();
+                                    let ptr35 = vec35.as_ptr().cast::<u8>();
+                                    let len35 = vec35.len();
+                                    ::core::mem::forget(vec35);
+                                    *ptr32.add(20).cast::<usize>() = len35;
+                                    *ptr32.add(16).cast::<*mut u8>() = ptr35.cast_mut();
+                                }
+                                Error::PricingNotFound(e) => {
+                                    *ptr32.add(4).cast::<u8>() = (1i32) as u8;
+                                    let PricingNotFoundError {
+                                        message: message36,
+                                        product_id: product_id36,
+                                    } = e;
+                                    let vec37 = (message36.into_bytes()).into_boxed_slice();
+                                    let ptr37 = vec37.as_ptr().cast::<u8>();
+                                    let len37 = vec37.len();
+                                    ::core::mem::forget(vec37);
+                                    *ptr32.add(12).cast::<usize>() = len37;
+                                    *ptr32.add(8).cast::<*mut u8>() = ptr37.cast_mut();
+                                    let vec38 = (product_id36.into_bytes()).into_boxed_slice();
+                                    let ptr38 = vec38.as_ptr().cast::<u8>();
+                                    let len38 = vec38.len();
+                                    ::core::mem::forget(vec38);
+                                    *ptr32.add(20).cast::<usize>() = len38;
+                                    *ptr32.add(16).cast::<*mut u8>() = ptr38.cast_mut();
+                                }
+                                Error::AddressNotValid(e) => {
+                                    *ptr32.add(4).cast::<u8>() = (2i32) as u8;
+                                    let AddressNotValidError { message: message39 } = e;
+                                    let vec40 = (message39.into_bytes()).into_boxed_slice();
+                                    let ptr40 = vec40.as_ptr().cast::<u8>();
+                                    let len40 = vec40.len();
+                                    ::core::mem::forget(vec40);
+                                    *ptr32.add(12).cast::<usize>() = len40;
+                                    *ptr32.add(8).cast::<*mut u8>() = ptr40.cast_mut();
+                                }
+                                Error::ItemNotFound(e) => {
+                                    *ptr32.add(4).cast::<u8>() = (3i32) as u8;
+                                    let ItemNotFoundError {
+                                        message: message41,
+                                        product_id: product_id41,
+                                    } = e;
+                                    let vec42 = (message41.into_bytes()).into_boxed_slice();
+                                    let ptr42 = vec42.as_ptr().cast::<u8>();
+                                    let len42 = vec42.len();
+                                    ::core::mem::forget(vec42);
+                                    *ptr32.add(12).cast::<usize>() = len42;
+                                    *ptr32.add(8).cast::<*mut u8>() = ptr42.cast_mut();
+                                    let vec43 = (product_id41.into_bytes()).into_boxed_slice();
+                                    let ptr43 = vec43.as_ptr().cast::<u8>();
+                                    let len43 = vec43.len();
+                                    ::core::mem::forget(vec43);
+                                    *ptr32.add(20).cast::<usize>() = len43;
+                                    *ptr32.add(16).cast::<*mut u8>() = ptr43.cast_mut();
+                                }
+                                Error::EmptyItems(e) => {
+                                    *ptr32.add(4).cast::<u8>() = (4i32) as u8;
+                                    let EmptyItemsError { message: message44 } = e;
+                                    let vec45 = (message44.into_bytes()).into_boxed_slice();
+                                    let ptr45 = vec45.as_ptr().cast::<u8>();
+                                    let len45 = vec45.len();
+                                    ::core::mem::forget(vec45);
+                                    *ptr32.add(12).cast::<usize>() = len45;
+                                    *ptr32.add(8).cast::<*mut u8>() = ptr45.cast_mut();
+                                }
+                                Error::BillingAddressNotSet(e) => {
+                                    *ptr32.add(4).cast::<u8>() = (5i32) as u8;
+                                    let BillingAddressNotSetError { message: message46 } = e;
+                                    let vec47 = (message46.into_bytes()).into_boxed_slice();
+                                    let ptr47 = vec47.as_ptr().cast::<u8>();
+                                    let len47 = vec47.len();
+                                    ::core::mem::forget(vec47);
+                                    *ptr32.add(12).cast::<usize>() = len47;
+                                    *ptr32.add(8).cast::<*mut u8>() = ptr47.cast_mut();
+                                }
+                            }
                         }
                     };
                     ptr32
@@ -10731,9 +13765,48 @@ pub mod exports {
                     match l0 {
                         0 => (),
                         _ => {
-                            let l1 = *arg0.add(8).cast::<*mut u8>();
-                            let l2 = *arg0.add(12).cast::<usize>();
-                            _rt::cabi_dealloc(l1, l2, 1);
+                            let l1 = i32::from(*arg0.add(4).cast::<u8>());
+                            match l1 {
+                                0 => {
+                                    let l2 = *arg0.add(8).cast::<*mut u8>();
+                                    let l3 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l2, l3, 1);
+                                    let l4 = *arg0.add(16).cast::<*mut u8>();
+                                    let l5 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l4, l5, 1);
+                                }
+                                1 => {
+                                    let l6 = *arg0.add(8).cast::<*mut u8>();
+                                    let l7 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l6, l7, 1);
+                                    let l8 = *arg0.add(16).cast::<*mut u8>();
+                                    let l9 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l8, l9, 1);
+                                }
+                                2 => {
+                                    let l10 = *arg0.add(8).cast::<*mut u8>();
+                                    let l11 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l10, l11, 1);
+                                }
+                                3 => {
+                                    let l12 = *arg0.add(8).cast::<*mut u8>();
+                                    let l13 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l12, l13, 1);
+                                    let l14 = *arg0.add(16).cast::<*mut u8>();
+                                    let l15 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l14, l15, 1);
+                                }
+                                4 => {
+                                    let l16 = *arg0.add(8).cast::<*mut u8>();
+                                    let l17 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l16, l17, 1);
+                                }
+                                _ => {
+                                    let l18 = *arg0.add(8).cast::<*mut u8>();
+                                    let l19 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l18, l19, 1);
+                                }
+                            }
                         }
                     }
                 }
@@ -10846,14 +13919,95 @@ pub mod exports {
                         }
                         Err(e) => {
                             *ptr32.add(0).cast::<u8>() = (1i32) as u8;
-                            let Error { code: code33, message: message33 } = e;
-                            *ptr32.add(4).cast::<u8>() = (code33.clone() as i32) as u8;
-                            let vec34 = (message33.into_bytes()).into_boxed_slice();
-                            let ptr34 = vec34.as_ptr().cast::<u8>();
-                            let len34 = vec34.len();
-                            ::core::mem::forget(vec34);
-                            *ptr32.add(12).cast::<usize>() = len34;
-                            *ptr32.add(8).cast::<*mut u8>() = ptr34.cast_mut();
+                            match e {
+                                Error::ProductNotFound(e) => {
+                                    *ptr32.add(4).cast::<u8>() = (0i32) as u8;
+                                    let ProductNotFoundError {
+                                        message: message33,
+                                        product_id: product_id33,
+                                    } = e;
+                                    let vec34 = (message33.into_bytes()).into_boxed_slice();
+                                    let ptr34 = vec34.as_ptr().cast::<u8>();
+                                    let len34 = vec34.len();
+                                    ::core::mem::forget(vec34);
+                                    *ptr32.add(12).cast::<usize>() = len34;
+                                    *ptr32.add(8).cast::<*mut u8>() = ptr34.cast_mut();
+                                    let vec35 = (product_id33.into_bytes()).into_boxed_slice();
+                                    let ptr35 = vec35.as_ptr().cast::<u8>();
+                                    let len35 = vec35.len();
+                                    ::core::mem::forget(vec35);
+                                    *ptr32.add(20).cast::<usize>() = len35;
+                                    *ptr32.add(16).cast::<*mut u8>() = ptr35.cast_mut();
+                                }
+                                Error::PricingNotFound(e) => {
+                                    *ptr32.add(4).cast::<u8>() = (1i32) as u8;
+                                    let PricingNotFoundError {
+                                        message: message36,
+                                        product_id: product_id36,
+                                    } = e;
+                                    let vec37 = (message36.into_bytes()).into_boxed_slice();
+                                    let ptr37 = vec37.as_ptr().cast::<u8>();
+                                    let len37 = vec37.len();
+                                    ::core::mem::forget(vec37);
+                                    *ptr32.add(12).cast::<usize>() = len37;
+                                    *ptr32.add(8).cast::<*mut u8>() = ptr37.cast_mut();
+                                    let vec38 = (product_id36.into_bytes()).into_boxed_slice();
+                                    let ptr38 = vec38.as_ptr().cast::<u8>();
+                                    let len38 = vec38.len();
+                                    ::core::mem::forget(vec38);
+                                    *ptr32.add(20).cast::<usize>() = len38;
+                                    *ptr32.add(16).cast::<*mut u8>() = ptr38.cast_mut();
+                                }
+                                Error::AddressNotValid(e) => {
+                                    *ptr32.add(4).cast::<u8>() = (2i32) as u8;
+                                    let AddressNotValidError { message: message39 } = e;
+                                    let vec40 = (message39.into_bytes()).into_boxed_slice();
+                                    let ptr40 = vec40.as_ptr().cast::<u8>();
+                                    let len40 = vec40.len();
+                                    ::core::mem::forget(vec40);
+                                    *ptr32.add(12).cast::<usize>() = len40;
+                                    *ptr32.add(8).cast::<*mut u8>() = ptr40.cast_mut();
+                                }
+                                Error::ItemNotFound(e) => {
+                                    *ptr32.add(4).cast::<u8>() = (3i32) as u8;
+                                    let ItemNotFoundError {
+                                        message: message41,
+                                        product_id: product_id41,
+                                    } = e;
+                                    let vec42 = (message41.into_bytes()).into_boxed_slice();
+                                    let ptr42 = vec42.as_ptr().cast::<u8>();
+                                    let len42 = vec42.len();
+                                    ::core::mem::forget(vec42);
+                                    *ptr32.add(12).cast::<usize>() = len42;
+                                    *ptr32.add(8).cast::<*mut u8>() = ptr42.cast_mut();
+                                    let vec43 = (product_id41.into_bytes()).into_boxed_slice();
+                                    let ptr43 = vec43.as_ptr().cast::<u8>();
+                                    let len43 = vec43.len();
+                                    ::core::mem::forget(vec43);
+                                    *ptr32.add(20).cast::<usize>() = len43;
+                                    *ptr32.add(16).cast::<*mut u8>() = ptr43.cast_mut();
+                                }
+                                Error::EmptyItems(e) => {
+                                    *ptr32.add(4).cast::<u8>() = (4i32) as u8;
+                                    let EmptyItemsError { message: message44 } = e;
+                                    let vec45 = (message44.into_bytes()).into_boxed_slice();
+                                    let ptr45 = vec45.as_ptr().cast::<u8>();
+                                    let len45 = vec45.len();
+                                    ::core::mem::forget(vec45);
+                                    *ptr32.add(12).cast::<usize>() = len45;
+                                    *ptr32.add(8).cast::<*mut u8>() = ptr45.cast_mut();
+                                }
+                                Error::BillingAddressNotSet(e) => {
+                                    *ptr32.add(4).cast::<u8>() = (5i32) as u8;
+                                    let BillingAddressNotSetError { message: message46 } = e;
+                                    let vec47 = (message46.into_bytes()).into_boxed_slice();
+                                    let ptr47 = vec47.as_ptr().cast::<u8>();
+                                    let len47 = vec47.len();
+                                    ::core::mem::forget(vec47);
+                                    *ptr32.add(12).cast::<usize>() = len47;
+                                    *ptr32.add(8).cast::<*mut u8>() = ptr47.cast_mut();
+                                }
+                            }
                         }
                     };
                     ptr32
@@ -10865,9 +14019,48 @@ pub mod exports {
                     match l0 {
                         0 => (),
                         _ => {
-                            let l1 = *arg0.add(8).cast::<*mut u8>();
-                            let l2 = *arg0.add(12).cast::<usize>();
-                            _rt::cabi_dealloc(l1, l2, 1);
+                            let l1 = i32::from(*arg0.add(4).cast::<u8>());
+                            match l1 {
+                                0 => {
+                                    let l2 = *arg0.add(8).cast::<*mut u8>();
+                                    let l3 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l2, l3, 1);
+                                    let l4 = *arg0.add(16).cast::<*mut u8>();
+                                    let l5 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l4, l5, 1);
+                                }
+                                1 => {
+                                    let l6 = *arg0.add(8).cast::<*mut u8>();
+                                    let l7 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l6, l7, 1);
+                                    let l8 = *arg0.add(16).cast::<*mut u8>();
+                                    let l9 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l8, l9, 1);
+                                }
+                                2 => {
+                                    let l10 = *arg0.add(8).cast::<*mut u8>();
+                                    let l11 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l10, l11, 1);
+                                }
+                                3 => {
+                                    let l12 = *arg0.add(8).cast::<*mut u8>();
+                                    let l13 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l12, l13, 1);
+                                    let l14 = *arg0.add(16).cast::<*mut u8>();
+                                    let l15 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l14, l15, 1);
+                                }
+                                4 => {
+                                    let l16 = *arg0.add(8).cast::<*mut u8>();
+                                    let l17 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l16, l17, 1);
+                                }
+                                _ => {
+                                    let l18 = *arg0.add(8).cast::<*mut u8>();
+                                    let l19 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l18, l19, 1);
+                                }
+                            }
                         }
                     }
                 }
@@ -10891,14 +14084,95 @@ pub mod exports {
                         }
                         Err(e) => {
                             *ptr1.add(0).cast::<u8>() = (1i32) as u8;
-                            let Error { code: code4, message: message4 } = e;
-                            *ptr1.add(4).cast::<u8>() = (code4.clone() as i32) as u8;
-                            let vec5 = (message4.into_bytes()).into_boxed_slice();
-                            let ptr5 = vec5.as_ptr().cast::<u8>();
-                            let len5 = vec5.len();
-                            ::core::mem::forget(vec5);
-                            *ptr1.add(12).cast::<usize>() = len5;
-                            *ptr1.add(8).cast::<*mut u8>() = ptr5.cast_mut();
+                            match e {
+                                Error::ProductNotFound(e) => {
+                                    *ptr1.add(4).cast::<u8>() = (0i32) as u8;
+                                    let ProductNotFoundError {
+                                        message: message4,
+                                        product_id: product_id4,
+                                    } = e;
+                                    let vec5 = (message4.into_bytes()).into_boxed_slice();
+                                    let ptr5 = vec5.as_ptr().cast::<u8>();
+                                    let len5 = vec5.len();
+                                    ::core::mem::forget(vec5);
+                                    *ptr1.add(12).cast::<usize>() = len5;
+                                    *ptr1.add(8).cast::<*mut u8>() = ptr5.cast_mut();
+                                    let vec6 = (product_id4.into_bytes()).into_boxed_slice();
+                                    let ptr6 = vec6.as_ptr().cast::<u8>();
+                                    let len6 = vec6.len();
+                                    ::core::mem::forget(vec6);
+                                    *ptr1.add(20).cast::<usize>() = len6;
+                                    *ptr1.add(16).cast::<*mut u8>() = ptr6.cast_mut();
+                                }
+                                Error::PricingNotFound(e) => {
+                                    *ptr1.add(4).cast::<u8>() = (1i32) as u8;
+                                    let PricingNotFoundError {
+                                        message: message7,
+                                        product_id: product_id7,
+                                    } = e;
+                                    let vec8 = (message7.into_bytes()).into_boxed_slice();
+                                    let ptr8 = vec8.as_ptr().cast::<u8>();
+                                    let len8 = vec8.len();
+                                    ::core::mem::forget(vec8);
+                                    *ptr1.add(12).cast::<usize>() = len8;
+                                    *ptr1.add(8).cast::<*mut u8>() = ptr8.cast_mut();
+                                    let vec9 = (product_id7.into_bytes()).into_boxed_slice();
+                                    let ptr9 = vec9.as_ptr().cast::<u8>();
+                                    let len9 = vec9.len();
+                                    ::core::mem::forget(vec9);
+                                    *ptr1.add(20).cast::<usize>() = len9;
+                                    *ptr1.add(16).cast::<*mut u8>() = ptr9.cast_mut();
+                                }
+                                Error::AddressNotValid(e) => {
+                                    *ptr1.add(4).cast::<u8>() = (2i32) as u8;
+                                    let AddressNotValidError { message: message10 } = e;
+                                    let vec11 = (message10.into_bytes()).into_boxed_slice();
+                                    let ptr11 = vec11.as_ptr().cast::<u8>();
+                                    let len11 = vec11.len();
+                                    ::core::mem::forget(vec11);
+                                    *ptr1.add(12).cast::<usize>() = len11;
+                                    *ptr1.add(8).cast::<*mut u8>() = ptr11.cast_mut();
+                                }
+                                Error::ItemNotFound(e) => {
+                                    *ptr1.add(4).cast::<u8>() = (3i32) as u8;
+                                    let ItemNotFoundError {
+                                        message: message12,
+                                        product_id: product_id12,
+                                    } = e;
+                                    let vec13 = (message12.into_bytes()).into_boxed_slice();
+                                    let ptr13 = vec13.as_ptr().cast::<u8>();
+                                    let len13 = vec13.len();
+                                    ::core::mem::forget(vec13);
+                                    *ptr1.add(12).cast::<usize>() = len13;
+                                    *ptr1.add(8).cast::<*mut u8>() = ptr13.cast_mut();
+                                    let vec14 = (product_id12.into_bytes()).into_boxed_slice();
+                                    let ptr14 = vec14.as_ptr().cast::<u8>();
+                                    let len14 = vec14.len();
+                                    ::core::mem::forget(vec14);
+                                    *ptr1.add(20).cast::<usize>() = len14;
+                                    *ptr1.add(16).cast::<*mut u8>() = ptr14.cast_mut();
+                                }
+                                Error::EmptyItems(e) => {
+                                    *ptr1.add(4).cast::<u8>() = (4i32) as u8;
+                                    let EmptyItemsError { message: message15 } = e;
+                                    let vec16 = (message15.into_bytes()).into_boxed_slice();
+                                    let ptr16 = vec16.as_ptr().cast::<u8>();
+                                    let len16 = vec16.len();
+                                    ::core::mem::forget(vec16);
+                                    *ptr1.add(12).cast::<usize>() = len16;
+                                    *ptr1.add(8).cast::<*mut u8>() = ptr16.cast_mut();
+                                }
+                                Error::BillingAddressNotSet(e) => {
+                                    *ptr1.add(4).cast::<u8>() = (5i32) as u8;
+                                    let BillingAddressNotSetError { message: message17 } = e;
+                                    let vec18 = (message17.into_bytes()).into_boxed_slice();
+                                    let ptr18 = vec18.as_ptr().cast::<u8>();
+                                    let len18 = vec18.len();
+                                    ::core::mem::forget(vec18);
+                                    *ptr1.add(12).cast::<usize>() = len18;
+                                    *ptr1.add(8).cast::<*mut u8>() = ptr18.cast_mut();
+                                }
+                            }
                         }
                     };
                     ptr1
@@ -10914,9 +14188,48 @@ pub mod exports {
                             _rt::cabi_dealloc(l1, l2, 1);
                         }
                         _ => {
-                            let l3 = *arg0.add(8).cast::<*mut u8>();
-                            let l4 = *arg0.add(12).cast::<usize>();
-                            _rt::cabi_dealloc(l3, l4, 1);
+                            let l3 = i32::from(*arg0.add(4).cast::<u8>());
+                            match l3 {
+                                0 => {
+                                    let l4 = *arg0.add(8).cast::<*mut u8>();
+                                    let l5 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l4, l5, 1);
+                                    let l6 = *arg0.add(16).cast::<*mut u8>();
+                                    let l7 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l6, l7, 1);
+                                }
+                                1 => {
+                                    let l8 = *arg0.add(8).cast::<*mut u8>();
+                                    let l9 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l8, l9, 1);
+                                    let l10 = *arg0.add(16).cast::<*mut u8>();
+                                    let l11 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l10, l11, 1);
+                                }
+                                2 => {
+                                    let l12 = *arg0.add(8).cast::<*mut u8>();
+                                    let l13 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l12, l13, 1);
+                                }
+                                3 => {
+                                    let l14 = *arg0.add(8).cast::<*mut u8>();
+                                    let l15 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l14, l15, 1);
+                                    let l16 = *arg0.add(16).cast::<*mut u8>();
+                                    let l17 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l16, l17, 1);
+                                }
+                                4 => {
+                                    let l18 = *arg0.add(8).cast::<*mut u8>();
+                                    let l19 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l18, l19, 1);
+                                }
+                                _ => {
+                                    let l20 = *arg0.add(8).cast::<*mut u8>();
+                                    let l21 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l20, l21, 1);
+                                }
+                            }
                         }
                     }
                 }
@@ -11797,8 +15110,8 @@ pub(crate) use __export_cart_impl as export;
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.25.0:cart:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 9412] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xc9H\x01A\x02\x01A#\x01\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 10414] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xb3P\x01A\x02\x01A)\x01\
 B\x0a\x04\0\x08pollable\x03\x01\x01h\0\x01@\x01\x04self\x01\0\x7f\x04\0\x16[meth\
 od]pollable.ready\x01\x02\x01@\x01\x04self\x01\x01\0\x04\0\x16[method]pollable.b\
 lock\x01\x03\x01p\x01\x01py\x01@\x01\x02in\x04\0\x05\x04\0\x04poll\x01\x06\x03\x01\
@@ -11861,101 +15174,115 @@ self\x08\0\x09\x04\0#[method]future-get-result.subscribe\x01\x0a\x01k\x05\x01k\x
 e-product\x01\x11\x04\0\x1e[method]api.initialize-product\x01\x11\x01@\x01\x04se\
 lf\x10\0\x0b\x04\0\x18[method]api.blocking-get\x01\x12\x01i\x06\x01@\x01\x04self\
 \x10\0\x13\x04\0\x0f[method]api.get\x01\x14\x03\x01\x1fgolem:product-stub/stub-p\
-roduct\x05\x0a\x01B\"\x01m\x03\x03new\x07shipped\x09cancelled\x04\0\x0corder-sta\
-tus\x03\0\0\x01ks\x01r\x09\x07street1s\x07street2\x02\x04citys\x0fstate-or-regio\
-ns\x07countrys\x0bpostal-codes\x04name\x02\x0dbusiness-name\x02\x0cphone-number\x02\
+roduct\x05\x0a\x01B.\x01m\x03\x03new\x07shipped\x09cancelled\x04\0\x0corder-stat\
+us\x03\0\0\x01ks\x01r\x09\x07street1s\x07street2\x02\x04citys\x0fstate-or-region\
+s\x07countrys\x0bpostal-codes\x04name\x02\x0dbusiness-name\x02\x0cphone-number\x02\
 \x04\0\x07address\x03\0\x03\x01r\x04\x0aproduct-ids\x04names\x05pricev\x08quanti\
 tyy\x04\0\x0aorder-item\x03\0\x05\x01p\x06\x01k\x04\x01r\x09\x08order-ids\x07use\
 r-ids\x0corder-status\x01\x05items\x07\x0fbilling-address\x08\x10shipping-addres\
 s\x08\x05totalv\x08currencys\x09timestampw\x04\0\x05order\x03\0\x09\x01r\x07\x07\
 user-ids\x05items\x07\x0fbilling-address\x08\x10shipping-address\x08\x05totalv\x08\
-currencys\x09timestampw\x04\0\x0ccreate-order\x03\0\x0b\x01m\x05\x11product-not-\
-found\x11pricing-not-found\x11address-not-valid\x0eitem-not-found\x12action-not-\
-allowed\x04\0\x0aerror-code\x03\0\x0d\x01r\x02\x04code\x0e\x07messages\x04\0\x05\
-error\x03\0\x0f\x01@\x01\x04data\x0c\x01\0\x04\0\x10initialize-order\x01\x11\x01\
-j\0\x01\x10\x01@\x02\x0aproduct-ids\x08quantityy\0\x12\x04\0\x08add-item\x01\x13\
-\x01@\x01\x0aproduct-ids\0\x12\x04\0\x0bremove-item\x01\x14\x04\0\x14update-item\
--quantity\x01\x13\x01@\x01\x07address\x04\0\x12\x04\0\x17update-shipping-address\
-\x01\x15\x04\0\x16update-billing-address\x01\x15\x01@\0\0\x12\x04\0\x0aship-orde\
-r\x01\x16\x04\0\x0ccancel-order\x01\x16\x01k\x0a\x01@\0\0\x17\x04\0\x03get\x01\x18\
-\x03\x01\x0fgolem:order/api\x05\x0b\x02\x03\0\x06\x0corder-status\x02\x03\0\x06\x07\
-address\x02\x03\0\x06\x0aorder-item\x02\x03\0\x06\x05order\x02\x03\0\x06\x0ccrea\
-te-order\x02\x03\0\x06\x0aerror-code\x02\x03\0\x06\x05error\x01Bt\x02\x03\x02\x01\
-\x04\x04\0\x0dgolem-rpc-uri\x03\0\0\x02\x03\x02\x01\x01\x04\0\x10wasi-io-pollabl\
-e\x03\0\x02\x02\x03\x02\x01\x0c\x04\0\x0corder-status\x03\0\x04\x02\x03\x02\x01\x0d\
-\x04\0\x07address\x03\0\x06\x02\x03\x02\x01\x0e\x04\0\x0aorder-item\x03\0\x08\x02\
-\x03\x02\x01\x0f\x04\0\x05order\x03\0\x0a\x02\x03\x02\x01\x10\x04\0\x0ccreate-or\
-der\x03\0\x0c\x02\x03\x02\x01\x11\x04\0\x0aerror-code\x03\0\x0e\x02\x03\x02\x01\x12\
-\x04\0\x05error\x03\0\x10\x04\0\x16future-add-item-result\x03\x01\x04\0\x19futur\
-e-remove-item-result\x03\x01\x04\0\"future-update-item-quantity-result\x03\x01\x04\
-\0%future-update-shipping-address-result\x03\x01\x04\0$future-update-billing-add\
-ress-result\x03\x01\x04\0\x18future-ship-order-result\x03\x01\x04\0\x1afuture-ca\
-ncel-order-result\x03\x01\x04\0\x11future-get-result\x03\x01\x04\0\x03api\x03\x01\
-\x01h\x12\x01i\x03\x01@\x01\x04self\x1b\0\x1c\x04\0([method]future-add-item-resu\
-lt.subscribe\x01\x1d\x01j\0\x01\x11\x01k\x1e\x01@\x01\x04self\x1b\0\x1f\x04\0\"[\
-method]future-add-item-result.get\x01\x20\x01h\x13\x01@\x01\x04self!\0\x1c\x04\0\
-+[method]future-remove-item-result.subscribe\x01\"\x01@\x01\x04self!\0\x1f\x04\0\
-%[method]future-remove-item-result.get\x01#\x01h\x14\x01@\x01\x04self$\0\x1c\x04\
-\04[method]future-update-item-quantity-result.subscribe\x01%\x01@\x01\x04self$\0\
-\x1f\x04\0.[method]future-update-item-quantity-result.get\x01&\x01h\x15\x01@\x01\
-\x04self'\0\x1c\x04\07[method]future-update-shipping-address-result.subscribe\x01\
-(\x01@\x01\x04self'\0\x1f\x04\01[method]future-update-shipping-address-result.ge\
-t\x01)\x01h\x16\x01@\x01\x04self*\0\x1c\x04\06[method]future-update-billing-addr\
-ess-result.subscribe\x01+\x01@\x01\x04self*\0\x1f\x04\00[method]future-update-bi\
-lling-address-result.get\x01,\x01h\x17\x01@\x01\x04self-\0\x1c\x04\0*[method]fut\
-ure-ship-order-result.subscribe\x01.\x01@\x01\x04self-\0\x1f\x04\0$[method]futur\
-e-ship-order-result.get\x01/\x01h\x18\x01@\x01\x04self0\0\x1c\x04\0,[method]futu\
-re-cancel-order-result.subscribe\x011\x01@\x01\x04self0\0\x1f\x04\0&[method]futu\
-re-cancel-order-result.get\x012\x01h\x19\x01@\x01\x04self3\0\x1c\x04\0#[method]f\
-uture-get-result.subscribe\x014\x01k\x0b\x01k5\x01@\x01\x04self3\06\x04\0\x1d[me\
-thod]future-get-result.get\x017\x01i\x1a\x01@\x01\x08location\x01\08\x04\0\x10[c\
-onstructor]api\x019\x01h\x1a\x01@\x02\x04self:\x04data\x0d\x01\0\x04\0%[method]a\
-pi.blocking-initialize-order\x01;\x04\0\x1c[method]api.initialize-order\x01;\x01\
-@\x03\x04self:\x0aproduct-ids\x08quantityy\0\x1e\x04\0\x1d[method]api.blocking-a\
-dd-item\x01<\x01i\x12\x01@\x03\x04self:\x0aproduct-ids\x08quantityy\0=\x04\0\x14\
-[method]api.add-item\x01>\x01@\x02\x04self:\x0aproduct-ids\0\x1e\x04\0\x20[metho\
-d]api.blocking-remove-item\x01?\x01i\x13\x01@\x02\x04self:\x0aproduct-ids\0\xc0\0\
-\x04\0\x17[method]api.remove-item\x01A\x04\0)[method]api.blocking-update-item-qu\
-antity\x01<\x01i\x14\x01@\x03\x04self:\x0aproduct-ids\x08quantityy\0\xc2\0\x04\0\
-\x20[method]api.update-item-quantity\x01C\x01@\x02\x04self:\x07address\x07\0\x1e\
-\x04\0,[method]api.blocking-update-shipping-address\x01D\x01i\x15\x01@\x02\x04se\
-lf:\x07address\x07\0\xc5\0\x04\0#[method]api.update-shipping-address\x01F\x04\0+\
-[method]api.blocking-update-billing-address\x01D\x01i\x16\x01@\x02\x04self:\x07a\
-ddress\x07\0\xc7\0\x04\0\"[method]api.update-billing-address\x01H\x01@\x01\x04se\
-lf:\0\x1e\x04\0\x1f[method]api.blocking-ship-order\x01I\x01i\x17\x01@\x01\x04sel\
-f:\0\xca\0\x04\0\x16[method]api.ship-order\x01K\x04\0![method]api.blocking-cance\
-l-order\x01I\x01i\x18\x01@\x01\x04self:\0\xcc\0\x04\0\x18[method]api.cancel-orde\
-r\x01M\x01@\x01\x04self:\05\x04\0\x18[method]api.blocking-get\x01N\x01i\x19\x01@\
-\x01\x04self:\0\xcf\0\x04\0\x0f[method]api.get\x01P\x03\x01\x1bgolem:order-stub/\
-stub-order\x05\x13\x01B\x0f\x02\x03\x02\x01\x01\x04\0\x08pollable\x03\0\0\x01w\x04\
-\0\x07instant\x03\0\x02\x01w\x04\0\x08duration\x03\0\x04\x01@\0\0\x03\x04\0\x03n\
-ow\x01\x06\x01@\0\0\x05\x04\0\x0aresolution\x01\x07\x01i\x01\x01@\x01\x04when\x03\
-\0\x08\x04\0\x11subscribe-instant\x01\x09\x01@\x01\x04when\x05\0\x08\x04\0\x12su\
-bscribe-duration\x01\x0a\x03\x01!wasi:clocks/monotonic-clock@0.2.0\x05\x14\x02\x03\
-\0\x08\x08duration\x01Bf\x02\x03\x02\x01\x04\x04\0\x03uri\x03\0\0\x02\x03\x02\x01\
-\x15\x04\0\x08duration\x03\0\x02\x01w\x04\0\x0boplog-index\x03\0\x04\x01w\x04\0\x11\
-component-version\x03\0\x06\x01r\x02\x09high-bitsw\x08low-bitsw\x04\0\x04uuid\x03\
-\0\x08\x01r\x01\x04uuid\x09\x04\0\x0ccomponent-id\x03\0\x0a\x01r\x02\x0ccomponen\
-t-id\x0b\x0bworker-names\x04\0\x09worker-id\x03\0\x0c\x01r\x02\x09worker-id\x0d\x09\
-oplog-idx\x05\x04\0\x0apromise-id\x03\0\x0e\x01r\x04\x0cmax-attemptsy\x09min-del\
-ay\x03\x09max-delay\x03\x0amultiplieru\x04\0\x0cretry-policy\x03\0\x10\x01q\x03\x0f\
-persist-nothing\0\0\x1bpersist-remote-side-effects\0\0\x05smart\0\0\x04\0\x11per\
-sistence-level\x03\0\x12\x01m\x02\x09automatic\x0esnapshot-based\x04\0\x0bupdate\
--mode\x03\0\x14\x01m\x06\x05equal\x09not-equal\x0dgreater-equal\x07greater\x0ale\
-ss-equal\x04less\x04\0\x11filter-comparator\x03\0\x16\x01m\x04\x05equal\x09not-e\
-qual\x04like\x08not-like\x04\0\x18string-filter-comparator\x03\0\x18\x01m\x07\x07\
-running\x04idle\x09suspended\x0binterrupted\x08retrying\x06failed\x06exited\x04\0\
-\x0dworker-status\x03\0\x1a\x01r\x02\x0acomparator\x19\x05values\x04\0\x12worker\
--name-filter\x03\0\x1c\x01r\x02\x0acomparator\x17\x05value\x1b\x04\0\x14worker-s\
-tatus-filter\x03\0\x1e\x01r\x02\x0acomparator\x17\x05valuew\x04\0\x15worker-vers\
-ion-filter\x03\0\x20\x01r\x02\x0acomparator\x17\x05valuew\x04\0\x18worker-create\
-d-at-filter\x03\0\"\x01r\x03\x04names\x0acomparator\x19\x05values\x04\0\x11worke\
-r-env-filter\x03\0$\x01q\x05\x04name\x01\x1d\0\x06status\x01\x1f\0\x07version\x01\
-!\0\x0acreated-at\x01#\0\x03env\x01%\0\x04\0\x16worker-property-filter\x03\0&\x01\
-p'\x01r\x01\x07filters(\x04\0\x11worker-all-filter\x03\0)\x01p*\x01r\x01\x07filt\
-ers+\x04\0\x11worker-any-filter\x03\0,\x01ps\x01o\x02ss\x01p/\x01r\x06\x09worker\
--id\x0d\x04args.\x03env0\x06status\x1b\x11component-versionw\x0bretry-countw\x04\
-\0\x0fworker-metadata\x03\01\x04\0\x0bget-workers\x03\x01\x01k-\x01i3\x01@\x03\x0c\
+currencys\x09timestampw\x04\0\x0ccreate-order\x03\0\x0b\x01r\x02\x07messages\x0a\
+product-ids\x04\0\x17product-not-found-error\x03\0\x0d\x01r\x02\x07messages\x0ap\
+roduct-ids\x04\0\x17pricing-not-found-error\x03\0\x0f\x01r\x01\x07messages\x04\0\
+\x17address-not-valid-error\x03\0\x11\x01r\x02\x07messages\x0aproduct-ids\x04\0\x14\
+item-not-found-error\x03\0\x13\x01r\x01\x07messages\x04\0\x11empty-items-error\x03\
+\0\x15\x01r\x01\x07messages\x04\0\x1dbilling-address-not-set-error\x03\0\x17\x01\
+r\x02\x07messages\x06status\x01\x04\0\x18action-not-allowed-error\x03\0\x19\x01q\
+\x06\x11product-not-found\x01\x0e\0\x11pricing-not-found\x01\x10\0\x11address-no\
+t-valid\x01\x12\0\x0eitem-not-found\x01\x14\0\x0bempty-items\x01\x16\0\x12action\
+-not-allowed\x01\x1a\0\x04\0\x05error\x03\0\x1b\x01@\x01\x04data\x0c\x01\0\x04\0\
+\x10initialize-order\x01\x1d\x01j\0\x01\x1c\x01@\x02\x0aproduct-ids\x08quantityy\
+\0\x1e\x04\0\x08add-item\x01\x1f\x01@\x01\x0aproduct-ids\0\x1e\x04\0\x0bremove-i\
+tem\x01\x20\x04\0\x14update-item-quantity\x01\x1f\x01@\x01\x07address\x04\0\x1e\x04\
+\0\x17update-shipping-address\x01!\x04\0\x16update-billing-address\x01!\x01@\0\0\
+\x1e\x04\0\x0aship-order\x01\"\x04\0\x0ccancel-order\x01\"\x01k\x0a\x01@\0\0#\x04\
+\0\x03get\x01$\x03\x01\x0fgolem:order/api\x05\x0b\x02\x03\0\x06\x0corder-status\x02\
+\x03\0\x06\x07address\x02\x03\0\x06\x0aorder-item\x02\x03\0\x06\x05order\x02\x03\
+\0\x06\x0ccreate-order\x02\x03\0\x06\x17product-not-found-error\x02\x03\0\x06\x17\
+pricing-not-found-error\x02\x03\0\x06\x17address-not-valid-error\x02\x03\0\x06\x14\
+item-not-found-error\x02\x03\0\x06\x11empty-items-error\x02\x03\0\x06\x1dbilling\
+-address-not-set-error\x02\x03\0\x06\x18action-not-allowed-error\x02\x03\0\x06\x05\
+error\x01B\x80\x01\x02\x03\x02\x01\x04\x04\0\x0dgolem-rpc-uri\x03\0\0\x02\x03\x02\
+\x01\x01\x04\0\x10wasi-io-pollable\x03\0\x02\x02\x03\x02\x01\x0c\x04\0\x0corder-\
+status\x03\0\x04\x02\x03\x02\x01\x0d\x04\0\x07address\x03\0\x06\x02\x03\x02\x01\x0e\
+\x04\0\x0aorder-item\x03\0\x08\x02\x03\x02\x01\x0f\x04\0\x05order\x03\0\x0a\x02\x03\
+\x02\x01\x10\x04\0\x0ccreate-order\x03\0\x0c\x02\x03\x02\x01\x11\x04\0\x17produc\
+t-not-found-error\x03\0\x0e\x02\x03\x02\x01\x12\x04\0\x17pricing-not-found-error\
+\x03\0\x10\x02\x03\x02\x01\x13\x04\0\x17address-not-valid-error\x03\0\x12\x02\x03\
+\x02\x01\x14\x04\0\x14item-not-found-error\x03\0\x14\x02\x03\x02\x01\x15\x04\0\x11\
+empty-items-error\x03\0\x16\x02\x03\x02\x01\x16\x04\0\x1dbilling-address-not-set\
+-error\x03\0\x18\x02\x03\x02\x01\x17\x04\0\x18action-not-allowed-error\x03\0\x1a\
+\x02\x03\x02\x01\x18\x04\0\x05error\x03\0\x1c\x04\0\x16future-add-item-result\x03\
+\x01\x04\0\x19future-remove-item-result\x03\x01\x04\0\"future-update-item-quanti\
+ty-result\x03\x01\x04\0%future-update-shipping-address-result\x03\x01\x04\0$futu\
+re-update-billing-address-result\x03\x01\x04\0\x18future-ship-order-result\x03\x01\
+\x04\0\x1afuture-cancel-order-result\x03\x01\x04\0\x11future-get-result\x03\x01\x04\
+\0\x03api\x03\x01\x01h\x1e\x01i\x03\x01@\x01\x04self'\0(\x04\0([method]future-ad\
+d-item-result.subscribe\x01)\x01j\0\x01\x1d\x01k*\x01@\x01\x04self'\0+\x04\0\"[m\
+ethod]future-add-item-result.get\x01,\x01h\x1f\x01@\x01\x04self-\0(\x04\0+[metho\
+d]future-remove-item-result.subscribe\x01.\x01@\x01\x04self-\0+\x04\0%[method]fu\
+ture-remove-item-result.get\x01/\x01h\x20\x01@\x01\x04self0\0(\x04\04[method]fut\
+ure-update-item-quantity-result.subscribe\x011\x01@\x01\x04self0\0+\x04\0.[metho\
+d]future-update-item-quantity-result.get\x012\x01h!\x01@\x01\x04self3\0(\x04\07[\
+method]future-update-shipping-address-result.subscribe\x014\x01@\x01\x04self3\0+\
+\x04\01[method]future-update-shipping-address-result.get\x015\x01h\"\x01@\x01\x04\
+self6\0(\x04\06[method]future-update-billing-address-result.subscribe\x017\x01@\x01\
+\x04self6\0+\x04\00[method]future-update-billing-address-result.get\x018\x01h#\x01\
+@\x01\x04self9\0(\x04\0*[method]future-ship-order-result.subscribe\x01:\x01@\x01\
+\x04self9\0+\x04\0$[method]future-ship-order-result.get\x01;\x01h$\x01@\x01\x04s\
+elf<\0(\x04\0,[method]future-cancel-order-result.subscribe\x01=\x01@\x01\x04self\
+<\0+\x04\0&[method]future-cancel-order-result.get\x01>\x01h%\x01@\x01\x04self?\0\
+(\x04\0#[method]future-get-result.subscribe\x01@\x01k\x0b\x01k\xc1\0\x01@\x01\x04\
+self?\0\xc2\0\x04\0\x1d[method]future-get-result.get\x01C\x01i&\x01@\x01\x08loca\
+tion\x01\0\xc4\0\x04\0\x10[constructor]api\x01E\x01h&\x01@\x02\x04self\xc6\0\x04\
+data\x0d\x01\0\x04\0%[method]api.blocking-initialize-order\x01G\x04\0\x1c[method\
+]api.initialize-order\x01G\x01@\x03\x04self\xc6\0\x0aproduct-ids\x08quantityy\0*\
+\x04\0\x1d[method]api.blocking-add-item\x01H\x01i\x1e\x01@\x03\x04self\xc6\0\x0a\
+product-ids\x08quantityy\0\xc9\0\x04\0\x14[method]api.add-item\x01J\x01@\x02\x04\
+self\xc6\0\x0aproduct-ids\0*\x04\0\x20[method]api.blocking-remove-item\x01K\x01i\
+\x1f\x01@\x02\x04self\xc6\0\x0aproduct-ids\0\xcc\0\x04\0\x17[method]api.remove-i\
+tem\x01M\x04\0)[method]api.blocking-update-item-quantity\x01H\x01i\x20\x01@\x03\x04\
+self\xc6\0\x0aproduct-ids\x08quantityy\0\xce\0\x04\0\x20[method]api.update-item-\
+quantity\x01O\x01@\x02\x04self\xc6\0\x07address\x07\0*\x04\0,[method]api.blockin\
+g-update-shipping-address\x01P\x01i!\x01@\x02\x04self\xc6\0\x07address\x07\0\xd1\
+\0\x04\0#[method]api.update-shipping-address\x01R\x04\0+[method]api.blocking-upd\
+ate-billing-address\x01P\x01i\"\x01@\x02\x04self\xc6\0\x07address\x07\0\xd3\0\x04\
+\0\"[method]api.update-billing-address\x01T\x01@\x01\x04self\xc6\0\0*\x04\0\x1f[\
+method]api.blocking-ship-order\x01U\x01i#\x01@\x01\x04self\xc6\0\0\xd6\0\x04\0\x16\
+[method]api.ship-order\x01W\x04\0![method]api.blocking-cancel-order\x01U\x01i$\x01\
+@\x01\x04self\xc6\0\0\xd8\0\x04\0\x18[method]api.cancel-order\x01Y\x01@\x01\x04s\
+elf\xc6\0\0\xc1\0\x04\0\x18[method]api.blocking-get\x01Z\x01i%\x01@\x01\x04self\xc6\
+\0\0\xdb\0\x04\0\x0f[method]api.get\x01\\\x03\x01\x1bgolem:order-stub/stub-order\
+\x05\x19\x01B\x0f\x02\x03\x02\x01\x01\x04\0\x08pollable\x03\0\0\x01w\x04\0\x07in\
+stant\x03\0\x02\x01w\x04\0\x08duration\x03\0\x04\x01@\0\0\x03\x04\0\x03now\x01\x06\
+\x01@\0\0\x05\x04\0\x0aresolution\x01\x07\x01i\x01\x01@\x01\x04when\x03\0\x08\x04\
+\0\x11subscribe-instant\x01\x09\x01@\x01\x04when\x05\0\x08\x04\0\x12subscribe-du\
+ration\x01\x0a\x03\x01!wasi:clocks/monotonic-clock@0.2.0\x05\x1a\x02\x03\0\x08\x08\
+duration\x01Bf\x02\x03\x02\x01\x04\x04\0\x03uri\x03\0\0\x02\x03\x02\x01\x1b\x04\0\
+\x08duration\x03\0\x02\x01w\x04\0\x0boplog-index\x03\0\x04\x01w\x04\0\x11compone\
+nt-version\x03\0\x06\x01r\x02\x09high-bitsw\x08low-bitsw\x04\0\x04uuid\x03\0\x08\
+\x01r\x01\x04uuid\x09\x04\0\x0ccomponent-id\x03\0\x0a\x01r\x02\x0ccomponent-id\x0b\
+\x0bworker-names\x04\0\x09worker-id\x03\0\x0c\x01r\x02\x09worker-id\x0d\x09oplog\
+-idx\x05\x04\0\x0apromise-id\x03\0\x0e\x01r\x04\x0cmax-attemptsy\x09min-delay\x03\
+\x09max-delay\x03\x0amultiplieru\x04\0\x0cretry-policy\x03\0\x10\x01q\x03\x0fper\
+sist-nothing\0\0\x1bpersist-remote-side-effects\0\0\x05smart\0\0\x04\0\x11persis\
+tence-level\x03\0\x12\x01m\x02\x09automatic\x0esnapshot-based\x04\0\x0bupdate-mo\
+de\x03\0\x14\x01m\x06\x05equal\x09not-equal\x0dgreater-equal\x07greater\x0aless-\
+equal\x04less\x04\0\x11filter-comparator\x03\0\x16\x01m\x04\x05equal\x09not-equa\
+l\x04like\x08not-like\x04\0\x18string-filter-comparator\x03\0\x18\x01m\x07\x07ru\
+nning\x04idle\x09suspended\x0binterrupted\x08retrying\x06failed\x06exited\x04\0\x0d\
+worker-status\x03\0\x1a\x01r\x02\x0acomparator\x19\x05values\x04\0\x12worker-nam\
+e-filter\x03\0\x1c\x01r\x02\x0acomparator\x17\x05value\x1b\x04\0\x14worker-statu\
+s-filter\x03\0\x1e\x01r\x02\x0acomparator\x17\x05valuew\x04\0\x15worker-version-\
+filter\x03\0\x20\x01r\x02\x0acomparator\x17\x05valuew\x04\0\x18worker-created-at\
+-filter\x03\0\"\x01r\x03\x04names\x0acomparator\x19\x05values\x04\0\x11worker-en\
+v-filter\x03\0$\x01q\x05\x04name\x01\x1d\0\x06status\x01\x1f\0\x07version\x01!\0\
+\x0acreated-at\x01#\0\x03env\x01%\0\x04\0\x16worker-property-filter\x03\0&\x01p'\
+\x01r\x01\x07filters(\x04\0\x11worker-all-filter\x03\0)\x01p*\x01r\x01\x07filter\
+s+\x04\0\x11worker-any-filter\x03\0,\x01ps\x01o\x02ss\x01p/\x01r\x06\x09worker-i\
+d\x0d\x04args.\x03env0\x06status\x1b\x11component-versionw\x0bretry-countw\x04\0\
+\x0fworker-metadata\x03\01\x04\0\x0bget-workers\x03\x01\x01k-\x01i3\x01@\x03\x0c\
 component-id\x0b\x06filter4\x07precise\x7f\05\x04\0\x18[constructor]get-workers\x01\
 6\x01h3\x01p2\x01k8\x01@\x01\x04self7\09\x04\0\x1c[method]get-workers.get-next\x01\
 :\x01@\0\0\x0f\x04\0\x0ecreate-promise\x01;\x01p}\x01@\x01\x0apromise-id\x0f\0<\x04\
@@ -11973,23 +15300,28 @@ l\x01H\x01@\0\0\x7f\x04\0\x14get-idempotence-mode\x01I\x01@\x01\x0aidempotent\x7
 ency-key\x01K\x01@\x03\x09worker-id\x0d\x0etarget-version\x07\x04mode\x15\x01\0\x04\
 \0\x0dupdate-worker\x01L\x01@\0\02\x04\0\x11get-self-metadata\x01M\x01k2\x01@\x01\
 \x09worker-id\x0d\0\xce\0\x04\0\x13get-worker-metadata\x01O\x03\x01\x14golem:api\
-/host@0.2.0\x05\x16\x01B\x1f\x01ks\x01r\x09\x07street1s\x07street2\0\x04citys\x0f\
-state-or-regions\x07countrys\x0bpostal-codes\x04name\0\x0dbusiness-name\0\x0cpho\
-ne-number\0\x04\0\x07address\x03\0\x01\x01r\x04\x0aproduct-ids\x04names\x05price\
-v\x08quantityy\x04\0\x09cart-item\x03\0\x03\x01p\x04\x01k\x02\x01ps\x01r\x08\x07\
-user-ids\x05items\x05\x0fbilling-address\x06\x10shipping-address\x06\x05totalv\x08\
-currencys\x09timestampw\x12previous-order-ids\x07\x04\0\x04cart\x03\0\x08\x01r\x01\
-\x08order-ids\x04\0\x12order-confirmation\x03\0\x0a\x01m\x06\x11product-not-foun\
-d\x11pricing-not-found\x11address-not-valid\x0eitem-not-found\x0bempty-items\x17\
-billing-address-not-set\x04\0\x0aerror-code\x03\0\x0c\x01r\x02\x04code\x0d\x07me\
-ssages\x04\0\x05error\x03\0\x0e\x01j\0\x01\x0f\x01@\x02\x0aproduct-ids\x08quanti\
-tyy\0\x10\x04\0\x08add-item\x01\x11\x01@\x01\x0aproduct-ids\0\x10\x04\0\x0bremov\
-e-item\x01\x12\x04\0\x14update-item-quantity\x01\x11\x01@\x01\x07address\x02\0\x10\
-\x04\0\x17update-shipping-address\x01\x13\x04\0\x16update-billing-address\x01\x13\
-\x01j\x01\x0b\x01\x0f\x01@\0\0\x14\x04\0\x08checkout\x01\x15\x01k\x09\x01@\0\0\x16\
-\x04\0\x03get\x01\x17\x04\x01\x0egolem:cart/api\x05\x17\x04\x01\x0fgolem:cart/ca\
-rt\x04\0\x0b\x0a\x01\0\x04cart\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0d\
-wit-component\x070.208.1\x10wit-bindgen-rust\x060.25.0";
+/host@0.2.0\x05\x1c\x01B)\x01ks\x01r\x09\x07street1s\x07street2\0\x04citys\x0fst\
+ate-or-regions\x07countrys\x0bpostal-codes\x04name\0\x0dbusiness-name\0\x0cphone\
+-number\0\x04\0\x07address\x03\0\x01\x01r\x04\x0aproduct-ids\x04names\x05pricev\x08\
+quantityy\x04\0\x09cart-item\x03\0\x03\x01p\x04\x01k\x02\x01ps\x01r\x08\x07user-\
+ids\x05items\x05\x0fbilling-address\x06\x10shipping-address\x06\x05totalv\x08cur\
+rencys\x09timestampw\x12previous-order-ids\x07\x04\0\x04cart\x03\0\x08\x01r\x01\x08\
+order-ids\x04\0\x12order-confirmation\x03\0\x0a\x01r\x02\x07messages\x0aproduct-\
+ids\x04\0\x17product-not-found-error\x03\0\x0c\x01r\x02\x07messages\x0aproduct-i\
+ds\x04\0\x17pricing-not-found-error\x03\0\x0e\x01r\x01\x07messages\x04\0\x17addr\
+ess-not-valid-error\x03\0\x10\x01r\x02\x07messages\x0aproduct-ids\x04\0\x14item-\
+not-found-error\x03\0\x12\x01r\x01\x07messages\x04\0\x11empty-items-error\x03\0\x14\
+\x01r\x01\x07messages\x04\0\x1dbilling-address-not-set-error\x03\0\x16\x01q\x06\x11\
+product-not-found\x01\x0d\0\x11pricing-not-found\x01\x0f\0\x11address-not-valid\x01\
+\x11\0\x0eitem-not-found\x01\x13\0\x0bempty-items\x01\x15\0\x17billing-address-n\
+ot-set\x01\x17\0\x04\0\x05error\x03\0\x18\x01j\0\x01\x19\x01@\x02\x0aproduct-ids\
+\x08quantityy\0\x1a\x04\0\x08add-item\x01\x1b\x01@\x01\x0aproduct-ids\0\x1a\x04\0\
+\x0bremove-item\x01\x1c\x04\0\x14update-item-quantity\x01\x1b\x01@\x01\x07addres\
+s\x02\0\x1a\x04\0\x17update-shipping-address\x01\x1d\x04\0\x16update-billing-add\
+ress\x01\x1d\x01j\x01\x0b\x01\x19\x01@\0\0\x1e\x04\0\x08checkout\x01\x1f\x01k\x09\
+\x01@\0\0\x20\x04\0\x03get\x01!\x04\x01\x0egolem:cart/api\x05\x1d\x04\x01\x0fgol\
+em:cart/cart\x04\0\x0b\x0a\x01\0\x04cart\x03\0\0\0G\x09producers\x01\x0cprocesse\
+d-by\x02\x0dwit-component\x070.208.1\x10wit-bindgen-rust\x060.25.0";
 
 #[inline(never)]
 #[doc(hidden)]

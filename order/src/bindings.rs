@@ -5975,67 +5975,109 @@ pub mod exports {
                             .finish()
                     }
                 }
-                #[repr(u8)]
-                #[derive(Clone, Copy, Eq, PartialEq)]
-                pub enum ErrorCode {
-                    ProductNotFound,
-                    PricingNotFound,
-                    AddressNotValid,
-                    ItemNotFound,
-                    ActionNotAllowed,
-                }
-                impl ::core::fmt::Debug for ErrorCode {
-                    fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
-                        match self {
-                            ErrorCode::ProductNotFound => {
-                                f.debug_tuple("ErrorCode::ProductNotFound").finish()
-                            }
-                            ErrorCode::PricingNotFound => {
-                                f.debug_tuple("ErrorCode::PricingNotFound").finish()
-                            }
-                            ErrorCode::AddressNotValid => {
-                                f.debug_tuple("ErrorCode::AddressNotValid").finish()
-                            }
-                            ErrorCode::ItemNotFound => {
-                                f.debug_tuple("ErrorCode::ItemNotFound").finish()
-                            }
-                            ErrorCode::ActionNotAllowed => {
-                                f.debug_tuple("ErrorCode::ActionNotAllowed").finish()
-                            }
-                        }
-                    }
-                }
-
-                impl ErrorCode {
-                    #[doc(hidden)]
-                    pub unsafe fn _lift(val: u8) -> ErrorCode {
-                        if !cfg!(debug_assertions) {
-                            return ::core::mem::transmute(val);
-                        }
-
-                        match val {
-                            0 => ErrorCode::ProductNotFound,
-                            1 => ErrorCode::PricingNotFound,
-                            2 => ErrorCode::AddressNotValid,
-                            3 => ErrorCode::ItemNotFound,
-                            4 => ErrorCode::ActionNotAllowed,
-
-                            _ => panic!("invalid enum discriminant"),
-                        }
-                    }
-                }
-
                 #[derive(Clone)]
-                pub struct Error {
-                    pub code: ErrorCode,
+                pub struct ProductNotFoundError {
                     pub message: _rt::String,
+                    pub product_id: _rt::String,
+                }
+                impl ::core::fmt::Debug for ProductNotFoundError {
+                    fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+                        f.debug_struct("ProductNotFoundError")
+                            .field("message", &self.message)
+                            .field("product-id", &self.product_id)
+                            .finish()
+                    }
+                }
+                #[derive(Clone)]
+                pub struct PricingNotFoundError {
+                    pub message: _rt::String,
+                    pub product_id: _rt::String,
+                }
+                impl ::core::fmt::Debug for PricingNotFoundError {
+                    fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+                        f.debug_struct("PricingNotFoundError")
+                            .field("message", &self.message)
+                            .field("product-id", &self.product_id)
+                            .finish()
+                    }
+                }
+                #[derive(Clone)]
+                pub struct AddressNotValidError {
+                    pub message: _rt::String,
+                }
+                impl ::core::fmt::Debug for AddressNotValidError {
+                    fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+                        f.debug_struct("AddressNotValidError")
+                            .field("message", &self.message)
+                            .finish()
+                    }
+                }
+                #[derive(Clone)]
+                pub struct ItemNotFoundError {
+                    pub message: _rt::String,
+                    pub product_id: _rt::String,
+                }
+                impl ::core::fmt::Debug for ItemNotFoundError {
+                    fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+                        f.debug_struct("ItemNotFoundError")
+                            .field("message", &self.message)
+                            .field("product-id", &self.product_id)
+                            .finish()
+                    }
+                }
+                #[derive(Clone)]
+                pub struct EmptyItemsError {
+                    pub message: _rt::String,
+                }
+                impl ::core::fmt::Debug for EmptyItemsError {
+                    fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+                        f.debug_struct("EmptyItemsError").field("message", &self.message).finish()
+                    }
+                }
+                #[derive(Clone)]
+                pub struct ActionNotAllowedError {
+                    pub message: _rt::String,
+                    pub status: OrderStatus,
+                }
+                impl ::core::fmt::Debug for ActionNotAllowedError {
+                    fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+                        f.debug_struct("ActionNotAllowedError")
+                            .field("message", &self.message)
+                            .field("status", &self.status)
+                            .finish()
+                    }
+                }
+                #[derive(Clone)]
+                pub enum Error {
+                    ProductNotFound(ProductNotFoundError),
+                    PricingNotFound(PricingNotFoundError),
+                    AddressNotValid(AddressNotValidError),
+                    ItemNotFound(ItemNotFoundError),
+                    EmptyItems(EmptyItemsError),
+                    ActionNotAllowed(ActionNotAllowedError),
                 }
                 impl ::core::fmt::Debug for Error {
                     fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
-                        f.debug_struct("Error")
-                            .field("code", &self.code)
-                            .field("message", &self.message)
-                            .finish()
+                        match self {
+                            Error::ProductNotFound(e) => {
+                                f.debug_tuple("Error::ProductNotFound").field(e).finish()
+                            }
+                            Error::PricingNotFound(e) => {
+                                f.debug_tuple("Error::PricingNotFound").field(e).finish()
+                            }
+                            Error::AddressNotValid(e) => {
+                                f.debug_tuple("Error::AddressNotValid").field(e).finish()
+                            }
+                            Error::ItemNotFound(e) => {
+                                f.debug_tuple("Error::ItemNotFound").field(e).finish()
+                            }
+                            Error::EmptyItems(e) => {
+                                f.debug_tuple("Error::EmptyItems").field(e).finish()
+                            }
+                            Error::ActionNotAllowed(e) => {
+                                f.debug_tuple("Error::ActionNotAllowed").field(e).finish()
+                            }
+                        }
                     }
                 }
                 impl ::core::fmt::Display for Error {
@@ -6043,6 +6085,7 @@ pub mod exports {
                         write!(f, "{:?}", self)
                     }
                 }
+
                 impl std::error::Error for Error {}
                 #[doc(hidden)]
                 #[allow(non_snake_case)]
@@ -6362,14 +6405,99 @@ pub mod exports {
                         }
                         Err(e) => {
                             *ptr2.add(0).cast::<u8>() = (1i32) as u8;
-                            let Error { code: code3, message: message3 } = e;
-                            *ptr2.add(4).cast::<u8>() = (code3.clone() as i32) as u8;
-                            let vec4 = (message3.into_bytes()).into_boxed_slice();
-                            let ptr4 = vec4.as_ptr().cast::<u8>();
-                            let len4 = vec4.len();
-                            ::core::mem::forget(vec4);
-                            *ptr2.add(12).cast::<usize>() = len4;
-                            *ptr2.add(8).cast::<*mut u8>() = ptr4.cast_mut();
+                            match e {
+                                Error::ProductNotFound(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (0i32) as u8;
+                                    let ProductNotFoundError {
+                                        message: message3,
+                                        product_id: product_id3,
+                                    } = e;
+                                    let vec4 = (message3.into_bytes()).into_boxed_slice();
+                                    let ptr4 = vec4.as_ptr().cast::<u8>();
+                                    let len4 = vec4.len();
+                                    ::core::mem::forget(vec4);
+                                    *ptr2.add(12).cast::<usize>() = len4;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr4.cast_mut();
+                                    let vec5 = (product_id3.into_bytes()).into_boxed_slice();
+                                    let ptr5 = vec5.as_ptr().cast::<u8>();
+                                    let len5 = vec5.len();
+                                    ::core::mem::forget(vec5);
+                                    *ptr2.add(20).cast::<usize>() = len5;
+                                    *ptr2.add(16).cast::<*mut u8>() = ptr5.cast_mut();
+                                }
+                                Error::PricingNotFound(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (1i32) as u8;
+                                    let PricingNotFoundError {
+                                        message: message6,
+                                        product_id: product_id6,
+                                    } = e;
+                                    let vec7 = (message6.into_bytes()).into_boxed_slice();
+                                    let ptr7 = vec7.as_ptr().cast::<u8>();
+                                    let len7 = vec7.len();
+                                    ::core::mem::forget(vec7);
+                                    *ptr2.add(12).cast::<usize>() = len7;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr7.cast_mut();
+                                    let vec8 = (product_id6.into_bytes()).into_boxed_slice();
+                                    let ptr8 = vec8.as_ptr().cast::<u8>();
+                                    let len8 = vec8.len();
+                                    ::core::mem::forget(vec8);
+                                    *ptr2.add(20).cast::<usize>() = len8;
+                                    *ptr2.add(16).cast::<*mut u8>() = ptr8.cast_mut();
+                                }
+                                Error::AddressNotValid(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (2i32) as u8;
+                                    let AddressNotValidError { message: message9 } = e;
+                                    let vec10 = (message9.into_bytes()).into_boxed_slice();
+                                    let ptr10 = vec10.as_ptr().cast::<u8>();
+                                    let len10 = vec10.len();
+                                    ::core::mem::forget(vec10);
+                                    *ptr2.add(12).cast::<usize>() = len10;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr10.cast_mut();
+                                }
+                                Error::ItemNotFound(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (3i32) as u8;
+                                    let ItemNotFoundError {
+                                        message: message11,
+                                        product_id: product_id11,
+                                    } = e;
+                                    let vec12 = (message11.into_bytes()).into_boxed_slice();
+                                    let ptr12 = vec12.as_ptr().cast::<u8>();
+                                    let len12 = vec12.len();
+                                    ::core::mem::forget(vec12);
+                                    *ptr2.add(12).cast::<usize>() = len12;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr12.cast_mut();
+                                    let vec13 = (product_id11.into_bytes()).into_boxed_slice();
+                                    let ptr13 = vec13.as_ptr().cast::<u8>();
+                                    let len13 = vec13.len();
+                                    ::core::mem::forget(vec13);
+                                    *ptr2.add(20).cast::<usize>() = len13;
+                                    *ptr2.add(16).cast::<*mut u8>() = ptr13.cast_mut();
+                                }
+                                Error::EmptyItems(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (4i32) as u8;
+                                    let EmptyItemsError { message: message14 } = e;
+                                    let vec15 = (message14.into_bytes()).into_boxed_slice();
+                                    let ptr15 = vec15.as_ptr().cast::<u8>();
+                                    let len15 = vec15.len();
+                                    ::core::mem::forget(vec15);
+                                    *ptr2.add(12).cast::<usize>() = len15;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr15.cast_mut();
+                                }
+                                Error::ActionNotAllowed(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (5i32) as u8;
+                                    let ActionNotAllowedError {
+                                        message: message16,
+                                        status: status16,
+                                    } = e;
+                                    let vec17 = (message16.into_bytes()).into_boxed_slice();
+                                    let ptr17 = vec17.as_ptr().cast::<u8>();
+                                    let len17 = vec17.len();
+                                    ::core::mem::forget(vec17);
+                                    *ptr2.add(12).cast::<usize>() = len17;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr17.cast_mut();
+                                    *ptr2.add(16).cast::<u8>() = (status16.clone() as i32) as u8;
+                                }
+                            }
                         }
                     };
                     ptr2
@@ -6381,9 +6509,48 @@ pub mod exports {
                     match l0 {
                         0 => (),
                         _ => {
-                            let l1 = *arg0.add(8).cast::<*mut u8>();
-                            let l2 = *arg0.add(12).cast::<usize>();
-                            _rt::cabi_dealloc(l1, l2, 1);
+                            let l1 = i32::from(*arg0.add(4).cast::<u8>());
+                            match l1 {
+                                0 => {
+                                    let l2 = *arg0.add(8).cast::<*mut u8>();
+                                    let l3 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l2, l3, 1);
+                                    let l4 = *arg0.add(16).cast::<*mut u8>();
+                                    let l5 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l4, l5, 1);
+                                }
+                                1 => {
+                                    let l6 = *arg0.add(8).cast::<*mut u8>();
+                                    let l7 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l6, l7, 1);
+                                    let l8 = *arg0.add(16).cast::<*mut u8>();
+                                    let l9 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l8, l9, 1);
+                                }
+                                2 => {
+                                    let l10 = *arg0.add(8).cast::<*mut u8>();
+                                    let l11 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l10, l11, 1);
+                                }
+                                3 => {
+                                    let l12 = *arg0.add(8).cast::<*mut u8>();
+                                    let l13 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l12, l13, 1);
+                                    let l14 = *arg0.add(16).cast::<*mut u8>();
+                                    let l15 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l14, l15, 1);
+                                }
+                                4 => {
+                                    let l16 = *arg0.add(8).cast::<*mut u8>();
+                                    let l17 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l16, l17, 1);
+                                }
+                                _ => {
+                                    let l18 = *arg0.add(8).cast::<*mut u8>();
+                                    let l19 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l18, l19, 1);
+                                }
+                            }
                         }
                     }
                 }
@@ -6405,14 +6572,99 @@ pub mod exports {
                         }
                         Err(e) => {
                             *ptr2.add(0).cast::<u8>() = (1i32) as u8;
-                            let Error { code: code3, message: message3 } = e;
-                            *ptr2.add(4).cast::<u8>() = (code3.clone() as i32) as u8;
-                            let vec4 = (message3.into_bytes()).into_boxed_slice();
-                            let ptr4 = vec4.as_ptr().cast::<u8>();
-                            let len4 = vec4.len();
-                            ::core::mem::forget(vec4);
-                            *ptr2.add(12).cast::<usize>() = len4;
-                            *ptr2.add(8).cast::<*mut u8>() = ptr4.cast_mut();
+                            match e {
+                                Error::ProductNotFound(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (0i32) as u8;
+                                    let ProductNotFoundError {
+                                        message: message3,
+                                        product_id: product_id3,
+                                    } = e;
+                                    let vec4 = (message3.into_bytes()).into_boxed_slice();
+                                    let ptr4 = vec4.as_ptr().cast::<u8>();
+                                    let len4 = vec4.len();
+                                    ::core::mem::forget(vec4);
+                                    *ptr2.add(12).cast::<usize>() = len4;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr4.cast_mut();
+                                    let vec5 = (product_id3.into_bytes()).into_boxed_slice();
+                                    let ptr5 = vec5.as_ptr().cast::<u8>();
+                                    let len5 = vec5.len();
+                                    ::core::mem::forget(vec5);
+                                    *ptr2.add(20).cast::<usize>() = len5;
+                                    *ptr2.add(16).cast::<*mut u8>() = ptr5.cast_mut();
+                                }
+                                Error::PricingNotFound(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (1i32) as u8;
+                                    let PricingNotFoundError {
+                                        message: message6,
+                                        product_id: product_id6,
+                                    } = e;
+                                    let vec7 = (message6.into_bytes()).into_boxed_slice();
+                                    let ptr7 = vec7.as_ptr().cast::<u8>();
+                                    let len7 = vec7.len();
+                                    ::core::mem::forget(vec7);
+                                    *ptr2.add(12).cast::<usize>() = len7;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr7.cast_mut();
+                                    let vec8 = (product_id6.into_bytes()).into_boxed_slice();
+                                    let ptr8 = vec8.as_ptr().cast::<u8>();
+                                    let len8 = vec8.len();
+                                    ::core::mem::forget(vec8);
+                                    *ptr2.add(20).cast::<usize>() = len8;
+                                    *ptr2.add(16).cast::<*mut u8>() = ptr8.cast_mut();
+                                }
+                                Error::AddressNotValid(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (2i32) as u8;
+                                    let AddressNotValidError { message: message9 } = e;
+                                    let vec10 = (message9.into_bytes()).into_boxed_slice();
+                                    let ptr10 = vec10.as_ptr().cast::<u8>();
+                                    let len10 = vec10.len();
+                                    ::core::mem::forget(vec10);
+                                    *ptr2.add(12).cast::<usize>() = len10;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr10.cast_mut();
+                                }
+                                Error::ItemNotFound(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (3i32) as u8;
+                                    let ItemNotFoundError {
+                                        message: message11,
+                                        product_id: product_id11,
+                                    } = e;
+                                    let vec12 = (message11.into_bytes()).into_boxed_slice();
+                                    let ptr12 = vec12.as_ptr().cast::<u8>();
+                                    let len12 = vec12.len();
+                                    ::core::mem::forget(vec12);
+                                    *ptr2.add(12).cast::<usize>() = len12;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr12.cast_mut();
+                                    let vec13 = (product_id11.into_bytes()).into_boxed_slice();
+                                    let ptr13 = vec13.as_ptr().cast::<u8>();
+                                    let len13 = vec13.len();
+                                    ::core::mem::forget(vec13);
+                                    *ptr2.add(20).cast::<usize>() = len13;
+                                    *ptr2.add(16).cast::<*mut u8>() = ptr13.cast_mut();
+                                }
+                                Error::EmptyItems(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (4i32) as u8;
+                                    let EmptyItemsError { message: message14 } = e;
+                                    let vec15 = (message14.into_bytes()).into_boxed_slice();
+                                    let ptr15 = vec15.as_ptr().cast::<u8>();
+                                    let len15 = vec15.len();
+                                    ::core::mem::forget(vec15);
+                                    *ptr2.add(12).cast::<usize>() = len15;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr15.cast_mut();
+                                }
+                                Error::ActionNotAllowed(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (5i32) as u8;
+                                    let ActionNotAllowedError {
+                                        message: message16,
+                                        status: status16,
+                                    } = e;
+                                    let vec17 = (message16.into_bytes()).into_boxed_slice();
+                                    let ptr17 = vec17.as_ptr().cast::<u8>();
+                                    let len17 = vec17.len();
+                                    ::core::mem::forget(vec17);
+                                    *ptr2.add(12).cast::<usize>() = len17;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr17.cast_mut();
+                                    *ptr2.add(16).cast::<u8>() = (status16.clone() as i32) as u8;
+                                }
+                            }
                         }
                     };
                     ptr2
@@ -6424,9 +6676,48 @@ pub mod exports {
                     match l0 {
                         0 => (),
                         _ => {
-                            let l1 = *arg0.add(8).cast::<*mut u8>();
-                            let l2 = *arg0.add(12).cast::<usize>();
-                            _rt::cabi_dealloc(l1, l2, 1);
+                            let l1 = i32::from(*arg0.add(4).cast::<u8>());
+                            match l1 {
+                                0 => {
+                                    let l2 = *arg0.add(8).cast::<*mut u8>();
+                                    let l3 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l2, l3, 1);
+                                    let l4 = *arg0.add(16).cast::<*mut u8>();
+                                    let l5 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l4, l5, 1);
+                                }
+                                1 => {
+                                    let l6 = *arg0.add(8).cast::<*mut u8>();
+                                    let l7 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l6, l7, 1);
+                                    let l8 = *arg0.add(16).cast::<*mut u8>();
+                                    let l9 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l8, l9, 1);
+                                }
+                                2 => {
+                                    let l10 = *arg0.add(8).cast::<*mut u8>();
+                                    let l11 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l10, l11, 1);
+                                }
+                                3 => {
+                                    let l12 = *arg0.add(8).cast::<*mut u8>();
+                                    let l13 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l12, l13, 1);
+                                    let l14 = *arg0.add(16).cast::<*mut u8>();
+                                    let l15 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l14, l15, 1);
+                                }
+                                4 => {
+                                    let l16 = *arg0.add(8).cast::<*mut u8>();
+                                    let l17 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l16, l17, 1);
+                                }
+                                _ => {
+                                    let l18 = *arg0.add(8).cast::<*mut u8>();
+                                    let l19 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l18, l19, 1);
+                                }
+                            }
                         }
                     }
                 }
@@ -6449,14 +6740,99 @@ pub mod exports {
                         }
                         Err(e) => {
                             *ptr2.add(0).cast::<u8>() = (1i32) as u8;
-                            let Error { code: code3, message: message3 } = e;
-                            *ptr2.add(4).cast::<u8>() = (code3.clone() as i32) as u8;
-                            let vec4 = (message3.into_bytes()).into_boxed_slice();
-                            let ptr4 = vec4.as_ptr().cast::<u8>();
-                            let len4 = vec4.len();
-                            ::core::mem::forget(vec4);
-                            *ptr2.add(12).cast::<usize>() = len4;
-                            *ptr2.add(8).cast::<*mut u8>() = ptr4.cast_mut();
+                            match e {
+                                Error::ProductNotFound(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (0i32) as u8;
+                                    let ProductNotFoundError {
+                                        message: message3,
+                                        product_id: product_id3,
+                                    } = e;
+                                    let vec4 = (message3.into_bytes()).into_boxed_slice();
+                                    let ptr4 = vec4.as_ptr().cast::<u8>();
+                                    let len4 = vec4.len();
+                                    ::core::mem::forget(vec4);
+                                    *ptr2.add(12).cast::<usize>() = len4;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr4.cast_mut();
+                                    let vec5 = (product_id3.into_bytes()).into_boxed_slice();
+                                    let ptr5 = vec5.as_ptr().cast::<u8>();
+                                    let len5 = vec5.len();
+                                    ::core::mem::forget(vec5);
+                                    *ptr2.add(20).cast::<usize>() = len5;
+                                    *ptr2.add(16).cast::<*mut u8>() = ptr5.cast_mut();
+                                }
+                                Error::PricingNotFound(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (1i32) as u8;
+                                    let PricingNotFoundError {
+                                        message: message6,
+                                        product_id: product_id6,
+                                    } = e;
+                                    let vec7 = (message6.into_bytes()).into_boxed_slice();
+                                    let ptr7 = vec7.as_ptr().cast::<u8>();
+                                    let len7 = vec7.len();
+                                    ::core::mem::forget(vec7);
+                                    *ptr2.add(12).cast::<usize>() = len7;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr7.cast_mut();
+                                    let vec8 = (product_id6.into_bytes()).into_boxed_slice();
+                                    let ptr8 = vec8.as_ptr().cast::<u8>();
+                                    let len8 = vec8.len();
+                                    ::core::mem::forget(vec8);
+                                    *ptr2.add(20).cast::<usize>() = len8;
+                                    *ptr2.add(16).cast::<*mut u8>() = ptr8.cast_mut();
+                                }
+                                Error::AddressNotValid(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (2i32) as u8;
+                                    let AddressNotValidError { message: message9 } = e;
+                                    let vec10 = (message9.into_bytes()).into_boxed_slice();
+                                    let ptr10 = vec10.as_ptr().cast::<u8>();
+                                    let len10 = vec10.len();
+                                    ::core::mem::forget(vec10);
+                                    *ptr2.add(12).cast::<usize>() = len10;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr10.cast_mut();
+                                }
+                                Error::ItemNotFound(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (3i32) as u8;
+                                    let ItemNotFoundError {
+                                        message: message11,
+                                        product_id: product_id11,
+                                    } = e;
+                                    let vec12 = (message11.into_bytes()).into_boxed_slice();
+                                    let ptr12 = vec12.as_ptr().cast::<u8>();
+                                    let len12 = vec12.len();
+                                    ::core::mem::forget(vec12);
+                                    *ptr2.add(12).cast::<usize>() = len12;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr12.cast_mut();
+                                    let vec13 = (product_id11.into_bytes()).into_boxed_slice();
+                                    let ptr13 = vec13.as_ptr().cast::<u8>();
+                                    let len13 = vec13.len();
+                                    ::core::mem::forget(vec13);
+                                    *ptr2.add(20).cast::<usize>() = len13;
+                                    *ptr2.add(16).cast::<*mut u8>() = ptr13.cast_mut();
+                                }
+                                Error::EmptyItems(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (4i32) as u8;
+                                    let EmptyItemsError { message: message14 } = e;
+                                    let vec15 = (message14.into_bytes()).into_boxed_slice();
+                                    let ptr15 = vec15.as_ptr().cast::<u8>();
+                                    let len15 = vec15.len();
+                                    ::core::mem::forget(vec15);
+                                    *ptr2.add(12).cast::<usize>() = len15;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr15.cast_mut();
+                                }
+                                Error::ActionNotAllowed(e) => {
+                                    *ptr2.add(4).cast::<u8>() = (5i32) as u8;
+                                    let ActionNotAllowedError {
+                                        message: message16,
+                                        status: status16,
+                                    } = e;
+                                    let vec17 = (message16.into_bytes()).into_boxed_slice();
+                                    let ptr17 = vec17.as_ptr().cast::<u8>();
+                                    let len17 = vec17.len();
+                                    ::core::mem::forget(vec17);
+                                    *ptr2.add(12).cast::<usize>() = len17;
+                                    *ptr2.add(8).cast::<*mut u8>() = ptr17.cast_mut();
+                                    *ptr2.add(16).cast::<u8>() = (status16.clone() as i32) as u8;
+                                }
+                            }
                         }
                     };
                     ptr2
@@ -6468,9 +6844,48 @@ pub mod exports {
                     match l0 {
                         0 => (),
                         _ => {
-                            let l1 = *arg0.add(8).cast::<*mut u8>();
-                            let l2 = *arg0.add(12).cast::<usize>();
-                            _rt::cabi_dealloc(l1, l2, 1);
+                            let l1 = i32::from(*arg0.add(4).cast::<u8>());
+                            match l1 {
+                                0 => {
+                                    let l2 = *arg0.add(8).cast::<*mut u8>();
+                                    let l3 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l2, l3, 1);
+                                    let l4 = *arg0.add(16).cast::<*mut u8>();
+                                    let l5 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l4, l5, 1);
+                                }
+                                1 => {
+                                    let l6 = *arg0.add(8).cast::<*mut u8>();
+                                    let l7 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l6, l7, 1);
+                                    let l8 = *arg0.add(16).cast::<*mut u8>();
+                                    let l9 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l8, l9, 1);
+                                }
+                                2 => {
+                                    let l10 = *arg0.add(8).cast::<*mut u8>();
+                                    let l11 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l10, l11, 1);
+                                }
+                                3 => {
+                                    let l12 = *arg0.add(8).cast::<*mut u8>();
+                                    let l13 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l12, l13, 1);
+                                    let l14 = *arg0.add(16).cast::<*mut u8>();
+                                    let l15 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l14, l15, 1);
+                                }
+                                4 => {
+                                    let l16 = *arg0.add(8).cast::<*mut u8>();
+                                    let l17 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l16, l17, 1);
+                                }
+                                _ => {
+                                    let l18 = *arg0.add(8).cast::<*mut u8>();
+                                    let l19 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l18, l19, 1);
+                                }
+                            }
                         }
                     }
                 }
@@ -6583,14 +6998,99 @@ pub mod exports {
                         }
                         Err(e) => {
                             *ptr32.add(0).cast::<u8>() = (1i32) as u8;
-                            let Error { code: code33, message: message33 } = e;
-                            *ptr32.add(4).cast::<u8>() = (code33.clone() as i32) as u8;
-                            let vec34 = (message33.into_bytes()).into_boxed_slice();
-                            let ptr34 = vec34.as_ptr().cast::<u8>();
-                            let len34 = vec34.len();
-                            ::core::mem::forget(vec34);
-                            *ptr32.add(12).cast::<usize>() = len34;
-                            *ptr32.add(8).cast::<*mut u8>() = ptr34.cast_mut();
+                            match e {
+                                Error::ProductNotFound(e) => {
+                                    *ptr32.add(4).cast::<u8>() = (0i32) as u8;
+                                    let ProductNotFoundError {
+                                        message: message33,
+                                        product_id: product_id33,
+                                    } = e;
+                                    let vec34 = (message33.into_bytes()).into_boxed_slice();
+                                    let ptr34 = vec34.as_ptr().cast::<u8>();
+                                    let len34 = vec34.len();
+                                    ::core::mem::forget(vec34);
+                                    *ptr32.add(12).cast::<usize>() = len34;
+                                    *ptr32.add(8).cast::<*mut u8>() = ptr34.cast_mut();
+                                    let vec35 = (product_id33.into_bytes()).into_boxed_slice();
+                                    let ptr35 = vec35.as_ptr().cast::<u8>();
+                                    let len35 = vec35.len();
+                                    ::core::mem::forget(vec35);
+                                    *ptr32.add(20).cast::<usize>() = len35;
+                                    *ptr32.add(16).cast::<*mut u8>() = ptr35.cast_mut();
+                                }
+                                Error::PricingNotFound(e) => {
+                                    *ptr32.add(4).cast::<u8>() = (1i32) as u8;
+                                    let PricingNotFoundError {
+                                        message: message36,
+                                        product_id: product_id36,
+                                    } = e;
+                                    let vec37 = (message36.into_bytes()).into_boxed_slice();
+                                    let ptr37 = vec37.as_ptr().cast::<u8>();
+                                    let len37 = vec37.len();
+                                    ::core::mem::forget(vec37);
+                                    *ptr32.add(12).cast::<usize>() = len37;
+                                    *ptr32.add(8).cast::<*mut u8>() = ptr37.cast_mut();
+                                    let vec38 = (product_id36.into_bytes()).into_boxed_slice();
+                                    let ptr38 = vec38.as_ptr().cast::<u8>();
+                                    let len38 = vec38.len();
+                                    ::core::mem::forget(vec38);
+                                    *ptr32.add(20).cast::<usize>() = len38;
+                                    *ptr32.add(16).cast::<*mut u8>() = ptr38.cast_mut();
+                                }
+                                Error::AddressNotValid(e) => {
+                                    *ptr32.add(4).cast::<u8>() = (2i32) as u8;
+                                    let AddressNotValidError { message: message39 } = e;
+                                    let vec40 = (message39.into_bytes()).into_boxed_slice();
+                                    let ptr40 = vec40.as_ptr().cast::<u8>();
+                                    let len40 = vec40.len();
+                                    ::core::mem::forget(vec40);
+                                    *ptr32.add(12).cast::<usize>() = len40;
+                                    *ptr32.add(8).cast::<*mut u8>() = ptr40.cast_mut();
+                                }
+                                Error::ItemNotFound(e) => {
+                                    *ptr32.add(4).cast::<u8>() = (3i32) as u8;
+                                    let ItemNotFoundError {
+                                        message: message41,
+                                        product_id: product_id41,
+                                    } = e;
+                                    let vec42 = (message41.into_bytes()).into_boxed_slice();
+                                    let ptr42 = vec42.as_ptr().cast::<u8>();
+                                    let len42 = vec42.len();
+                                    ::core::mem::forget(vec42);
+                                    *ptr32.add(12).cast::<usize>() = len42;
+                                    *ptr32.add(8).cast::<*mut u8>() = ptr42.cast_mut();
+                                    let vec43 = (product_id41.into_bytes()).into_boxed_slice();
+                                    let ptr43 = vec43.as_ptr().cast::<u8>();
+                                    let len43 = vec43.len();
+                                    ::core::mem::forget(vec43);
+                                    *ptr32.add(20).cast::<usize>() = len43;
+                                    *ptr32.add(16).cast::<*mut u8>() = ptr43.cast_mut();
+                                }
+                                Error::EmptyItems(e) => {
+                                    *ptr32.add(4).cast::<u8>() = (4i32) as u8;
+                                    let EmptyItemsError { message: message44 } = e;
+                                    let vec45 = (message44.into_bytes()).into_boxed_slice();
+                                    let ptr45 = vec45.as_ptr().cast::<u8>();
+                                    let len45 = vec45.len();
+                                    ::core::mem::forget(vec45);
+                                    *ptr32.add(12).cast::<usize>() = len45;
+                                    *ptr32.add(8).cast::<*mut u8>() = ptr45.cast_mut();
+                                }
+                                Error::ActionNotAllowed(e) => {
+                                    *ptr32.add(4).cast::<u8>() = (5i32) as u8;
+                                    let ActionNotAllowedError {
+                                        message: message46,
+                                        status: status46,
+                                    } = e;
+                                    let vec47 = (message46.into_bytes()).into_boxed_slice();
+                                    let ptr47 = vec47.as_ptr().cast::<u8>();
+                                    let len47 = vec47.len();
+                                    ::core::mem::forget(vec47);
+                                    *ptr32.add(12).cast::<usize>() = len47;
+                                    *ptr32.add(8).cast::<*mut u8>() = ptr47.cast_mut();
+                                    *ptr32.add(16).cast::<u8>() = (status46.clone() as i32) as u8;
+                                }
+                            }
                         }
                     };
                     ptr32
@@ -6602,9 +7102,48 @@ pub mod exports {
                     match l0 {
                         0 => (),
                         _ => {
-                            let l1 = *arg0.add(8).cast::<*mut u8>();
-                            let l2 = *arg0.add(12).cast::<usize>();
-                            _rt::cabi_dealloc(l1, l2, 1);
+                            let l1 = i32::from(*arg0.add(4).cast::<u8>());
+                            match l1 {
+                                0 => {
+                                    let l2 = *arg0.add(8).cast::<*mut u8>();
+                                    let l3 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l2, l3, 1);
+                                    let l4 = *arg0.add(16).cast::<*mut u8>();
+                                    let l5 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l4, l5, 1);
+                                }
+                                1 => {
+                                    let l6 = *arg0.add(8).cast::<*mut u8>();
+                                    let l7 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l6, l7, 1);
+                                    let l8 = *arg0.add(16).cast::<*mut u8>();
+                                    let l9 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l8, l9, 1);
+                                }
+                                2 => {
+                                    let l10 = *arg0.add(8).cast::<*mut u8>();
+                                    let l11 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l10, l11, 1);
+                                }
+                                3 => {
+                                    let l12 = *arg0.add(8).cast::<*mut u8>();
+                                    let l13 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l12, l13, 1);
+                                    let l14 = *arg0.add(16).cast::<*mut u8>();
+                                    let l15 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l14, l15, 1);
+                                }
+                                4 => {
+                                    let l16 = *arg0.add(8).cast::<*mut u8>();
+                                    let l17 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l16, l17, 1);
+                                }
+                                _ => {
+                                    let l18 = *arg0.add(8).cast::<*mut u8>();
+                                    let l19 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l18, l19, 1);
+                                }
+                            }
                         }
                     }
                 }
@@ -6717,14 +7256,99 @@ pub mod exports {
                         }
                         Err(e) => {
                             *ptr32.add(0).cast::<u8>() = (1i32) as u8;
-                            let Error { code: code33, message: message33 } = e;
-                            *ptr32.add(4).cast::<u8>() = (code33.clone() as i32) as u8;
-                            let vec34 = (message33.into_bytes()).into_boxed_slice();
-                            let ptr34 = vec34.as_ptr().cast::<u8>();
-                            let len34 = vec34.len();
-                            ::core::mem::forget(vec34);
-                            *ptr32.add(12).cast::<usize>() = len34;
-                            *ptr32.add(8).cast::<*mut u8>() = ptr34.cast_mut();
+                            match e {
+                                Error::ProductNotFound(e) => {
+                                    *ptr32.add(4).cast::<u8>() = (0i32) as u8;
+                                    let ProductNotFoundError {
+                                        message: message33,
+                                        product_id: product_id33,
+                                    } = e;
+                                    let vec34 = (message33.into_bytes()).into_boxed_slice();
+                                    let ptr34 = vec34.as_ptr().cast::<u8>();
+                                    let len34 = vec34.len();
+                                    ::core::mem::forget(vec34);
+                                    *ptr32.add(12).cast::<usize>() = len34;
+                                    *ptr32.add(8).cast::<*mut u8>() = ptr34.cast_mut();
+                                    let vec35 = (product_id33.into_bytes()).into_boxed_slice();
+                                    let ptr35 = vec35.as_ptr().cast::<u8>();
+                                    let len35 = vec35.len();
+                                    ::core::mem::forget(vec35);
+                                    *ptr32.add(20).cast::<usize>() = len35;
+                                    *ptr32.add(16).cast::<*mut u8>() = ptr35.cast_mut();
+                                }
+                                Error::PricingNotFound(e) => {
+                                    *ptr32.add(4).cast::<u8>() = (1i32) as u8;
+                                    let PricingNotFoundError {
+                                        message: message36,
+                                        product_id: product_id36,
+                                    } = e;
+                                    let vec37 = (message36.into_bytes()).into_boxed_slice();
+                                    let ptr37 = vec37.as_ptr().cast::<u8>();
+                                    let len37 = vec37.len();
+                                    ::core::mem::forget(vec37);
+                                    *ptr32.add(12).cast::<usize>() = len37;
+                                    *ptr32.add(8).cast::<*mut u8>() = ptr37.cast_mut();
+                                    let vec38 = (product_id36.into_bytes()).into_boxed_slice();
+                                    let ptr38 = vec38.as_ptr().cast::<u8>();
+                                    let len38 = vec38.len();
+                                    ::core::mem::forget(vec38);
+                                    *ptr32.add(20).cast::<usize>() = len38;
+                                    *ptr32.add(16).cast::<*mut u8>() = ptr38.cast_mut();
+                                }
+                                Error::AddressNotValid(e) => {
+                                    *ptr32.add(4).cast::<u8>() = (2i32) as u8;
+                                    let AddressNotValidError { message: message39 } = e;
+                                    let vec40 = (message39.into_bytes()).into_boxed_slice();
+                                    let ptr40 = vec40.as_ptr().cast::<u8>();
+                                    let len40 = vec40.len();
+                                    ::core::mem::forget(vec40);
+                                    *ptr32.add(12).cast::<usize>() = len40;
+                                    *ptr32.add(8).cast::<*mut u8>() = ptr40.cast_mut();
+                                }
+                                Error::ItemNotFound(e) => {
+                                    *ptr32.add(4).cast::<u8>() = (3i32) as u8;
+                                    let ItemNotFoundError {
+                                        message: message41,
+                                        product_id: product_id41,
+                                    } = e;
+                                    let vec42 = (message41.into_bytes()).into_boxed_slice();
+                                    let ptr42 = vec42.as_ptr().cast::<u8>();
+                                    let len42 = vec42.len();
+                                    ::core::mem::forget(vec42);
+                                    *ptr32.add(12).cast::<usize>() = len42;
+                                    *ptr32.add(8).cast::<*mut u8>() = ptr42.cast_mut();
+                                    let vec43 = (product_id41.into_bytes()).into_boxed_slice();
+                                    let ptr43 = vec43.as_ptr().cast::<u8>();
+                                    let len43 = vec43.len();
+                                    ::core::mem::forget(vec43);
+                                    *ptr32.add(20).cast::<usize>() = len43;
+                                    *ptr32.add(16).cast::<*mut u8>() = ptr43.cast_mut();
+                                }
+                                Error::EmptyItems(e) => {
+                                    *ptr32.add(4).cast::<u8>() = (4i32) as u8;
+                                    let EmptyItemsError { message: message44 } = e;
+                                    let vec45 = (message44.into_bytes()).into_boxed_slice();
+                                    let ptr45 = vec45.as_ptr().cast::<u8>();
+                                    let len45 = vec45.len();
+                                    ::core::mem::forget(vec45);
+                                    *ptr32.add(12).cast::<usize>() = len45;
+                                    *ptr32.add(8).cast::<*mut u8>() = ptr45.cast_mut();
+                                }
+                                Error::ActionNotAllowed(e) => {
+                                    *ptr32.add(4).cast::<u8>() = (5i32) as u8;
+                                    let ActionNotAllowedError {
+                                        message: message46,
+                                        status: status46,
+                                    } = e;
+                                    let vec47 = (message46.into_bytes()).into_boxed_slice();
+                                    let ptr47 = vec47.as_ptr().cast::<u8>();
+                                    let len47 = vec47.len();
+                                    ::core::mem::forget(vec47);
+                                    *ptr32.add(12).cast::<usize>() = len47;
+                                    *ptr32.add(8).cast::<*mut u8>() = ptr47.cast_mut();
+                                    *ptr32.add(16).cast::<u8>() = (status46.clone() as i32) as u8;
+                                }
+                            }
                         }
                     };
                     ptr32
@@ -6736,9 +7360,48 @@ pub mod exports {
                     match l0 {
                         0 => (),
                         _ => {
-                            let l1 = *arg0.add(8).cast::<*mut u8>();
-                            let l2 = *arg0.add(12).cast::<usize>();
-                            _rt::cabi_dealloc(l1, l2, 1);
+                            let l1 = i32::from(*arg0.add(4).cast::<u8>());
+                            match l1 {
+                                0 => {
+                                    let l2 = *arg0.add(8).cast::<*mut u8>();
+                                    let l3 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l2, l3, 1);
+                                    let l4 = *arg0.add(16).cast::<*mut u8>();
+                                    let l5 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l4, l5, 1);
+                                }
+                                1 => {
+                                    let l6 = *arg0.add(8).cast::<*mut u8>();
+                                    let l7 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l6, l7, 1);
+                                    let l8 = *arg0.add(16).cast::<*mut u8>();
+                                    let l9 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l8, l9, 1);
+                                }
+                                2 => {
+                                    let l10 = *arg0.add(8).cast::<*mut u8>();
+                                    let l11 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l10, l11, 1);
+                                }
+                                3 => {
+                                    let l12 = *arg0.add(8).cast::<*mut u8>();
+                                    let l13 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l12, l13, 1);
+                                    let l14 = *arg0.add(16).cast::<*mut u8>();
+                                    let l15 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l14, l15, 1);
+                                }
+                                4 => {
+                                    let l16 = *arg0.add(8).cast::<*mut u8>();
+                                    let l17 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l16, l17, 1);
+                                }
+                                _ => {
+                                    let l18 = *arg0.add(8).cast::<*mut u8>();
+                                    let l19 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l18, l19, 1);
+                                }
+                            }
                         }
                     }
                 }
@@ -6755,14 +7418,99 @@ pub mod exports {
                         }
                         Err(e) => {
                             *ptr1.add(0).cast::<u8>() = (1i32) as u8;
-                            let Error { code: code2, message: message2 } = e;
-                            *ptr1.add(4).cast::<u8>() = (code2.clone() as i32) as u8;
-                            let vec3 = (message2.into_bytes()).into_boxed_slice();
-                            let ptr3 = vec3.as_ptr().cast::<u8>();
-                            let len3 = vec3.len();
-                            ::core::mem::forget(vec3);
-                            *ptr1.add(12).cast::<usize>() = len3;
-                            *ptr1.add(8).cast::<*mut u8>() = ptr3.cast_mut();
+                            match e {
+                                Error::ProductNotFound(e) => {
+                                    *ptr1.add(4).cast::<u8>() = (0i32) as u8;
+                                    let ProductNotFoundError {
+                                        message: message2,
+                                        product_id: product_id2,
+                                    } = e;
+                                    let vec3 = (message2.into_bytes()).into_boxed_slice();
+                                    let ptr3 = vec3.as_ptr().cast::<u8>();
+                                    let len3 = vec3.len();
+                                    ::core::mem::forget(vec3);
+                                    *ptr1.add(12).cast::<usize>() = len3;
+                                    *ptr1.add(8).cast::<*mut u8>() = ptr3.cast_mut();
+                                    let vec4 = (product_id2.into_bytes()).into_boxed_slice();
+                                    let ptr4 = vec4.as_ptr().cast::<u8>();
+                                    let len4 = vec4.len();
+                                    ::core::mem::forget(vec4);
+                                    *ptr1.add(20).cast::<usize>() = len4;
+                                    *ptr1.add(16).cast::<*mut u8>() = ptr4.cast_mut();
+                                }
+                                Error::PricingNotFound(e) => {
+                                    *ptr1.add(4).cast::<u8>() = (1i32) as u8;
+                                    let PricingNotFoundError {
+                                        message: message5,
+                                        product_id: product_id5,
+                                    } = e;
+                                    let vec6 = (message5.into_bytes()).into_boxed_slice();
+                                    let ptr6 = vec6.as_ptr().cast::<u8>();
+                                    let len6 = vec6.len();
+                                    ::core::mem::forget(vec6);
+                                    *ptr1.add(12).cast::<usize>() = len6;
+                                    *ptr1.add(8).cast::<*mut u8>() = ptr6.cast_mut();
+                                    let vec7 = (product_id5.into_bytes()).into_boxed_slice();
+                                    let ptr7 = vec7.as_ptr().cast::<u8>();
+                                    let len7 = vec7.len();
+                                    ::core::mem::forget(vec7);
+                                    *ptr1.add(20).cast::<usize>() = len7;
+                                    *ptr1.add(16).cast::<*mut u8>() = ptr7.cast_mut();
+                                }
+                                Error::AddressNotValid(e) => {
+                                    *ptr1.add(4).cast::<u8>() = (2i32) as u8;
+                                    let AddressNotValidError { message: message8 } = e;
+                                    let vec9 = (message8.into_bytes()).into_boxed_slice();
+                                    let ptr9 = vec9.as_ptr().cast::<u8>();
+                                    let len9 = vec9.len();
+                                    ::core::mem::forget(vec9);
+                                    *ptr1.add(12).cast::<usize>() = len9;
+                                    *ptr1.add(8).cast::<*mut u8>() = ptr9.cast_mut();
+                                }
+                                Error::ItemNotFound(e) => {
+                                    *ptr1.add(4).cast::<u8>() = (3i32) as u8;
+                                    let ItemNotFoundError {
+                                        message: message10,
+                                        product_id: product_id10,
+                                    } = e;
+                                    let vec11 = (message10.into_bytes()).into_boxed_slice();
+                                    let ptr11 = vec11.as_ptr().cast::<u8>();
+                                    let len11 = vec11.len();
+                                    ::core::mem::forget(vec11);
+                                    *ptr1.add(12).cast::<usize>() = len11;
+                                    *ptr1.add(8).cast::<*mut u8>() = ptr11.cast_mut();
+                                    let vec12 = (product_id10.into_bytes()).into_boxed_slice();
+                                    let ptr12 = vec12.as_ptr().cast::<u8>();
+                                    let len12 = vec12.len();
+                                    ::core::mem::forget(vec12);
+                                    *ptr1.add(20).cast::<usize>() = len12;
+                                    *ptr1.add(16).cast::<*mut u8>() = ptr12.cast_mut();
+                                }
+                                Error::EmptyItems(e) => {
+                                    *ptr1.add(4).cast::<u8>() = (4i32) as u8;
+                                    let EmptyItemsError { message: message13 } = e;
+                                    let vec14 = (message13.into_bytes()).into_boxed_slice();
+                                    let ptr14 = vec14.as_ptr().cast::<u8>();
+                                    let len14 = vec14.len();
+                                    ::core::mem::forget(vec14);
+                                    *ptr1.add(12).cast::<usize>() = len14;
+                                    *ptr1.add(8).cast::<*mut u8>() = ptr14.cast_mut();
+                                }
+                                Error::ActionNotAllowed(e) => {
+                                    *ptr1.add(4).cast::<u8>() = (5i32) as u8;
+                                    let ActionNotAllowedError {
+                                        message: message15,
+                                        status: status15,
+                                    } = e;
+                                    let vec16 = (message15.into_bytes()).into_boxed_slice();
+                                    let ptr16 = vec16.as_ptr().cast::<u8>();
+                                    let len16 = vec16.len();
+                                    ::core::mem::forget(vec16);
+                                    *ptr1.add(12).cast::<usize>() = len16;
+                                    *ptr1.add(8).cast::<*mut u8>() = ptr16.cast_mut();
+                                    *ptr1.add(16).cast::<u8>() = (status15.clone() as i32) as u8;
+                                }
+                            }
                         }
                     };
                     ptr1
@@ -6774,9 +7522,48 @@ pub mod exports {
                     match l0 {
                         0 => (),
                         _ => {
-                            let l1 = *arg0.add(8).cast::<*mut u8>();
-                            let l2 = *arg0.add(12).cast::<usize>();
-                            _rt::cabi_dealloc(l1, l2, 1);
+                            let l1 = i32::from(*arg0.add(4).cast::<u8>());
+                            match l1 {
+                                0 => {
+                                    let l2 = *arg0.add(8).cast::<*mut u8>();
+                                    let l3 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l2, l3, 1);
+                                    let l4 = *arg0.add(16).cast::<*mut u8>();
+                                    let l5 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l4, l5, 1);
+                                }
+                                1 => {
+                                    let l6 = *arg0.add(8).cast::<*mut u8>();
+                                    let l7 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l6, l7, 1);
+                                    let l8 = *arg0.add(16).cast::<*mut u8>();
+                                    let l9 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l8, l9, 1);
+                                }
+                                2 => {
+                                    let l10 = *arg0.add(8).cast::<*mut u8>();
+                                    let l11 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l10, l11, 1);
+                                }
+                                3 => {
+                                    let l12 = *arg0.add(8).cast::<*mut u8>();
+                                    let l13 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l12, l13, 1);
+                                    let l14 = *arg0.add(16).cast::<*mut u8>();
+                                    let l15 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l14, l15, 1);
+                                }
+                                4 => {
+                                    let l16 = *arg0.add(8).cast::<*mut u8>();
+                                    let l17 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l16, l17, 1);
+                                }
+                                _ => {
+                                    let l18 = *arg0.add(8).cast::<*mut u8>();
+                                    let l19 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l18, l19, 1);
+                                }
+                            }
                         }
                     }
                 }
@@ -6793,14 +7580,99 @@ pub mod exports {
                         }
                         Err(e) => {
                             *ptr1.add(0).cast::<u8>() = (1i32) as u8;
-                            let Error { code: code2, message: message2 } = e;
-                            *ptr1.add(4).cast::<u8>() = (code2.clone() as i32) as u8;
-                            let vec3 = (message2.into_bytes()).into_boxed_slice();
-                            let ptr3 = vec3.as_ptr().cast::<u8>();
-                            let len3 = vec3.len();
-                            ::core::mem::forget(vec3);
-                            *ptr1.add(12).cast::<usize>() = len3;
-                            *ptr1.add(8).cast::<*mut u8>() = ptr3.cast_mut();
+                            match e {
+                                Error::ProductNotFound(e) => {
+                                    *ptr1.add(4).cast::<u8>() = (0i32) as u8;
+                                    let ProductNotFoundError {
+                                        message: message2,
+                                        product_id: product_id2,
+                                    } = e;
+                                    let vec3 = (message2.into_bytes()).into_boxed_slice();
+                                    let ptr3 = vec3.as_ptr().cast::<u8>();
+                                    let len3 = vec3.len();
+                                    ::core::mem::forget(vec3);
+                                    *ptr1.add(12).cast::<usize>() = len3;
+                                    *ptr1.add(8).cast::<*mut u8>() = ptr3.cast_mut();
+                                    let vec4 = (product_id2.into_bytes()).into_boxed_slice();
+                                    let ptr4 = vec4.as_ptr().cast::<u8>();
+                                    let len4 = vec4.len();
+                                    ::core::mem::forget(vec4);
+                                    *ptr1.add(20).cast::<usize>() = len4;
+                                    *ptr1.add(16).cast::<*mut u8>() = ptr4.cast_mut();
+                                }
+                                Error::PricingNotFound(e) => {
+                                    *ptr1.add(4).cast::<u8>() = (1i32) as u8;
+                                    let PricingNotFoundError {
+                                        message: message5,
+                                        product_id: product_id5,
+                                    } = e;
+                                    let vec6 = (message5.into_bytes()).into_boxed_slice();
+                                    let ptr6 = vec6.as_ptr().cast::<u8>();
+                                    let len6 = vec6.len();
+                                    ::core::mem::forget(vec6);
+                                    *ptr1.add(12).cast::<usize>() = len6;
+                                    *ptr1.add(8).cast::<*mut u8>() = ptr6.cast_mut();
+                                    let vec7 = (product_id5.into_bytes()).into_boxed_slice();
+                                    let ptr7 = vec7.as_ptr().cast::<u8>();
+                                    let len7 = vec7.len();
+                                    ::core::mem::forget(vec7);
+                                    *ptr1.add(20).cast::<usize>() = len7;
+                                    *ptr1.add(16).cast::<*mut u8>() = ptr7.cast_mut();
+                                }
+                                Error::AddressNotValid(e) => {
+                                    *ptr1.add(4).cast::<u8>() = (2i32) as u8;
+                                    let AddressNotValidError { message: message8 } = e;
+                                    let vec9 = (message8.into_bytes()).into_boxed_slice();
+                                    let ptr9 = vec9.as_ptr().cast::<u8>();
+                                    let len9 = vec9.len();
+                                    ::core::mem::forget(vec9);
+                                    *ptr1.add(12).cast::<usize>() = len9;
+                                    *ptr1.add(8).cast::<*mut u8>() = ptr9.cast_mut();
+                                }
+                                Error::ItemNotFound(e) => {
+                                    *ptr1.add(4).cast::<u8>() = (3i32) as u8;
+                                    let ItemNotFoundError {
+                                        message: message10,
+                                        product_id: product_id10,
+                                    } = e;
+                                    let vec11 = (message10.into_bytes()).into_boxed_slice();
+                                    let ptr11 = vec11.as_ptr().cast::<u8>();
+                                    let len11 = vec11.len();
+                                    ::core::mem::forget(vec11);
+                                    *ptr1.add(12).cast::<usize>() = len11;
+                                    *ptr1.add(8).cast::<*mut u8>() = ptr11.cast_mut();
+                                    let vec12 = (product_id10.into_bytes()).into_boxed_slice();
+                                    let ptr12 = vec12.as_ptr().cast::<u8>();
+                                    let len12 = vec12.len();
+                                    ::core::mem::forget(vec12);
+                                    *ptr1.add(20).cast::<usize>() = len12;
+                                    *ptr1.add(16).cast::<*mut u8>() = ptr12.cast_mut();
+                                }
+                                Error::EmptyItems(e) => {
+                                    *ptr1.add(4).cast::<u8>() = (4i32) as u8;
+                                    let EmptyItemsError { message: message13 } = e;
+                                    let vec14 = (message13.into_bytes()).into_boxed_slice();
+                                    let ptr14 = vec14.as_ptr().cast::<u8>();
+                                    let len14 = vec14.len();
+                                    ::core::mem::forget(vec14);
+                                    *ptr1.add(12).cast::<usize>() = len14;
+                                    *ptr1.add(8).cast::<*mut u8>() = ptr14.cast_mut();
+                                }
+                                Error::ActionNotAllowed(e) => {
+                                    *ptr1.add(4).cast::<u8>() = (5i32) as u8;
+                                    let ActionNotAllowedError {
+                                        message: message15,
+                                        status: status15,
+                                    } = e;
+                                    let vec16 = (message15.into_bytes()).into_boxed_slice();
+                                    let ptr16 = vec16.as_ptr().cast::<u8>();
+                                    let len16 = vec16.len();
+                                    ::core::mem::forget(vec16);
+                                    *ptr1.add(12).cast::<usize>() = len16;
+                                    *ptr1.add(8).cast::<*mut u8>() = ptr16.cast_mut();
+                                    *ptr1.add(16).cast::<u8>() = (status15.clone() as i32) as u8;
+                                }
+                            }
                         }
                     };
                     ptr1
@@ -6812,9 +7684,48 @@ pub mod exports {
                     match l0 {
                         0 => (),
                         _ => {
-                            let l1 = *arg0.add(8).cast::<*mut u8>();
-                            let l2 = *arg0.add(12).cast::<usize>();
-                            _rt::cabi_dealloc(l1, l2, 1);
+                            let l1 = i32::from(*arg0.add(4).cast::<u8>());
+                            match l1 {
+                                0 => {
+                                    let l2 = *arg0.add(8).cast::<*mut u8>();
+                                    let l3 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l2, l3, 1);
+                                    let l4 = *arg0.add(16).cast::<*mut u8>();
+                                    let l5 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l4, l5, 1);
+                                }
+                                1 => {
+                                    let l6 = *arg0.add(8).cast::<*mut u8>();
+                                    let l7 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l6, l7, 1);
+                                    let l8 = *arg0.add(16).cast::<*mut u8>();
+                                    let l9 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l8, l9, 1);
+                                }
+                                2 => {
+                                    let l10 = *arg0.add(8).cast::<*mut u8>();
+                                    let l11 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l10, l11, 1);
+                                }
+                                3 => {
+                                    let l12 = *arg0.add(8).cast::<*mut u8>();
+                                    let l13 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l12, l13, 1);
+                                    let l14 = *arg0.add(16).cast::<*mut u8>();
+                                    let l15 = *arg0.add(20).cast::<usize>();
+                                    _rt::cabi_dealloc(l14, l15, 1);
+                                }
+                                4 => {
+                                    let l16 = *arg0.add(8).cast::<*mut u8>();
+                                    let l17 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l16, l17, 1);
+                                }
+                                _ => {
+                                    let l18 = *arg0.add(8).cast::<*mut u8>();
+                                    let l19 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l18, l19, 1);
+                                }
+                            }
                         }
                     }
                 }
@@ -7679,8 +8590,8 @@ pub(crate) use __export_order_impl as export;
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.25.0:order:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 6145] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\x85/\x01A\x02\x01A\x18\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 6470] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xca1\x01A\x02\x01A\x18\
 \x01B\x0a\x04\0\x08pollable\x03\x01\x01h\0\x01@\x01\x04self\x01\0\x7f\x04\0\x16[\
 method]pollable.ready\x01\x02\x01@\x01\x04self\x01\x01\0\x04\0\x16[method]pollab\
 le.block\x01\x03\x01p\x01\x01py\x01@\x01\x02in\x04\0\x05\x04\0\x04poll\x01\x06\x03\
@@ -7789,26 +8700,32 @@ l\x01H\x01@\0\0\x7f\x04\0\x14get-idempotence-mode\x01I\x01@\x01\x0aidempotent\x7
 ency-key\x01K\x01@\x03\x09worker-id\x0d\x0etarget-version\x07\x04mode\x15\x01\0\x04\
 \0\x0dupdate-worker\x01L\x01@\0\02\x04\0\x11get-self-metadata\x01M\x01k2\x01@\x01\
 \x09worker-id\x0d\0\xce\0\x04\0\x13get-worker-metadata\x01O\x03\x01\x14golem:api\
-/host@0.2.0\x05\x0d\x01B\"\x01m\x03\x03new\x07shipped\x09cancelled\x04\0\x0corde\
-r-status\x03\0\0\x01ks\x01r\x09\x07street1s\x07street2\x02\x04citys\x0fstate-or-\
-regions\x07countrys\x0bpostal-codes\x04name\x02\x0dbusiness-name\x02\x0cphone-nu\
-mber\x02\x04\0\x07address\x03\0\x03\x01r\x04\x0aproduct-ids\x04names\x05pricev\x08\
+/host@0.2.0\x05\x0d\x01B.\x01m\x03\x03new\x07shipped\x09cancelled\x04\0\x0corder\
+-status\x03\0\0\x01ks\x01r\x09\x07street1s\x07street2\x02\x04citys\x0fstate-or-r\
+egions\x07countrys\x0bpostal-codes\x04name\x02\x0dbusiness-name\x02\x0cphone-num\
+ber\x02\x04\0\x07address\x03\0\x03\x01r\x04\x0aproduct-ids\x04names\x05pricev\x08\
 quantityy\x04\0\x0aorder-item\x03\0\x05\x01p\x06\x01k\x04\x01r\x09\x08order-ids\x07\
 user-ids\x0corder-status\x01\x05items\x07\x0fbilling-address\x08\x10shipping-add\
 ress\x08\x05totalv\x08currencys\x09timestampw\x04\0\x05order\x03\0\x09\x01r\x07\x07\
 user-ids\x05items\x07\x0fbilling-address\x08\x10shipping-address\x08\x05totalv\x08\
-currencys\x09timestampw\x04\0\x0ccreate-order\x03\0\x0b\x01m\x05\x11product-not-\
-found\x11pricing-not-found\x11address-not-valid\x0eitem-not-found\x12action-not-\
-allowed\x04\0\x0aerror-code\x03\0\x0d\x01r\x02\x04code\x0e\x07messages\x04\0\x05\
-error\x03\0\x0f\x01@\x01\x04data\x0c\x01\0\x04\0\x10initialize-order\x01\x11\x01\
-j\0\x01\x10\x01@\x02\x0aproduct-ids\x08quantityy\0\x12\x04\0\x08add-item\x01\x13\
-\x01@\x01\x0aproduct-ids\0\x12\x04\0\x0bremove-item\x01\x14\x04\0\x14update-item\
--quantity\x01\x13\x01@\x01\x07address\x04\0\x12\x04\0\x17update-shipping-address\
-\x01\x15\x04\0\x16update-billing-address\x01\x15\x01@\0\0\x12\x04\0\x0aship-orde\
-r\x01\x16\x04\0\x0ccancel-order\x01\x16\x01k\x0a\x01@\0\0\x17\x04\0\x03get\x01\x18\
-\x04\x01\x0fgolem:order/api\x05\x0e\x04\x01\x11golem:order/order\x04\0\x0b\x0b\x01\
-\0\x05order\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit-component\x07\
-0.208.1\x10wit-bindgen-rust\x060.25.0";
+currencys\x09timestampw\x04\0\x0ccreate-order\x03\0\x0b\x01r\x02\x07messages\x0a\
+product-ids\x04\0\x17product-not-found-error\x03\0\x0d\x01r\x02\x07messages\x0ap\
+roduct-ids\x04\0\x17pricing-not-found-error\x03\0\x0f\x01r\x01\x07messages\x04\0\
+\x17address-not-valid-error\x03\0\x11\x01r\x02\x07messages\x0aproduct-ids\x04\0\x14\
+item-not-found-error\x03\0\x13\x01r\x01\x07messages\x04\0\x11empty-items-error\x03\
+\0\x15\x01r\x01\x07messages\x04\0\x1dbilling-address-not-set-error\x03\0\x17\x01\
+r\x02\x07messages\x06status\x01\x04\0\x18action-not-allowed-error\x03\0\x19\x01q\
+\x06\x11product-not-found\x01\x0e\0\x11pricing-not-found\x01\x10\0\x11address-no\
+t-valid\x01\x12\0\x0eitem-not-found\x01\x14\0\x0bempty-items\x01\x16\0\x12action\
+-not-allowed\x01\x1a\0\x04\0\x05error\x03\0\x1b\x01@\x01\x04data\x0c\x01\0\x04\0\
+\x10initialize-order\x01\x1d\x01j\0\x01\x1c\x01@\x02\x0aproduct-ids\x08quantityy\
+\0\x1e\x04\0\x08add-item\x01\x1f\x01@\x01\x0aproduct-ids\0\x1e\x04\0\x0bremove-i\
+tem\x01\x20\x04\0\x14update-item-quantity\x01\x1f\x01@\x01\x07address\x04\0\x1e\x04\
+\0\x17update-shipping-address\x01!\x04\0\x16update-billing-address\x01!\x01@\0\0\
+\x1e\x04\0\x0aship-order\x01\"\x04\0\x0ccancel-order\x01\"\x01k\x0a\x01@\0\0#\x04\
+\0\x03get\x01$\x04\x01\x0fgolem:order/api\x05\x0e\x04\x01\x11golem:order/order\x04\
+\0\x0b\x0b\x01\0\x05order\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit\
+-component\x070.208.1\x10wit-bindgen-rust\x060.25.0";
 
 #[inline(never)]
 #[doc(hidden)]

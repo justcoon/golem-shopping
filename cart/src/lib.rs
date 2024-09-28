@@ -65,12 +65,11 @@ fn get_pricing(product_id: String, currency: String, zone: String) -> Option<Pri
 
 fn validate_cart(cart: Cart) -> Result<(), Error> {
     if cart.items.is_empty() {
-        Err(Error { code: ErrorCode::EmptyItems, message: "Empty items".to_string() })
+        Err(Error::EmptyItems(EmptyItemsError { message: "Empty items".to_string() }))
     } else if cart.billing_address.is_none() {
-        Err(Error {
-            code: ErrorCode::BillingAddressNotSet,
+        Err(Error::BillingAddressNotSet(BillingAddressNotSetError {
             message: "Billing address not set".to_string(),
-        })
+        }))
     } else {
         Ok(())
     }
@@ -134,6 +133,24 @@ fn create_order(order_id: String, cart: Cart) -> Result<String, Error> {
     Ok(order_id)
 }
 
+fn item_not_found_error(product_id: String) -> Error {
+    Error::ItemNotFound(ItemNotFoundError { message: "Item not found".to_string(), product_id })
+}
+
+fn pricing_not_found_error(product_id: String) -> Error {
+    Error::PricingNotFound(PricingNotFoundError {
+        message: "Pricing not found".to_string(),
+        product_id,
+    })
+}
+
+fn product_not_found_error(product_id: String) -> Error {
+    Error::ProductNotFound(ProductNotFoundError {
+        message: "Product not found".to_string(),
+        product_id,
+    })
+}
+
 thread_local! {
     static STATE: RefCell<Option<Cart>> = const { RefCell::new(None) };
 }
@@ -189,17 +206,9 @@ impl Guest for Component {
                         });
                     }
                     (None, _) => {
-                        return Err(Error {
-                            code: ErrorCode::ProductNotFound,
-                            message: "Product not found".to_string(),
-                        });
+                        return Err(product_not_found_error(product_id));
                     }
-                    _ => {
-                        return Err(Error {
-                            code: ErrorCode::PricingNotFound,
-                            message: "Pricing not found".to_string(),
-                        });
-                    }
+                    _ => return Err(pricing_not_found_error(product_id)),
                 }
             }
 
@@ -221,7 +230,7 @@ impl Guest for Component {
                 state.total = get_total_price(state.items.clone());
                 Ok(())
             } else {
-                Err(Error { code: ErrorCode::ItemNotFound, message: "Item not found".to_string() })
+                Err(item_not_found_error(product_id))
             }
         })
     }
@@ -247,7 +256,7 @@ impl Guest for Component {
 
                 Ok(())
             } else {
-                Err(Error { code: ErrorCode::ItemNotFound, message: "Item not found".to_string() })
+                Err(item_not_found_error(product_id))
             }
         })
     }

@@ -8,7 +8,13 @@ interface stub-order {
   use golem:order/api.{order-item};
   use golem:order/api.{order};
   use golem:order/api.{create-order};
-  use golem:order/api.{error-code};
+  use golem:order/api.{product-not-found-error};
+  use golem:order/api.{pricing-not-found-error};
+  use golem:order/api.{address-not-valid-error};
+  use golem:order/api.{item-not-found-error};
+  use golem:order/api.{empty-items-error};
+  use golem:order/api.{billing-address-not-set-error};
+  use golem:order/api.{action-not-allowed-error};
   use golem:order/api.{error};
 
   resource future-add-item-result {

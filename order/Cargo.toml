@@ -9,6 +9,9 @@ path = "wit"
 [package.metadata.component.target.dependencies."golem:api"]
 path = "wit/deps/golem"
 
+[package.metadata.component.target.dependencies."golem:order-stub"]
+path = "wit/deps/golem_order-stub"
+
 [package.metadata.component.target.dependencies."golem:pricing"]
 path = "wit/deps/golem_pricing"
 
