@@ -14,7 +14,6 @@ interface api {
 }
 
 world product {
-  import golem:api/host@0.2.0;
 
   export api;
 }

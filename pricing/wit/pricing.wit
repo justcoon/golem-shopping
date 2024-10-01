@@ -24,7 +24,6 @@ interface api {
 }
 
 world pricing {
-  import golem:api/host@0.2.0;
 
   export api;
 }

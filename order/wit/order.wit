@@ -114,8 +114,6 @@ world order {
   import golem: pricing-stub/stub-pricing;
   import golem: product-stub/stub-product;
 
-  import golem: api/host@0.2.0;
-
   export golem:api/save-snapshot@0.2.0;
   export golem:api/load-snapshot@0.2.0;
 
