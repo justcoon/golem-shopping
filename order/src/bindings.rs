@@ -5836,6 +5836,138 @@ pub mod exports {
     #[allow(dead_code)]
     pub mod golem {
         #[allow(dead_code)]
+        pub mod api {
+            #[allow(dead_code, clippy::all)]
+            pub mod save_snapshot {
+                #[used]
+                #[doc(hidden)]
+                #[cfg(target_arch = "wasm32")]
+                static __FORCE_SECTION_REF: fn() =
+                    super::super::super::super::__link_custom_section_describing_imports;
+                use super::super::super::super::_rt;
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn _export_save_cabi<T: Guest>() -> *mut u8 {
+                    #[cfg(target_arch = "wasm32")]
+                    _rt::run_ctors_once();
+                    let result0 = T::save();
+                    let ptr1 = _RET_AREA.0.as_mut_ptr().cast::<u8>();
+                    let vec2 = (result0).into_boxed_slice();
+                    let ptr2 = vec2.as_ptr().cast::<u8>();
+                    let len2 = vec2.len();
+                    ::core::mem::forget(vec2);
+                    *ptr1.add(4).cast::<usize>() = len2;
+                    *ptr1.add(0).cast::<*mut u8>() = ptr2.cast_mut();
+                    ptr1
+                }
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn __post_return_save<T: Guest>(arg0: *mut u8) {
+                    let l0 = *arg0.add(0).cast::<*mut u8>();
+                    let l1 = *arg0.add(4).cast::<usize>();
+                    let base2 = l0;
+                    let len2 = l1;
+                    _rt::cabi_dealloc(base2, len2 * 1, 1);
+                }
+                pub trait Guest {
+                    /// Saves the component's state into a user-defined snapshot
+                    fn save() -> _rt::Vec<u8>;
+                }
+                #[doc(hidden)]
+
+                macro_rules! __export_golem_api_save_snapshot_0_2_0_cabi{
+                                      ($ty:ident with_types_in $($path_to_types:tt)*) => (const _: () = {
+
+                                        #[export_name = "golem:api/save-snapshot@0.2.0#save"]
+                                        unsafe extern "C" fn export_save() -> *mut u8 {
+                                          $($path_to_types)*::_export_save_cabi::<$ty>()
+                                        }
+                                        #[export_name = "cabi_post_golem:api/save-snapshot@0.2.0#save"]
+                                        unsafe extern "C" fn _post_return_save(arg0: *mut u8,) {
+                                          $($path_to_types)*::__post_return_save::<$ty>(arg0)
+                                        }
+                                      };);
+                                    }
+                #[doc(hidden)]
+                pub(crate) use __export_golem_api_save_snapshot_0_2_0_cabi;
+                #[repr(align(4))]
+                struct _RetArea([::core::mem::MaybeUninit<u8>; 8]);
+                static mut _RET_AREA: _RetArea = _RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+            }
+
+            #[allow(dead_code, clippy::all)]
+            pub mod load_snapshot {
+                #[used]
+                #[doc(hidden)]
+                #[cfg(target_arch = "wasm32")]
+                static __FORCE_SECTION_REF: fn() =
+                    super::super::super::super::__link_custom_section_describing_imports;
+                use super::super::super::super::_rt;
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn _export_load_cabi<T: Guest>(arg0: *mut u8, arg1: usize) -> *mut u8 {
+                    #[cfg(target_arch = "wasm32")]
+                    _rt::run_ctors_once();
+                    let len0 = arg1;
+                    let result1 = T::load(_rt::Vec::from_raw_parts(arg0.cast(), len0, len0));
+                    let ptr2 = _RET_AREA.0.as_mut_ptr().cast::<u8>();
+                    match result1 {
+                        Ok(_) => {
+                            *ptr2.add(0).cast::<u8>() = (0i32) as u8;
+                        }
+                        Err(e) => {
+                            *ptr2.add(0).cast::<u8>() = (1i32) as u8;
+                            let vec3 = (e.into_bytes()).into_boxed_slice();
+                            let ptr3 = vec3.as_ptr().cast::<u8>();
+                            let len3 = vec3.len();
+                            ::core::mem::forget(vec3);
+                            *ptr2.add(8).cast::<usize>() = len3;
+                            *ptr2.add(4).cast::<*mut u8>() = ptr3.cast_mut();
+                        }
+                    };
+                    ptr2
+                }
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn __post_return_load<T: Guest>(arg0: *mut u8) {
+                    let l0 = i32::from(*arg0.add(0).cast::<u8>());
+                    match l0 {
+                        0 => (),
+                        _ => {
+                            let l1 = *arg0.add(4).cast::<*mut u8>();
+                            let l2 = *arg0.add(8).cast::<usize>();
+                            _rt::cabi_dealloc(l1, l2, 1);
+                        }
+                    }
+                }
+                pub trait Guest {
+                    /// Tries to load a user-defined snapshot, setting up the worker's state based on it.
+                    /// The function can return with a failure to indicate that the update is not possible.
+                    fn load(bytes: _rt::Vec<u8>) -> Result<(), _rt::String>;
+                }
+                #[doc(hidden)]
+
+                macro_rules! __export_golem_api_load_snapshot_0_2_0_cabi{
+                                    ($ty:ident with_types_in $($path_to_types:tt)*) => (const _: () = {
+
+                                      #[export_name = "golem:api/load-snapshot@0.2.0#load"]
+                                      unsafe extern "C" fn export_load(arg0: *mut u8,arg1: usize,) -> *mut u8 {
+                                        $($path_to_types)*::_export_load_cabi::<$ty>(arg0, arg1)
+                                      }
+                                      #[export_name = "cabi_post_golem:api/load-snapshot@0.2.0#load"]
+                                      unsafe extern "C" fn _post_return_load(arg0: *mut u8,) {
+                                        $($path_to_types)*::__post_return_load::<$ty>(arg0)
+                                      }
+                                    };);
+                                  }
+                #[doc(hidden)]
+                pub(crate) use __export_golem_api_load_snapshot_0_2_0_cabi;
+                #[repr(align(4))]
+                struct _RetArea([::core::mem::MaybeUninit<u8>; 12]);
+                static mut _RET_AREA: _RetArea = _RetArea([::core::mem::MaybeUninit::uninit(); 12]);
+            }
+        }
+        #[allow(dead_code)]
         pub mod order {
             #[allow(dead_code, clippy::all)]
             pub mod api {
@@ -8196,78 +8328,78 @@ pub mod exports {
                 #[doc(hidden)]
 
                 macro_rules! __export_golem_order_api_cabi{
-                          ($ty:ident with_types_in $($path_to_types:tt)*) => (const _: () = {
+                      ($ty:ident with_types_in $($path_to_types:tt)*) => (const _: () = {
 
-                            #[export_name = "golem:order/api#initialize-order"]
-                            unsafe extern "C" fn export_initialize_order(arg0: *mut u8,) {
-                              $($path_to_types)*::_export_initialize_order_cabi::<$ty>(arg0)
-                            }
-                            #[export_name = "golem:order/api#add-item"]
-                            unsafe extern "C" fn export_add_item(arg0: *mut u8,arg1: usize,arg2: i32,) -> *mut u8 {
-                              $($path_to_types)*::_export_add_item_cabi::<$ty>(arg0, arg1, arg2)
-                            }
-                            #[export_name = "cabi_post_golem:order/api#add-item"]
-                            unsafe extern "C" fn _post_return_add_item(arg0: *mut u8,) {
-                              $($path_to_types)*::__post_return_add_item::<$ty>(arg0)
-                            }
-                            #[export_name = "golem:order/api#remove-item"]
-                            unsafe extern "C" fn export_remove_item(arg0: *mut u8,arg1: usize,) -> *mut u8 {
-                              $($path_to_types)*::_export_remove_item_cabi::<$ty>(arg0, arg1)
-                            }
-                            #[export_name = "cabi_post_golem:order/api#remove-item"]
-                            unsafe extern "C" fn _post_return_remove_item(arg0: *mut u8,) {
-                              $($path_to_types)*::__post_return_remove_item::<$ty>(arg0)
-                            }
-                            #[export_name = "golem:order/api#update-item-quantity"]
-                            unsafe extern "C" fn export_update_item_quantity(arg0: *mut u8,arg1: usize,arg2: i32,) -> *mut u8 {
-                              $($path_to_types)*::_export_update_item_quantity_cabi::<$ty>(arg0, arg1, arg2)
-                            }
-                            #[export_name = "cabi_post_golem:order/api#update-item-quantity"]
-                            unsafe extern "C" fn _post_return_update_item_quantity(arg0: *mut u8,) {
-                              $($path_to_types)*::__post_return_update_item_quantity::<$ty>(arg0)
-                            }
-                            #[export_name = "golem:order/api#update-shipping-address"]
-                            unsafe extern "C" fn export_update_shipping_address(arg0: *mut u8,) -> *mut u8 {
-                              $($path_to_types)*::_export_update_shipping_address_cabi::<$ty>(arg0)
-                            }
-                            #[export_name = "cabi_post_golem:order/api#update-shipping-address"]
-                            unsafe extern "C" fn _post_return_update_shipping_address(arg0: *mut u8,) {
-                              $($path_to_types)*::__post_return_update_shipping_address::<$ty>(arg0)
-                            }
-                            #[export_name = "golem:order/api#update-billing-address"]
-                            unsafe extern "C" fn export_update_billing_address(arg0: *mut u8,) -> *mut u8 {
-                              $($path_to_types)*::_export_update_billing_address_cabi::<$ty>(arg0)
-                            }
-                            #[export_name = "cabi_post_golem:order/api#update-billing-address"]
-                            unsafe extern "C" fn _post_return_update_billing_address(arg0: *mut u8,) {
-                              $($path_to_types)*::__post_return_update_billing_address::<$ty>(arg0)
-                            }
-                            #[export_name = "golem:order/api#ship-order"]
-                            unsafe extern "C" fn export_ship_order() -> *mut u8 {
-                              $($path_to_types)*::_export_ship_order_cabi::<$ty>()
-                            }
-                            #[export_name = "cabi_post_golem:order/api#ship-order"]
-                            unsafe extern "C" fn _post_return_ship_order(arg0: *mut u8,) {
-                              $($path_to_types)*::__post_return_ship_order::<$ty>(arg0)
-                            }
-                            #[export_name = "golem:order/api#cancel-order"]
-                            unsafe extern "C" fn export_cancel_order() -> *mut u8 {
-                              $($path_to_types)*::_export_cancel_order_cabi::<$ty>()
-                            }
-                            #[export_name = "cabi_post_golem:order/api#cancel-order"]
-                            unsafe extern "C" fn _post_return_cancel_order(arg0: *mut u8,) {
-                              $($path_to_types)*::__post_return_cancel_order::<$ty>(arg0)
-                            }
-                            #[export_name = "golem:order/api#get"]
-                            unsafe extern "C" fn export_get() -> *mut u8 {
-                              $($path_to_types)*::_export_get_cabi::<$ty>()
-                            }
-                            #[export_name = "cabi_post_golem:order/api#get"]
-                            unsafe extern "C" fn _post_return_get(arg0: *mut u8,) {
-                              $($path_to_types)*::__post_return_get::<$ty>(arg0)
-                            }
-                          };);
+                        #[export_name = "golem:order/api#initialize-order"]
+                        unsafe extern "C" fn export_initialize_order(arg0: *mut u8,) {
+                          $($path_to_types)*::_export_initialize_order_cabi::<$ty>(arg0)
                         }
+                        #[export_name = "golem:order/api#add-item"]
+                        unsafe extern "C" fn export_add_item(arg0: *mut u8,arg1: usize,arg2: i32,) -> *mut u8 {
+                          $($path_to_types)*::_export_add_item_cabi::<$ty>(arg0, arg1, arg2)
+                        }
+                        #[export_name = "cabi_post_golem:order/api#add-item"]
+                        unsafe extern "C" fn _post_return_add_item(arg0: *mut u8,) {
+                          $($path_to_types)*::__post_return_add_item::<$ty>(arg0)
+                        }
+                        #[export_name = "golem:order/api#remove-item"]
+                        unsafe extern "C" fn export_remove_item(arg0: *mut u8,arg1: usize,) -> *mut u8 {
+                          $($path_to_types)*::_export_remove_item_cabi::<$ty>(arg0, arg1)
+                        }
+                        #[export_name = "cabi_post_golem:order/api#remove-item"]
+                        unsafe extern "C" fn _post_return_remove_item(arg0: *mut u8,) {
+                          $($path_to_types)*::__post_return_remove_item::<$ty>(arg0)
+                        }
+                        #[export_name = "golem:order/api#update-item-quantity"]
+                        unsafe extern "C" fn export_update_item_quantity(arg0: *mut u8,arg1: usize,arg2: i32,) -> *mut u8 {
+                          $($path_to_types)*::_export_update_item_quantity_cabi::<$ty>(arg0, arg1, arg2)
+                        }
+                        #[export_name = "cabi_post_golem:order/api#update-item-quantity"]
+                        unsafe extern "C" fn _post_return_update_item_quantity(arg0: *mut u8,) {
+                          $($path_to_types)*::__post_return_update_item_quantity::<$ty>(arg0)
+                        }
+                        #[export_name = "golem:order/api#update-shipping-address"]
+                        unsafe extern "C" fn export_update_shipping_address(arg0: *mut u8,) -> *mut u8 {
+                          $($path_to_types)*::_export_update_shipping_address_cabi::<$ty>(arg0)
+                        }
+                        #[export_name = "cabi_post_golem:order/api#update-shipping-address"]
+                        unsafe extern "C" fn _post_return_update_shipping_address(arg0: *mut u8,) {
+                          $($path_to_types)*::__post_return_update_shipping_address::<$ty>(arg0)
+                        }
+                        #[export_name = "golem:order/api#update-billing-address"]
+                        unsafe extern "C" fn export_update_billing_address(arg0: *mut u8,) -> *mut u8 {
+                          $($path_to_types)*::_export_update_billing_address_cabi::<$ty>(arg0)
+                        }
+                        #[export_name = "cabi_post_golem:order/api#update-billing-address"]
+                        unsafe extern "C" fn _post_return_update_billing_address(arg0: *mut u8,) {
+                          $($path_to_types)*::__post_return_update_billing_address::<$ty>(arg0)
+                        }
+                        #[export_name = "golem:order/api#ship-order"]
+                        unsafe extern "C" fn export_ship_order() -> *mut u8 {
+                          $($path_to_types)*::_export_ship_order_cabi::<$ty>()
+                        }
+                        #[export_name = "cabi_post_golem:order/api#ship-order"]
+                        unsafe extern "C" fn _post_return_ship_order(arg0: *mut u8,) {
+                          $($path_to_types)*::__post_return_ship_order::<$ty>(arg0)
+                        }
+                        #[export_name = "golem:order/api#cancel-order"]
+                        unsafe extern "C" fn export_cancel_order() -> *mut u8 {
+                          $($path_to_types)*::_export_cancel_order_cabi::<$ty>()
+                        }
+                        #[export_name = "cabi_post_golem:order/api#cancel-order"]
+                        unsafe extern "C" fn _post_return_cancel_order(arg0: *mut u8,) {
+                          $($path_to_types)*::__post_return_cancel_order::<$ty>(arg0)
+                        }
+                        #[export_name = "golem:order/api#get"]
+                        unsafe extern "C" fn export_get() -> *mut u8 {
+                          $($path_to_types)*::_export_get_cabi::<$ty>()
+                        }
+                        #[export_name = "cabi_post_golem:order/api#get"]
+                        unsafe extern "C" fn _post_return_get(arg0: *mut u8,) {
+                          $($path_to_types)*::__post_return_get::<$ty>(arg0)
+                        }
+                      };);
+                    }
                 #[doc(hidden)]
                 pub(crate) use __export_golem_order_api_cabi;
                 #[repr(align(8))]
@@ -8579,19 +8711,21 @@ mod _rt {
 #[doc(hidden)]
 
 macro_rules! __export_order_impl {
-                  ($ty:ident) => (self::export!($ty with_types_in self););
-                  ($ty:ident with_types_in $($path_to_types_root:tt)*) => (
-                  $($path_to_types_root)*::exports::golem::order::api::__export_golem_order_api_cabi!($ty with_types_in $($path_to_types_root)*::exports::golem::order::api);
-                  )
-                }
+              ($ty:ident) => (self::export!($ty with_types_in self););
+              ($ty:ident with_types_in $($path_to_types_root:tt)*) => (
+              $($path_to_types_root)*::exports::golem::api::save_snapshot::__export_golem_api_save_snapshot_0_2_0_cabi!($ty with_types_in $($path_to_types_root)*::exports::golem::api::save_snapshot);
+              $($path_to_types_root)*::exports::golem::api::load_snapshot::__export_golem_api_load_snapshot_0_2_0_cabi!($ty with_types_in $($path_to_types_root)*::exports::golem::api::load_snapshot);
+              $($path_to_types_root)*::exports::golem::order::api::__export_golem_order_api_cabi!($ty with_types_in $($path_to_types_root)*::exports::golem::order::api);
+              )
+            }
 #[doc(inline)]
 pub(crate) use __export_order_impl as export;
 
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.25.0:order:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 6470] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xca1\x01A\x02\x01A\x18\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 6590] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xc22\x01A\x02\x01A\x1c\
 \x01B\x0a\x04\0\x08pollable\x03\x01\x01h\0\x01@\x01\x04self\x01\0\x7f\x04\0\x16[\
 method]pollable.ready\x01\x02\x01@\x01\x04self\x01\x01\0\x04\0\x16[method]pollab\
 le.block\x01\x03\x01p\x01\x01py\x01@\x01\x02in\x04\0\x05\x04\0\x04poll\x01\x06\x03\
@@ -8700,32 +8834,35 @@ l\x01H\x01@\0\0\x7f\x04\0\x14get-idempotence-mode\x01I\x01@\x01\x0aidempotent\x7
 ency-key\x01K\x01@\x03\x09worker-id\x0d\x0etarget-version\x07\x04mode\x15\x01\0\x04\
 \0\x0dupdate-worker\x01L\x01@\0\02\x04\0\x11get-self-metadata\x01M\x01k2\x01@\x01\
 \x09worker-id\x0d\0\xce\0\x04\0\x13get-worker-metadata\x01O\x03\x01\x14golem:api\
-/host@0.2.0\x05\x0d\x01B.\x01m\x03\x03new\x07shipped\x09cancelled\x04\0\x0corder\
--status\x03\0\0\x01ks\x01r\x09\x07street1s\x07street2\x02\x04citys\x0fstate-or-r\
-egions\x07countrys\x0bpostal-codes\x04name\x02\x0dbusiness-name\x02\x0cphone-num\
-ber\x02\x04\0\x07address\x03\0\x03\x01r\x04\x0aproduct-ids\x04names\x05pricev\x08\
-quantityy\x04\0\x0aorder-item\x03\0\x05\x01p\x06\x01k\x04\x01r\x09\x08order-ids\x07\
-user-ids\x0corder-status\x01\x05items\x07\x0fbilling-address\x08\x10shipping-add\
-ress\x08\x05totalv\x08currencys\x09timestampw\x04\0\x05order\x03\0\x09\x01r\x07\x07\
-user-ids\x05items\x07\x0fbilling-address\x08\x10shipping-address\x08\x05totalv\x08\
-currencys\x09timestampw\x04\0\x0ccreate-order\x03\0\x0b\x01r\x02\x07messages\x0a\
-product-ids\x04\0\x17product-not-found-error\x03\0\x0d\x01r\x02\x07messages\x0ap\
-roduct-ids\x04\0\x17pricing-not-found-error\x03\0\x0f\x01r\x01\x07messages\x04\0\
-\x17address-not-valid-error\x03\0\x11\x01r\x02\x07messages\x0aproduct-ids\x04\0\x14\
-item-not-found-error\x03\0\x13\x01r\x01\x07messages\x04\0\x11empty-items-error\x03\
-\0\x15\x01r\x01\x07messages\x04\0\x1dbilling-address-not-set-error\x03\0\x17\x01\
-r\x02\x07messages\x06status\x01\x04\0\x18action-not-allowed-error\x03\0\x19\x01q\
-\x06\x11product-not-found\x01\x0e\0\x11pricing-not-found\x01\x10\0\x11address-no\
-t-valid\x01\x12\0\x0eitem-not-found\x01\x14\0\x0bempty-items\x01\x16\0\x12action\
--not-allowed\x01\x1a\0\x04\0\x05error\x03\0\x1b\x01@\x01\x04data\x0c\x01\0\x04\0\
-\x10initialize-order\x01\x1d\x01j\0\x01\x1c\x01@\x02\x0aproduct-ids\x08quantityy\
-\0\x1e\x04\0\x08add-item\x01\x1f\x01@\x01\x0aproduct-ids\0\x1e\x04\0\x0bremove-i\
-tem\x01\x20\x04\0\x14update-item-quantity\x01\x1f\x01@\x01\x07address\x04\0\x1e\x04\
-\0\x17update-shipping-address\x01!\x04\0\x16update-billing-address\x01!\x01@\0\0\
-\x1e\x04\0\x0aship-order\x01\"\x04\0\x0ccancel-order\x01\"\x01k\x0a\x01@\0\0#\x04\
-\0\x03get\x01$\x04\x01\x0fgolem:order/api\x05\x0e\x04\x01\x11golem:order/order\x04\
-\0\x0b\x0b\x01\0\x05order\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit\
--component\x070.208.1\x10wit-bindgen-rust\x060.25.0";
+/host@0.2.0\x05\x0d\x01B\x03\x01p}\x01@\0\0\0\x04\0\x04save\x01\x01\x04\x01\x1dg\
+olem:api/save-snapshot@0.2.0\x05\x0e\x01B\x04\x01p}\x01j\0\x01s\x01@\x01\x05byte\
+s\0\0\x01\x04\0\x04load\x01\x02\x04\x01\x1dgolem:api/load-snapshot@0.2.0\x05\x0f\
+\x01B.\x01m\x03\x03new\x07shipped\x09cancelled\x04\0\x0corder-status\x03\0\0\x01\
+ks\x01r\x09\x07street1s\x07street2\x02\x04citys\x0fstate-or-regions\x07countrys\x0b\
+postal-codes\x04name\x02\x0dbusiness-name\x02\x0cphone-number\x02\x04\0\x07addre\
+ss\x03\0\x03\x01r\x04\x0aproduct-ids\x04names\x05pricev\x08quantityy\x04\0\x0aor\
+der-item\x03\0\x05\x01p\x06\x01k\x04\x01r\x09\x08order-ids\x07user-ids\x0corder-\
+status\x01\x05items\x07\x0fbilling-address\x08\x10shipping-address\x08\x05totalv\
+\x08currencys\x09timestampw\x04\0\x05order\x03\0\x09\x01r\x07\x07user-ids\x05ite\
+ms\x07\x0fbilling-address\x08\x10shipping-address\x08\x05totalv\x08currencys\x09\
+timestampw\x04\0\x0ccreate-order\x03\0\x0b\x01r\x02\x07messages\x0aproduct-ids\x04\
+\0\x17product-not-found-error\x03\0\x0d\x01r\x02\x07messages\x0aproduct-ids\x04\0\
+\x17pricing-not-found-error\x03\0\x0f\x01r\x01\x07messages\x04\0\x17address-not-\
+valid-error\x03\0\x11\x01r\x02\x07messages\x0aproduct-ids\x04\0\x14item-not-foun\
+d-error\x03\0\x13\x01r\x01\x07messages\x04\0\x11empty-items-error\x03\0\x15\x01r\
+\x01\x07messages\x04\0\x1dbilling-address-not-set-error\x03\0\x17\x01r\x02\x07me\
+ssages\x06status\x01\x04\0\x18action-not-allowed-error\x03\0\x19\x01q\x06\x11pro\
+duct-not-found\x01\x0e\0\x11pricing-not-found\x01\x10\0\x11address-not-valid\x01\
+\x12\0\x0eitem-not-found\x01\x14\0\x0bempty-items\x01\x16\0\x12action-not-allowe\
+d\x01\x1a\0\x04\0\x05error\x03\0\x1b\x01@\x01\x04data\x0c\x01\0\x04\0\x10initial\
+ize-order\x01\x1d\x01j\0\x01\x1c\x01@\x02\x0aproduct-ids\x08quantityy\0\x1e\x04\0\
+\x08add-item\x01\x1f\x01@\x01\x0aproduct-ids\0\x1e\x04\0\x0bremove-item\x01\x20\x04\
+\0\x14update-item-quantity\x01\x1f\x01@\x01\x07address\x04\0\x1e\x04\0\x17update\
+-shipping-address\x01!\x04\0\x16update-billing-address\x01!\x01@\0\0\x1e\x04\0\x0a\
+ship-order\x01\"\x04\0\x0ccancel-order\x01\"\x01k\x0a\x01@\0\0#\x04\0\x03get\x01\
+$\x04\x01\x0fgolem:order/api\x05\x10\x04\x01\x11golem:order/order\x04\0\x0b\x0b\x01\
+\0\x05order\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit-component\x07\
+0.208.1\x10wit-bindgen-rust\x060.25.0";
 
 #[inline(never)]
 #[doc(hidden)]

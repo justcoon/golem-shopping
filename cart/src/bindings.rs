@@ -3641,6 +3641,90 @@ pub mod golem {
 
             #[derive(Debug)]
             #[repr(transparent)]
+            pub struct FutureSaveResult {
+                handle: _rt::Resource<FutureSaveResult>,
+            }
+
+            impl FutureSaveResult {
+                #[doc(hidden)]
+                pub unsafe fn from_handle(handle: u32) -> Self {
+                    Self { handle: _rt::Resource::from_handle(handle) }
+                }
+
+                #[doc(hidden)]
+                pub fn take_handle(&self) -> u32 {
+                    _rt::Resource::take_handle(&self.handle)
+                }
+
+                #[doc(hidden)]
+                pub fn handle(&self) -> u32 {
+                    _rt::Resource::handle(&self.handle)
+                }
+            }
+
+            unsafe impl _rt::WasmResource for FutureSaveResult {
+                #[inline]
+                unsafe fn drop(_handle: u32) {
+                    #[cfg(not(target_arch = "wasm32"))]
+                    unreachable!();
+
+                    #[cfg(target_arch = "wasm32")]
+                    {
+                        #[link(wasm_import_module = "golem:order-stub/stub-order")]
+                        extern "C" {
+                            #[link_name = "[resource-drop]future-save-result"]
+                            fn drop(_: u32);
+                        }
+
+                        drop(_handle);
+                    }
+                }
+            }
+
+            #[derive(Debug)]
+            #[repr(transparent)]
+            pub struct FutureLoadResult {
+                handle: _rt::Resource<FutureLoadResult>,
+            }
+
+            impl FutureLoadResult {
+                #[doc(hidden)]
+                pub unsafe fn from_handle(handle: u32) -> Self {
+                    Self { handle: _rt::Resource::from_handle(handle) }
+                }
+
+                #[doc(hidden)]
+                pub fn take_handle(&self) -> u32 {
+                    _rt::Resource::take_handle(&self.handle)
+                }
+
+                #[doc(hidden)]
+                pub fn handle(&self) -> u32 {
+                    _rt::Resource::handle(&self.handle)
+                }
+            }
+
+            unsafe impl _rt::WasmResource for FutureLoadResult {
+                #[inline]
+                unsafe fn drop(_handle: u32) {
+                    #[cfg(not(target_arch = "wasm32"))]
+                    unreachable!();
+
+                    #[cfg(target_arch = "wasm32")]
+                    {
+                        #[link(wasm_import_module = "golem:order-stub/stub-order")]
+                        extern "C" {
+                            #[link_name = "[resource-drop]future-load-result"]
+                            fn drop(_: u32);
+                        }
+
+                        drop(_handle);
+                    }
+                }
+            }
+
+            #[derive(Debug)]
+            #[repr(transparent)]
             pub struct FutureAddItemResult {
                 handle: _rt::Resource<FutureAddItemResult>,
             }
@@ -3977,6 +4061,90 @@ pub mod golem {
 
             #[derive(Debug)]
             #[repr(transparent)]
+            pub struct SaveSnapshot {
+                handle: _rt::Resource<SaveSnapshot>,
+            }
+
+            impl SaveSnapshot {
+                #[doc(hidden)]
+                pub unsafe fn from_handle(handle: u32) -> Self {
+                    Self { handle: _rt::Resource::from_handle(handle) }
+                }
+
+                #[doc(hidden)]
+                pub fn take_handle(&self) -> u32 {
+                    _rt::Resource::take_handle(&self.handle)
+                }
+
+                #[doc(hidden)]
+                pub fn handle(&self) -> u32 {
+                    _rt::Resource::handle(&self.handle)
+                }
+            }
+
+            unsafe impl _rt::WasmResource for SaveSnapshot {
+                #[inline]
+                unsafe fn drop(_handle: u32) {
+                    #[cfg(not(target_arch = "wasm32"))]
+                    unreachable!();
+
+                    #[cfg(target_arch = "wasm32")]
+                    {
+                        #[link(wasm_import_module = "golem:order-stub/stub-order")]
+                        extern "C" {
+                            #[link_name = "[resource-drop]save-snapshot"]
+                            fn drop(_: u32);
+                        }
+
+                        drop(_handle);
+                    }
+                }
+            }
+
+            #[derive(Debug)]
+            #[repr(transparent)]
+            pub struct LoadSnapshot {
+                handle: _rt::Resource<LoadSnapshot>,
+            }
+
+            impl LoadSnapshot {
+                #[doc(hidden)]
+                pub unsafe fn from_handle(handle: u32) -> Self {
+                    Self { handle: _rt::Resource::from_handle(handle) }
+                }
+
+                #[doc(hidden)]
+                pub fn take_handle(&self) -> u32 {
+                    _rt::Resource::take_handle(&self.handle)
+                }
+
+                #[doc(hidden)]
+                pub fn handle(&self) -> u32 {
+                    _rt::Resource::handle(&self.handle)
+                }
+            }
+
+            unsafe impl _rt::WasmResource for LoadSnapshot {
+                #[inline]
+                unsafe fn drop(_handle: u32) {
+                    #[cfg(not(target_arch = "wasm32"))]
+                    unreachable!();
+
+                    #[cfg(target_arch = "wasm32")]
+                    {
+                        #[link(wasm_import_module = "golem:order-stub/stub-order")]
+                        extern "C" {
+                            #[link_name = "[resource-drop]load-snapshot"]
+                            fn drop(_: u32);
+                        }
+
+                        drop(_handle);
+                    }
+                }
+            }
+
+            #[derive(Debug)]
+            #[repr(transparent)]
             pub struct Api {
                 handle: _rt::Resource<Api>,
             }
@@ -4017,6 +4185,138 @@ pub mod golem {
                 }
             }
 
+            impl FutureSaveResult {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn subscribe(&self) -> WasiIoPollable {
+                    unsafe {
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:order-stub/stub-order")]
+                        extern "C" {
+                            #[link_name = "[method]future-save-result.subscribe"]
+                            fn wit_import(_: i32) -> i32;
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import((self).handle() as i32);
+                        super::super::super::wasi::io::poll::Pollable::from_handle(ret as u32)
+                    }
+                }
+            }
+            impl FutureSaveResult {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn get(&self) -> Option<_rt::Vec<u8>> {
+                    unsafe {
+                        #[repr(align(4))]
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 12]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 12]);
+                        let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:order-stub/stub-order")]
+                        extern "C" {
+                            #[link_name = "[method]future-save-result.get"]
+                            fn wit_import(_: i32, _: *mut u8);
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32, _: *mut u8) {
+                            unreachable!()
+                        }
+                        wit_import((self).handle() as i32, ptr0);
+                        let l1 = i32::from(*ptr0.add(0).cast::<u8>());
+                        match l1 {
+                            0 => None,
+                            1 => {
+                                let e = {
+                                    let l2 = *ptr0.add(4).cast::<*mut u8>();
+                                    let l3 = *ptr0.add(8).cast::<usize>();
+                                    let len4 = l3;
+
+                                    _rt::Vec::from_raw_parts(l2.cast(), len4, len4)
+                                };
+                                Some(e)
+                            }
+                            _ => _rt::invalid_enum_discriminant(),
+                        }
+                    }
+                }
+            }
+            impl FutureLoadResult {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn subscribe(&self) -> WasiIoPollable {
+                    unsafe {
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:order-stub/stub-order")]
+                        extern "C" {
+                            #[link_name = "[method]future-load-result.subscribe"]
+                            fn wit_import(_: i32) -> i32;
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import((self).handle() as i32);
+                        super::super::super::wasi::io::poll::Pollable::from_handle(ret as u32)
+                    }
+                }
+            }
+            impl FutureLoadResult {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn get(&self) -> Option<Result<(), _rt::String>> {
+                    unsafe {
+                        #[repr(align(4))]
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 16]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 16]);
+                        let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:order-stub/stub-order")]
+                        extern "C" {
+                            #[link_name = "[method]future-load-result.get"]
+                            fn wit_import(_: i32, _: *mut u8);
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32, _: *mut u8) {
+                            unreachable!()
+                        }
+                        wit_import((self).handle() as i32, ptr0);
+                        let l1 = i32::from(*ptr0.add(0).cast::<u8>());
+                        match l1 {
+                            0 => None,
+                            1 => {
+                                let e = {
+                                    let l2 = i32::from(*ptr0.add(4).cast::<u8>());
+
+                                    match l2 {
+                                        0 => {
+                                            let e = ();
+                                            Ok(e)
+                                        }
+                                        1 => {
+                                            let e = {
+                                                let l3 = *ptr0.add(8).cast::<*mut u8>();
+                                                let l4 = *ptr0.add(12).cast::<usize>();
+                                                let len5 = l4;
+                                                let bytes5 =
+                                                    _rt::Vec::from_raw_parts(l3.cast(), len5, len5);
+
+                                                _rt::string_lift(bytes5)
+                                            };
+                                            Err(e)
+                                        }
+                                        _ => _rt::invalid_enum_discriminant(),
+                                    }
+                                };
+                                Some(e)
+                            }
+                            _ => _rt::invalid_enum_discriminant(),
+                        }
+                    }
+                }
+            }
             impl FutureAddItemResult {
                 #[allow(unused_unsafe, clippy::all)]
                 pub fn subscribe(&self) -> WasiIoPollable {
@@ -5883,6 +6183,174 @@ pub mod golem {
                             }
                             _ => _rt::invalid_enum_discriminant(),
                         }
+                    }
+                }
+            }
+            impl SaveSnapshot {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn new(location: &GolemRpcUri) -> Self {
+                    unsafe {
+                        let super::super::super::golem::rpc::types::Uri { value: value0 } =
+                            location;
+                        let vec1 = value0;
+                        let ptr1 = vec1.as_ptr().cast::<u8>();
+                        let len1 = vec1.len();
+
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:order-stub/stub-order")]
+                        extern "C" {
+                            #[link_name = "[constructor]save-snapshot"]
+                            fn wit_import(_: *mut u8, _: usize) -> i32;
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: *mut u8, _: usize) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import(ptr1.cast_mut(), len1);
+                        SaveSnapshot::from_handle(ret as u32)
+                    }
+                }
+            }
+            impl SaveSnapshot {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn blocking_save(&self) -> _rt::Vec<u8> {
+                    unsafe {
+                        #[repr(align(4))]
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 8]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+                        let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:order-stub/stub-order")]
+                        extern "C" {
+                            #[link_name = "[method]save-snapshot.blocking-save"]
+                            fn wit_import(_: i32, _: *mut u8);
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32, _: *mut u8) {
+                            unreachable!()
+                        }
+                        wit_import((self).handle() as i32, ptr0);
+                        let l1 = *ptr0.add(0).cast::<*mut u8>();
+                        let l2 = *ptr0.add(4).cast::<usize>();
+                        let len3 = l2;
+                        _rt::Vec::from_raw_parts(l1.cast(), len3, len3)
+                    }
+                }
+            }
+            impl SaveSnapshot {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn save(&self) -> FutureSaveResult {
+                    unsafe {
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:order-stub/stub-order")]
+                        extern "C" {
+                            #[link_name = "[method]save-snapshot.save"]
+                            fn wit_import(_: i32) -> i32;
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import((self).handle() as i32);
+                        FutureSaveResult::from_handle(ret as u32)
+                    }
+                }
+            }
+            impl LoadSnapshot {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn new(location: &GolemRpcUri) -> Self {
+                    unsafe {
+                        let super::super::super::golem::rpc::types::Uri { value: value0 } =
+                            location;
+                        let vec1 = value0;
+                        let ptr1 = vec1.as_ptr().cast::<u8>();
+                        let len1 = vec1.len();
+
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:order-stub/stub-order")]
+                        extern "C" {
+                            #[link_name = "[constructor]load-snapshot"]
+                            fn wit_import(_: *mut u8, _: usize) -> i32;
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: *mut u8, _: usize) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import(ptr1.cast_mut(), len1);
+                        LoadSnapshot::from_handle(ret as u32)
+                    }
+                }
+            }
+            impl LoadSnapshot {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn blocking_load(&self, bytes: &[u8]) -> Result<(), _rt::String> {
+                    unsafe {
+                        #[repr(align(4))]
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 12]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 12]);
+                        let vec0 = bytes;
+                        let ptr0 = vec0.as_ptr().cast::<u8>();
+                        let len0 = vec0.len();
+                        let ptr1 = ret_area.0.as_mut_ptr().cast::<u8>();
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:order-stub/stub-order")]
+                        extern "C" {
+                            #[link_name = "[method]load-snapshot.blocking-load"]
+                            fn wit_import(_: i32, _: *mut u8, _: usize, _: *mut u8);
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32, _: *mut u8, _: usize, _: *mut u8) {
+                            unreachable!()
+                        }
+                        wit_import((self).handle() as i32, ptr0.cast_mut(), len0, ptr1);
+                        let l2 = i32::from(*ptr1.add(0).cast::<u8>());
+                        match l2 {
+                            0 => {
+                                let e = ();
+                                Ok(e)
+                            }
+                            1 => {
+                                let e = {
+                                    let l3 = *ptr1.add(4).cast::<*mut u8>();
+                                    let l4 = *ptr1.add(8).cast::<usize>();
+                                    let len5 = l4;
+                                    let bytes5 = _rt::Vec::from_raw_parts(l3.cast(), len5, len5);
+
+                                    _rt::string_lift(bytes5)
+                                };
+                                Err(e)
+                            }
+                            _ => _rt::invalid_enum_discriminant(),
+                        }
+                    }
+                }
+            }
+            impl LoadSnapshot {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn load(&self, bytes: &[u8]) -> FutureLoadResult {
+                    unsafe {
+                        let vec0 = bytes;
+                        let ptr0 = vec0.as_ptr().cast::<u8>();
+                        let len0 = vec0.len();
+
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:order-stub/stub-order")]
+                        extern "C" {
+                            #[link_name = "[method]load-snapshot.load"]
+                            fn wit_import(_: i32, _: *mut u8, _: usize) -> i32;
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32, _: *mut u8, _: usize) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import((self).handle() as i32, ptr0.cast_mut(), len0);
+                        FutureLoadResult::from_handle(ret as u32)
                     }
                 }
             }
@@ -12866,6 +13334,138 @@ pub mod exports {
     #[allow(dead_code)]
     pub mod golem {
         #[allow(dead_code)]
+        pub mod api {
+            #[allow(dead_code, clippy::all)]
+            pub mod save_snapshot {
+                #[used]
+                #[doc(hidden)]
+                #[cfg(target_arch = "wasm32")]
+                static __FORCE_SECTION_REF: fn() =
+                    super::super::super::super::__link_custom_section_describing_imports;
+                use super::super::super::super::_rt;
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn _export_save_cabi<T: Guest>() -> *mut u8 {
+                    #[cfg(target_arch = "wasm32")]
+                    _rt::run_ctors_once();
+                    let result0 = T::save();
+                    let ptr1 = _RET_AREA.0.as_mut_ptr().cast::<u8>();
+                    let vec2 = (result0).into_boxed_slice();
+                    let ptr2 = vec2.as_ptr().cast::<u8>();
+                    let len2 = vec2.len();
+                    ::core::mem::forget(vec2);
+                    *ptr1.add(4).cast::<usize>() = len2;
+                    *ptr1.add(0).cast::<*mut u8>() = ptr2.cast_mut();
+                    ptr1
+                }
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn __post_return_save<T: Guest>(arg0: *mut u8) {
+                    let l0 = *arg0.add(0).cast::<*mut u8>();
+                    let l1 = *arg0.add(4).cast::<usize>();
+                    let base2 = l0;
+                    let len2 = l1;
+                    _rt::cabi_dealloc(base2, len2 * 1, 1);
+                }
+                pub trait Guest {
+                    /// Saves the component's state into a user-defined snapshot
+                    fn save() -> _rt::Vec<u8>;
+                }
+                #[doc(hidden)]
+
+                macro_rules! __export_golem_api_save_snapshot_0_2_0_cabi{
+                                                  ($ty:ident with_types_in $($path_to_types:tt)*) => (const _: () = {
+
+                                                    #[export_name = "golem:api/save-snapshot@0.2.0#save"]
+                                                    unsafe extern "C" fn export_save() -> *mut u8 {
+                                                      $($path_to_types)*::_export_save_cabi::<$ty>()
+                                                    }
+                                                    #[export_name = "cabi_post_golem:api/save-snapshot@0.2.0#save"]
+                                                    unsafe extern "C" fn _post_return_save(arg0: *mut u8,) {
+                                                      $($path_to_types)*::__post_return_save::<$ty>(arg0)
+                                                    }
+                                                  };);
+                                                }
+                #[doc(hidden)]
+                pub(crate) use __export_golem_api_save_snapshot_0_2_0_cabi;
+                #[repr(align(4))]
+                struct _RetArea([::core::mem::MaybeUninit<u8>; 8]);
+                static mut _RET_AREA: _RetArea = _RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+            }
+
+            #[allow(dead_code, clippy::all)]
+            pub mod load_snapshot {
+                #[used]
+                #[doc(hidden)]
+                #[cfg(target_arch = "wasm32")]
+                static __FORCE_SECTION_REF: fn() =
+                    super::super::super::super::__link_custom_section_describing_imports;
+                use super::super::super::super::_rt;
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn _export_load_cabi<T: Guest>(arg0: *mut u8, arg1: usize) -> *mut u8 {
+                    #[cfg(target_arch = "wasm32")]
+                    _rt::run_ctors_once();
+                    let len0 = arg1;
+                    let result1 = T::load(_rt::Vec::from_raw_parts(arg0.cast(), len0, len0));
+                    let ptr2 = _RET_AREA.0.as_mut_ptr().cast::<u8>();
+                    match result1 {
+                        Ok(_) => {
+                            *ptr2.add(0).cast::<u8>() = (0i32) as u8;
+                        }
+                        Err(e) => {
+                            *ptr2.add(0).cast::<u8>() = (1i32) as u8;
+                            let vec3 = (e.into_bytes()).into_boxed_slice();
+                            let ptr3 = vec3.as_ptr().cast::<u8>();
+                            let len3 = vec3.len();
+                            ::core::mem::forget(vec3);
+                            *ptr2.add(8).cast::<usize>() = len3;
+                            *ptr2.add(4).cast::<*mut u8>() = ptr3.cast_mut();
+                        }
+                    };
+                    ptr2
+                }
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn __post_return_load<T: Guest>(arg0: *mut u8) {
+                    let l0 = i32::from(*arg0.add(0).cast::<u8>());
+                    match l0 {
+                        0 => (),
+                        _ => {
+                            let l1 = *arg0.add(4).cast::<*mut u8>();
+                            let l2 = *arg0.add(8).cast::<usize>();
+                            _rt::cabi_dealloc(l1, l2, 1);
+                        }
+                    }
+                }
+                pub trait Guest {
+                    /// Tries to load a user-defined snapshot, setting up the worker's state based on it.
+                    /// The function can return with a failure to indicate that the update is not possible.
+                    fn load(bytes: _rt::Vec<u8>) -> Result<(), _rt::String>;
+                }
+                #[doc(hidden)]
+
+                macro_rules! __export_golem_api_load_snapshot_0_2_0_cabi{
+                                                ($ty:ident with_types_in $($path_to_types:tt)*) => (const _: () = {
+
+                                                  #[export_name = "golem:api/load-snapshot@0.2.0#load"]
+                                                  unsafe extern "C" fn export_load(arg0: *mut u8,arg1: usize,) -> *mut u8 {
+                                                    $($path_to_types)*::_export_load_cabi::<$ty>(arg0, arg1)
+                                                  }
+                                                  #[export_name = "cabi_post_golem:api/load-snapshot@0.2.0#load"]
+                                                  unsafe extern "C" fn _post_return_load(arg0: *mut u8,) {
+                                                    $($path_to_types)*::__post_return_load::<$ty>(arg0)
+                                                  }
+                                                };);
+                                              }
+                #[doc(hidden)]
+                pub(crate) use __export_golem_api_load_snapshot_0_2_0_cabi;
+                #[repr(align(4))]
+                struct _RetArea([::core::mem::MaybeUninit<u8>; 12]);
+                static mut _RET_AREA: _RetArea = _RetArea([::core::mem::MaybeUninit::uninit(); 12]);
+            }
+        }
+        #[allow(dead_code)]
         pub mod cart {
             #[allow(dead_code, clippy::all)]
             pub mod api {
@@ -14728,66 +15328,66 @@ pub mod exports {
                 #[doc(hidden)]
 
                 macro_rules! __export_golem_cart_api_cabi{
-                                          ($ty:ident with_types_in $($path_to_types:tt)*) => (const _: () = {
+                                      ($ty:ident with_types_in $($path_to_types:tt)*) => (const _: () = {
 
-                                            #[export_name = "golem:cart/api#add-item"]
-                                            unsafe extern "C" fn export_add_item(arg0: *mut u8,arg1: usize,arg2: i32,) -> *mut u8 {
-                                              $($path_to_types)*::_export_add_item_cabi::<$ty>(arg0, arg1, arg2)
-                                            }
-                                            #[export_name = "cabi_post_golem:cart/api#add-item"]
-                                            unsafe extern "C" fn _post_return_add_item(arg0: *mut u8,) {
-                                              $($path_to_types)*::__post_return_add_item::<$ty>(arg0)
-                                            }
-                                            #[export_name = "golem:cart/api#remove-item"]
-                                            unsafe extern "C" fn export_remove_item(arg0: *mut u8,arg1: usize,) -> *mut u8 {
-                                              $($path_to_types)*::_export_remove_item_cabi::<$ty>(arg0, arg1)
-                                            }
-                                            #[export_name = "cabi_post_golem:cart/api#remove-item"]
-                                            unsafe extern "C" fn _post_return_remove_item(arg0: *mut u8,) {
-                                              $($path_to_types)*::__post_return_remove_item::<$ty>(arg0)
-                                            }
-                                            #[export_name = "golem:cart/api#update-item-quantity"]
-                                            unsafe extern "C" fn export_update_item_quantity(arg0: *mut u8,arg1: usize,arg2: i32,) -> *mut u8 {
-                                              $($path_to_types)*::_export_update_item_quantity_cabi::<$ty>(arg0, arg1, arg2)
-                                            }
-                                            #[export_name = "cabi_post_golem:cart/api#update-item-quantity"]
-                                            unsafe extern "C" fn _post_return_update_item_quantity(arg0: *mut u8,) {
-                                              $($path_to_types)*::__post_return_update_item_quantity::<$ty>(arg0)
-                                            }
-                                            #[export_name = "golem:cart/api#update-shipping-address"]
-                                            unsafe extern "C" fn export_update_shipping_address(arg0: *mut u8,) -> *mut u8 {
-                                              $($path_to_types)*::_export_update_shipping_address_cabi::<$ty>(arg0)
-                                            }
-                                            #[export_name = "cabi_post_golem:cart/api#update-shipping-address"]
-                                            unsafe extern "C" fn _post_return_update_shipping_address(arg0: *mut u8,) {
-                                              $($path_to_types)*::__post_return_update_shipping_address::<$ty>(arg0)
-                                            }
-                                            #[export_name = "golem:cart/api#update-billing-address"]
-                                            unsafe extern "C" fn export_update_billing_address(arg0: *mut u8,) -> *mut u8 {
-                                              $($path_to_types)*::_export_update_billing_address_cabi::<$ty>(arg0)
-                                            }
-                                            #[export_name = "cabi_post_golem:cart/api#update-billing-address"]
-                                            unsafe extern "C" fn _post_return_update_billing_address(arg0: *mut u8,) {
-                                              $($path_to_types)*::__post_return_update_billing_address::<$ty>(arg0)
-                                            }
-                                            #[export_name = "golem:cart/api#checkout"]
-                                            unsafe extern "C" fn export_checkout() -> *mut u8 {
-                                              $($path_to_types)*::_export_checkout_cabi::<$ty>()
-                                            }
-                                            #[export_name = "cabi_post_golem:cart/api#checkout"]
-                                            unsafe extern "C" fn _post_return_checkout(arg0: *mut u8,) {
-                                              $($path_to_types)*::__post_return_checkout::<$ty>(arg0)
-                                            }
-                                            #[export_name = "golem:cart/api#get"]
-                                            unsafe extern "C" fn export_get() -> *mut u8 {
-                                              $($path_to_types)*::_export_get_cabi::<$ty>()
-                                            }
-                                            #[export_name = "cabi_post_golem:cart/api#get"]
-                                            unsafe extern "C" fn _post_return_get(arg0: *mut u8,) {
-                                              $($path_to_types)*::__post_return_get::<$ty>(arg0)
-                                            }
-                                          };);
+                                        #[export_name = "golem:cart/api#add-item"]
+                                        unsafe extern "C" fn export_add_item(arg0: *mut u8,arg1: usize,arg2: i32,) -> *mut u8 {
+                                          $($path_to_types)*::_export_add_item_cabi::<$ty>(arg0, arg1, arg2)
                                         }
+                                        #[export_name = "cabi_post_golem:cart/api#add-item"]
+                                        unsafe extern "C" fn _post_return_add_item(arg0: *mut u8,) {
+                                          $($path_to_types)*::__post_return_add_item::<$ty>(arg0)
+                                        }
+                                        #[export_name = "golem:cart/api#remove-item"]
+                                        unsafe extern "C" fn export_remove_item(arg0: *mut u8,arg1: usize,) -> *mut u8 {
+                                          $($path_to_types)*::_export_remove_item_cabi::<$ty>(arg0, arg1)
+                                        }
+                                        #[export_name = "cabi_post_golem:cart/api#remove-item"]
+                                        unsafe extern "C" fn _post_return_remove_item(arg0: *mut u8,) {
+                                          $($path_to_types)*::__post_return_remove_item::<$ty>(arg0)
+                                        }
+                                        #[export_name = "golem:cart/api#update-item-quantity"]
+                                        unsafe extern "C" fn export_update_item_quantity(arg0: *mut u8,arg1: usize,arg2: i32,) -> *mut u8 {
+                                          $($path_to_types)*::_export_update_item_quantity_cabi::<$ty>(arg0, arg1, arg2)
+                                        }
+                                        #[export_name = "cabi_post_golem:cart/api#update-item-quantity"]
+                                        unsafe extern "C" fn _post_return_update_item_quantity(arg0: *mut u8,) {
+                                          $($path_to_types)*::__post_return_update_item_quantity::<$ty>(arg0)
+                                        }
+                                        #[export_name = "golem:cart/api#update-shipping-address"]
+                                        unsafe extern "C" fn export_update_shipping_address(arg0: *mut u8,) -> *mut u8 {
+                                          $($path_to_types)*::_export_update_shipping_address_cabi::<$ty>(arg0)
+                                        }
+                                        #[export_name = "cabi_post_golem:cart/api#update-shipping-address"]
+                                        unsafe extern "C" fn _post_return_update_shipping_address(arg0: *mut u8,) {
+                                          $($path_to_types)*::__post_return_update_shipping_address::<$ty>(arg0)
+                                        }
+                                        #[export_name = "golem:cart/api#update-billing-address"]
+                                        unsafe extern "C" fn export_update_billing_address(arg0: *mut u8,) -> *mut u8 {
+                                          $($path_to_types)*::_export_update_billing_address_cabi::<$ty>(arg0)
+                                        }
+                                        #[export_name = "cabi_post_golem:cart/api#update-billing-address"]
+                                        unsafe extern "C" fn _post_return_update_billing_address(arg0: *mut u8,) {
+                                          $($path_to_types)*::__post_return_update_billing_address::<$ty>(arg0)
+                                        }
+                                        #[export_name = "golem:cart/api#checkout"]
+                                        unsafe extern "C" fn export_checkout() -> *mut u8 {
+                                          $($path_to_types)*::_export_checkout_cabi::<$ty>()
+                                        }
+                                        #[export_name = "cabi_post_golem:cart/api#checkout"]
+                                        unsafe extern "C" fn _post_return_checkout(arg0: *mut u8,) {
+                                          $($path_to_types)*::__post_return_checkout::<$ty>(arg0)
+                                        }
+                                        #[export_name = "golem:cart/api#get"]
+                                        unsafe extern "C" fn export_get() -> *mut u8 {
+                                          $($path_to_types)*::_export_get_cabi::<$ty>()
+                                        }
+                                        #[export_name = "cabi_post_golem:cart/api#get"]
+                                        unsafe extern "C" fn _post_return_get(arg0: *mut u8,) {
+                                          $($path_to_types)*::__post_return_get::<$ty>(arg0)
+                                        }
+                                      };);
+                                    }
                 #[doc(hidden)]
                 pub(crate) use __export_golem_cart_api_cabi;
                 #[repr(align(8))]
@@ -15099,19 +15699,21 @@ mod _rt {
 #[doc(hidden)]
 
 macro_rules! __export_cart_impl {
-                                  ($ty:ident) => (self::export!($ty with_types_in self););
-                                  ($ty:ident with_types_in $($path_to_types_root:tt)*) => (
-                                  $($path_to_types_root)*::exports::golem::cart::api::__export_golem_cart_api_cabi!($ty with_types_in $($path_to_types_root)*::exports::golem::cart::api);
-                                  )
-                                }
+                              ($ty:ident) => (self::export!($ty with_types_in self););
+                              ($ty:ident with_types_in $($path_to_types_root:tt)*) => (
+                              $($path_to_types_root)*::exports::golem::api::save_snapshot::__export_golem_api_save_snapshot_0_2_0_cabi!($ty with_types_in $($path_to_types_root)*::exports::golem::api::save_snapshot);
+                              $($path_to_types_root)*::exports::golem::api::load_snapshot::__export_golem_api_load_snapshot_0_2_0_cabi!($ty with_types_in $($path_to_types_root)*::exports::golem::api::load_snapshot);
+                              $($path_to_types_root)*::exports::golem::cart::api::__export_golem_cart_api_cabi!($ty with_types_in $($path_to_types_root)*::exports::golem::cart::api);
+                              )
+                            }
 #[doc(inline)]
 pub(crate) use __export_cart_impl as export;
 
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.25.0:cart:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 10414] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xb3P\x01A\x02\x01A)\x01\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 11160] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\x9dV\x01A\x02\x01A-\x01\
 B\x0a\x04\0\x08pollable\x03\x01\x01h\0\x01@\x01\x04self\x01\0\x7f\x04\0\x16[meth\
 od]pollable.ready\x01\x02\x01@\x01\x04self\x01\x01\0\x04\0\x16[method]pollable.b\
 lock\x01\x03\x01p\x01\x01py\x01@\x01\x02in\x04\0\x05\x04\0\x04poll\x01\x06\x03\x01\
@@ -15203,7 +15805,7 @@ tem\x01\x20\x04\0\x14update-item-quantity\x01\x1f\x01@\x01\x07address\x04\0\x1e\
 pricing-not-found-error\x02\x03\0\x06\x17address-not-valid-error\x02\x03\0\x06\x14\
 item-not-found-error\x02\x03\0\x06\x11empty-items-error\x02\x03\0\x06\x1dbilling\
 -address-not-set-error\x02\x03\0\x06\x18action-not-allowed-error\x02\x03\0\x06\x05\
-error\x01B\x80\x01\x02\x03\x02\x01\x04\x04\0\x0dgolem-rpc-uri\x03\0\0\x02\x03\x02\
+error\x01B\xa4\x01\x02\x03\x02\x01\x04\x04\0\x0dgolem-rpc-uri\x03\0\0\x02\x03\x02\
 \x01\x01\x04\0\x10wasi-io-pollable\x03\0\x02\x02\x03\x02\x01\x0c\x04\0\x0corder-\
 status\x03\0\x04\x02\x03\x02\x01\x0d\x04\0\x07address\x03\0\x06\x02\x03\x02\x01\x0e\
 \x04\0\x0aorder-item\x03\0\x08\x02\x03\x02\x01\x0f\x04\0\x05order\x03\0\x0a\x02\x03\
@@ -15213,99 +15815,114 @@ t-not-found-error\x03\0\x0e\x02\x03\x02\x01\x12\x04\0\x17pricing-not-found-error
 \x02\x01\x14\x04\0\x14item-not-found-error\x03\0\x14\x02\x03\x02\x01\x15\x04\0\x11\
 empty-items-error\x03\0\x16\x02\x03\x02\x01\x16\x04\0\x1dbilling-address-not-set\
 -error\x03\0\x18\x02\x03\x02\x01\x17\x04\0\x18action-not-allowed-error\x03\0\x1a\
-\x02\x03\x02\x01\x18\x04\0\x05error\x03\0\x1c\x04\0\x16future-add-item-result\x03\
-\x01\x04\0\x19future-remove-item-result\x03\x01\x04\0\"future-update-item-quanti\
-ty-result\x03\x01\x04\0%future-update-shipping-address-result\x03\x01\x04\0$futu\
-re-update-billing-address-result\x03\x01\x04\0\x18future-ship-order-result\x03\x01\
-\x04\0\x1afuture-cancel-order-result\x03\x01\x04\0\x11future-get-result\x03\x01\x04\
-\0\x03api\x03\x01\x01h\x1e\x01i\x03\x01@\x01\x04self'\0(\x04\0([method]future-ad\
-d-item-result.subscribe\x01)\x01j\0\x01\x1d\x01k*\x01@\x01\x04self'\0+\x04\0\"[m\
-ethod]future-add-item-result.get\x01,\x01h\x1f\x01@\x01\x04self-\0(\x04\0+[metho\
-d]future-remove-item-result.subscribe\x01.\x01@\x01\x04self-\0+\x04\0%[method]fu\
-ture-remove-item-result.get\x01/\x01h\x20\x01@\x01\x04self0\0(\x04\04[method]fut\
-ure-update-item-quantity-result.subscribe\x011\x01@\x01\x04self0\0+\x04\0.[metho\
-d]future-update-item-quantity-result.get\x012\x01h!\x01@\x01\x04self3\0(\x04\07[\
-method]future-update-shipping-address-result.subscribe\x014\x01@\x01\x04self3\0+\
-\x04\01[method]future-update-shipping-address-result.get\x015\x01h\"\x01@\x01\x04\
-self6\0(\x04\06[method]future-update-billing-address-result.subscribe\x017\x01@\x01\
-\x04self6\0+\x04\00[method]future-update-billing-address-result.get\x018\x01h#\x01\
-@\x01\x04self9\0(\x04\0*[method]future-ship-order-result.subscribe\x01:\x01@\x01\
-\x04self9\0+\x04\0$[method]future-ship-order-result.get\x01;\x01h$\x01@\x01\x04s\
-elf<\0(\x04\0,[method]future-cancel-order-result.subscribe\x01=\x01@\x01\x04self\
-<\0+\x04\0&[method]future-cancel-order-result.get\x01>\x01h%\x01@\x01\x04self?\0\
-(\x04\0#[method]future-get-result.subscribe\x01@\x01k\x0b\x01k\xc1\0\x01@\x01\x04\
-self?\0\xc2\0\x04\0\x1d[method]future-get-result.get\x01C\x01i&\x01@\x01\x08loca\
-tion\x01\0\xc4\0\x04\0\x10[constructor]api\x01E\x01h&\x01@\x02\x04self\xc6\0\x04\
-data\x0d\x01\0\x04\0%[method]api.blocking-initialize-order\x01G\x04\0\x1c[method\
-]api.initialize-order\x01G\x01@\x03\x04self\xc6\0\x0aproduct-ids\x08quantityy\0*\
-\x04\0\x1d[method]api.blocking-add-item\x01H\x01i\x1e\x01@\x03\x04self\xc6\0\x0a\
-product-ids\x08quantityy\0\xc9\0\x04\0\x14[method]api.add-item\x01J\x01@\x02\x04\
-self\xc6\0\x0aproduct-ids\0*\x04\0\x20[method]api.blocking-remove-item\x01K\x01i\
-\x1f\x01@\x02\x04self\xc6\0\x0aproduct-ids\0\xcc\0\x04\0\x17[method]api.remove-i\
-tem\x01M\x04\0)[method]api.blocking-update-item-quantity\x01H\x01i\x20\x01@\x03\x04\
-self\xc6\0\x0aproduct-ids\x08quantityy\0\xce\0\x04\0\x20[method]api.update-item-\
-quantity\x01O\x01@\x02\x04self\xc6\0\x07address\x07\0*\x04\0,[method]api.blockin\
-g-update-shipping-address\x01P\x01i!\x01@\x02\x04self\xc6\0\x07address\x07\0\xd1\
-\0\x04\0#[method]api.update-shipping-address\x01R\x04\0+[method]api.blocking-upd\
-ate-billing-address\x01P\x01i\"\x01@\x02\x04self\xc6\0\x07address\x07\0\xd3\0\x04\
-\0\"[method]api.update-billing-address\x01T\x01@\x01\x04self\xc6\0\0*\x04\0\x1f[\
-method]api.blocking-ship-order\x01U\x01i#\x01@\x01\x04self\xc6\0\0\xd6\0\x04\0\x16\
-[method]api.ship-order\x01W\x04\0![method]api.blocking-cancel-order\x01U\x01i$\x01\
-@\x01\x04self\xc6\0\0\xd8\0\x04\0\x18[method]api.cancel-order\x01Y\x01@\x01\x04s\
-elf\xc6\0\0\xc1\0\x04\0\x18[method]api.blocking-get\x01Z\x01i%\x01@\x01\x04self\xc6\
-\0\0\xdb\0\x04\0\x0f[method]api.get\x01\\\x03\x01\x1bgolem:order-stub/stub-order\
-\x05\x19\x01B\x0f\x02\x03\x02\x01\x01\x04\0\x08pollable\x03\0\0\x01w\x04\0\x07in\
-stant\x03\0\x02\x01w\x04\0\x08duration\x03\0\x04\x01@\0\0\x03\x04\0\x03now\x01\x06\
-\x01@\0\0\x05\x04\0\x0aresolution\x01\x07\x01i\x01\x01@\x01\x04when\x03\0\x08\x04\
-\0\x11subscribe-instant\x01\x09\x01@\x01\x04when\x05\0\x08\x04\0\x12subscribe-du\
-ration\x01\x0a\x03\x01!wasi:clocks/monotonic-clock@0.2.0\x05\x1a\x02\x03\0\x08\x08\
-duration\x01Bf\x02\x03\x02\x01\x04\x04\0\x03uri\x03\0\0\x02\x03\x02\x01\x1b\x04\0\
-\x08duration\x03\0\x02\x01w\x04\0\x0boplog-index\x03\0\x04\x01w\x04\0\x11compone\
-nt-version\x03\0\x06\x01r\x02\x09high-bitsw\x08low-bitsw\x04\0\x04uuid\x03\0\x08\
-\x01r\x01\x04uuid\x09\x04\0\x0ccomponent-id\x03\0\x0a\x01r\x02\x0ccomponent-id\x0b\
-\x0bworker-names\x04\0\x09worker-id\x03\0\x0c\x01r\x02\x09worker-id\x0d\x09oplog\
--idx\x05\x04\0\x0apromise-id\x03\0\x0e\x01r\x04\x0cmax-attemptsy\x09min-delay\x03\
-\x09max-delay\x03\x0amultiplieru\x04\0\x0cretry-policy\x03\0\x10\x01q\x03\x0fper\
-sist-nothing\0\0\x1bpersist-remote-side-effects\0\0\x05smart\0\0\x04\0\x11persis\
-tence-level\x03\0\x12\x01m\x02\x09automatic\x0esnapshot-based\x04\0\x0bupdate-mo\
-de\x03\0\x14\x01m\x06\x05equal\x09not-equal\x0dgreater-equal\x07greater\x0aless-\
-equal\x04less\x04\0\x11filter-comparator\x03\0\x16\x01m\x04\x05equal\x09not-equa\
-l\x04like\x08not-like\x04\0\x18string-filter-comparator\x03\0\x18\x01m\x07\x07ru\
-nning\x04idle\x09suspended\x0binterrupted\x08retrying\x06failed\x06exited\x04\0\x0d\
-worker-status\x03\0\x1a\x01r\x02\x0acomparator\x19\x05values\x04\0\x12worker-nam\
-e-filter\x03\0\x1c\x01r\x02\x0acomparator\x17\x05value\x1b\x04\0\x14worker-statu\
-s-filter\x03\0\x1e\x01r\x02\x0acomparator\x17\x05valuew\x04\0\x15worker-version-\
-filter\x03\0\x20\x01r\x02\x0acomparator\x17\x05valuew\x04\0\x18worker-created-at\
--filter\x03\0\"\x01r\x03\x04names\x0acomparator\x19\x05values\x04\0\x11worker-en\
-v-filter\x03\0$\x01q\x05\x04name\x01\x1d\0\x06status\x01\x1f\0\x07version\x01!\0\
-\x0acreated-at\x01#\0\x03env\x01%\0\x04\0\x16worker-property-filter\x03\0&\x01p'\
-\x01r\x01\x07filters(\x04\0\x11worker-all-filter\x03\0)\x01p*\x01r\x01\x07filter\
-s+\x04\0\x11worker-any-filter\x03\0,\x01ps\x01o\x02ss\x01p/\x01r\x06\x09worker-i\
-d\x0d\x04args.\x03env0\x06status\x1b\x11component-versionw\x0bretry-countw\x04\0\
-\x0fworker-metadata\x03\01\x04\0\x0bget-workers\x03\x01\x01k-\x01i3\x01@\x03\x0c\
-component-id\x0b\x06filter4\x07precise\x7f\05\x04\0\x18[constructor]get-workers\x01\
-6\x01h3\x01p2\x01k8\x01@\x01\x04self7\09\x04\0\x1c[method]get-workers.get-next\x01\
-:\x01@\0\0\x0f\x04\0\x0ecreate-promise\x01;\x01p}\x01@\x01\x0apromise-id\x0f\0<\x04\
-\0\x0dawait-promise\x01=\x01@\x02\x0apromise-id\x0f\x04data<\0\x7f\x04\0\x10comp\
-lete-promise\x01>\x01@\x01\x0apromise-id\x0f\x01\0\x04\0\x0edelete-promise\x01?\x01\
-@\x01\x0dfunction-names\0\x01\x04\0\x0cget-self-uri\x01@\x01@\0\0\x05\x04\0\x0fg\
-et-oplog-index\x01A\x01@\x01\x09oplog-idx\x05\x01\0\x04\0\x0fset-oplog-index\x01\
-B\x01@\x01\x08replicas}\x01\0\x04\0\x0coplog-commit\x01C\x04\0\x14mark-begin-ope\
-ration\x01A\x01@\x01\x05begin\x05\x01\0\x04\0\x12mark-end-operation\x01D\x01@\0\0\
-\x11\x04\0\x10get-retry-policy\x01E\x01@\x01\x10new-retry-policy\x11\x01\0\x04\0\
-\x10set-retry-policy\x01F\x01@\0\0\x13\x04\0\x1bget-oplog-persistence-level\x01G\
-\x01@\x01\x15new-persistence-level\x13\x01\0\x04\0\x1bset-oplog-persistence-leve\
-l\x01H\x01@\0\0\x7f\x04\0\x14get-idempotence-mode\x01I\x01@\x01\x0aidempotent\x7f\
-\x01\0\x04\0\x14set-idempotence-mode\x01J\x01@\0\0\x09\x04\0\x18generate-idempot\
-ency-key\x01K\x01@\x03\x09worker-id\x0d\x0etarget-version\x07\x04mode\x15\x01\0\x04\
-\0\x0dupdate-worker\x01L\x01@\0\02\x04\0\x11get-self-metadata\x01M\x01k2\x01@\x01\
-\x09worker-id\x0d\0\xce\0\x04\0\x13get-worker-metadata\x01O\x03\x01\x14golem:api\
-/host@0.2.0\x05\x1c\x01B)\x01ks\x01r\x09\x07street1s\x07street2\0\x04citys\x0fst\
-ate-or-regions\x07countrys\x0bpostal-codes\x04name\0\x0dbusiness-name\0\x0cphone\
--number\0\x04\0\x07address\x03\0\x01\x01r\x04\x0aproduct-ids\x04names\x05pricev\x08\
-quantityy\x04\0\x09cart-item\x03\0\x03\x01p\x04\x01k\x02\x01ps\x01r\x08\x07user-\
-ids\x05items\x05\x0fbilling-address\x06\x10shipping-address\x06\x05totalv\x08cur\
-rencys\x09timestampw\x12previous-order-ids\x07\x04\0\x04cart\x03\0\x08\x01r\x01\x08\
+\x02\x03\x02\x01\x18\x04\0\x05error\x03\0\x1c\x04\0\x12future-save-result\x03\x01\
+\x04\0\x12future-load-result\x03\x01\x04\0\x16future-add-item-result\x03\x01\x04\
+\0\x19future-remove-item-result\x03\x01\x04\0\"future-update-item-quantity-resul\
+t\x03\x01\x04\0%future-update-shipping-address-result\x03\x01\x04\0$future-updat\
+e-billing-address-result\x03\x01\x04\0\x18future-ship-order-result\x03\x01\x04\0\
+\x1afuture-cancel-order-result\x03\x01\x04\0\x11future-get-result\x03\x01\x04\0\x0d\
+save-snapshot\x03\x01\x04\0\x0dload-snapshot\x03\x01\x04\0\x03api\x03\x01\x01h\x1e\
+\x01i\x03\x01@\x01\x04self+\0,\x04\0$[method]future-save-result.subscribe\x01-\x01\
+p}\x01k.\x01@\x01\x04self+\0/\x04\0\x1e[method]future-save-result.get\x010\x01h\x1f\
+\x01@\x01\x04self1\0,\x04\0$[method]future-load-result.subscribe\x012\x01j\0\x01\
+s\x01k3\x01@\x01\x04self1\04\x04\0\x1e[method]future-load-result.get\x015\x01h\x20\
+\x01@\x01\x04self6\0,\x04\0([method]future-add-item-result.subscribe\x017\x01j\0\
+\x01\x1d\x01k8\x01@\x01\x04self6\09\x04\0\"[method]future-add-item-result.get\x01\
+:\x01h!\x01@\x01\x04self;\0,\x04\0+[method]future-remove-item-result.subscribe\x01\
+<\x01@\x01\x04self;\09\x04\0%[method]future-remove-item-result.get\x01=\x01h\"\x01\
+@\x01\x04self>\0,\x04\04[method]future-update-item-quantity-result.subscribe\x01\
+?\x01@\x01\x04self>\09\x04\0.[method]future-update-item-quantity-result.get\x01@\
+\x01h#\x01@\x01\x04self\xc1\0\0,\x04\07[method]future-update-shipping-address-re\
+sult.subscribe\x01B\x01@\x01\x04self\xc1\0\09\x04\01[method]future-update-shippi\
+ng-address-result.get\x01C\x01h$\x01@\x01\x04self\xc4\0\0,\x04\06[method]future-\
+update-billing-address-result.subscribe\x01E\x01@\x01\x04self\xc4\0\09\x04\00[me\
+thod]future-update-billing-address-result.get\x01F\x01h%\x01@\x01\x04self\xc7\0\0\
+,\x04\0*[method]future-ship-order-result.subscribe\x01H\x01@\x01\x04self\xc7\0\0\
+9\x04\0$[method]future-ship-order-result.get\x01I\x01h&\x01@\x01\x04self\xca\0\0\
+,\x04\0,[method]future-cancel-order-result.subscribe\x01K\x01@\x01\x04self\xca\0\
+\09\x04\0&[method]future-cancel-order-result.get\x01L\x01h'\x01@\x01\x04self\xcd\
+\0\0,\x04\0#[method]future-get-result.subscribe\x01N\x01k\x0b\x01k\xcf\0\x01@\x01\
+\x04self\xcd\0\0\xd0\0\x04\0\x1d[method]future-get-result.get\x01Q\x01i(\x01@\x01\
+\x08location\x01\0\xd2\0\x04\0\x1a[constructor]save-snapshot\x01S\x01h(\x01@\x01\
+\x04self\xd4\0\0.\x04\0#[method]save-snapshot.blocking-save\x01U\x01i\x1e\x01@\x01\
+\x04self\xd4\0\0\xd6\0\x04\0\x1a[method]save-snapshot.save\x01W\x01i)\x01@\x01\x08\
+location\x01\0\xd8\0\x04\0\x1a[constructor]load-snapshot\x01Y\x01h)\x01@\x02\x04\
+self\xda\0\x05bytes.\03\x04\0#[method]load-snapshot.blocking-load\x01[\x01i\x1f\x01\
+@\x02\x04self\xda\0\x05bytes.\0\xdc\0\x04\0\x1a[method]load-snapshot.load\x01]\x01\
+i*\x01@\x01\x08location\x01\0\xde\0\x04\0\x10[constructor]api\x01_\x01h*\x01@\x02\
+\x04self\xe0\0\x04data\x0d\x01\0\x04\0%[method]api.blocking-initialize-order\x01\
+a\x04\0\x1c[method]api.initialize-order\x01a\x01@\x03\x04self\xe0\0\x0aproduct-i\
+ds\x08quantityy\08\x04\0\x1d[method]api.blocking-add-item\x01b\x01i\x20\x01@\x03\
+\x04self\xe0\0\x0aproduct-ids\x08quantityy\0\xe3\0\x04\0\x14[method]api.add-item\
+\x01d\x01@\x02\x04self\xe0\0\x0aproduct-ids\08\x04\0\x20[method]api.blocking-rem\
+ove-item\x01e\x01i!\x01@\x02\x04self\xe0\0\x0aproduct-ids\0\xe6\0\x04\0\x17[meth\
+od]api.remove-item\x01g\x04\0)[method]api.blocking-update-item-quantity\x01b\x01\
+i\"\x01@\x03\x04self\xe0\0\x0aproduct-ids\x08quantityy\0\xe8\0\x04\0\x20[method]\
+api.update-item-quantity\x01i\x01@\x02\x04self\xe0\0\x07address\x07\08\x04\0,[me\
+thod]api.blocking-update-shipping-address\x01j\x01i#\x01@\x02\x04self\xe0\0\x07a\
+ddress\x07\0\xeb\0\x04\0#[method]api.update-shipping-address\x01l\x04\0+[method]\
+api.blocking-update-billing-address\x01j\x01i$\x01@\x02\x04self\xe0\0\x07address\
+\x07\0\xed\0\x04\0\"[method]api.update-billing-address\x01n\x01@\x01\x04self\xe0\
+\0\08\x04\0\x1f[method]api.blocking-ship-order\x01o\x01i%\x01@\x01\x04self\xe0\0\
+\0\xf0\0\x04\0\x16[method]api.ship-order\x01q\x04\0![method]api.blocking-cancel-\
+order\x01o\x01i&\x01@\x01\x04self\xe0\0\0\xf2\0\x04\0\x18[method]api.cancel-orde\
+r\x01s\x01@\x01\x04self\xe0\0\0\xcf\0\x04\0\x18[method]api.blocking-get\x01t\x01\
+i'\x01@\x01\x04self\xe0\0\0\xf5\0\x04\0\x0f[method]api.get\x01v\x03\x01\x1bgolem\
+:order-stub/stub-order\x05\x19\x01B\x0f\x02\x03\x02\x01\x01\x04\0\x08pollable\x03\
+\0\0\x01w\x04\0\x07instant\x03\0\x02\x01w\x04\0\x08duration\x03\0\x04\x01@\0\0\x03\
+\x04\0\x03now\x01\x06\x01@\0\0\x05\x04\0\x0aresolution\x01\x07\x01i\x01\x01@\x01\
+\x04when\x03\0\x08\x04\0\x11subscribe-instant\x01\x09\x01@\x01\x04when\x05\0\x08\
+\x04\0\x12subscribe-duration\x01\x0a\x03\x01!wasi:clocks/monotonic-clock@0.2.0\x05\
+\x1a\x02\x03\0\x08\x08duration\x01Bf\x02\x03\x02\x01\x04\x04\0\x03uri\x03\0\0\x02\
+\x03\x02\x01\x1b\x04\0\x08duration\x03\0\x02\x01w\x04\0\x0boplog-index\x03\0\x04\
+\x01w\x04\0\x11component-version\x03\0\x06\x01r\x02\x09high-bitsw\x08low-bitsw\x04\
+\0\x04uuid\x03\0\x08\x01r\x01\x04uuid\x09\x04\0\x0ccomponent-id\x03\0\x0a\x01r\x02\
+\x0ccomponent-id\x0b\x0bworker-names\x04\0\x09worker-id\x03\0\x0c\x01r\x02\x09wo\
+rker-id\x0d\x09oplog-idx\x05\x04\0\x0apromise-id\x03\0\x0e\x01r\x04\x0cmax-attem\
+ptsy\x09min-delay\x03\x09max-delay\x03\x0amultiplieru\x04\0\x0cretry-policy\x03\0\
+\x10\x01q\x03\x0fpersist-nothing\0\0\x1bpersist-remote-side-effects\0\0\x05smart\
+\0\0\x04\0\x11persistence-level\x03\0\x12\x01m\x02\x09automatic\x0esnapshot-base\
+d\x04\0\x0bupdate-mode\x03\0\x14\x01m\x06\x05equal\x09not-equal\x0dgreater-equal\
+\x07greater\x0aless-equal\x04less\x04\0\x11filter-comparator\x03\0\x16\x01m\x04\x05\
+equal\x09not-equal\x04like\x08not-like\x04\0\x18string-filter-comparator\x03\0\x18\
+\x01m\x07\x07running\x04idle\x09suspended\x0binterrupted\x08retrying\x06failed\x06\
+exited\x04\0\x0dworker-status\x03\0\x1a\x01r\x02\x0acomparator\x19\x05values\x04\
+\0\x12worker-name-filter\x03\0\x1c\x01r\x02\x0acomparator\x17\x05value\x1b\x04\0\
+\x14worker-status-filter\x03\0\x1e\x01r\x02\x0acomparator\x17\x05valuew\x04\0\x15\
+worker-version-filter\x03\0\x20\x01r\x02\x0acomparator\x17\x05valuew\x04\0\x18wo\
+rker-created-at-filter\x03\0\"\x01r\x03\x04names\x0acomparator\x19\x05values\x04\
+\0\x11worker-env-filter\x03\0$\x01q\x05\x04name\x01\x1d\0\x06status\x01\x1f\0\x07\
+version\x01!\0\x0acreated-at\x01#\0\x03env\x01%\0\x04\0\x16worker-property-filte\
+r\x03\0&\x01p'\x01r\x01\x07filters(\x04\0\x11worker-all-filter\x03\0)\x01p*\x01r\
+\x01\x07filters+\x04\0\x11worker-any-filter\x03\0,\x01ps\x01o\x02ss\x01p/\x01r\x06\
+\x09worker-id\x0d\x04args.\x03env0\x06status\x1b\x11component-versionw\x0bretry-\
+countw\x04\0\x0fworker-metadata\x03\01\x04\0\x0bget-workers\x03\x01\x01k-\x01i3\x01\
+@\x03\x0ccomponent-id\x0b\x06filter4\x07precise\x7f\05\x04\0\x18[constructor]get\
+-workers\x016\x01h3\x01p2\x01k8\x01@\x01\x04self7\09\x04\0\x1c[method]get-worker\
+s.get-next\x01:\x01@\0\0\x0f\x04\0\x0ecreate-promise\x01;\x01p}\x01@\x01\x0aprom\
+ise-id\x0f\0<\x04\0\x0dawait-promise\x01=\x01@\x02\x0apromise-id\x0f\x04data<\0\x7f\
+\x04\0\x10complete-promise\x01>\x01@\x01\x0apromise-id\x0f\x01\0\x04\0\x0edelete\
+-promise\x01?\x01@\x01\x0dfunction-names\0\x01\x04\0\x0cget-self-uri\x01@\x01@\0\
+\0\x05\x04\0\x0fget-oplog-index\x01A\x01@\x01\x09oplog-idx\x05\x01\0\x04\0\x0fse\
+t-oplog-index\x01B\x01@\x01\x08replicas}\x01\0\x04\0\x0coplog-commit\x01C\x04\0\x14\
+mark-begin-operation\x01A\x01@\x01\x05begin\x05\x01\0\x04\0\x12mark-end-operatio\
+n\x01D\x01@\0\0\x11\x04\0\x10get-retry-policy\x01E\x01@\x01\x10new-retry-policy\x11\
+\x01\0\x04\0\x10set-retry-policy\x01F\x01@\0\0\x13\x04\0\x1bget-oplog-persistenc\
+e-level\x01G\x01@\x01\x15new-persistence-level\x13\x01\0\x04\0\x1bset-oplog-pers\
+istence-level\x01H\x01@\0\0\x7f\x04\0\x14get-idempotence-mode\x01I\x01@\x01\x0ai\
+dempotent\x7f\x01\0\x04\0\x14set-idempotence-mode\x01J\x01@\0\0\x09\x04\0\x18gen\
+erate-idempotency-key\x01K\x01@\x03\x09worker-id\x0d\x0etarget-version\x07\x04mo\
+de\x15\x01\0\x04\0\x0dupdate-worker\x01L\x01@\0\02\x04\0\x11get-self-metadata\x01\
+M\x01k2\x01@\x01\x09worker-id\x0d\0\xce\0\x04\0\x13get-worker-metadata\x01O\x03\x01\
+\x14golem:api/host@0.2.0\x05\x1c\x01B\x03\x01p}\x01@\0\0\0\x04\0\x04save\x01\x01\
+\x04\x01\x1dgolem:api/save-snapshot@0.2.0\x05\x1d\x01B\x04\x01p}\x01j\0\x01s\x01\
+@\x01\x05bytes\0\0\x01\x04\0\x04load\x01\x02\x04\x01\x1dgolem:api/load-snapshot@\
+0.2.0\x05\x1e\x01B)\x01ks\x01r\x09\x07street1s\x07street2\0\x04citys\x0fstate-or\
+-regions\x07countrys\x0bpostal-codes\x04name\0\x0dbusiness-name\0\x0cphone-numbe\
+r\0\x04\0\x07address\x03\0\x01\x01r\x04\x0aproduct-ids\x04names\x05pricev\x08qua\
+ntityy\x04\0\x09cart-item\x03\0\x03\x01p\x04\x01k\x02\x01ps\x01r\x08\x07user-ids\
+\x05items\x05\x0fbilling-address\x06\x10shipping-address\x06\x05totalv\x08curren\
+cys\x09timestampw\x12previous-order-ids\x07\x04\0\x04cart\x03\0\x08\x01r\x01\x08\
 order-ids\x04\0\x12order-confirmation\x03\0\x0a\x01r\x02\x07messages\x0aproduct-\
 ids\x04\0\x17product-not-found-error\x03\0\x0c\x01r\x02\x07messages\x0aproduct-i\
 ds\x04\0\x17pricing-not-found-error\x03\0\x0e\x01r\x01\x07messages\x04\0\x17addr\
@@ -15319,7 +15936,7 @@ ot-set\x01\x17\0\x04\0\x05error\x03\0\x18\x01j\0\x01\x19\x01@\x02\x0aproduct-ids
 \x0bremove-item\x01\x1c\x04\0\x14update-item-quantity\x01\x1b\x01@\x01\x07addres\
 s\x02\0\x1a\x04\0\x17update-shipping-address\x01\x1d\x04\0\x16update-billing-add\
 ress\x01\x1d\x01j\x01\x0b\x01\x19\x01@\0\0\x1e\x04\0\x08checkout\x01\x1f\x01k\x09\
-\x01@\0\0\x20\x04\0\x03get\x01!\x04\x01\x0egolem:cart/api\x05\x1d\x04\x01\x0fgol\
+\x01@\0\0\x20\x04\0\x03get\x01!\x04\x01\x0egolem:cart/api\x05\x1f\x04\x01\x0fgol\
 em:cart/cart\x04\0\x0b\x0a\x01\0\x04cart\x03\0\0\0G\x09producers\x01\x0cprocesse\
 d-by\x02\x0dwit-component\x070.208.1\x10wit-bindgen-rust\x060.25.0";
 

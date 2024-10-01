@@ -1,5 +1,6 @@
 mod bindings;
 
+use crate::bindings::exports::golem::api::{load_snapshot, save_snapshot};
 use crate::bindings::exports::golem::order::api::*;
 use crate::bindings::golem::pricing::api::PricingItem;
 use crate::bindings::golem::product_stub::stub_product::Product;
@@ -254,6 +255,27 @@ impl Guest for Component {
             println!("Getting order");
 
             state.clone().map(|state| state.into())
+        })
+    }
+}
+
+impl save_snapshot::Guest for Component {
+    fn save() -> Vec<u8> {
+        with_state(|state| serde_json::to_vec_pretty(&state).expect("Failed to serialize state"))
+    }
+}
+
+impl load_snapshot::Guest for Component {
+    fn load(bytes: Vec<u8>) -> Result<(), String> {
+        with_state(|state| {
+            let value: domain::order::Order =
+                serde_json::from_slice(&bytes).map_err(|err| err.to_string())?;
+            if value.order_id != state.order_id {
+                Err("Invalid state".to_string())
+            } else {
+                state.clone_from(&value);
+                Ok(())
+            }
         })
     }
 }

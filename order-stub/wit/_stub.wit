@@ -17,6 +17,14 @@ interface stub-order {
   use golem:order/api.{action-not-allowed-error};
   use golem:order/api.{error};
 
+  resource future-save-result {
+    subscribe: func() -> wasi-io-pollable;
+    get: func() -> option<list<u8>>;
+  }
+  resource future-load-result {
+    subscribe: func() -> wasi-io-pollable;
+    get: func() -> option<result<_, string>>;
+  }
   resource future-add-item-result {
     subscribe: func() -> wasi-io-pollable;
     get: func() -> option<result<_, error>>;
@@ -49,6 +57,18 @@ interface stub-order {
     subscribe: func() -> wasi-io-pollable;
     get: func() -> option<option<order>>;
   }
+  resource save-snapshot {
+    constructor(location: golem-rpc-uri);
+    blocking-save: func() -> list<u8>;
+    save: func() -> future-save-result;
+  }
+
+  resource load-snapshot {
+    constructor(location: golem-rpc-uri);
+    blocking-load: func(bytes: list<u8>) -> result<_, string>;
+    load: func(bytes: list<u8>) -> future-load-result;
+  }
+
   resource api {
     constructor(location: golem-rpc-uri);
     blocking-initialize-order: func(data: create-order);

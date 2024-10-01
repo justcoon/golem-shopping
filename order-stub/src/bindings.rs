@@ -4478,6 +4478,278 @@ pub mod exports {
 
                 #[derive(Debug)]
                 #[repr(transparent)]
+                pub struct FutureSaveResult {
+                    handle: _rt::Resource<FutureSaveResult>,
+                }
+
+                type _FutureSaveResultRep<T> = Option<T>;
+
+                impl FutureSaveResult {
+                    /// Creates a new resource from the specified representation.
+                    ///
+                    /// This function will create a new resource handle by moving `val` onto
+                    /// the heap and then passing that heap pointer to the component model to
+                    /// create a handle. The owned handle is then returned as `FutureSaveResult`.
+                    pub fn new<T: GuestFutureSaveResult>(val: T) -> Self {
+                        Self::type_guard::<T>();
+                        let val: _FutureSaveResultRep<T> = Some(val);
+                        let ptr: *mut _FutureSaveResultRep<T> =
+                            _rt::Box::into_raw(_rt::Box::new(val));
+                        unsafe { Self::from_handle(T::_resource_new(ptr.cast())) }
+                    }
+
+                    /// Gets access to the underlying `T` which represents this resource.
+                    pub fn get<T: GuestFutureSaveResult>(&self) -> &T {
+                        let ptr = unsafe { &*self.as_ptr::<T>() };
+                        ptr.as_ref().unwrap()
+                    }
+
+                    /// Gets mutable access to the underlying `T` which represents this
+                    /// resource.
+                    pub fn get_mut<T: GuestFutureSaveResult>(&mut self) -> &mut T {
+                        let ptr = unsafe { &mut *self.as_ptr::<T>() };
+                        ptr.as_mut().unwrap()
+                    }
+
+                    /// Consumes this resource and returns the underlying `T`.
+                    pub fn into_inner<T: GuestFutureSaveResult>(self) -> T {
+                        let ptr = unsafe { &mut *self.as_ptr::<T>() };
+                        ptr.take().unwrap()
+                    }
+
+                    #[doc(hidden)]
+                    pub unsafe fn from_handle(handle: u32) -> Self {
+                        Self { handle: _rt::Resource::from_handle(handle) }
+                    }
+
+                    #[doc(hidden)]
+                    pub fn take_handle(&self) -> u32 {
+                        _rt::Resource::take_handle(&self.handle)
+                    }
+
+                    #[doc(hidden)]
+                    pub fn handle(&self) -> u32 {
+                        _rt::Resource::handle(&self.handle)
+                    }
+
+                    // It's theoretically possible to implement the `GuestFutureSaveResult` trait twice
+                    // so guard against using it with two different types here.
+                    #[doc(hidden)]
+                    fn type_guard<T: 'static>() {
+                        use core::any::TypeId;
+                        static mut LAST_TYPE: Option<TypeId> = None;
+                        unsafe {
+                            assert!(!cfg!(target_feature = "threads"));
+                            let id = TypeId::of::<T>();
+                            match LAST_TYPE {
+                                Some(ty) => assert!(
+                                    ty == id,
+                                    "cannot use two types with this resource type"
+                                ),
+                                None => LAST_TYPE = Some(id),
+                            }
+                        }
+                    }
+
+                    #[doc(hidden)]
+                    pub unsafe fn dtor<T: 'static>(handle: *mut u8) {
+                        Self::type_guard::<T>();
+                        let _ = _rt::Box::from_raw(handle as *mut _FutureSaveResultRep<T>);
+                    }
+
+                    fn as_ptr<T: GuestFutureSaveResult>(&self) -> *mut _FutureSaveResultRep<T> {
+                        FutureSaveResult::type_guard::<T>();
+                        T::_resource_rep(self.handle()).cast()
+                    }
+                }
+
+                /// A borrowed version of [`FutureSaveResult`] which represents a borrowed value
+                /// with the lifetime `'a`.
+                #[derive(Debug)]
+                #[repr(transparent)]
+                pub struct FutureSaveResultBorrow<'a> {
+                    rep: *mut u8,
+                    _marker: core::marker::PhantomData<&'a FutureSaveResult>,
+                }
+
+                impl<'a> FutureSaveResultBorrow<'a> {
+                    #[doc(hidden)]
+                    pub unsafe fn lift(rep: usize) -> Self {
+                        Self { rep: rep as *mut u8, _marker: core::marker::PhantomData }
+                    }
+
+                    /// Gets access to the underlying `T` in this resource.
+                    pub fn get<T: GuestFutureSaveResult>(&self) -> &T {
+                        let ptr = unsafe { &mut *self.as_ptr::<T>() };
+                        ptr.as_ref().unwrap()
+                    }
+
+                    // NB: mutable access is not allowed due to the component model allowing
+                    // multiple borrows of the same resource.
+
+                    fn as_ptr<T: 'static>(&self) -> *mut _FutureSaveResultRep<T> {
+                        FutureSaveResult::type_guard::<T>();
+                        self.rep.cast()
+                    }
+                }
+
+                unsafe impl _rt::WasmResource for FutureSaveResult {
+                    #[inline]
+                    unsafe fn drop(_handle: u32) {
+                        #[cfg(not(target_arch = "wasm32"))]
+                        unreachable!();
+
+                        #[cfg(target_arch = "wasm32")]
+                        {
+                            #[link(wasm_import_module = "[export]golem:order-stub/stub-order")]
+                            extern "C" {
+                                #[link_name = "[resource-drop]future-save-result"]
+                                fn drop(_: u32);
+                            }
+
+                            drop(_handle);
+                        }
+                    }
+                }
+
+                #[derive(Debug)]
+                #[repr(transparent)]
+                pub struct FutureLoadResult {
+                    handle: _rt::Resource<FutureLoadResult>,
+                }
+
+                type _FutureLoadResultRep<T> = Option<T>;
+
+                impl FutureLoadResult {
+                    /// Creates a new resource from the specified representation.
+                    ///
+                    /// This function will create a new resource handle by moving `val` onto
+                    /// the heap and then passing that heap pointer to the component model to
+                    /// create a handle. The owned handle is then returned as `FutureLoadResult`.
+                    pub fn new<T: GuestFutureLoadResult>(val: T) -> Self {
+                        Self::type_guard::<T>();
+                        let val: _FutureLoadResultRep<T> = Some(val);
+                        let ptr: *mut _FutureLoadResultRep<T> =
+                            _rt::Box::into_raw(_rt::Box::new(val));
+                        unsafe { Self::from_handle(T::_resource_new(ptr.cast())) }
+                    }
+
+                    /// Gets access to the underlying `T` which represents this resource.
+                    pub fn get<T: GuestFutureLoadResult>(&self) -> &T {
+                        let ptr = unsafe { &*self.as_ptr::<T>() };
+                        ptr.as_ref().unwrap()
+                    }
+
+                    /// Gets mutable access to the underlying `T` which represents this
+                    /// resource.
+                    pub fn get_mut<T: GuestFutureLoadResult>(&mut self) -> &mut T {
+                        let ptr = unsafe { &mut *self.as_ptr::<T>() };
+                        ptr.as_mut().unwrap()
+                    }
+
+                    /// Consumes this resource and returns the underlying `T`.
+                    pub fn into_inner<T: GuestFutureLoadResult>(self) -> T {
+                        let ptr = unsafe { &mut *self.as_ptr::<T>() };
+                        ptr.take().unwrap()
+                    }
+
+                    #[doc(hidden)]
+                    pub unsafe fn from_handle(handle: u32) -> Self {
+                        Self { handle: _rt::Resource::from_handle(handle) }
+                    }
+
+                    #[doc(hidden)]
+                    pub fn take_handle(&self) -> u32 {
+                        _rt::Resource::take_handle(&self.handle)
+                    }
+
+                    #[doc(hidden)]
+                    pub fn handle(&self) -> u32 {
+                        _rt::Resource::handle(&self.handle)
+                    }
+
+                    // It's theoretically possible to implement the `GuestFutureLoadResult` trait twice
+                    // so guard against using it with two different types here.
+                    #[doc(hidden)]
+                    fn type_guard<T: 'static>() {
+                        use core::any::TypeId;
+                        static mut LAST_TYPE: Option<TypeId> = None;
+                        unsafe {
+                            assert!(!cfg!(target_feature = "threads"));
+                            let id = TypeId::of::<T>();
+                            match LAST_TYPE {
+                                Some(ty) => assert!(
+                                    ty == id,
+                                    "cannot use two types with this resource type"
+                                ),
+                                None => LAST_TYPE = Some(id),
+                            }
+                        }
+                    }
+
+                    #[doc(hidden)]
+                    pub unsafe fn dtor<T: 'static>(handle: *mut u8) {
+                        Self::type_guard::<T>();
+                        let _ = _rt::Box::from_raw(handle as *mut _FutureLoadResultRep<T>);
+                    }
+
+                    fn as_ptr<T: GuestFutureLoadResult>(&self) -> *mut _FutureLoadResultRep<T> {
+                        FutureLoadResult::type_guard::<T>();
+                        T::_resource_rep(self.handle()).cast()
+                    }
+                }
+
+                /// A borrowed version of [`FutureLoadResult`] which represents a borrowed value
+                /// with the lifetime `'a`.
+                #[derive(Debug)]
+                #[repr(transparent)]
+                pub struct FutureLoadResultBorrow<'a> {
+                    rep: *mut u8,
+                    _marker: core::marker::PhantomData<&'a FutureLoadResult>,
+                }
+
+                impl<'a> FutureLoadResultBorrow<'a> {
+                    #[doc(hidden)]
+                    pub unsafe fn lift(rep: usize) -> Self {
+                        Self { rep: rep as *mut u8, _marker: core::marker::PhantomData }
+                    }
+
+                    /// Gets access to the underlying `T` in this resource.
+                    pub fn get<T: GuestFutureLoadResult>(&self) -> &T {
+                        let ptr = unsafe { &mut *self.as_ptr::<T>() };
+                        ptr.as_ref().unwrap()
+                    }
+
+                    // NB: mutable access is not allowed due to the component model allowing
+                    // multiple borrows of the same resource.
+
+                    fn as_ptr<T: 'static>(&self) -> *mut _FutureLoadResultRep<T> {
+                        FutureLoadResult::type_guard::<T>();
+                        self.rep.cast()
+                    }
+                }
+
+                unsafe impl _rt::WasmResource for FutureLoadResult {
+                    #[inline]
+                    unsafe fn drop(_handle: u32) {
+                        #[cfg(not(target_arch = "wasm32"))]
+                        unreachable!();
+
+                        #[cfg(target_arch = "wasm32")]
+                        {
+                            #[link(wasm_import_module = "[export]golem:order-stub/stub-order")]
+                            extern "C" {
+                                #[link_name = "[resource-drop]future-load-result"]
+                                fn drop(_: u32);
+                            }
+
+                            drop(_handle);
+                        }
+                    }
+                }
+
+                #[derive(Debug)]
+                #[repr(transparent)]
                 pub struct FutureAddItemResult {
                     handle: _rt::Resource<FutureAddItemResult>,
                 }
@@ -5586,6 +5858,276 @@ pub mod exports {
 
                 #[derive(Debug)]
                 #[repr(transparent)]
+                pub struct SaveSnapshot {
+                    handle: _rt::Resource<SaveSnapshot>,
+                }
+
+                type _SaveSnapshotRep<T> = Option<T>;
+
+                impl SaveSnapshot {
+                    /// Creates a new resource from the specified representation.
+                    ///
+                    /// This function will create a new resource handle by moving `val` onto
+                    /// the heap and then passing that heap pointer to the component model to
+                    /// create a handle. The owned handle is then returned as `SaveSnapshot`.
+                    pub fn new<T: GuestSaveSnapshot>(val: T) -> Self {
+                        Self::type_guard::<T>();
+                        let val: _SaveSnapshotRep<T> = Some(val);
+                        let ptr: *mut _SaveSnapshotRep<T> = _rt::Box::into_raw(_rt::Box::new(val));
+                        unsafe { Self::from_handle(T::_resource_new(ptr.cast())) }
+                    }
+
+                    /// Gets access to the underlying `T` which represents this resource.
+                    pub fn get<T: GuestSaveSnapshot>(&self) -> &T {
+                        let ptr = unsafe { &*self.as_ptr::<T>() };
+                        ptr.as_ref().unwrap()
+                    }
+
+                    /// Gets mutable access to the underlying `T` which represents this
+                    /// resource.
+                    pub fn get_mut<T: GuestSaveSnapshot>(&mut self) -> &mut T {
+                        let ptr = unsafe { &mut *self.as_ptr::<T>() };
+                        ptr.as_mut().unwrap()
+                    }
+
+                    /// Consumes this resource and returns the underlying `T`.
+                    pub fn into_inner<T: GuestSaveSnapshot>(self) -> T {
+                        let ptr = unsafe { &mut *self.as_ptr::<T>() };
+                        ptr.take().unwrap()
+                    }
+
+                    #[doc(hidden)]
+                    pub unsafe fn from_handle(handle: u32) -> Self {
+                        Self { handle: _rt::Resource::from_handle(handle) }
+                    }
+
+                    #[doc(hidden)]
+                    pub fn take_handle(&self) -> u32 {
+                        _rt::Resource::take_handle(&self.handle)
+                    }
+
+                    #[doc(hidden)]
+                    pub fn handle(&self) -> u32 {
+                        _rt::Resource::handle(&self.handle)
+                    }
+
+                    // It's theoretically possible to implement the `GuestSaveSnapshot` trait twice
+                    // so guard against using it with two different types here.
+                    #[doc(hidden)]
+                    fn type_guard<T: 'static>() {
+                        use core::any::TypeId;
+                        static mut LAST_TYPE: Option<TypeId> = None;
+                        unsafe {
+                            assert!(!cfg!(target_feature = "threads"));
+                            let id = TypeId::of::<T>();
+                            match LAST_TYPE {
+                                Some(ty) => assert!(
+                                    ty == id,
+                                    "cannot use two types with this resource type"
+                                ),
+                                None => LAST_TYPE = Some(id),
+                            }
+                        }
+                    }
+
+                    #[doc(hidden)]
+                    pub unsafe fn dtor<T: 'static>(handle: *mut u8) {
+                        Self::type_guard::<T>();
+                        let _ = _rt::Box::from_raw(handle as *mut _SaveSnapshotRep<T>);
+                    }
+
+                    fn as_ptr<T: GuestSaveSnapshot>(&self) -> *mut _SaveSnapshotRep<T> {
+                        SaveSnapshot::type_guard::<T>();
+                        T::_resource_rep(self.handle()).cast()
+                    }
+                }
+
+                /// A borrowed version of [`SaveSnapshot`] which represents a borrowed value
+                /// with the lifetime `'a`.
+                #[derive(Debug)]
+                #[repr(transparent)]
+                pub struct SaveSnapshotBorrow<'a> {
+                    rep: *mut u8,
+                    _marker: core::marker::PhantomData<&'a SaveSnapshot>,
+                }
+
+                impl<'a> SaveSnapshotBorrow<'a> {
+                    #[doc(hidden)]
+                    pub unsafe fn lift(rep: usize) -> Self {
+                        Self { rep: rep as *mut u8, _marker: core::marker::PhantomData }
+                    }
+
+                    /// Gets access to the underlying `T` in this resource.
+                    pub fn get<T: GuestSaveSnapshot>(&self) -> &T {
+                        let ptr = unsafe { &mut *self.as_ptr::<T>() };
+                        ptr.as_ref().unwrap()
+                    }
+
+                    // NB: mutable access is not allowed due to the component model allowing
+                    // multiple borrows of the same resource.
+
+                    fn as_ptr<T: 'static>(&self) -> *mut _SaveSnapshotRep<T> {
+                        SaveSnapshot::type_guard::<T>();
+                        self.rep.cast()
+                    }
+                }
+
+                unsafe impl _rt::WasmResource for SaveSnapshot {
+                    #[inline]
+                    unsafe fn drop(_handle: u32) {
+                        #[cfg(not(target_arch = "wasm32"))]
+                        unreachable!();
+
+                        #[cfg(target_arch = "wasm32")]
+                        {
+                            #[link(wasm_import_module = "[export]golem:order-stub/stub-order")]
+                            extern "C" {
+                                #[link_name = "[resource-drop]save-snapshot"]
+                                fn drop(_: u32);
+                            }
+
+                            drop(_handle);
+                        }
+                    }
+                }
+
+                #[derive(Debug)]
+                #[repr(transparent)]
+                pub struct LoadSnapshot {
+                    handle: _rt::Resource<LoadSnapshot>,
+                }
+
+                type _LoadSnapshotRep<T> = Option<T>;
+
+                impl LoadSnapshot {
+                    /// Creates a new resource from the specified representation.
+                    ///
+                    /// This function will create a new resource handle by moving `val` onto
+                    /// the heap and then passing that heap pointer to the component model to
+                    /// create a handle. The owned handle is then returned as `LoadSnapshot`.
+                    pub fn new<T: GuestLoadSnapshot>(val: T) -> Self {
+                        Self::type_guard::<T>();
+                        let val: _LoadSnapshotRep<T> = Some(val);
+                        let ptr: *mut _LoadSnapshotRep<T> = _rt::Box::into_raw(_rt::Box::new(val));
+                        unsafe { Self::from_handle(T::_resource_new(ptr.cast())) }
+                    }
+
+                    /// Gets access to the underlying `T` which represents this resource.
+                    pub fn get<T: GuestLoadSnapshot>(&self) -> &T {
+                        let ptr = unsafe { &*self.as_ptr::<T>() };
+                        ptr.as_ref().unwrap()
+                    }
+
+                    /// Gets mutable access to the underlying `T` which represents this
+                    /// resource.
+                    pub fn get_mut<T: GuestLoadSnapshot>(&mut self) -> &mut T {
+                        let ptr = unsafe { &mut *self.as_ptr::<T>() };
+                        ptr.as_mut().unwrap()
+                    }
+
+                    /// Consumes this resource and returns the underlying `T`.
+                    pub fn into_inner<T: GuestLoadSnapshot>(self) -> T {
+                        let ptr = unsafe { &mut *self.as_ptr::<T>() };
+                        ptr.take().unwrap()
+                    }
+
+                    #[doc(hidden)]
+                    pub unsafe fn from_handle(handle: u32) -> Self {
+                        Self { handle: _rt::Resource::from_handle(handle) }
+                    }
+
+                    #[doc(hidden)]
+                    pub fn take_handle(&self) -> u32 {
+                        _rt::Resource::take_handle(&self.handle)
+                    }
+
+                    #[doc(hidden)]
+                    pub fn handle(&self) -> u32 {
+                        _rt::Resource::handle(&self.handle)
+                    }
+
+                    // It's theoretically possible to implement the `GuestLoadSnapshot` trait twice
+                    // so guard against using it with two different types here.
+                    #[doc(hidden)]
+                    fn type_guard<T: 'static>() {
+                        use core::any::TypeId;
+                        static mut LAST_TYPE: Option<TypeId> = None;
+                        unsafe {
+                            assert!(!cfg!(target_feature = "threads"));
+                            let id = TypeId::of::<T>();
+                            match LAST_TYPE {
+                                Some(ty) => assert!(
+                                    ty == id,
+                                    "cannot use two types with this resource type"
+                                ),
+                                None => LAST_TYPE = Some(id),
+                            }
+                        }
+                    }
+
+                    #[doc(hidden)]
+                    pub unsafe fn dtor<T: 'static>(handle: *mut u8) {
+                        Self::type_guard::<T>();
+                        let _ = _rt::Box::from_raw(handle as *mut _LoadSnapshotRep<T>);
+                    }
+
+                    fn as_ptr<T: GuestLoadSnapshot>(&self) -> *mut _LoadSnapshotRep<T> {
+                        LoadSnapshot::type_guard::<T>();
+                        T::_resource_rep(self.handle()).cast()
+                    }
+                }
+
+                /// A borrowed version of [`LoadSnapshot`] which represents a borrowed value
+                /// with the lifetime `'a`.
+                #[derive(Debug)]
+                #[repr(transparent)]
+                pub struct LoadSnapshotBorrow<'a> {
+                    rep: *mut u8,
+                    _marker: core::marker::PhantomData<&'a LoadSnapshot>,
+                }
+
+                impl<'a> LoadSnapshotBorrow<'a> {
+                    #[doc(hidden)]
+                    pub unsafe fn lift(rep: usize) -> Self {
+                        Self { rep: rep as *mut u8, _marker: core::marker::PhantomData }
+                    }
+
+                    /// Gets access to the underlying `T` in this resource.
+                    pub fn get<T: GuestLoadSnapshot>(&self) -> &T {
+                        let ptr = unsafe { &mut *self.as_ptr::<T>() };
+                        ptr.as_ref().unwrap()
+                    }
+
+                    // NB: mutable access is not allowed due to the component model allowing
+                    // multiple borrows of the same resource.
+
+                    fn as_ptr<T: 'static>(&self) -> *mut _LoadSnapshotRep<T> {
+                        LoadSnapshot::type_guard::<T>();
+                        self.rep.cast()
+                    }
+                }
+
+                unsafe impl _rt::WasmResource for LoadSnapshot {
+                    #[inline]
+                    unsafe fn drop(_handle: u32) {
+                        #[cfg(not(target_arch = "wasm32"))]
+                        unreachable!();
+
+                        #[cfg(target_arch = "wasm32")]
+                        {
+                            #[link(wasm_import_module = "[export]golem:order-stub/stub-order")]
+                            extern "C" {
+                                #[link_name = "[resource-drop]load-snapshot"]
+                                fn drop(_: u32);
+                            }
+
+                            drop(_handle);
+                        }
+                    }
+                }
+
+                #[derive(Debug)]
+                #[repr(transparent)]
                 pub struct Api {
                     handle: _rt::Resource<Api>,
                 }
@@ -5719,6 +6261,136 @@ pub mod exports {
                     }
                 }
 
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn _export_method_future_save_result_subscribe_cabi<
+                    T: GuestFutureSaveResult,
+                >(
+                    arg0: *mut u8,
+                ) -> i32 {
+                    #[cfg(target_arch = "wasm32")]
+                    _rt::run_ctors_once();
+                    let result0 =
+                        T::subscribe(FutureSaveResultBorrow::lift(arg0 as u32 as usize).get());
+                    (result0).take_handle() as i32
+                }
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn _export_method_future_save_result_get_cabi<
+                    T: GuestFutureSaveResult,
+                >(
+                    arg0: *mut u8,
+                ) -> *mut u8 {
+                    #[cfg(target_arch = "wasm32")]
+                    _rt::run_ctors_once();
+                    let result0 = T::get(FutureSaveResultBorrow::lift(arg0 as u32 as usize).get());
+                    let ptr1 = _RET_AREA.0.as_mut_ptr().cast::<u8>();
+                    match result0 {
+                        Some(e) => {
+                            *ptr1.add(0).cast::<u8>() = (1i32) as u8;
+                            let vec2 = (e).into_boxed_slice();
+                            let ptr2 = vec2.as_ptr().cast::<u8>();
+                            let len2 = vec2.len();
+                            ::core::mem::forget(vec2);
+                            *ptr1.add(8).cast::<usize>() = len2;
+                            *ptr1.add(4).cast::<*mut u8>() = ptr2.cast_mut();
+                        }
+                        None => {
+                            *ptr1.add(0).cast::<u8>() = (0i32) as u8;
+                        }
+                    };
+                    ptr1
+                }
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn __post_return_method_future_save_result_get<
+                    T: GuestFutureSaveResult,
+                >(
+                    arg0: *mut u8,
+                ) {
+                    let l0 = i32::from(*arg0.add(0).cast::<u8>());
+                    match l0 {
+                        0 => (),
+                        _ => {
+                            let l1 = *arg0.add(4).cast::<*mut u8>();
+                            let l2 = *arg0.add(8).cast::<usize>();
+                            let base3 = l1;
+                            let len3 = l2;
+                            _rt::cabi_dealloc(base3, len3 * 1, 1);
+                        }
+                    }
+                }
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn _export_method_future_load_result_subscribe_cabi<
+                    T: GuestFutureLoadResult,
+                >(
+                    arg0: *mut u8,
+                ) -> i32 {
+                    #[cfg(target_arch = "wasm32")]
+                    _rt::run_ctors_once();
+                    let result0 =
+                        T::subscribe(FutureLoadResultBorrow::lift(arg0 as u32 as usize).get());
+                    (result0).take_handle() as i32
+                }
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn _export_method_future_load_result_get_cabi<
+                    T: GuestFutureLoadResult,
+                >(
+                    arg0: *mut u8,
+                ) -> *mut u8 {
+                    #[cfg(target_arch = "wasm32")]
+                    _rt::run_ctors_once();
+                    let result0 = T::get(FutureLoadResultBorrow::lift(arg0 as u32 as usize).get());
+                    let ptr1 = _RET_AREA.0.as_mut_ptr().cast::<u8>();
+                    match result0 {
+                        Some(e) => {
+                            *ptr1.add(0).cast::<u8>() = (1i32) as u8;
+                            match e {
+                                Ok(_) => {
+                                    *ptr1.add(4).cast::<u8>() = (0i32) as u8;
+                                }
+                                Err(e) => {
+                                    *ptr1.add(4).cast::<u8>() = (1i32) as u8;
+                                    let vec2 = (e.into_bytes()).into_boxed_slice();
+                                    let ptr2 = vec2.as_ptr().cast::<u8>();
+                                    let len2 = vec2.len();
+                                    ::core::mem::forget(vec2);
+                                    *ptr1.add(12).cast::<usize>() = len2;
+                                    *ptr1.add(8).cast::<*mut u8>() = ptr2.cast_mut();
+                                }
+                            };
+                        }
+                        None => {
+                            *ptr1.add(0).cast::<u8>() = (0i32) as u8;
+                        }
+                    };
+                    ptr1
+                }
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn __post_return_method_future_load_result_get<
+                    T: GuestFutureLoadResult,
+                >(
+                    arg0: *mut u8,
+                ) {
+                    let l0 = i32::from(*arg0.add(0).cast::<u8>());
+                    match l0 {
+                        0 => (),
+                        _ => {
+                            let l1 = i32::from(*arg0.add(4).cast::<u8>());
+                            match l1 {
+                                0 => (),
+                                _ => {
+                                    let l2 = *arg0.add(8).cast::<*mut u8>();
+                                    let l3 = *arg0.add(12).cast::<usize>();
+                                    _rt::cabi_dealloc(l2, l3, 1);
+                                }
+                            }
+                        }
+                    }
+                }
                 #[doc(hidden)]
                 #[allow(non_snake_case)]
                 pub unsafe fn _export_method_future_add_item_result_subscribe_cabi<
@@ -7537,6 +8209,149 @@ pub mod exports {
                             }
                         }
                     }
+                }
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn _export_constructor_save_snapshot_cabi<T: GuestSaveSnapshot>(
+                    arg0: *mut u8,
+                    arg1: usize,
+                ) -> i32 {
+                    #[cfg(target_arch = "wasm32")]
+                    _rt::run_ctors_once();
+                    let len0 = arg1;
+                    let bytes0 = _rt::Vec::from_raw_parts(arg0.cast(), len0, len0);
+                    let result1 = SaveSnapshot::new(T::new(
+                        super::super::super::super::golem::rpc::types::Uri {
+                            value: _rt::string_lift(bytes0),
+                        },
+                    ));
+                    (result1).take_handle() as i32
+                }
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn _export_method_save_snapshot_blocking_save_cabi<
+                    T: GuestSaveSnapshot,
+                >(
+                    arg0: *mut u8,
+                ) -> *mut u8 {
+                    #[cfg(target_arch = "wasm32")]
+                    _rt::run_ctors_once();
+                    let result0 =
+                        T::blocking_save(SaveSnapshotBorrow::lift(arg0 as u32 as usize).get());
+                    let ptr1 = _RET_AREA.0.as_mut_ptr().cast::<u8>();
+                    let vec2 = (result0).into_boxed_slice();
+                    let ptr2 = vec2.as_ptr().cast::<u8>();
+                    let len2 = vec2.len();
+                    ::core::mem::forget(vec2);
+                    *ptr1.add(4).cast::<usize>() = len2;
+                    *ptr1.add(0).cast::<*mut u8>() = ptr2.cast_mut();
+                    ptr1
+                }
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn __post_return_method_save_snapshot_blocking_save<
+                    T: GuestSaveSnapshot,
+                >(
+                    arg0: *mut u8,
+                ) {
+                    let l0 = *arg0.add(0).cast::<*mut u8>();
+                    let l1 = *arg0.add(4).cast::<usize>();
+                    let base2 = l0;
+                    let len2 = l1;
+                    _rt::cabi_dealloc(base2, len2 * 1, 1);
+                }
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn _export_method_save_snapshot_save_cabi<T: GuestSaveSnapshot>(
+                    arg0: *mut u8,
+                ) -> i32 {
+                    #[cfg(target_arch = "wasm32")]
+                    _rt::run_ctors_once();
+                    let result0 = T::save(SaveSnapshotBorrow::lift(arg0 as u32 as usize).get());
+                    (result0).take_handle() as i32
+                }
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn _export_constructor_load_snapshot_cabi<T: GuestLoadSnapshot>(
+                    arg0: *mut u8,
+                    arg1: usize,
+                ) -> i32 {
+                    #[cfg(target_arch = "wasm32")]
+                    _rt::run_ctors_once();
+                    let len0 = arg1;
+                    let bytes0 = _rt::Vec::from_raw_parts(arg0.cast(), len0, len0);
+                    let result1 = LoadSnapshot::new(T::new(
+                        super::super::super::super::golem::rpc::types::Uri {
+                            value: _rt::string_lift(bytes0),
+                        },
+                    ));
+                    (result1).take_handle() as i32
+                }
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn _export_method_load_snapshot_blocking_load_cabi<
+                    T: GuestLoadSnapshot,
+                >(
+                    arg0: *mut u8,
+                    arg1: *mut u8,
+                    arg2: usize,
+                ) -> *mut u8 {
+                    #[cfg(target_arch = "wasm32")]
+                    _rt::run_ctors_once();
+                    let len0 = arg2;
+                    let result1 = T::blocking_load(
+                        LoadSnapshotBorrow::lift(arg0 as u32 as usize).get(),
+                        _rt::Vec::from_raw_parts(arg1.cast(), len0, len0),
+                    );
+                    let ptr2 = _RET_AREA.0.as_mut_ptr().cast::<u8>();
+                    match result1 {
+                        Ok(_) => {
+                            *ptr2.add(0).cast::<u8>() = (0i32) as u8;
+                        }
+                        Err(e) => {
+                            *ptr2.add(0).cast::<u8>() = (1i32) as u8;
+                            let vec3 = (e.into_bytes()).into_boxed_slice();
+                            let ptr3 = vec3.as_ptr().cast::<u8>();
+                            let len3 = vec3.len();
+                            ::core::mem::forget(vec3);
+                            *ptr2.add(8).cast::<usize>() = len3;
+                            *ptr2.add(4).cast::<*mut u8>() = ptr3.cast_mut();
+                        }
+                    };
+                    ptr2
+                }
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn __post_return_method_load_snapshot_blocking_load<
+                    T: GuestLoadSnapshot,
+                >(
+                    arg0: *mut u8,
+                ) {
+                    let l0 = i32::from(*arg0.add(0).cast::<u8>());
+                    match l0 {
+                        0 => (),
+                        _ => {
+                            let l1 = *arg0.add(4).cast::<*mut u8>();
+                            let l2 = *arg0.add(8).cast::<usize>();
+                            _rt::cabi_dealloc(l1, l2, 1);
+                        }
+                    }
+                }
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn _export_method_load_snapshot_load_cabi<T: GuestLoadSnapshot>(
+                    arg0: *mut u8,
+                    arg1: *mut u8,
+                    arg2: usize,
+                ) -> i32 {
+                    #[cfg(target_arch = "wasm32")]
+                    _rt::run_ctors_once();
+                    let len0 = arg2;
+                    let result1 = T::load(
+                        LoadSnapshotBorrow::lift(arg0 as u32 as usize).get(),
+                        _rt::Vec::from_raw_parts(arg1.cast(), len0, len0),
+                    );
+                    (result1).take_handle() as i32
                 }
                 #[doc(hidden)]
                 #[allow(non_snake_case)]
@@ -10236,6 +11051,8 @@ pub mod exports {
                     (result0).take_handle() as i32
                 }
                 pub trait Guest {
+                    type FutureSaveResult: GuestFutureSaveResult;
+                    type FutureLoadResult: GuestFutureLoadResult;
                     type FutureAddItemResult: GuestFutureAddItemResult;
                     type FutureRemoveItemResult: GuestFutureRemoveItemResult;
                     type FutureUpdateItemQuantityResult: GuestFutureUpdateItemQuantityResult;
@@ -10244,7 +11061,105 @@ pub mod exports {
                     type FutureShipOrderResult: GuestFutureShipOrderResult;
                     type FutureCancelOrderResult: GuestFutureCancelOrderResult;
                     type FutureGetResult: GuestFutureGetResult;
+                    type SaveSnapshot: GuestSaveSnapshot;
+                    type LoadSnapshot: GuestLoadSnapshot;
                     type Api: GuestApi;
+                }
+                pub trait GuestFutureSaveResult: 'static {
+                    #[doc(hidden)]
+                    unsafe fn _resource_new(val: *mut u8) -> u32
+                    where
+                        Self: Sized,
+                    {
+                        #[cfg(not(target_arch = "wasm32"))]
+                        {
+                            let _ = val;
+                            unreachable!();
+                        }
+
+                        #[cfg(target_arch = "wasm32")]
+                        {
+                            #[link(wasm_import_module = "[export]golem:order-stub/stub-order")]
+                            extern "C" {
+                                #[link_name = "[resource-new]future-save-result"]
+                                fn new(_: *mut u8) -> u32;
+                            }
+                            new(val)
+                        }
+                    }
+
+                    #[doc(hidden)]
+                    fn _resource_rep(handle: u32) -> *mut u8
+                    where
+                        Self: Sized,
+                    {
+                        #[cfg(not(target_arch = "wasm32"))]
+                        {
+                            let _ = handle;
+                            unreachable!();
+                        }
+
+                        #[cfg(target_arch = "wasm32")]
+                        {
+                            #[link(wasm_import_module = "[export]golem:order-stub/stub-order")]
+                            extern "C" {
+                                #[link_name = "[resource-rep]future-save-result"]
+                                fn rep(_: u32) -> *mut u8;
+                            }
+                            unsafe { rep(handle) }
+                        }
+                    }
+
+                    fn subscribe(&self) -> WasiIoPollable;
+                    fn get(&self) -> Option<_rt::Vec<u8>>;
+                }
+                pub trait GuestFutureLoadResult: 'static {
+                    #[doc(hidden)]
+                    unsafe fn _resource_new(val: *mut u8) -> u32
+                    where
+                        Self: Sized,
+                    {
+                        #[cfg(not(target_arch = "wasm32"))]
+                        {
+                            let _ = val;
+                            unreachable!();
+                        }
+
+                        #[cfg(target_arch = "wasm32")]
+                        {
+                            #[link(wasm_import_module = "[export]golem:order-stub/stub-order")]
+                            extern "C" {
+                                #[link_name = "[resource-new]future-load-result"]
+                                fn new(_: *mut u8) -> u32;
+                            }
+                            new(val)
+                        }
+                    }
+
+                    #[doc(hidden)]
+                    fn _resource_rep(handle: u32) -> *mut u8
+                    where
+                        Self: Sized,
+                    {
+                        #[cfg(not(target_arch = "wasm32"))]
+                        {
+                            let _ = handle;
+                            unreachable!();
+                        }
+
+                        #[cfg(target_arch = "wasm32")]
+                        {
+                            #[link(wasm_import_module = "[export]golem:order-stub/stub-order")]
+                            extern "C" {
+                                #[link_name = "[resource-rep]future-load-result"]
+                                fn rep(_: u32) -> *mut u8;
+                            }
+                            unsafe { rep(handle) }
+                        }
+                    }
+
+                    fn subscribe(&self) -> WasiIoPollable;
+                    fn get(&self) -> Option<Result<(), _rt::String>>;
                 }
                 pub trait GuestFutureAddItemResult: 'static {
                     #[doc(hidden)]
@@ -10630,6 +11545,104 @@ pub mod exports {
                     fn subscribe(&self) -> WasiIoPollable;
                     fn get(&self) -> Option<Option<Order>>;
                 }
+                pub trait GuestSaveSnapshot: 'static {
+                    #[doc(hidden)]
+                    unsafe fn _resource_new(val: *mut u8) -> u32
+                    where
+                        Self: Sized,
+                    {
+                        #[cfg(not(target_arch = "wasm32"))]
+                        {
+                            let _ = val;
+                            unreachable!();
+                        }
+
+                        #[cfg(target_arch = "wasm32")]
+                        {
+                            #[link(wasm_import_module = "[export]golem:order-stub/stub-order")]
+                            extern "C" {
+                                #[link_name = "[resource-new]save-snapshot"]
+                                fn new(_: *mut u8) -> u32;
+                            }
+                            new(val)
+                        }
+                    }
+
+                    #[doc(hidden)]
+                    fn _resource_rep(handle: u32) -> *mut u8
+                    where
+                        Self: Sized,
+                    {
+                        #[cfg(not(target_arch = "wasm32"))]
+                        {
+                            let _ = handle;
+                            unreachable!();
+                        }
+
+                        #[cfg(target_arch = "wasm32")]
+                        {
+                            #[link(wasm_import_module = "[export]golem:order-stub/stub-order")]
+                            extern "C" {
+                                #[link_name = "[resource-rep]save-snapshot"]
+                                fn rep(_: u32) -> *mut u8;
+                            }
+                            unsafe { rep(handle) }
+                        }
+                    }
+
+                    fn new(location: GolemRpcUri) -> Self;
+                    fn blocking_save(&self) -> _rt::Vec<u8>;
+                    fn save(&self) -> FutureSaveResult;
+                }
+                pub trait GuestLoadSnapshot: 'static {
+                    #[doc(hidden)]
+                    unsafe fn _resource_new(val: *mut u8) -> u32
+                    where
+                        Self: Sized,
+                    {
+                        #[cfg(not(target_arch = "wasm32"))]
+                        {
+                            let _ = val;
+                            unreachable!();
+                        }
+
+                        #[cfg(target_arch = "wasm32")]
+                        {
+                            #[link(wasm_import_module = "[export]golem:order-stub/stub-order")]
+                            extern "C" {
+                                #[link_name = "[resource-new]load-snapshot"]
+                                fn new(_: *mut u8) -> u32;
+                            }
+                            new(val)
+                        }
+                    }
+
+                    #[doc(hidden)]
+                    fn _resource_rep(handle: u32) -> *mut u8
+                    where
+                        Self: Sized,
+                    {
+                        #[cfg(not(target_arch = "wasm32"))]
+                        {
+                            let _ = handle;
+                            unreachable!();
+                        }
+
+                        #[cfg(target_arch = "wasm32")]
+                        {
+                            #[link(wasm_import_module = "[export]golem:order-stub/stub-order")]
+                            extern "C" {
+                                #[link_name = "[resource-rep]load-snapshot"]
+                                fn rep(_: u32) -> *mut u8;
+                            }
+                            unsafe { rep(handle) }
+                        }
+                    }
+
+                    fn new(location: GolemRpcUri) -> Self;
+                    fn blocking_load(&self, bytes: _rt::Vec<u8>) -> Result<(), _rt::String>;
+                    fn load(&self, bytes: _rt::Vec<u8>) -> FutureLoadResult;
+                }
                 pub trait GuestApi: 'static {
                     #[doc(hidden)]
                     unsafe fn _resource_new(val: *mut u8) -> u32
@@ -10728,6 +11741,30 @@ pub mod exports {
                 macro_rules! __export_golem_order_stub_stub_order_cabi{
   ($ty:ident with_types_in $($path_to_types:tt)*) => (const _: () = {
 
+    #[export_name = "golem:order-stub/stub-order#[method]future-save-result.subscribe"]
+    unsafe extern "C" fn export_method_future_save_result_subscribe(arg0: *mut u8,) -> i32 {
+      $($path_to_types)*::_export_method_future_save_result_subscribe_cabi::<<$ty as $($path_to_types)*::Guest>::FutureSaveResult>(arg0)
+    }
+    #[export_name = "golem:order-stub/stub-order#[method]future-save-result.get"]
+    unsafe extern "C" fn export_method_future_save_result_get(arg0: *mut u8,) -> *mut u8 {
+      $($path_to_types)*::_export_method_future_save_result_get_cabi::<<$ty as $($path_to_types)*::Guest>::FutureSaveResult>(arg0)
+    }
+    #[export_name = "cabi_post_golem:order-stub/stub-order#[method]future-save-result.get"]
+    unsafe extern "C" fn _post_return_method_future_save_result_get(arg0: *mut u8,) {
+      $($path_to_types)*::__post_return_method_future_save_result_get::<<$ty as $($path_to_types)*::Guest>::FutureSaveResult>(arg0)
+    }
+    #[export_name = "golem:order-stub/stub-order#[method]future-load-result.subscribe"]
+    unsafe extern "C" fn export_method_future_load_result_subscribe(arg0: *mut u8,) -> i32 {
+      $($path_to_types)*::_export_method_future_load_result_subscribe_cabi::<<$ty as $($path_to_types)*::Guest>::FutureLoadResult>(arg0)
+    }
+    #[export_name = "golem:order-stub/stub-order#[method]future-load-result.get"]
+    unsafe extern "C" fn export_method_future_load_result_get(arg0: *mut u8,) -> *mut u8 {
+      $($path_to_types)*::_export_method_future_load_result_get_cabi::<<$ty as $($path_to_types)*::Guest>::FutureLoadResult>(arg0)
+    }
+    #[export_name = "cabi_post_golem:order-stub/stub-order#[method]future-load-result.get"]
+    unsafe extern "C" fn _post_return_method_future_load_result_get(arg0: *mut u8,) {
+      $($path_to_types)*::__post_return_method_future_load_result_get::<<$ty as $($path_to_types)*::Guest>::FutureLoadResult>(arg0)
+    }
     #[export_name = "golem:order-stub/stub-order#[method]future-add-item-result.subscribe"]
     unsafe extern "C" fn export_method_future_add_item_result_subscribe(arg0: *mut u8,) -> i32 {
       $($path_to_types)*::_export_method_future_add_item_result_subscribe_cabi::<<$ty as $($path_to_types)*::Guest>::FutureAddItemResult>(arg0)
@@ -10823,6 +11860,38 @@ pub mod exports {
     #[export_name = "cabi_post_golem:order-stub/stub-order#[method]future-get-result.get"]
     unsafe extern "C" fn _post_return_method_future_get_result_get(arg0: *mut u8,) {
       $($path_to_types)*::__post_return_method_future_get_result_get::<<$ty as $($path_to_types)*::Guest>::FutureGetResult>(arg0)
+    }
+    #[export_name = "golem:order-stub/stub-order#[constructor]save-snapshot"]
+    unsafe extern "C" fn export_constructor_save_snapshot(arg0: *mut u8,arg1: usize,) -> i32 {
+      $($path_to_types)*::_export_constructor_save_snapshot_cabi::<<$ty as $($path_to_types)*::Guest>::SaveSnapshot>(arg0, arg1)
+    }
+    #[export_name = "golem:order-stub/stub-order#[method]save-snapshot.blocking-save"]
+    unsafe extern "C" fn export_method_save_snapshot_blocking_save(arg0: *mut u8,) -> *mut u8 {
+      $($path_to_types)*::_export_method_save_snapshot_blocking_save_cabi::<<$ty as $($path_to_types)*::Guest>::SaveSnapshot>(arg0)
+    }
+    #[export_name = "cabi_post_golem:order-stub/stub-order#[method]save-snapshot.blocking-save"]
+    unsafe extern "C" fn _post_return_method_save_snapshot_blocking_save(arg0: *mut u8,) {
+      $($path_to_types)*::__post_return_method_save_snapshot_blocking_save::<<$ty as $($path_to_types)*::Guest>::SaveSnapshot>(arg0)
+    }
+    #[export_name = "golem:order-stub/stub-order#[method]save-snapshot.save"]
+    unsafe extern "C" fn export_method_save_snapshot_save(arg0: *mut u8,) -> i32 {
+      $($path_to_types)*::_export_method_save_snapshot_save_cabi::<<$ty as $($path_to_types)*::Guest>::SaveSnapshot>(arg0)
+    }
+    #[export_name = "golem:order-stub/stub-order#[constructor]load-snapshot"]
+    unsafe extern "C" fn export_constructor_load_snapshot(arg0: *mut u8,arg1: usize,) -> i32 {
+      $($path_to_types)*::_export_constructor_load_snapshot_cabi::<<$ty as $($path_to_types)*::Guest>::LoadSnapshot>(arg0, arg1)
+    }
+    #[export_name = "golem:order-stub/stub-order#[method]load-snapshot.blocking-load"]
+    unsafe extern "C" fn export_method_load_snapshot_blocking_load(arg0: *mut u8,arg1: *mut u8,arg2: usize,) -> *mut u8 {
+      $($path_to_types)*::_export_method_load_snapshot_blocking_load_cabi::<<$ty as $($path_to_types)*::Guest>::LoadSnapshot>(arg0, arg1, arg2)
+    }
+    #[export_name = "cabi_post_golem:order-stub/stub-order#[method]load-snapshot.blocking-load"]
+    unsafe extern "C" fn _post_return_method_load_snapshot_blocking_load(arg0: *mut u8,) {
+      $($path_to_types)*::__post_return_method_load_snapshot_blocking_load::<<$ty as $($path_to_types)*::Guest>::LoadSnapshot>(arg0)
+    }
+    #[export_name = "golem:order-stub/stub-order#[method]load-snapshot.load"]
+    unsafe extern "C" fn export_method_load_snapshot_load(arg0: *mut u8,arg1: *mut u8,arg2: usize,) -> i32 {
+      $($path_to_types)*::_export_method_load_snapshot_load_cabi::<<$ty as $($path_to_types)*::Guest>::LoadSnapshot>(arg0, arg1, arg2)
     }
     #[export_name = "golem:order-stub/stub-order#[constructor]api"]
     unsafe extern "C" fn export_constructor_api(arg0: *mut u8,arg1: usize,) -> i32 {
@@ -10935,6 +12004,30 @@ pub mod exports {
 
     const _: () = {
       #[doc(hidden)]
+      #[export_name = "golem:order-stub/stub-order#[dtor]future-save-result"]
+      #[allow(non_snake_case)]
+      unsafe extern "C" fn dtor(rep: *mut u8) {
+        $($path_to_types)*::FutureSaveResult::dtor::<
+        <$ty as $($path_to_types)*::Guest>::FutureSaveResult
+        >(rep)
+      }
+    };
+
+
+    const _: () = {
+      #[doc(hidden)]
+      #[export_name = "golem:order-stub/stub-order#[dtor]future-load-result"]
+      #[allow(non_snake_case)]
+      unsafe extern "C" fn dtor(rep: *mut u8) {
+        $($path_to_types)*::FutureLoadResult::dtor::<
+        <$ty as $($path_to_types)*::Guest>::FutureLoadResult
+        >(rep)
+      }
+    };
+
+
+    const _: () = {
+      #[doc(hidden)]
       #[export_name = "golem:order-stub/stub-order#[dtor]future-add-item-result"]
       #[allow(non_snake_case)]
       unsafe extern "C" fn dtor(rep: *mut u8) {
@@ -11024,6 +12117,30 @@ pub mod exports {
       unsafe extern "C" fn dtor(rep: *mut u8) {
         $($path_to_types)*::FutureGetResult::dtor::<
         <$ty as $($path_to_types)*::Guest>::FutureGetResult
+        >(rep)
+      }
+    };
+
+
+    const _: () = {
+      #[doc(hidden)]
+      #[export_name = "golem:order-stub/stub-order#[dtor]save-snapshot"]
+      #[allow(non_snake_case)]
+      unsafe extern "C" fn dtor(rep: *mut u8) {
+        $($path_to_types)*::SaveSnapshot::dtor::<
+        <$ty as $($path_to_types)*::Guest>::SaveSnapshot
+        >(rep)
+      }
+    };
+
+
+    const _: () = {
+      #[doc(hidden)]
+      #[export_name = "golem:order-stub/stub-order#[dtor]load-snapshot"]
+      #[allow(non_snake_case)]
+      unsafe extern "C" fn dtor(rep: *mut u8) {
+        $($path_to_types)*::LoadSnapshot::dtor::<
+        <$ty as $($path_to_types)*::Guest>::LoadSnapshot
         >(rep)
       }
     };
@@ -11365,8 +12482,8 @@ pub(crate) use __export_wasm_rpc_stub_order_impl as export;
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.25.0:wasm-rpc-stub-order:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 5486] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xe4)\x01A\x02\x01A\x17\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 6112] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xd6.\x01A\x02\x01A\x17\
 \x01B\x0a\x04\0\x08pollable\x03\x01\x01h\0\x01@\x01\x04self\x01\0\x7f\x04\0\x16[\
 method]pollable.ready\x01\x02\x01@\x01\x04self\x01\x01\0\x04\0\x16[method]pollab\
 le.block\x01\x03\x01p\x01\x01py\x01@\x01\x02in\x04\0\x05\x04\0\x04poll\x01\x06\x03\
@@ -11420,7 +12537,7 @@ ing-address\x01!\x01@\0\0\x1e\x04\0\x0aship-order\x01\"\x04\0\x0ccancel-order\x0
 \x17product-not-found-error\x02\x03\0\x02\x17pricing-not-found-error\x02\x03\0\x02\
 \x17address-not-valid-error\x02\x03\0\x02\x14item-not-found-error\x02\x03\0\x02\x11\
 empty-items-error\x02\x03\0\x02\x1dbilling-address-not-set-error\x02\x03\0\x02\x18\
-action-not-allowed-error\x02\x03\0\x02\x05error\x01B\x80\x01\x02\x03\x02\x01\x04\
+action-not-allowed-error\x02\x03\0\x02\x05error\x01B\xa4\x01\x02\x03\x02\x01\x04\
 \x04\0\x0dgolem-rpc-uri\x03\0\0\x02\x03\x02\x01\x01\x04\0\x10wasi-io-pollable\x03\
 \0\x02\x02\x03\x02\x01\x05\x04\0\x0corder-status\x03\0\x04\x02\x03\x02\x01\x06\x04\
 \0\x07address\x03\0\x06\x02\x03\x02\x01\x07\x04\0\x0aorder-item\x03\0\x08\x02\x03\
@@ -11431,49 +12548,62 @@ address-not-valid-error\x03\0\x12\x02\x03\x02\x01\x0d\x04\0\x14item-not-found-er
 ror\x03\0\x14\x02\x03\x02\x01\x0e\x04\0\x11empty-items-error\x03\0\x16\x02\x03\x02\
 \x01\x0f\x04\0\x1dbilling-address-not-set-error\x03\0\x18\x02\x03\x02\x01\x10\x04\
 \0\x18action-not-allowed-error\x03\0\x1a\x02\x03\x02\x01\x11\x04\0\x05error\x03\0\
-\x1c\x04\0\x16future-add-item-result\x03\x01\x04\0\x19future-remove-item-result\x03\
-\x01\x04\0\"future-update-item-quantity-result\x03\x01\x04\0%future-update-shipp\
-ing-address-result\x03\x01\x04\0$future-update-billing-address-result\x03\x01\x04\
-\0\x18future-ship-order-result\x03\x01\x04\0\x1afuture-cancel-order-result\x03\x01\
-\x04\0\x11future-get-result\x03\x01\x04\0\x03api\x03\x01\x01h\x1e\x01i\x03\x01@\x01\
-\x04self'\0(\x04\0([method]future-add-item-result.subscribe\x01)\x01j\0\x01\x1d\x01\
-k*\x01@\x01\x04self'\0+\x04\0\"[method]future-add-item-result.get\x01,\x01h\x1f\x01\
-@\x01\x04self-\0(\x04\0+[method]future-remove-item-result.subscribe\x01.\x01@\x01\
-\x04self-\0+\x04\0%[method]future-remove-item-result.get\x01/\x01h\x20\x01@\x01\x04\
-self0\0(\x04\04[method]future-update-item-quantity-result.subscribe\x011\x01@\x01\
-\x04self0\0+\x04\0.[method]future-update-item-quantity-result.get\x012\x01h!\x01\
-@\x01\x04self3\0(\x04\07[method]future-update-shipping-address-result.subscribe\x01\
-4\x01@\x01\x04self3\0+\x04\01[method]future-update-shipping-address-result.get\x01\
-5\x01h\"\x01@\x01\x04self6\0(\x04\06[method]future-update-billing-address-result\
-.subscribe\x017\x01@\x01\x04self6\0+\x04\00[method]future-update-billing-address\
--result.get\x018\x01h#\x01@\x01\x04self9\0(\x04\0*[method]future-ship-order-resu\
-lt.subscribe\x01:\x01@\x01\x04self9\0+\x04\0$[method]future-ship-order-result.ge\
-t\x01;\x01h$\x01@\x01\x04self<\0(\x04\0,[method]future-cancel-order-result.subsc\
-ribe\x01=\x01@\x01\x04self<\0+\x04\0&[method]future-cancel-order-result.get\x01>\
-\x01h%\x01@\x01\x04self?\0(\x04\0#[method]future-get-result.subscribe\x01@\x01k\x0b\
-\x01k\xc1\0\x01@\x01\x04self?\0\xc2\0\x04\0\x1d[method]future-get-result.get\x01\
-C\x01i&\x01@\x01\x08location\x01\0\xc4\0\x04\0\x10[constructor]api\x01E\x01h&\x01\
-@\x02\x04self\xc6\0\x04data\x0d\x01\0\x04\0%[method]api.blocking-initialize-orde\
-r\x01G\x04\0\x1c[method]api.initialize-order\x01G\x01@\x03\x04self\xc6\0\x0aprod\
-uct-ids\x08quantityy\0*\x04\0\x1d[method]api.blocking-add-item\x01H\x01i\x1e\x01\
-@\x03\x04self\xc6\0\x0aproduct-ids\x08quantityy\0\xc9\0\x04\0\x14[method]api.add\
--item\x01J\x01@\x02\x04self\xc6\0\x0aproduct-ids\0*\x04\0\x20[method]api.blockin\
-g-remove-item\x01K\x01i\x1f\x01@\x02\x04self\xc6\0\x0aproduct-ids\0\xcc\0\x04\0\x17\
-[method]api.remove-item\x01M\x04\0)[method]api.blocking-update-item-quantity\x01\
-H\x01i\x20\x01@\x03\x04self\xc6\0\x0aproduct-ids\x08quantityy\0\xce\0\x04\0\x20[\
-method]api.update-item-quantity\x01O\x01@\x02\x04self\xc6\0\x07address\x07\0*\x04\
-\0,[method]api.blocking-update-shipping-address\x01P\x01i!\x01@\x02\x04self\xc6\0\
-\x07address\x07\0\xd1\0\x04\0#[method]api.update-shipping-address\x01R\x04\0+[me\
-thod]api.blocking-update-billing-address\x01P\x01i\"\x01@\x02\x04self\xc6\0\x07a\
-ddress\x07\0\xd3\0\x04\0\"[method]api.update-billing-address\x01T\x01@\x01\x04se\
-lf\xc6\0\0*\x04\0\x1f[method]api.blocking-ship-order\x01U\x01i#\x01@\x01\x04self\
-\xc6\0\0\xd6\0\x04\0\x16[method]api.ship-order\x01W\x04\0![method]api.blocking-c\
-ancel-order\x01U\x01i$\x01@\x01\x04self\xc6\0\0\xd8\0\x04\0\x18[method]api.cance\
-l-order\x01Y\x01@\x01\x04self\xc6\0\0\xc1\0\x04\0\x18[method]api.blocking-get\x01\
-Z\x01i%\x01@\x01\x04self\xc6\0\0\xdb\0\x04\0\x0f[method]api.get\x01\\\x04\x01\x1b\
-golem:order-stub/stub-order\x05\x12\x04\x01$golem:order-stub/wasm-rpc-stub-order\
-\x04\0\x0b\x19\x01\0\x13wasm-rpc-stub-order\x03\0\0\0G\x09producers\x01\x0cproce\
-ssed-by\x02\x0dwit-component\x070.208.1\x10wit-bindgen-rust\x060.25.0";
+\x1c\x04\0\x12future-save-result\x03\x01\x04\0\x12future-load-result\x03\x01\x04\
+\0\x16future-add-item-result\x03\x01\x04\0\x19future-remove-item-result\x03\x01\x04\
+\0\"future-update-item-quantity-result\x03\x01\x04\0%future-update-shipping-addr\
+ess-result\x03\x01\x04\0$future-update-billing-address-result\x03\x01\x04\0\x18f\
+uture-ship-order-result\x03\x01\x04\0\x1afuture-cancel-order-result\x03\x01\x04\0\
+\x11future-get-result\x03\x01\x04\0\x0dsave-snapshot\x03\x01\x04\0\x0dload-snaps\
+hot\x03\x01\x04\0\x03api\x03\x01\x01h\x1e\x01i\x03\x01@\x01\x04self+\0,\x04\0$[m\
+ethod]future-save-result.subscribe\x01-\x01p}\x01k.\x01@\x01\x04self+\0/\x04\0\x1e\
+[method]future-save-result.get\x010\x01h\x1f\x01@\x01\x04self1\0,\x04\0$[method]\
+future-load-result.subscribe\x012\x01j\0\x01s\x01k3\x01@\x01\x04self1\04\x04\0\x1e\
+[method]future-load-result.get\x015\x01h\x20\x01@\x01\x04self6\0,\x04\0([method]\
+future-add-item-result.subscribe\x017\x01j\0\x01\x1d\x01k8\x01@\x01\x04self6\09\x04\
+\0\"[method]future-add-item-result.get\x01:\x01h!\x01@\x01\x04self;\0,\x04\0+[me\
+thod]future-remove-item-result.subscribe\x01<\x01@\x01\x04self;\09\x04\0%[method\
+]future-remove-item-result.get\x01=\x01h\"\x01@\x01\x04self>\0,\x04\04[method]fu\
+ture-update-item-quantity-result.subscribe\x01?\x01@\x01\x04self>\09\x04\0.[meth\
+od]future-update-item-quantity-result.get\x01@\x01h#\x01@\x01\x04self\xc1\0\0,\x04\
+\07[method]future-update-shipping-address-result.subscribe\x01B\x01@\x01\x04self\
+\xc1\0\09\x04\01[method]future-update-shipping-address-result.get\x01C\x01h$\x01\
+@\x01\x04self\xc4\0\0,\x04\06[method]future-update-billing-address-result.subscr\
+ibe\x01E\x01@\x01\x04self\xc4\0\09\x04\00[method]future-update-billing-address-r\
+esult.get\x01F\x01h%\x01@\x01\x04self\xc7\0\0,\x04\0*[method]future-ship-order-r\
+esult.subscribe\x01H\x01@\x01\x04self\xc7\0\09\x04\0$[method]future-ship-order-r\
+esult.get\x01I\x01h&\x01@\x01\x04self\xca\0\0,\x04\0,[method]future-cancel-order\
+-result.subscribe\x01K\x01@\x01\x04self\xca\0\09\x04\0&[method]future-cancel-ord\
+er-result.get\x01L\x01h'\x01@\x01\x04self\xcd\0\0,\x04\0#[method]future-get-resu\
+lt.subscribe\x01N\x01k\x0b\x01k\xcf\0\x01@\x01\x04self\xcd\0\0\xd0\0\x04\0\x1d[m\
+ethod]future-get-result.get\x01Q\x01i(\x01@\x01\x08location\x01\0\xd2\0\x04\0\x1a\
+[constructor]save-snapshot\x01S\x01h(\x01@\x01\x04self\xd4\0\0.\x04\0#[method]sa\
+ve-snapshot.blocking-save\x01U\x01i\x1e\x01@\x01\x04self\xd4\0\0\xd6\0\x04\0\x1a\
+[method]save-snapshot.save\x01W\x01i)\x01@\x01\x08location\x01\0\xd8\0\x04\0\x1a\
+[constructor]load-snapshot\x01Y\x01h)\x01@\x02\x04self\xda\0\x05bytes.\03\x04\0#\
+[method]load-snapshot.blocking-load\x01[\x01i\x1f\x01@\x02\x04self\xda\0\x05byte\
+s.\0\xdc\0\x04\0\x1a[method]load-snapshot.load\x01]\x01i*\x01@\x01\x08location\x01\
+\0\xde\0\x04\0\x10[constructor]api\x01_\x01h*\x01@\x02\x04self\xe0\0\x04data\x0d\
+\x01\0\x04\0%[method]api.blocking-initialize-order\x01a\x04\0\x1c[method]api.ini\
+tialize-order\x01a\x01@\x03\x04self\xe0\0\x0aproduct-ids\x08quantityy\08\x04\0\x1d\
+[method]api.blocking-add-item\x01b\x01i\x20\x01@\x03\x04self\xe0\0\x0aproduct-id\
+s\x08quantityy\0\xe3\0\x04\0\x14[method]api.add-item\x01d\x01@\x02\x04self\xe0\0\
+\x0aproduct-ids\08\x04\0\x20[method]api.blocking-remove-item\x01e\x01i!\x01@\x02\
+\x04self\xe0\0\x0aproduct-ids\0\xe6\0\x04\0\x17[method]api.remove-item\x01g\x04\0\
+)[method]api.blocking-update-item-quantity\x01b\x01i\"\x01@\x03\x04self\xe0\0\x0a\
+product-ids\x08quantityy\0\xe8\0\x04\0\x20[method]api.update-item-quantity\x01i\x01\
+@\x02\x04self\xe0\0\x07address\x07\08\x04\0,[method]api.blocking-update-shipping\
+-address\x01j\x01i#\x01@\x02\x04self\xe0\0\x07address\x07\0\xeb\0\x04\0#[method]\
+api.update-shipping-address\x01l\x04\0+[method]api.blocking-update-billing-addre\
+ss\x01j\x01i$\x01@\x02\x04self\xe0\0\x07address\x07\0\xed\0\x04\0\"[method]api.u\
+pdate-billing-address\x01n\x01@\x01\x04self\xe0\0\08\x04\0\x1f[method]api.blocki\
+ng-ship-order\x01o\x01i%\x01@\x01\x04self\xe0\0\0\xf0\0\x04\0\x16[method]api.shi\
+p-order\x01q\x04\0![method]api.blocking-cancel-order\x01o\x01i&\x01@\x01\x04self\
+\xe0\0\0\xf2\0\x04\0\x18[method]api.cancel-order\x01s\x01@\x01\x04self\xe0\0\0\xcf\
+\0\x04\0\x18[method]api.blocking-get\x01t\x01i'\x01@\x01\x04self\xe0\0\0\xf5\0\x04\
+\0\x0f[method]api.get\x01v\x04\x01\x1bgolem:order-stub/stub-order\x05\x12\x04\x01\
+$golem:order-stub/wasm-rpc-stub-order\x04\0\x0b\x19\x01\0\x13wasm-rpc-stub-order\
+\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit-component\x070.208.1\x10\
+wit-bindgen-rust\x060.25.0";
 
 #[inline(never)]
 #[doc(hidden)]
