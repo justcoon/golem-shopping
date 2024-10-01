@@ -262,6 +262,8 @@ dependencies = [
  "golem-rust",
  "once_cell",
  "rand",
+ "serde",
+ "serde-wasm-bindgen",
  "wit-bindgen-rt",
 ]
 

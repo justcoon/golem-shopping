@@ -1,23 +1,13 @@
 mod bindings;
 
 use crate::bindings::exports::golem::order::api::*;
-use std::cell::RefCell;
-use std::env;
-
 use crate::bindings::golem::pricing::api::PricingItem;
 use crate::bindings::golem::product_stub::stub_product::Product;
+use std::cell::RefCell;
+use std::env;
+mod domain;
 
 struct Component;
-
-fn get_total_price(items: Vec<OrderItem>) -> f32 {
-    let mut total = 0f32;
-
-    for item in items {
-        total += item.price * item.quantity as f32;
-    }
-
-    total
-}
 
 fn get_product_worker_urn(product_id: String) -> String {
     let component_id = std::env::var("PRODUCT_COMPONENT_ID").expect("PRODUCT_COMPONENT_ID not set");
@@ -51,10 +41,10 @@ fn get_pricing(product_id: String, currency: String, zone: String) -> Option<Pri
     api.blocking_get_price(&currency, &zone)
 }
 
-fn action_not_allowed_error(status: OrderStatus) -> Error {
+fn action_not_allowed_error(status: domain::order::OrderStatus) -> Error {
     Error::ActionNotAllowed(ActionNotAllowedError {
         message: "Can not update order with status".to_string(),
-        status,
+        status: status.into(),
     })
 }
 
@@ -77,24 +67,14 @@ fn product_not_found_error(product_id: String) -> Error {
 }
 
 thread_local! {
-    static STATE: RefCell<Option<Order>> = const { RefCell::new(None) };
+    static STATE: RefCell<Option<domain::order::Order>> = const { RefCell::new(None) };
 }
 
-fn with_state<T>(f: impl FnOnce(&mut Order) -> T) -> T {
+fn with_state<T>(f: impl FnOnce(&mut domain::order::Order) -> T) -> T {
     STATE.with_borrow_mut(|state| {
         if state.is_none() {
             let worker_name = env::var("GOLEM_WORKER_NAME").expect("GOLEM_WORKER_NAME must be set");
-            let value = Order {
-                order_id: worker_name,
-                user_id: "".to_string(),
-                order_status: OrderStatus::New,
-                items: vec![],
-                shipping_address: None,
-                billing_address: None,
-                total: 0f32,
-                currency: "USD".to_string(),
-                timestamp: 0,
-            };
+            let value = domain::order::Order::new(worker_name, "".to_string());
             *state = Some(value);
         }
 
@@ -109,10 +89,10 @@ impl Guest for Component {
             state.user_id = data.user_id;
             state.currency = data.currency;
             state.timestamp = data.timestamp;
-            state.billing_address = data.billing_address;
-            state.shipping_address = data.shipping_address;
+            state.billing_address = data.billing_address.map(|v| v.into());
+            state.shipping_address = data.shipping_address.map(|v| v.into());
             state.total = data.total;
-            state.items = data.items;
+            state.items = data.items.into_iter().map(|item| item.into()).collect();
         });
     }
 
@@ -123,7 +103,7 @@ impl Guest for Component {
                 product_id, state.order_id, state.user_id
             );
 
-            if state.order_status == OrderStatus::New {
+            if state.order_status == domain::order::OrderStatus::New {
                 let mut updated = false;
                 for item in &mut state.items {
                     if item.product_id == product_id {
@@ -141,7 +121,7 @@ impl Guest for Component {
                     );
                     match (product, pricing) {
                         (Some(product), Some(pricing)) => {
-                            state.items.push(OrderItem {
+                            state.items.push(domain::order::OrderItem {
                                 product_id,
                                 name: product.name,
                                 price: pricing.price,
@@ -153,7 +133,7 @@ impl Guest for Component {
                     }
                 }
 
-                state.total = get_total_price(state.items.clone());
+                state.total = domain::order::get_total_price(state.items.clone());
 
                 Ok(())
             } else {
@@ -168,10 +148,10 @@ impl Guest for Component {
                 "Removing item with product {} from the order {} of user {}",
                 product_id, state.order_id, state.user_id
             );
-            if state.order_status == OrderStatus::New {
+            if state.order_status == domain::order::OrderStatus::New {
                 if state.items.iter().any(|item| item.product_id == product_id) {
                     state.items.retain(|item| item.product_id != product_id);
-                    state.total = get_total_price(state.items.clone());
+                    state.total = domain::order::get_total_price(state.items.clone());
                     Ok(())
                 } else {
                     Err(item_not_found_error(product_id))
@@ -188,7 +168,7 @@ impl Guest for Component {
                 "Updating quantity of item with product {} to {} in the order {} of user {}",
                 product_id, quantity, state.order_id, state.user_id
             );
-            if state.order_status == OrderStatus::New {
+            if state.order_status == domain::order::OrderStatus::New {
                 let mut updated = false;
                 for item in &mut state.items {
                     if item.product_id == product_id {
@@ -198,7 +178,7 @@ impl Guest for Component {
                 }
 
                 if updated {
-                    state.total = get_total_price(state.items.clone());
+                    state.total = domain::order::get_total_price(state.items.clone());
 
                     Ok(())
                 } else {
@@ -214,9 +194,9 @@ impl Guest for Component {
         with_state(|state| {
             println!("Cancelling order {} of user {}", state.order_id, state.user_id);
 
-            if state.order_status == OrderStatus::New {
+            if state.order_status == domain::order::OrderStatus::New {
                 println!("Cancelling order {} of user {}", state.order_id, state.user_id);
-                state.order_status = OrderStatus::Cancelled;
+                state.order_status = domain::order::OrderStatus::Cancelled;
                 Ok(())
             } else {
                 println!("Cancelling order {} of user {}", state.order_id, state.user_id);
@@ -228,9 +208,9 @@ impl Guest for Component {
 
     fn ship_order() -> Result<(), Error> {
         with_state(|state| {
-            if state.order_status == OrderStatus::New {
+            if state.order_status == domain::order::OrderStatus::New {
                 println!("Shipping order {} of user {}", state.order_id, state.user_id);
-                state.order_status = OrderStatus::Shipped;
+                state.order_status = domain::order::OrderStatus::Shipped;
                 Ok(())
             } else {
                 println!("Shipping order {} of user {}", state.order_id, state.user_id);
@@ -245,8 +225,8 @@ impl Guest for Component {
                 "Updating billing address in the order {} of user {}",
                 state.order_id, state.user_id
             );
-            if state.order_status == OrderStatus::New {
-                state.billing_address = Some(address);
+            if state.order_status == domain::order::OrderStatus::New {
+                state.billing_address = Some(address.into());
                 Ok(())
             } else {
                 Err(action_not_allowed_error(state.order_status))
@@ -260,8 +240,8 @@ impl Guest for Component {
                 "Updating shipping address in the order {} of user {}",
                 state.order_id, state.user_id
             );
-            if state.order_status == OrderStatus::New {
-                state.shipping_address = Some(address);
+            if state.order_status == domain::order::OrderStatus::New {
+                state.shipping_address = Some(address.into());
                 Ok(())
             } else {
                 Err(action_not_allowed_error(state.order_status))
@@ -273,7 +253,7 @@ impl Guest for Component {
         STATE.with_borrow(|state| {
             println!("Getting order");
 
-            state.clone()
+            state.clone().map(|state| state.into())
         })
     }
 }

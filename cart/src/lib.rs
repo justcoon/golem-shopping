@@ -1,29 +1,18 @@
 mod bindings;
+mod domain;
 
 use crate::bindings::exports::golem::cart::api::*;
+use crate::bindings::golem::pricing_stub::stub_pricing::PricingItem;
+use crate::bindings::golem::product_stub::stub_product::Product;
 use std::cell::RefCell;
 use std::env;
 
-use crate::bindings::golem::pricing_stub::stub_pricing::PricingItem;
-use crate::bindings::golem::product_stub::stub_product::Product;
-
-use crate::bindings::golem::order::api::OrderItem;
 use uuid::Uuid;
 
 struct Component;
 
 fn generate_order_id() -> String {
     Uuid::new_v4().to_string()
-}
-
-fn get_total_price(items: Vec<CartItem>) -> f32 {
-    let mut total = 0f32;
-
-    for item in items {
-        total += item.price * item.quantity as f32;
-    }
-
-    total
 }
 
 fn get_product_worker_urn(product_id: String) -> String {
@@ -63,7 +52,7 @@ fn get_pricing(product_id: String, currency: String, zone: String) -> Option<Pri
     api.blocking_get_price(&currency, &zone)
 }
 
-fn validate_cart(cart: Cart) -> Result<(), Error> {
+fn validate_cart(cart: domain::cart::Cart) -> Result<(), Error> {
     if cart.items.is_empty() {
         Err(Error::EmptyItems(EmptyItemsError { message: "Empty items".to_string() }))
     } else if cart.billing_address.is_none() {
@@ -75,7 +64,7 @@ fn validate_cart(cart: Cart) -> Result<(), Error> {
     }
 }
 
-fn create_order(order_id: String, cart: Cart) -> Result<String, Error> {
+fn create_order(order_id: String, cart: domain::cart::Cart) -> Result<String, Error> {
     println!("Creating order: {}", order_id);
 
     validate_cart(cart.clone())?;
@@ -85,48 +74,7 @@ fn create_order(order_id: String, cart: Cart) -> Result<String, Error> {
 
     let api = Api::new(&Uri { value: get_order_worker_urn(order_id.clone()) });
 
-    let shipping_address = cart.shipping_address.map(|x| Address {
-        street1: x.street1,
-        street2: x.street2,
-        state_or_region: x.state_or_region,
-        phone_number: x.phone_number,
-        postal_code: x.postal_code,
-        business_name: x.business_name,
-        name: x.name,
-        city: x.city,
-        country: x.country,
-    });
-
-    let billing_address = cart.billing_address.map(|x| Address {
-        street1: x.street1,
-        street2: x.street2,
-        state_or_region: x.state_or_region,
-        phone_number: x.phone_number,
-        postal_code: x.postal_code,
-        business_name: x.business_name,
-        name: x.name,
-        city: x.city,
-        country: x.country,
-    });
-
-    let order = CreateOrder {
-        user_id: cart.user_id,
-        items: cart
-            .items
-            .into_iter()
-            .map(|item| OrderItem {
-                product_id: item.product_id,
-                quantity: item.quantity,
-                price: item.price,
-                name: item.name,
-            })
-            .collect(),
-        total: cart.total,
-        currency: cart.currency,
-        timestamp: cart.timestamp,
-        shipping_address,
-        billing_address,
-    };
+    let order = cart.into();
 
     api.blocking_initialize_order(&order);
 
@@ -152,23 +100,14 @@ fn product_not_found_error(product_id: String) -> Error {
 }
 
 thread_local! {
-    static STATE: RefCell<Option<Cart>> = const { RefCell::new(None) };
+    static STATE: RefCell<Option<domain::cart::Cart>> = const { RefCell::new(None) };
 }
 
-fn with_state<T>(f: impl FnOnce(&mut Cart) -> T) -> T {
+fn with_state<T>(f: impl FnOnce(&mut domain::cart::Cart) -> T) -> T {
     STATE.with_borrow_mut(|state| {
         if state.is_none() {
             let worker_name = env::var("GOLEM_WORKER_NAME").expect("GOLEM_WORKER_NAME must be set");
-            let value = Cart {
-                user_id: worker_name,
-                items: vec![],
-                total: 0f32,
-                currency: "USD".to_string(),
-                shipping_address: None,
-                billing_address: None,
-                timestamp: 0,
-                previous_order_ids: vec![],
-            };
+            let value = domain::cart::Cart::new(worker_name);
             *state = Some(value);
         }
 
@@ -198,7 +137,7 @@ impl Guest for Component {
                     get_pricing(product_id.clone(), state.currency.clone(), "global".to_string());
                 match (product, pricing) {
                     (Some(product), Some(pricing)) => {
-                        state.items.push(CartItem {
+                        state.items.push(domain::cart::CartItem {
                             product_id,
                             name: product.name,
                             price: pricing.price,
@@ -212,7 +151,7 @@ impl Guest for Component {
                 }
             }
 
-            state.total = get_total_price(state.items.clone());
+            state.total = domain::cart::get_total_price(state.items.clone());
 
             Ok(())
         })
@@ -227,7 +166,7 @@ impl Guest for Component {
 
             if state.items.iter().any(|item| item.product_id == product_id) {
                 state.items.retain(|item| item.product_id != product_id);
-                state.total = get_total_price(state.items.clone());
+                state.total = domain::cart::get_total_price(state.items.clone());
                 Ok(())
             } else {
                 Err(item_not_found_error(product_id))
@@ -252,7 +191,7 @@ impl Guest for Component {
             }
 
             if updated {
-                state.total = get_total_price(state.items.clone());
+                state.total = domain::cart::get_total_price(state.items.clone());
 
                 Ok(())
             } else {
@@ -282,7 +221,7 @@ impl Guest for Component {
         with_state(|state| {
             println!("Updating billing address in the cart of user {}", state.user_id);
 
-            state.billing_address = Some(address);
+            state.billing_address = Some(address.into());
             Ok(())
         })
     }
@@ -291,7 +230,7 @@ impl Guest for Component {
         with_state(|state| {
             println!("Updating shipping address in the cart of user {}", state.user_id);
 
-            state.shipping_address = Some(address);
+            state.shipping_address = Some(address.into());
             Ok(())
         })
     }
@@ -300,7 +239,7 @@ impl Guest for Component {
         STATE.with_borrow(|state| {
             println!("Getting cart");
 
-            state.clone()
+            state.clone().map(|state| state.into())
         })
     }
 }
