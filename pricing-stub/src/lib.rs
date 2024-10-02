@@ -2,6 +2,20 @@
 use golem_wasm_rpc::*;
 #[allow(dead_code)]
 mod bindings;
+pub struct SaveSnapshot {
+    rpc: WasmRpc,
+}
+impl SaveSnapshot {}
+pub struct FutureSaveResult {
+    pub future_invoke_result: FutureInvokeResult,
+}
+pub struct LoadSnapshot {
+    rpc: WasmRpc,
+}
+impl LoadSnapshot {}
+pub struct FutureLoadResult {
+    pub future_invoke_result: FutureInvokeResult,
+}
 pub struct Api {
     rpc: WasmRpc,
 }
@@ -14,9 +28,142 @@ pub struct FutureGetResult {
 }
 struct Component;
 impl crate::bindings::exports::golem::pricing_stub::stub_pricing::Guest for Component {
+    type SaveSnapshot = crate::SaveSnapshot;
+    type FutureSaveResult = crate::FutureSaveResult;
+    type LoadSnapshot = crate::LoadSnapshot;
+    type FutureLoadResult = crate::FutureLoadResult;
     type Api = crate::Api;
     type FutureGetPriceResult = crate::FutureGetPriceResult;
     type FutureGetResult = crate::FutureGetResult;
+}
+impl crate::bindings::exports::golem::pricing_stub::stub_pricing::GuestFutureSaveResult
+    for FutureSaveResult
+{
+    fn subscribe(&self) -> bindings::wasi::io::poll::Pollable {
+        let pollable = self.future_invoke_result.subscribe();
+        let pollable =
+            unsafe { bindings::wasi::io::poll::Pollable::from_handle(pollable.take_handle()) };
+        pollable
+    }
+    fn get(&self) -> Option<Vec<u8>> {
+        self.future_invoke_result.get().map(|result| {
+            let result = result.expect(&format!(
+                "Failed to invoke remote {}",
+                "golem:pricing/save-snapshot.{save}"
+            ));
+            (result
+                .tuple_element(0)
+                .expect("tuple not found")
+                .list_elements(|item| item.u8().expect("u8 not found"))
+                .expect("list not found"))
+        })
+    }
+}
+impl crate::bindings::exports::golem::pricing_stub::stub_pricing::GuestSaveSnapshot
+    for SaveSnapshot
+{
+    fn new(location: crate::bindings::golem::rpc::types::Uri) -> Self {
+        let location = golem_wasm_rpc::Uri { value: location.value };
+        Self { rpc: WasmRpc::new(&location) }
+    }
+    fn blocking_save(&self) -> Vec<u8> {
+        let result = self.rpc.invoke_and_await("golem:pricing/save-snapshot.{save}", &[]).expect(
+            &format!("Failed to invoke-and-await remote {}", "golem:pricing/save-snapshot.{save}"),
+        );
+        (result
+            .tuple_element(0)
+            .expect("tuple not found")
+            .list_elements(|item| item.u8().expect("u8 not found"))
+            .expect("list not found"))
+    }
+    fn save(
+        &self,
+    ) -> crate::bindings::exports::golem::pricing_stub::stub_pricing::FutureSaveResult {
+        let result = self.rpc.async_invoke_and_await("golem:pricing/save-snapshot.{save}", &[]);
+        crate::bindings::exports::golem::pricing_stub::stub_pricing::FutureSaveResult::new(
+            FutureSaveResult { future_invoke_result: result },
+        )
+    }
+}
+impl crate::bindings::exports::golem::pricing_stub::stub_pricing::GuestFutureLoadResult
+    for FutureLoadResult
+{
+    fn subscribe(&self) -> bindings::wasi::io::poll::Pollable {
+        let pollable = self.future_invoke_result.subscribe();
+        let pollable =
+            unsafe { bindings::wasi::io::poll::Pollable::from_handle(pollable.take_handle()) };
+        pollable
+    }
+    fn get(&self) -> Option<Result<(), String>> {
+        self.future_invoke_result.get().map(|result| {
+            let result = result.expect(&format!(
+                "Failed to invoke remote {}",
+                "golem:pricing/load-snapshot.{load}"
+            ));
+            ({
+                let result = result
+                    .tuple_element(0)
+                    .expect("tuple not found")
+                    .result()
+                    .expect("result not found");
+                match result {
+                    Ok(ok_value) => Ok(()),
+                    Err(err_value) => Err(err_value
+                        .expect("result err value not found")
+                        .string()
+                        .expect("string not found")
+                        .to_string()),
+                }
+            })
+        })
+    }
+}
+impl crate::bindings::exports::golem::pricing_stub::stub_pricing::GuestLoadSnapshot
+    for LoadSnapshot
+{
+    fn new(location: crate::bindings::golem::rpc::types::Uri) -> Self {
+        let location = golem_wasm_rpc::Uri { value: location.value };
+        Self { rpc: WasmRpc::new(&location) }
+    }
+    fn blocking_load(&self, bytes: Vec<u8>) -> Result<(), String> {
+        let result = self
+            .rpc
+            .invoke_and_await(
+                "golem:pricing/load-snapshot.{load}",
+                &[WitValue::builder().list_fn(&bytes, |item, item_builder| item_builder.u8(*item))],
+            )
+            .expect(&format!(
+                "Failed to invoke-and-await remote {}",
+                "golem:pricing/load-snapshot.{load}"
+            ));
+        ({
+            let result = result
+                .tuple_element(0)
+                .expect("tuple not found")
+                .result()
+                .expect("result not found");
+            match result {
+                Ok(ok_value) => Ok(()),
+                Err(err_value) => Err(err_value
+                    .expect("result err value not found")
+                    .string()
+                    .expect("string not found")
+                    .to_string()),
+            }
+        })
+    }
+    fn load(
+        &self,
+        bytes: Vec<u8>,
+    ) -> crate::bindings::exports::golem::pricing_stub::stub_pricing::FutureLoadResult {
+        let result = self.rpc.async_invoke_and_await(
+            "golem:pricing/load-snapshot.{load}",
+            &[WitValue::builder().list_fn(&bytes, |item, item_builder| item_builder.u8(*item))],
+        );
+        crate::bindings::exports::golem::pricing_stub::stub_pricing::FutureLoadResult::new(
+            FutureLoadResult { future_invoke_result: result },
+        )
+    }
 }
 impl crate::bindings::exports::golem::pricing_stub::stub_pricing::GuestFutureGetPriceResult
     for FutureGetPriceResult
@@ -82,7 +229,7 @@ impl crate::bindings::exports::golem::pricing_stub::stub_pricing::GuestFutureGet
                 .map(|inner| {
                     let record = inner;
                     crate::bindings::golem::pricing::api::Pricing {
-                        asset_id: record
+                        product_id: record
                             .field(0usize)
                             .expect("record field not found")
                             .string()
@@ -369,7 +516,7 @@ impl crate::bindings::exports::golem::pricing_stub::stub_pricing::GuestApi for A
             |inner| {
                 let record = inner;
                 crate::bindings::golem::pricing::api::Pricing {
-                    asset_id: record
+                    product_id: record
                         .field(0usize)
                         .expect("record field not found")
                         .string()

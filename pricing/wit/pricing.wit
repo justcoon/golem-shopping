@@ -3,7 +3,7 @@ package golem:pricing;
 interface api {
 
   record pricing {
-    asset-id: string,
+    product-id: string,
     msrp-prices: list<pricing-item>,
     list-prices: list<pricing-item>,
   }
@@ -24,6 +24,9 @@ interface api {
 }
 
 world pricing {
+
+  export golem:api/save-snapshot@0.2.0;
+  export golem:api/load-snapshot@0.2.0;
 
   export api;
 }

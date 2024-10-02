@@ -5,6 +5,138 @@ pub mod exports {
     #[allow(dead_code)]
     pub mod golem {
         #[allow(dead_code)]
+        pub mod api {
+            #[allow(dead_code, clippy::all)]
+            pub mod save_snapshot {
+                #[used]
+                #[doc(hidden)]
+                #[cfg(target_arch = "wasm32")]
+                static __FORCE_SECTION_REF: fn() =
+                    super::super::super::super::__link_custom_section_describing_imports;
+                use super::super::super::super::_rt;
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn _export_save_cabi<T: Guest>() -> *mut u8 {
+                    #[cfg(target_arch = "wasm32")]
+                    _rt::run_ctors_once();
+                    let result0 = T::save();
+                    let ptr1 = _RET_AREA.0.as_mut_ptr().cast::<u8>();
+                    let vec2 = (result0).into_boxed_slice();
+                    let ptr2 = vec2.as_ptr().cast::<u8>();
+                    let len2 = vec2.len();
+                    ::core::mem::forget(vec2);
+                    *ptr1.add(4).cast::<usize>() = len2;
+                    *ptr1.add(0).cast::<*mut u8>() = ptr2.cast_mut();
+                    ptr1
+                }
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn __post_return_save<T: Guest>(arg0: *mut u8) {
+                    let l0 = *arg0.add(0).cast::<*mut u8>();
+                    let l1 = *arg0.add(4).cast::<usize>();
+                    let base2 = l0;
+                    let len2 = l1;
+                    _rt::cabi_dealloc(base2, len2 * 1, 1);
+                }
+                pub trait Guest {
+                    /// Saves the component's state into a user-defined snapshot
+                    fn save() -> _rt::Vec<u8>;
+                }
+                #[doc(hidden)]
+
+                macro_rules! __export_golem_api_save_snapshot_0_2_0_cabi{
+        ($ty:ident with_types_in $($path_to_types:tt)*) => (const _: () = {
+
+          #[export_name = "golem:api/save-snapshot@0.2.0#save"]
+          unsafe extern "C" fn export_save() -> *mut u8 {
+            $($path_to_types)*::_export_save_cabi::<$ty>()
+          }
+          #[export_name = "cabi_post_golem:api/save-snapshot@0.2.0#save"]
+          unsafe extern "C" fn _post_return_save(arg0: *mut u8,) {
+            $($path_to_types)*::__post_return_save::<$ty>(arg0)
+          }
+        };);
+      }
+                #[doc(hidden)]
+                pub(crate) use __export_golem_api_save_snapshot_0_2_0_cabi;
+                #[repr(align(4))]
+                struct _RetArea([::core::mem::MaybeUninit<u8>; 8]);
+                static mut _RET_AREA: _RetArea = _RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+            }
+
+            #[allow(dead_code, clippy::all)]
+            pub mod load_snapshot {
+                #[used]
+                #[doc(hidden)]
+                #[cfg(target_arch = "wasm32")]
+                static __FORCE_SECTION_REF: fn() =
+                    super::super::super::super::__link_custom_section_describing_imports;
+                use super::super::super::super::_rt;
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn _export_load_cabi<T: Guest>(arg0: *mut u8, arg1: usize) -> *mut u8 {
+                    #[cfg(target_arch = "wasm32")]
+                    _rt::run_ctors_once();
+                    let len0 = arg1;
+                    let result1 = T::load(_rt::Vec::from_raw_parts(arg0.cast(), len0, len0));
+                    let ptr2 = _RET_AREA.0.as_mut_ptr().cast::<u8>();
+                    match result1 {
+                        Ok(_) => {
+                            *ptr2.add(0).cast::<u8>() = (0i32) as u8;
+                        }
+                        Err(e) => {
+                            *ptr2.add(0).cast::<u8>() = (1i32) as u8;
+                            let vec3 = (e.into_bytes()).into_boxed_slice();
+                            let ptr3 = vec3.as_ptr().cast::<u8>();
+                            let len3 = vec3.len();
+                            ::core::mem::forget(vec3);
+                            *ptr2.add(8).cast::<usize>() = len3;
+                            *ptr2.add(4).cast::<*mut u8>() = ptr3.cast_mut();
+                        }
+                    };
+                    ptr2
+                }
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn __post_return_load<T: Guest>(arg0: *mut u8) {
+                    let l0 = i32::from(*arg0.add(0).cast::<u8>());
+                    match l0 {
+                        0 => (),
+                        _ => {
+                            let l1 = *arg0.add(4).cast::<*mut u8>();
+                            let l2 = *arg0.add(8).cast::<usize>();
+                            _rt::cabi_dealloc(l1, l2, 1);
+                        }
+                    }
+                }
+                pub trait Guest {
+                    /// Tries to load a user-defined snapshot, setting up the worker's state based on it.
+                    /// The function can return with a failure to indicate that the update is not possible.
+                    fn load(bytes: _rt::Vec<u8>) -> Result<(), _rt::String>;
+                }
+                #[doc(hidden)]
+
+                macro_rules! __export_golem_api_load_snapshot_0_2_0_cabi{
+      ($ty:ident with_types_in $($path_to_types:tt)*) => (const _: () = {
+
+        #[export_name = "golem:api/load-snapshot@0.2.0#load"]
+        unsafe extern "C" fn export_load(arg0: *mut u8,arg1: usize,) -> *mut u8 {
+          $($path_to_types)*::_export_load_cabi::<$ty>(arg0, arg1)
+        }
+        #[export_name = "cabi_post_golem:api/load-snapshot@0.2.0#load"]
+        unsafe extern "C" fn _post_return_load(arg0: *mut u8,) {
+          $($path_to_types)*::__post_return_load::<$ty>(arg0)
+        }
+      };);
+    }
+                #[doc(hidden)]
+                pub(crate) use __export_golem_api_load_snapshot_0_2_0_cabi;
+                #[repr(align(4))]
+                struct _RetArea([::core::mem::MaybeUninit<u8>; 12]);
+                static mut _RET_AREA: _RetArea = _RetArea([::core::mem::MaybeUninit::uninit(); 12]);
+            }
+        }
+        #[allow(dead_code)]
         pub mod product {
             #[allow(dead_code, clippy::all)]
             pub mod api {
@@ -111,22 +243,22 @@ pub mod exports {
                 #[doc(hidden)]
 
                 macro_rules! __export_golem_product_api_cabi{
-      ($ty:ident with_types_in $($path_to_types:tt)*) => (const _: () = {
+  ($ty:ident with_types_in $($path_to_types:tt)*) => (const _: () = {
 
-        #[export_name = "golem:product/api#initialize-product"]
-        unsafe extern "C" fn export_initialize_product(arg0: *mut u8,arg1: usize,arg2: *mut u8,arg3: usize,) {
-          $($path_to_types)*::_export_initialize_product_cabi::<$ty>(arg0, arg1, arg2, arg3)
-        }
-        #[export_name = "golem:product/api#get"]
-        unsafe extern "C" fn export_get() -> *mut u8 {
-          $($path_to_types)*::_export_get_cabi::<$ty>()
-        }
-        #[export_name = "cabi_post_golem:product/api#get"]
-        unsafe extern "C" fn _post_return_get(arg0: *mut u8,) {
-          $($path_to_types)*::__post_return_get::<$ty>(arg0)
-        }
-      };);
+    #[export_name = "golem:product/api#initialize-product"]
+    unsafe extern "C" fn export_initialize_product(arg0: *mut u8,arg1: usize,arg2: *mut u8,arg3: usize,) {
+      $($path_to_types)*::_export_initialize_product_cabi::<$ty>(arg0, arg1, arg2, arg3)
     }
+    #[export_name = "golem:product/api#get"]
+    unsafe extern "C" fn export_get() -> *mut u8 {
+      $($path_to_types)*::_export_get_cabi::<$ty>()
+    }
+    #[export_name = "cabi_post_golem:product/api#get"]
+    unsafe extern "C" fn _post_return_get(arg0: *mut u8,) {
+      $($path_to_types)*::__post_return_get::<$ty>(arg0)
+    }
+  };);
+}
                 #[doc(hidden)]
                 pub(crate) use __export_golem_product_api_cabi;
                 #[repr(align(4))]
@@ -137,19 +269,10 @@ pub mod exports {
     }
 }
 mod _rt {
-    pub use alloc_crate::string::String;
 
     #[cfg(target_arch = "wasm32")]
     pub fn run_ctors_once() {
         wit_bindgen_rt::run_ctors_once();
-    }
-    pub use alloc_crate::vec::Vec;
-    pub unsafe fn string_lift(bytes: Vec<u8>) -> String {
-        if cfg!(debug_assertions) {
-            String::from_utf8(bytes).unwrap()
-        } else {
-            String::from_utf8_unchecked(bytes)
-        }
     }
     pub unsafe fn cabi_dealloc(ptr: *mut u8, size: usize, align: usize) {
         if size == 0 {
@@ -158,8 +281,17 @@ mod _rt {
         let layout = alloc::Layout::from_size_align_unchecked(size, align);
         alloc::dealloc(ptr as *mut u8, layout);
     }
-    extern crate alloc as alloc_crate;
+    pub use alloc_crate::string::String;
+    pub use alloc_crate::vec::Vec;
+    pub unsafe fn string_lift(bytes: Vec<u8>) -> String {
+        if cfg!(debug_assertions) {
+            String::from_utf8(bytes).unwrap()
+        } else {
+            String::from_utf8_unchecked(bytes)
+        }
+    }
     pub use alloc_crate::alloc;
+    extern crate alloc as alloc_crate;
 }
 
 /// Generates `#[no_mangle]` functions to export the specified type as the
@@ -184,6 +316,8 @@ mod _rt {
 macro_rules! __export_product_impl {
   ($ty:ident) => (self::export!($ty with_types_in self););
   ($ty:ident with_types_in $($path_to_types_root:tt)*) => (
+  $($path_to_types_root)*::exports::golem::api::save_snapshot::__export_golem_api_save_snapshot_0_2_0_cabi!($ty with_types_in $($path_to_types_root)*::exports::golem::api::save_snapshot);
+  $($path_to_types_root)*::exports::golem::api::load_snapshot::__export_golem_api_load_snapshot_0_2_0_cabi!($ty with_types_in $($path_to_types_root)*::exports::golem::api::load_snapshot);
   $($path_to_types_root)*::exports::golem::product::api::__export_golem_product_api_cabi!($ty with_types_in $($path_to_types_root)*::exports::golem::product::api);
   )
 }
@@ -193,14 +327,16 @@ pub(crate) use __export_product_impl as export;
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.25.0:product:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 293] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xa7\x01\x01A\x02\x01\
-A\x02\x01B\x07\x01r\x03\x0aproduct-ids\x04names\x0bdescriptions\x04\0\x07product\
-\x03\0\0\x01@\x02\x04names\x0bdescriptions\x01\0\x04\0\x12initialize-product\x01\
-\x02\x01k\x01\x01@\0\0\x03\x04\0\x03get\x01\x04\x04\x01\x11golem:product/api\x05\
-\0\x04\x01\x15golem:product/product\x04\0\x0b\x0d\x01\0\x07product\x03\0\0\0G\x09\
-producers\x01\x0cprocessed-by\x02\x0dwit-component\x070.208.1\x10wit-bindgen-rus\
-t\x060.25.0";
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 413] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\x9f\x02\x01A\x02\x01\
+A\x06\x01B\x03\x01p}\x01@\0\0\0\x04\0\x04save\x01\x01\x04\x01\x1dgolem:api/save-\
+snapshot@0.2.0\x05\0\x01B\x04\x01p}\x01j\0\x01s\x01@\x01\x05bytes\0\0\x01\x04\0\x04\
+load\x01\x02\x04\x01\x1dgolem:api/load-snapshot@0.2.0\x05\x01\x01B\x07\x01r\x03\x0a\
+product-ids\x04names\x0bdescriptions\x04\0\x07product\x03\0\0\x01@\x02\x04names\x0b\
+descriptions\x01\0\x04\0\x12initialize-product\x01\x02\x01k\x01\x01@\0\0\x03\x04\
+\0\x03get\x01\x04\x04\x01\x11golem:product/api\x05\x02\x04\x01\x15golem:product/\
+product\x04\0\x0b\x0d\x01\0\x07product\x03\0\0\0G\x09producers\x01\x0cprocessed-\
+by\x02\x0dwit-component\x070.208.1\x10wit-bindgen-rust\x060.25.0";
 
 #[inline(never)]
 #[doc(hidden)]

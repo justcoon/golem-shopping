@@ -1,4 +1,5 @@
 mod bindings;
+mod domain;
 
 use crate::bindings::exports::golem::api::{load_snapshot, save_snapshot};
 use crate::bindings::exports::golem::order::api::*;
@@ -6,7 +7,6 @@ use crate::bindings::golem::pricing::api::PricingItem;
 use crate::bindings::golem::product_stub::stub_product::Product;
 use std::cell::RefCell;
 use std::env;
-mod domain;
 
 struct Component;
 
@@ -134,7 +134,7 @@ impl Guest for Component {
                     }
                 }
 
-                state.total = domain::order::get_total_price(state.items.clone());
+                state.recalculate_total();
 
                 Ok(())
             } else {
@@ -150,9 +150,7 @@ impl Guest for Component {
                 product_id, state.order_id, state.user_id
             );
             if state.order_status == domain::order::OrderStatus::New {
-                if state.items.iter().any(|item| item.product_id == product_id) {
-                    state.items.retain(|item| item.product_id != product_id);
-                    state.total = domain::order::get_total_price(state.items.clone());
+                if state.remove_item(product_id.clone()) {
                     Ok(())
                 } else {
                     Err(item_not_found_error(product_id))
@@ -170,17 +168,9 @@ impl Guest for Component {
                 product_id, quantity, state.order_id, state.user_id
             );
             if state.order_status == domain::order::OrderStatus::New {
-                let mut updated = false;
-                for item in &mut state.items {
-                    if item.product_id == product_id {
-                        item.quantity = quantity;
-                        updated = true;
-                    }
-                }
+                let updated = state.update_item_quantity(product_id.clone(), quantity);
 
                 if updated {
-                    state.total = domain::order::get_total_price(state.items.clone());
-
                     Ok(())
                 } else {
                     Err(item_not_found_error(product_id))
@@ -261,15 +251,16 @@ impl Guest for Component {
 
 impl save_snapshot::Guest for Component {
     fn save() -> Vec<u8> {
-        with_state(|state| serde_json::to_vec_pretty(&state).expect("Failed to serialize state"))
+        with_state(|state| {
+            domain::order::serdes::serialize(state).expect("Failed to serialize state")
+        })
     }
 }
 
 impl load_snapshot::Guest for Component {
     fn load(bytes: Vec<u8>) -> Result<(), String> {
         with_state(|state| {
-            let value: domain::order::Order =
-                serde_json::from_slice(&bytes).map_err(|err| err.to_string())?;
+            let value = domain::order::serdes::deserialize(&bytes)?;
             if value.order_id != state.order_id {
                 Err("Invalid state".to_string())
             } else {

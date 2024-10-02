@@ -88,6 +88,50 @@ pub mod cart {
                 previous_order_ids: vec![],
             }
         }
+
+        pub fn order_created(&mut self, order_id: String) {
+            self.items.clear();
+            self.billing_address = None;
+            self.shipping_address = None;
+            self.total = 0.0;
+            self.previous_order_ids.push(order_id);
+        }
+
+        pub fn recalculate_total(&mut self) {
+            self.total = get_total_price(self.items.clone());
+        }
+
+        pub fn has_item(&self, product_id: String) -> bool {
+            self.items.clone().into_iter().any(|item| item.product_id == product_id)
+        }
+
+        pub fn update_item_quantity(&mut self, product_id: String, quantity: u32) -> bool {
+            let mut updated = false;
+
+            for item in &mut self.items {
+                if item.product_id == product_id {
+                    item.quantity = quantity;
+                    updated = true;
+                }
+            }
+
+            if updated {
+                self.recalculate_total();
+            }
+
+            updated
+        }
+
+        pub fn remove_item(&mut self, product_id: String) -> bool {
+            let exist = self.items.iter().any(|item| item.product_id == product_id);
+
+            if exist {
+                self.items.retain(|item| item.product_id != product_id);
+                self.recalculate_total();
+            }
+
+            exist
+        }
     }
 
     #[derive(Clone, Serialize, Deserialize)]
@@ -156,5 +200,34 @@ pub mod cart {
         }
 
         total
+    }
+
+    pub mod serdes {
+        use crate::domain::cart::Cart;
+
+        pub const SERIALIZATION_VERSION_V1: u8 = 1u8;
+
+        pub fn serialize(value: &Cart) -> Result<Vec<u8>, String> {
+            let data = serde_json::to_vec_pretty(value).map_err(|err| err.to_string())?;
+
+            let mut result = vec![SERIALIZATION_VERSION_V1];
+            result.extend(data);
+
+            Ok(result)
+        }
+
+        pub fn deserialize(bytes: &[u8]) -> Result<Cart, String> {
+            let (version, data) = bytes.split_at(1);
+
+            match version[0] {
+                SERIALIZATION_VERSION_V1 => {
+                    let value: Cart =
+                        serde_json::from_slice(data).map_err(|err| err.to_string())?;
+
+                    Ok(value)
+                }
+                _ => Err("Unsupported serialization version".to_string()),
+            }
+        }
     }
 }

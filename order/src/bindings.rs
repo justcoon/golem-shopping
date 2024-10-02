@@ -29,14 +29,14 @@ pub mod golem {
             }
             #[derive(Clone)]
             pub struct Pricing {
-                pub asset_id: _rt::String,
+                pub product_id: _rt::String,
                 pub msrp_prices: _rt::Vec<PricingItem>,
                 pub list_prices: _rt::Vec<PricingItem>,
             }
             impl ::core::fmt::Debug for Pricing {
                 fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
                     f.debug_struct("Pricing")
-                        .field("asset-id", &self.asset_id)
+                        .field("product-id", &self.product_id)
                         .field("msrp-prices", &self.msrp_prices)
                         .field("list-prices", &self.list_prices)
                         .finish()
@@ -354,7 +354,7 @@ pub mod golem {
                                 _rt::cabi_dealloc(base24, len24 * 20, 4);
 
                                 Pricing {
-                                    asset_id: _rt::string_lift(bytes4),
+                                    product_id: _rt::string_lift(bytes4),
                                     msrp_prices: result14,
                                     list_prices: result24,
                                 }
@@ -381,6 +381,90 @@ pub mod golem {
             pub type WasiIoPollable = super::super::super::wasi::io::poll::Pollable;
             pub type PricingItem = super::super::super::golem::pricing::api::PricingItem;
             pub type Pricing = super::super::super::golem::pricing::api::Pricing;
+
+            #[derive(Debug)]
+            #[repr(transparent)]
+            pub struct FutureSaveResult {
+                handle: _rt::Resource<FutureSaveResult>,
+            }
+
+            impl FutureSaveResult {
+                #[doc(hidden)]
+                pub unsafe fn from_handle(handle: u32) -> Self {
+                    Self { handle: _rt::Resource::from_handle(handle) }
+                }
+
+                #[doc(hidden)]
+                pub fn take_handle(&self) -> u32 {
+                    _rt::Resource::take_handle(&self.handle)
+                }
+
+                #[doc(hidden)]
+                pub fn handle(&self) -> u32 {
+                    _rt::Resource::handle(&self.handle)
+                }
+            }
+
+            unsafe impl _rt::WasmResource for FutureSaveResult {
+                #[inline]
+                unsafe fn drop(_handle: u32) {
+                    #[cfg(not(target_arch = "wasm32"))]
+                    unreachable!();
+
+                    #[cfg(target_arch = "wasm32")]
+                    {
+                        #[link(wasm_import_module = "golem:pricing-stub/stub-pricing")]
+                        extern "C" {
+                            #[link_name = "[resource-drop]future-save-result"]
+                            fn drop(_: u32);
+                        }
+
+                        drop(_handle);
+                    }
+                }
+            }
+
+            #[derive(Debug)]
+            #[repr(transparent)]
+            pub struct FutureLoadResult {
+                handle: _rt::Resource<FutureLoadResult>,
+            }
+
+            impl FutureLoadResult {
+                #[doc(hidden)]
+                pub unsafe fn from_handle(handle: u32) -> Self {
+                    Self { handle: _rt::Resource::from_handle(handle) }
+                }
+
+                #[doc(hidden)]
+                pub fn take_handle(&self) -> u32 {
+                    _rt::Resource::take_handle(&self.handle)
+                }
+
+                #[doc(hidden)]
+                pub fn handle(&self) -> u32 {
+                    _rt::Resource::handle(&self.handle)
+                }
+            }
+
+            unsafe impl _rt::WasmResource for FutureLoadResult {
+                #[inline]
+                unsafe fn drop(_handle: u32) {
+                    #[cfg(not(target_arch = "wasm32"))]
+                    unreachable!();
+
+                    #[cfg(target_arch = "wasm32")]
+                    {
+                        #[link(wasm_import_module = "golem:pricing-stub/stub-pricing")]
+                        extern "C" {
+                            #[link_name = "[resource-drop]future-load-result"]
+                            fn drop(_: u32);
+                        }
+
+                        drop(_handle);
+                    }
+                }
+            }
 
             #[derive(Debug)]
             #[repr(transparent)]
@@ -468,6 +552,90 @@ pub mod golem {
 
             #[derive(Debug)]
             #[repr(transparent)]
+            pub struct SaveSnapshot {
+                handle: _rt::Resource<SaveSnapshot>,
+            }
+
+            impl SaveSnapshot {
+                #[doc(hidden)]
+                pub unsafe fn from_handle(handle: u32) -> Self {
+                    Self { handle: _rt::Resource::from_handle(handle) }
+                }
+
+                #[doc(hidden)]
+                pub fn take_handle(&self) -> u32 {
+                    _rt::Resource::take_handle(&self.handle)
+                }
+
+                #[doc(hidden)]
+                pub fn handle(&self) -> u32 {
+                    _rt::Resource::handle(&self.handle)
+                }
+            }
+
+            unsafe impl _rt::WasmResource for SaveSnapshot {
+                #[inline]
+                unsafe fn drop(_handle: u32) {
+                    #[cfg(not(target_arch = "wasm32"))]
+                    unreachable!();
+
+                    #[cfg(target_arch = "wasm32")]
+                    {
+                        #[link(wasm_import_module = "golem:pricing-stub/stub-pricing")]
+                        extern "C" {
+                            #[link_name = "[resource-drop]save-snapshot"]
+                            fn drop(_: u32);
+                        }
+
+                        drop(_handle);
+                    }
+                }
+            }
+
+            #[derive(Debug)]
+            #[repr(transparent)]
+            pub struct LoadSnapshot {
+                handle: _rt::Resource<LoadSnapshot>,
+            }
+
+            impl LoadSnapshot {
+                #[doc(hidden)]
+                pub unsafe fn from_handle(handle: u32) -> Self {
+                    Self { handle: _rt::Resource::from_handle(handle) }
+                }
+
+                #[doc(hidden)]
+                pub fn take_handle(&self) -> u32 {
+                    _rt::Resource::take_handle(&self.handle)
+                }
+
+                #[doc(hidden)]
+                pub fn handle(&self) -> u32 {
+                    _rt::Resource::handle(&self.handle)
+                }
+            }
+
+            unsafe impl _rt::WasmResource for LoadSnapshot {
+                #[inline]
+                unsafe fn drop(_handle: u32) {
+                    #[cfg(not(target_arch = "wasm32"))]
+                    unreachable!();
+
+                    #[cfg(target_arch = "wasm32")]
+                    {
+                        #[link(wasm_import_module = "golem:pricing-stub/stub-pricing")]
+                        extern "C" {
+                            #[link_name = "[resource-drop]load-snapshot"]
+                            fn drop(_: u32);
+                        }
+
+                        drop(_handle);
+                    }
+                }
+            }
+
+            #[derive(Debug)]
+            #[repr(transparent)]
             pub struct Api {
                 handle: _rt::Resource<Api>,
             }
@@ -508,6 +676,138 @@ pub mod golem {
                 }
             }
 
+            impl FutureSaveResult {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn subscribe(&self) -> WasiIoPollable {
+                    unsafe {
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:pricing-stub/stub-pricing")]
+                        extern "C" {
+                            #[link_name = "[method]future-save-result.subscribe"]
+                            fn wit_import(_: i32) -> i32;
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import((self).handle() as i32);
+                        super::super::super::wasi::io::poll::Pollable::from_handle(ret as u32)
+                    }
+                }
+            }
+            impl FutureSaveResult {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn get(&self) -> Option<_rt::Vec<u8>> {
+                    unsafe {
+                        #[repr(align(4))]
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 12]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 12]);
+                        let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:pricing-stub/stub-pricing")]
+                        extern "C" {
+                            #[link_name = "[method]future-save-result.get"]
+                            fn wit_import(_: i32, _: *mut u8);
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32, _: *mut u8) {
+                            unreachable!()
+                        }
+                        wit_import((self).handle() as i32, ptr0);
+                        let l1 = i32::from(*ptr0.add(0).cast::<u8>());
+                        match l1 {
+                            0 => None,
+                            1 => {
+                                let e = {
+                                    let l2 = *ptr0.add(4).cast::<*mut u8>();
+                                    let l3 = *ptr0.add(8).cast::<usize>();
+                                    let len4 = l3;
+
+                                    _rt::Vec::from_raw_parts(l2.cast(), len4, len4)
+                                };
+                                Some(e)
+                            }
+                            _ => _rt::invalid_enum_discriminant(),
+                        }
+                    }
+                }
+            }
+            impl FutureLoadResult {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn subscribe(&self) -> WasiIoPollable {
+                    unsafe {
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:pricing-stub/stub-pricing")]
+                        extern "C" {
+                            #[link_name = "[method]future-load-result.subscribe"]
+                            fn wit_import(_: i32) -> i32;
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import((self).handle() as i32);
+                        super::super::super::wasi::io::poll::Pollable::from_handle(ret as u32)
+                    }
+                }
+            }
+            impl FutureLoadResult {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn get(&self) -> Option<Result<(), _rt::String>> {
+                    unsafe {
+                        #[repr(align(4))]
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 16]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 16]);
+                        let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:pricing-stub/stub-pricing")]
+                        extern "C" {
+                            #[link_name = "[method]future-load-result.get"]
+                            fn wit_import(_: i32, _: *mut u8);
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32, _: *mut u8) {
+                            unreachable!()
+                        }
+                        wit_import((self).handle() as i32, ptr0);
+                        let l1 = i32::from(*ptr0.add(0).cast::<u8>());
+                        match l1 {
+                            0 => None,
+                            1 => {
+                                let e = {
+                                    let l2 = i32::from(*ptr0.add(4).cast::<u8>());
+
+                                    match l2 {
+                                        0 => {
+                                            let e = ();
+                                            Ok(e)
+                                        }
+                                        1 => {
+                                            let e = {
+                                                let l3 = *ptr0.add(8).cast::<*mut u8>();
+                                                let l4 = *ptr0.add(12).cast::<usize>();
+                                                let len5 = l4;
+                                                let bytes5 =
+                                                    _rt::Vec::from_raw_parts(l3.cast(), len5, len5);
+
+                                                _rt::string_lift(bytes5)
+                                            };
+                                            Err(e)
+                                        }
+                                        _ => _rt::invalid_enum_discriminant(),
+                                    }
+                                };
+                                Some(e)
+                            }
+                            _ => _rt::invalid_enum_discriminant(),
+                        }
+                    }
+                }
+            }
             impl FutureGetPriceResult {
                 #[allow(unused_unsafe, clippy::all)]
                 pub fn subscribe(&self) -> WasiIoPollable {
@@ -717,7 +1017,7 @@ pub mod golem {
                                                 _rt::cabi_dealloc(base25, len25 * 20, 4);
 
                                                 super::super::super::golem::pricing::api::Pricing {
-                                                    asset_id: _rt::string_lift(bytes5),
+                                                    product_id: _rt::string_lift(bytes5),
                                                     msrp_prices: result15,
                                                     list_prices: result25,
                                                 }
@@ -731,6 +1031,174 @@ pub mod golem {
                             }
                             _ => _rt::invalid_enum_discriminant(),
                         }
+                    }
+                }
+            }
+            impl SaveSnapshot {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn new(location: &GolemRpcUri) -> Self {
+                    unsafe {
+                        let super::super::super::golem::rpc::types::Uri { value: value0 } =
+                            location;
+                        let vec1 = value0;
+                        let ptr1 = vec1.as_ptr().cast::<u8>();
+                        let len1 = vec1.len();
+
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:pricing-stub/stub-pricing")]
+                        extern "C" {
+                            #[link_name = "[constructor]save-snapshot"]
+                            fn wit_import(_: *mut u8, _: usize) -> i32;
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: *mut u8, _: usize) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import(ptr1.cast_mut(), len1);
+                        SaveSnapshot::from_handle(ret as u32)
+                    }
+                }
+            }
+            impl SaveSnapshot {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn blocking_save(&self) -> _rt::Vec<u8> {
+                    unsafe {
+                        #[repr(align(4))]
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 8]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+                        let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:pricing-stub/stub-pricing")]
+                        extern "C" {
+                            #[link_name = "[method]save-snapshot.blocking-save"]
+                            fn wit_import(_: i32, _: *mut u8);
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32, _: *mut u8) {
+                            unreachable!()
+                        }
+                        wit_import((self).handle() as i32, ptr0);
+                        let l1 = *ptr0.add(0).cast::<*mut u8>();
+                        let l2 = *ptr0.add(4).cast::<usize>();
+                        let len3 = l2;
+                        _rt::Vec::from_raw_parts(l1.cast(), len3, len3)
+                    }
+                }
+            }
+            impl SaveSnapshot {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn save(&self) -> FutureSaveResult {
+                    unsafe {
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:pricing-stub/stub-pricing")]
+                        extern "C" {
+                            #[link_name = "[method]save-snapshot.save"]
+                            fn wit_import(_: i32) -> i32;
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import((self).handle() as i32);
+                        FutureSaveResult::from_handle(ret as u32)
+                    }
+                }
+            }
+            impl LoadSnapshot {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn new(location: &GolemRpcUri) -> Self {
+                    unsafe {
+                        let super::super::super::golem::rpc::types::Uri { value: value0 } =
+                            location;
+                        let vec1 = value0;
+                        let ptr1 = vec1.as_ptr().cast::<u8>();
+                        let len1 = vec1.len();
+
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:pricing-stub/stub-pricing")]
+                        extern "C" {
+                            #[link_name = "[constructor]load-snapshot"]
+                            fn wit_import(_: *mut u8, _: usize) -> i32;
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: *mut u8, _: usize) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import(ptr1.cast_mut(), len1);
+                        LoadSnapshot::from_handle(ret as u32)
+                    }
+                }
+            }
+            impl LoadSnapshot {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn blocking_load(&self, bytes: &[u8]) -> Result<(), _rt::String> {
+                    unsafe {
+                        #[repr(align(4))]
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 12]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 12]);
+                        let vec0 = bytes;
+                        let ptr0 = vec0.as_ptr().cast::<u8>();
+                        let len0 = vec0.len();
+                        let ptr1 = ret_area.0.as_mut_ptr().cast::<u8>();
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:pricing-stub/stub-pricing")]
+                        extern "C" {
+                            #[link_name = "[method]load-snapshot.blocking-load"]
+                            fn wit_import(_: i32, _: *mut u8, _: usize, _: *mut u8);
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32, _: *mut u8, _: usize, _: *mut u8) {
+                            unreachable!()
+                        }
+                        wit_import((self).handle() as i32, ptr0.cast_mut(), len0, ptr1);
+                        let l2 = i32::from(*ptr1.add(0).cast::<u8>());
+                        match l2 {
+                            0 => {
+                                let e = ();
+                                Ok(e)
+                            }
+                            1 => {
+                                let e = {
+                                    let l3 = *ptr1.add(4).cast::<*mut u8>();
+                                    let l4 = *ptr1.add(8).cast::<usize>();
+                                    let len5 = l4;
+                                    let bytes5 = _rt::Vec::from_raw_parts(l3.cast(), len5, len5);
+
+                                    _rt::string_lift(bytes5)
+                                };
+                                Err(e)
+                            }
+                            _ => _rt::invalid_enum_discriminant(),
+                        }
+                    }
+                }
+            }
+            impl LoadSnapshot {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn load(&self, bytes: &[u8]) -> FutureLoadResult {
+                    unsafe {
+                        let vec0 = bytes;
+                        let ptr0 = vec0.as_ptr().cast::<u8>();
+                        let len0 = vec0.len();
+
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:pricing-stub/stub-pricing")]
+                        extern "C" {
+                            #[link_name = "[method]load-snapshot.load"]
+                            fn wit_import(_: i32, _: *mut u8, _: usize) -> i32;
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32, _: *mut u8, _: usize) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import((self).handle() as i32, ptr0.cast_mut(), len0);
+                        FutureLoadResult::from_handle(ret as u32)
                     }
                 }
             }
@@ -1375,7 +1843,7 @@ pub mod golem {
                                     _rt::cabi_dealloc(base24, len24 * 20, 4);
 
                                     super::super::super::golem::pricing::api::Pricing {
-                                        asset_id: _rt::string_lift(bytes4),
+                                        product_id: _rt::string_lift(bytes4),
                                         msrp_prices: result14,
                                         list_prices: result24,
                                     }
@@ -1525,6 +1993,90 @@ pub mod golem {
 
             #[derive(Debug)]
             #[repr(transparent)]
+            pub struct FutureSaveResult {
+                handle: _rt::Resource<FutureSaveResult>,
+            }
+
+            impl FutureSaveResult {
+                #[doc(hidden)]
+                pub unsafe fn from_handle(handle: u32) -> Self {
+                    Self { handle: _rt::Resource::from_handle(handle) }
+                }
+
+                #[doc(hidden)]
+                pub fn take_handle(&self) -> u32 {
+                    _rt::Resource::take_handle(&self.handle)
+                }
+
+                #[doc(hidden)]
+                pub fn handle(&self) -> u32 {
+                    _rt::Resource::handle(&self.handle)
+                }
+            }
+
+            unsafe impl _rt::WasmResource for FutureSaveResult {
+                #[inline]
+                unsafe fn drop(_handle: u32) {
+                    #[cfg(not(target_arch = "wasm32"))]
+                    unreachable!();
+
+                    #[cfg(target_arch = "wasm32")]
+                    {
+                        #[link(wasm_import_module = "golem:product-stub/stub-product")]
+                        extern "C" {
+                            #[link_name = "[resource-drop]future-save-result"]
+                            fn drop(_: u32);
+                        }
+
+                        drop(_handle);
+                    }
+                }
+            }
+
+            #[derive(Debug)]
+            #[repr(transparent)]
+            pub struct FutureLoadResult {
+                handle: _rt::Resource<FutureLoadResult>,
+            }
+
+            impl FutureLoadResult {
+                #[doc(hidden)]
+                pub unsafe fn from_handle(handle: u32) -> Self {
+                    Self { handle: _rt::Resource::from_handle(handle) }
+                }
+
+                #[doc(hidden)]
+                pub fn take_handle(&self) -> u32 {
+                    _rt::Resource::take_handle(&self.handle)
+                }
+
+                #[doc(hidden)]
+                pub fn handle(&self) -> u32 {
+                    _rt::Resource::handle(&self.handle)
+                }
+            }
+
+            unsafe impl _rt::WasmResource for FutureLoadResult {
+                #[inline]
+                unsafe fn drop(_handle: u32) {
+                    #[cfg(not(target_arch = "wasm32"))]
+                    unreachable!();
+
+                    #[cfg(target_arch = "wasm32")]
+                    {
+                        #[link(wasm_import_module = "golem:product-stub/stub-product")]
+                        extern "C" {
+                            #[link_name = "[resource-drop]future-load-result"]
+                            fn drop(_: u32);
+                        }
+
+                        drop(_handle);
+                    }
+                }
+            }
+
+            #[derive(Debug)]
+            #[repr(transparent)]
             pub struct FutureGetResult {
                 handle: _rt::Resource<FutureGetResult>,
             }
@@ -1557,6 +2109,90 @@ pub mod golem {
                         #[link(wasm_import_module = "golem:product-stub/stub-product")]
                         extern "C" {
                             #[link_name = "[resource-drop]future-get-result"]
+                            fn drop(_: u32);
+                        }
+
+                        drop(_handle);
+                    }
+                }
+            }
+
+            #[derive(Debug)]
+            #[repr(transparent)]
+            pub struct SaveSnapshot {
+                handle: _rt::Resource<SaveSnapshot>,
+            }
+
+            impl SaveSnapshot {
+                #[doc(hidden)]
+                pub unsafe fn from_handle(handle: u32) -> Self {
+                    Self { handle: _rt::Resource::from_handle(handle) }
+                }
+
+                #[doc(hidden)]
+                pub fn take_handle(&self) -> u32 {
+                    _rt::Resource::take_handle(&self.handle)
+                }
+
+                #[doc(hidden)]
+                pub fn handle(&self) -> u32 {
+                    _rt::Resource::handle(&self.handle)
+                }
+            }
+
+            unsafe impl _rt::WasmResource for SaveSnapshot {
+                #[inline]
+                unsafe fn drop(_handle: u32) {
+                    #[cfg(not(target_arch = "wasm32"))]
+                    unreachable!();
+
+                    #[cfg(target_arch = "wasm32")]
+                    {
+                        #[link(wasm_import_module = "golem:product-stub/stub-product")]
+                        extern "C" {
+                            #[link_name = "[resource-drop]save-snapshot"]
+                            fn drop(_: u32);
+                        }
+
+                        drop(_handle);
+                    }
+                }
+            }
+
+            #[derive(Debug)]
+            #[repr(transparent)]
+            pub struct LoadSnapshot {
+                handle: _rt::Resource<LoadSnapshot>,
+            }
+
+            impl LoadSnapshot {
+                #[doc(hidden)]
+                pub unsafe fn from_handle(handle: u32) -> Self {
+                    Self { handle: _rt::Resource::from_handle(handle) }
+                }
+
+                #[doc(hidden)]
+                pub fn take_handle(&self) -> u32 {
+                    _rt::Resource::take_handle(&self.handle)
+                }
+
+                #[doc(hidden)]
+                pub fn handle(&self) -> u32 {
+                    _rt::Resource::handle(&self.handle)
+                }
+            }
+
+            unsafe impl _rt::WasmResource for LoadSnapshot {
+                #[inline]
+                unsafe fn drop(_handle: u32) {
+                    #[cfg(not(target_arch = "wasm32"))]
+                    unreachable!();
+
+                    #[cfg(target_arch = "wasm32")]
+                    {
+                        #[link(wasm_import_module = "golem:product-stub/stub-product")]
+                        extern "C" {
+                            #[link_name = "[resource-drop]load-snapshot"]
                             fn drop(_: u32);
                         }
 
@@ -1607,6 +2243,138 @@ pub mod golem {
                 }
             }
 
+            impl FutureSaveResult {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn subscribe(&self) -> WasiIoPollable {
+                    unsafe {
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:product-stub/stub-product")]
+                        extern "C" {
+                            #[link_name = "[method]future-save-result.subscribe"]
+                            fn wit_import(_: i32) -> i32;
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import((self).handle() as i32);
+                        super::super::super::wasi::io::poll::Pollable::from_handle(ret as u32)
+                    }
+                }
+            }
+            impl FutureSaveResult {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn get(&self) -> Option<_rt::Vec<u8>> {
+                    unsafe {
+                        #[repr(align(4))]
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 12]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 12]);
+                        let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:product-stub/stub-product")]
+                        extern "C" {
+                            #[link_name = "[method]future-save-result.get"]
+                            fn wit_import(_: i32, _: *mut u8);
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32, _: *mut u8) {
+                            unreachable!()
+                        }
+                        wit_import((self).handle() as i32, ptr0);
+                        let l1 = i32::from(*ptr0.add(0).cast::<u8>());
+                        match l1 {
+                            0 => None,
+                            1 => {
+                                let e = {
+                                    let l2 = *ptr0.add(4).cast::<*mut u8>();
+                                    let l3 = *ptr0.add(8).cast::<usize>();
+                                    let len4 = l3;
+
+                                    _rt::Vec::from_raw_parts(l2.cast(), len4, len4)
+                                };
+                                Some(e)
+                            }
+                            _ => _rt::invalid_enum_discriminant(),
+                        }
+                    }
+                }
+            }
+            impl FutureLoadResult {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn subscribe(&self) -> WasiIoPollable {
+                    unsafe {
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:product-stub/stub-product")]
+                        extern "C" {
+                            #[link_name = "[method]future-load-result.subscribe"]
+                            fn wit_import(_: i32) -> i32;
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import((self).handle() as i32);
+                        super::super::super::wasi::io::poll::Pollable::from_handle(ret as u32)
+                    }
+                }
+            }
+            impl FutureLoadResult {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn get(&self) -> Option<Result<(), _rt::String>> {
+                    unsafe {
+                        #[repr(align(4))]
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 16]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 16]);
+                        let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:product-stub/stub-product")]
+                        extern "C" {
+                            #[link_name = "[method]future-load-result.get"]
+                            fn wit_import(_: i32, _: *mut u8);
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32, _: *mut u8) {
+                            unreachable!()
+                        }
+                        wit_import((self).handle() as i32, ptr0);
+                        let l1 = i32::from(*ptr0.add(0).cast::<u8>());
+                        match l1 {
+                            0 => None,
+                            1 => {
+                                let e = {
+                                    let l2 = i32::from(*ptr0.add(4).cast::<u8>());
+
+                                    match l2 {
+                                        0 => {
+                                            let e = ();
+                                            Ok(e)
+                                        }
+                                        1 => {
+                                            let e = {
+                                                let l3 = *ptr0.add(8).cast::<*mut u8>();
+                                                let l4 = *ptr0.add(12).cast::<usize>();
+                                                let len5 = l4;
+                                                let bytes5 =
+                                                    _rt::Vec::from_raw_parts(l3.cast(), len5, len5);
+
+                                                _rt::string_lift(bytes5)
+                                            };
+                                            Err(e)
+                                        }
+                                        _ => _rt::invalid_enum_discriminant(),
+                                    }
+                                };
+                                Some(e)
+                            }
+                            _ => _rt::invalid_enum_discriminant(),
+                        }
+                    }
+                }
+            }
             impl FutureGetResult {
                 #[allow(unused_unsafe, clippy::all)]
                 pub fn subscribe(&self) -> WasiIoPollable {
@@ -1692,6 +2460,174 @@ pub mod golem {
                             }
                             _ => _rt::invalid_enum_discriminant(),
                         }
+                    }
+                }
+            }
+            impl SaveSnapshot {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn new(location: &GolemRpcUri) -> Self {
+                    unsafe {
+                        let super::super::super::golem::rpc::types::Uri { value: value0 } =
+                            location;
+                        let vec1 = value0;
+                        let ptr1 = vec1.as_ptr().cast::<u8>();
+                        let len1 = vec1.len();
+
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:product-stub/stub-product")]
+                        extern "C" {
+                            #[link_name = "[constructor]save-snapshot"]
+                            fn wit_import(_: *mut u8, _: usize) -> i32;
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: *mut u8, _: usize) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import(ptr1.cast_mut(), len1);
+                        SaveSnapshot::from_handle(ret as u32)
+                    }
+                }
+            }
+            impl SaveSnapshot {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn blocking_save(&self) -> _rt::Vec<u8> {
+                    unsafe {
+                        #[repr(align(4))]
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 8]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+                        let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:product-stub/stub-product")]
+                        extern "C" {
+                            #[link_name = "[method]save-snapshot.blocking-save"]
+                            fn wit_import(_: i32, _: *mut u8);
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32, _: *mut u8) {
+                            unreachable!()
+                        }
+                        wit_import((self).handle() as i32, ptr0);
+                        let l1 = *ptr0.add(0).cast::<*mut u8>();
+                        let l2 = *ptr0.add(4).cast::<usize>();
+                        let len3 = l2;
+                        _rt::Vec::from_raw_parts(l1.cast(), len3, len3)
+                    }
+                }
+            }
+            impl SaveSnapshot {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn save(&self) -> FutureSaveResult {
+                    unsafe {
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:product-stub/stub-product")]
+                        extern "C" {
+                            #[link_name = "[method]save-snapshot.save"]
+                            fn wit_import(_: i32) -> i32;
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import((self).handle() as i32);
+                        FutureSaveResult::from_handle(ret as u32)
+                    }
+                }
+            }
+            impl LoadSnapshot {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn new(location: &GolemRpcUri) -> Self {
+                    unsafe {
+                        let super::super::super::golem::rpc::types::Uri { value: value0 } =
+                            location;
+                        let vec1 = value0;
+                        let ptr1 = vec1.as_ptr().cast::<u8>();
+                        let len1 = vec1.len();
+
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:product-stub/stub-product")]
+                        extern "C" {
+                            #[link_name = "[constructor]load-snapshot"]
+                            fn wit_import(_: *mut u8, _: usize) -> i32;
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: *mut u8, _: usize) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import(ptr1.cast_mut(), len1);
+                        LoadSnapshot::from_handle(ret as u32)
+                    }
+                }
+            }
+            impl LoadSnapshot {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn blocking_load(&self, bytes: &[u8]) -> Result<(), _rt::String> {
+                    unsafe {
+                        #[repr(align(4))]
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 12]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 12]);
+                        let vec0 = bytes;
+                        let ptr0 = vec0.as_ptr().cast::<u8>();
+                        let len0 = vec0.len();
+                        let ptr1 = ret_area.0.as_mut_ptr().cast::<u8>();
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:product-stub/stub-product")]
+                        extern "C" {
+                            #[link_name = "[method]load-snapshot.blocking-load"]
+                            fn wit_import(_: i32, _: *mut u8, _: usize, _: *mut u8);
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32, _: *mut u8, _: usize, _: *mut u8) {
+                            unreachable!()
+                        }
+                        wit_import((self).handle() as i32, ptr0.cast_mut(), len0, ptr1);
+                        let l2 = i32::from(*ptr1.add(0).cast::<u8>());
+                        match l2 {
+                            0 => {
+                                let e = ();
+                                Ok(e)
+                            }
+                            1 => {
+                                let e = {
+                                    let l3 = *ptr1.add(4).cast::<*mut u8>();
+                                    let l4 = *ptr1.add(8).cast::<usize>();
+                                    let len5 = l4;
+                                    let bytes5 = _rt::Vec::from_raw_parts(l3.cast(), len5, len5);
+
+                                    _rt::string_lift(bytes5)
+                                };
+                                Err(e)
+                            }
+                            _ => _rt::invalid_enum_discriminant(),
+                        }
+                    }
+                }
+            }
+            impl LoadSnapshot {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn load(&self, bytes: &[u8]) -> FutureLoadResult {
+                    unsafe {
+                        let vec0 = bytes;
+                        let ptr0 = vec0.as_ptr().cast::<u8>();
+                        let len0 = vec0.len();
+
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:product-stub/stub-product")]
+                        extern "C" {
+                            #[link_name = "[method]load-snapshot.load"]
+                            fn wit_import(_: i32, _: *mut u8, _: usize) -> i32;
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32, _: *mut u8, _: usize) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import((self).handle() as i32, ptr0.cast_mut(), len0);
+                        FutureLoadResult::from_handle(ret as u32)
                     }
                 }
             }
@@ -7103,99 +8039,122 @@ pub(crate) use __export_order_impl as export;
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.25.0:order:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 4340] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xf8\x20\x01A\x02\x01\
-A\x17\x01B\x0a\x04\0\x08pollable\x03\x01\x01h\0\x01@\x01\x04self\x01\0\x7f\x04\0\
-\x16[method]pollable.ready\x01\x02\x01@\x01\x04self\x01\x01\0\x04\0\x16[method]p\
-ollable.block\x01\x03\x01p\x01\x01py\x01@\x01\x02in\x04\0\x05\x04\0\x04poll\x01\x06\
-\x03\x01\x12wasi:io/poll@0.2.0\x05\0\x02\x03\0\0\x08pollable\x01B*\x02\x03\x02\x01\
-\x01\x04\0\x08pollable\x03\0\0\x01z\x04\0\x0anode-index\x03\0\x02\x01r\x01\x05va\
-lues\x04\0\x03uri\x03\0\x04\x01p\x03\x01k\x03\x01o\x02y\x07\x01p\x7f\x01j\x01\x07\
-\x01\x07\x01o\x02\x05w\x01q\x16\x0crecord-value\x01\x06\0\x0dvariant-value\x01\x08\
-\0\x0aenum-value\x01y\0\x0bflags-value\x01\x09\0\x0btuple-value\x01\x06\0\x0alis\
-t-value\x01\x06\0\x0coption-value\x01\x07\0\x0cresult-value\x01\x0a\0\x07prim-u8\
-\x01}\0\x08prim-u16\x01{\0\x08prim-u32\x01y\0\x08prim-u64\x01w\0\x07prim-s8\x01~\
-\0\x08prim-s16\x01|\0\x08prim-s32\x01z\0\x08prim-s64\x01x\0\x0cprim-float32\x01v\
-\0\x0cprim-float64\x01u\0\x09prim-char\x01t\0\x09prim-bool\x01\x7f\0\x0bprim-str\
-ing\x01s\0\x06handle\x01\x0b\0\x04\0\x08wit-node\x03\0\x0c\x01p\x0d\x01r\x01\x05\
-nodes\x0e\x04\0\x09wit-value\x03\0\x0f\x01q\x04\x0eprotocol-error\x01s\0\x06deni\
-ed\x01s\0\x09not-found\x01s\0\x15remote-internal-error\x01s\0\x04\0\x09rpc-error\
-\x03\0\x11\x04\0\x08wasm-rpc\x03\x01\x04\0\x14future-invoke-result\x03\x01\x01i\x13\
-\x01@\x01\x08location\x05\0\x15\x04\0\x15[constructor]wasm-rpc\x01\x16\x01h\x13\x01\
-p\x10\x01j\x01\x10\x01\x12\x01@\x03\x04self\x17\x0dfunction-names\x0ffunction-pa\
-rams\x18\0\x19\x04\0![method]wasm-rpc.invoke-and-await\x01\x1a\x01j\0\x01\x12\x01\
-@\x03\x04self\x17\x0dfunction-names\x0ffunction-params\x18\0\x1b\x04\0\x17[metho\
-d]wasm-rpc.invoke\x01\x1c\x01i\x14\x01@\x03\x04self\x17\x0dfunction-names\x0ffun\
-ction-params\x18\0\x1d\x04\0'[method]wasm-rpc.async-invoke-and-await\x01\x1e\x01\
-h\x14\x01i\x01\x01@\x01\x04self\x1f\0\x20\x04\0&[method]future-invoke-result.sub\
-scribe\x01!\x01k\x19\x01@\x01\x04self\x1f\0\"\x04\0\x20[method]future-invoke-res\
-ult.get\x01#\x03\x01\x15golem:rpc/types@0.1.0\x05\x02\x01B\x0e\x01r\x03\x05price\
-v\x08currencys\x04zones\x04\0\x0cpricing-item\x03\0\0\x01p\x01\x01r\x03\x08asset\
--ids\x0bmsrp-prices\x02\x0blist-prices\x02\x04\0\x07pricing\x03\0\x03\x01@\x02\x0b\
-msrp-prices\x02\x0blist-prices\x02\x01\0\x04\0\x12initialize-pricing\x01\x05\x01\
-k\x01\x01@\x02\x08currencys\x04zones\0\x06\x04\0\x09get-price\x01\x07\x04\0\x0eu\
-pdate-pricing\x01\x05\x01k\x04\x01@\0\0\x08\x04\0\x03get\x01\x09\x03\x01\x11gole\
-m:pricing/api\x05\x03\x02\x03\0\x01\x03uri\x02\x03\0\x02\x0cpricing-item\x02\x03\
-\0\x02\x07pricing\x01B.\x02\x03\x02\x01\x04\x04\0\x0dgolem-rpc-uri\x03\0\0\x02\x03\
-\x02\x01\x01\x04\0\x10wasi-io-pollable\x03\0\x02\x02\x03\x02\x01\x05\x04\0\x0cpr\
-icing-item\x03\0\x04\x02\x03\x02\x01\x06\x04\0\x07pricing\x03\0\x06\x04\0\x17fut\
-ure-get-price-result\x03\x01\x04\0\x11future-get-result\x03\x01\x04\0\x03api\x03\
-\x01\x01h\x08\x01i\x03\x01@\x01\x04self\x0b\0\x0c\x04\0)[method]future-get-price\
--result.subscribe\x01\x0d\x01k\x05\x01k\x0e\x01@\x01\x04self\x0b\0\x0f\x04\0#[me\
-thod]future-get-price-result.get\x01\x10\x01h\x09\x01@\x01\x04self\x11\0\x0c\x04\
-\0#[method]future-get-result.subscribe\x01\x12\x01k\x07\x01k\x13\x01@\x01\x04sel\
-f\x11\0\x14\x04\0\x1d[method]future-get-result.get\x01\x15\x01i\x0a\x01@\x01\x08\
-location\x01\0\x16\x04\0\x10[constructor]api\x01\x17\x01h\x0a\x01p\x05\x01@\x03\x04\
-self\x18\x0bmsrp-prices\x19\x0blist-prices\x19\x01\0\x04\0'[method]api.blocking-\
-initialize-pricing\x01\x1a\x04\0\x1e[method]api.initialize-pricing\x01\x1a\x01@\x03\
-\x04self\x18\x08currencys\x04zones\0\x0e\x04\0\x1e[method]api.blocking-get-price\
-\x01\x1b\x01i\x08\x01@\x03\x04self\x18\x08currencys\x04zones\0\x1c\x04\0\x15[met\
-hod]api.get-price\x01\x1d\x04\0#[method]api.blocking-update-pricing\x01\x1a\x04\0\
-\x1a[method]api.update-pricing\x01\x1a\x01@\x01\x04self\x18\0\x13\x04\0\x18[meth\
-od]api.blocking-get\x01\x1e\x01i\x09\x01@\x01\x04self\x18\0\x1f\x04\0\x0f[method\
-]api.get\x01\x20\x03\x01\x1fgolem:pricing-stub/stub-pricing\x05\x07\x01B\x07\x01\
-r\x03\x0aproduct-ids\x04names\x0bdescriptions\x04\0\x07product\x03\0\0\x01@\x02\x04\
-names\x0bdescriptions\x01\0\x04\0\x12initialize-product\x01\x02\x01k\x01\x01@\0\0\
-\x03\x04\0\x03get\x01\x04\x03\x01\x11golem:product/api\x05\x08\x02\x03\0\x04\x07\
-product\x01B\x1c\x02\x03\x02\x01\x04\x04\0\x0dgolem-rpc-uri\x03\0\0\x02\x03\x02\x01\
-\x01\x04\0\x10wasi-io-pollable\x03\0\x02\x02\x03\x02\x01\x09\x04\0\x07product\x03\
-\0\x04\x04\0\x11future-get-result\x03\x01\x04\0\x03api\x03\x01\x01h\x06\x01i\x03\
-\x01@\x01\x04self\x08\0\x09\x04\0#[method]future-get-result.subscribe\x01\x0a\x01\
-k\x05\x01k\x0b\x01@\x01\x04self\x08\0\x0c\x04\0\x1d[method]future-get-result.get\
-\x01\x0d\x01i\x07\x01@\x01\x08location\x01\0\x0e\x04\0\x10[constructor]api\x01\x0f\
-\x01h\x07\x01@\x03\x04self\x10\x04names\x0bdescriptions\x01\0\x04\0'[method]api.\
-blocking-initialize-product\x01\x11\x04\0\x1e[method]api.initialize-product\x01\x11\
-\x01@\x01\x04self\x10\0\x0b\x04\0\x18[method]api.blocking-get\x01\x12\x01i\x06\x01\
-@\x01\x04self\x10\0\x13\x04\0\x0f[method]api.get\x01\x14\x03\x01\x1fgolem:produc\
-t-stub/stub-product\x05\x0a\x01B\x03\x01p}\x01@\0\0\0\x04\0\x04save\x01\x01\x04\x01\
-\x1dgolem:api/save-snapshot@0.2.0\x05\x0b\x01B\x04\x01p}\x01j\0\x01s\x01@\x01\x05\
-bytes\0\0\x01\x04\0\x04load\x01\x02\x04\x01\x1dgolem:api/load-snapshot@0.2.0\x05\
-\x0c\x01B.\x01m\x03\x03new\x07shipped\x09cancelled\x04\0\x0corder-status\x03\0\0\
-\x01ks\x01r\x09\x07street1s\x07street2\x02\x04citys\x0fstate-or-regions\x07count\
-rys\x0bpostal-codes\x04name\x02\x0dbusiness-name\x02\x0cphone-number\x02\x04\0\x07\
-address\x03\0\x03\x01r\x04\x0aproduct-ids\x04names\x05pricev\x08quantityy\x04\0\x0a\
-order-item\x03\0\x05\x01p\x06\x01k\x04\x01r\x09\x08order-ids\x07user-ids\x0corde\
-r-status\x01\x05items\x07\x0fbilling-address\x08\x10shipping-address\x08\x05tota\
-lv\x08currencys\x09timestampw\x04\0\x05order\x03\0\x09\x01r\x07\x07user-ids\x05i\
-tems\x07\x0fbilling-address\x08\x10shipping-address\x08\x05totalv\x08currencys\x09\
-timestampw\x04\0\x0ccreate-order\x03\0\x0b\x01r\x02\x07messages\x0aproduct-ids\x04\
-\0\x17product-not-found-error\x03\0\x0d\x01r\x02\x07messages\x0aproduct-ids\x04\0\
-\x17pricing-not-found-error\x03\0\x0f\x01r\x01\x07messages\x04\0\x17address-not-\
-valid-error\x03\0\x11\x01r\x02\x07messages\x0aproduct-ids\x04\0\x14item-not-foun\
-d-error\x03\0\x13\x01r\x01\x07messages\x04\0\x11empty-items-error\x03\0\x15\x01r\
-\x01\x07messages\x04\0\x1dbilling-address-not-set-error\x03\0\x17\x01r\x02\x07me\
-ssages\x06status\x01\x04\0\x18action-not-allowed-error\x03\0\x19\x01q\x06\x11pro\
-duct-not-found\x01\x0e\0\x11pricing-not-found\x01\x10\0\x11address-not-valid\x01\
-\x12\0\x0eitem-not-found\x01\x14\0\x0bempty-items\x01\x16\0\x12action-not-allowe\
-d\x01\x1a\0\x04\0\x05error\x03\0\x1b\x01@\x01\x04data\x0c\x01\0\x04\0\x10initial\
-ize-order\x01\x1d\x01j\0\x01\x1c\x01@\x02\x0aproduct-ids\x08quantityy\0\x1e\x04\0\
-\x08add-item\x01\x1f\x01@\x01\x0aproduct-ids\0\x1e\x04\0\x0bremove-item\x01\x20\x04\
-\0\x14update-item-quantity\x01\x1f\x01@\x01\x07address\x04\0\x1e\x04\0\x17update\
--shipping-address\x01!\x04\0\x16update-billing-address\x01!\x01@\0\0\x1e\x04\0\x0a\
-ship-order\x01\"\x04\0\x0ccancel-order\x01\"\x01k\x0a\x01@\0\0#\x04\0\x03get\x01\
-$\x04\x01\x0fgolem:order/api\x05\x0d\x04\x01\x11golem:order/order\x04\0\x0b\x0b\x01\
-\0\x05order\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit-component\x07\
-0.208.1\x10wit-bindgen-rust\x060.25.0";
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 5558] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xba*\x01A\x02\x01A\x17\
+\x01B\x0a\x04\0\x08pollable\x03\x01\x01h\0\x01@\x01\x04self\x01\0\x7f\x04\0\x16[\
+method]pollable.ready\x01\x02\x01@\x01\x04self\x01\x01\0\x04\0\x16[method]pollab\
+le.block\x01\x03\x01p\x01\x01py\x01@\x01\x02in\x04\0\x05\x04\0\x04poll\x01\x06\x03\
+\x01\x12wasi:io/poll@0.2.0\x05\0\x02\x03\0\0\x08pollable\x01B*\x02\x03\x02\x01\x01\
+\x04\0\x08pollable\x03\0\0\x01z\x04\0\x0anode-index\x03\0\x02\x01r\x01\x05values\
+\x04\0\x03uri\x03\0\x04\x01p\x03\x01k\x03\x01o\x02y\x07\x01p\x7f\x01j\x01\x07\x01\
+\x07\x01o\x02\x05w\x01q\x16\x0crecord-value\x01\x06\0\x0dvariant-value\x01\x08\0\
+\x0aenum-value\x01y\0\x0bflags-value\x01\x09\0\x0btuple-value\x01\x06\0\x0alist-\
+value\x01\x06\0\x0coption-value\x01\x07\0\x0cresult-value\x01\x0a\0\x07prim-u8\x01\
+}\0\x08prim-u16\x01{\0\x08prim-u32\x01y\0\x08prim-u64\x01w\0\x07prim-s8\x01~\0\x08\
+prim-s16\x01|\0\x08prim-s32\x01z\0\x08prim-s64\x01x\0\x0cprim-float32\x01v\0\x0c\
+prim-float64\x01u\0\x09prim-char\x01t\0\x09prim-bool\x01\x7f\0\x0bprim-string\x01\
+s\0\x06handle\x01\x0b\0\x04\0\x08wit-node\x03\0\x0c\x01p\x0d\x01r\x01\x05nodes\x0e\
+\x04\0\x09wit-value\x03\0\x0f\x01q\x04\x0eprotocol-error\x01s\0\x06denied\x01s\0\
+\x09not-found\x01s\0\x15remote-internal-error\x01s\0\x04\0\x09rpc-error\x03\0\x11\
+\x04\0\x08wasm-rpc\x03\x01\x04\0\x14future-invoke-result\x03\x01\x01i\x13\x01@\x01\
+\x08location\x05\0\x15\x04\0\x15[constructor]wasm-rpc\x01\x16\x01h\x13\x01p\x10\x01\
+j\x01\x10\x01\x12\x01@\x03\x04self\x17\x0dfunction-names\x0ffunction-params\x18\0\
+\x19\x04\0![method]wasm-rpc.invoke-and-await\x01\x1a\x01j\0\x01\x12\x01@\x03\x04\
+self\x17\x0dfunction-names\x0ffunction-params\x18\0\x1b\x04\0\x17[method]wasm-rp\
+c.invoke\x01\x1c\x01i\x14\x01@\x03\x04self\x17\x0dfunction-names\x0ffunction-par\
+ams\x18\0\x1d\x04\0'[method]wasm-rpc.async-invoke-and-await\x01\x1e\x01h\x14\x01\
+i\x01\x01@\x01\x04self\x1f\0\x20\x04\0&[method]future-invoke-result.subscribe\x01\
+!\x01k\x19\x01@\x01\x04self\x1f\0\"\x04\0\x20[method]future-invoke-result.get\x01\
+#\x03\x01\x15golem:rpc/types@0.1.0\x05\x02\x01B\x0e\x01r\x03\x05pricev\x08curren\
+cys\x04zones\x04\0\x0cpricing-item\x03\0\0\x01p\x01\x01r\x03\x0aproduct-ids\x0bm\
+srp-prices\x02\x0blist-prices\x02\x04\0\x07pricing\x03\0\x03\x01@\x02\x0bmsrp-pr\
+ices\x02\x0blist-prices\x02\x01\0\x04\0\x12initialize-pricing\x01\x05\x01k\x01\x01\
+@\x02\x08currencys\x04zones\0\x06\x04\0\x09get-price\x01\x07\x04\0\x0eupdate-pri\
+cing\x01\x05\x01k\x04\x01@\0\0\x08\x04\0\x03get\x01\x09\x03\x01\x11golem:pricing\
+/api\x05\x03\x02\x03\0\x01\x03uri\x02\x03\0\x02\x0cpricing-item\x02\x03\0\x02\x07\
+pricing\x01BR\x02\x03\x02\x01\x04\x04\0\x0dgolem-rpc-uri\x03\0\0\x02\x03\x02\x01\
+\x01\x04\0\x10wasi-io-pollable\x03\0\x02\x02\x03\x02\x01\x05\x04\0\x0cpricing-it\
+em\x03\0\x04\x02\x03\x02\x01\x06\x04\0\x07pricing\x03\0\x06\x04\0\x12future-save\
+-result\x03\x01\x04\0\x12future-load-result\x03\x01\x04\0\x17future-get-price-re\
+sult\x03\x01\x04\0\x11future-get-result\x03\x01\x04\0\x0dsave-snapshot\x03\x01\x04\
+\0\x0dload-snapshot\x03\x01\x04\0\x03api\x03\x01\x01h\x08\x01i\x03\x01@\x01\x04s\
+elf\x0f\0\x10\x04\0$[method]future-save-result.subscribe\x01\x11\x01p}\x01k\x12\x01\
+@\x01\x04self\x0f\0\x13\x04\0\x1e[method]future-save-result.get\x01\x14\x01h\x09\
+\x01@\x01\x04self\x15\0\x10\x04\0$[method]future-load-result.subscribe\x01\x16\x01\
+j\0\x01s\x01k\x17\x01@\x01\x04self\x15\0\x18\x04\0\x1e[method]future-load-result\
+.get\x01\x19\x01h\x0a\x01@\x01\x04self\x1a\0\x10\x04\0)[method]future-get-price-\
+result.subscribe\x01\x1b\x01k\x05\x01k\x1c\x01@\x01\x04self\x1a\0\x1d\x04\0#[met\
+hod]future-get-price-result.get\x01\x1e\x01h\x0b\x01@\x01\x04self\x1f\0\x10\x04\0\
+#[method]future-get-result.subscribe\x01\x20\x01k\x07\x01k!\x01@\x01\x04self\x1f\
+\0\"\x04\0\x1d[method]future-get-result.get\x01#\x01i\x0c\x01@\x01\x08location\x01\
+\0$\x04\0\x1a[constructor]save-snapshot\x01%\x01h\x0c\x01@\x01\x04self&\0\x12\x04\
+\0#[method]save-snapshot.blocking-save\x01'\x01i\x08\x01@\x01\x04self&\0(\x04\0\x1a\
+[method]save-snapshot.save\x01)\x01i\x0d\x01@\x01\x08location\x01\0*\x04\0\x1a[c\
+onstructor]load-snapshot\x01+\x01h\x0d\x01@\x02\x04self,\x05bytes\x12\0\x17\x04\0\
+#[method]load-snapshot.blocking-load\x01-\x01i\x09\x01@\x02\x04self,\x05bytes\x12\
+\0.\x04\0\x1a[method]load-snapshot.load\x01/\x01i\x0e\x01@\x01\x08location\x01\0\
+0\x04\0\x10[constructor]api\x011\x01h\x0e\x01p\x05\x01@\x03\x04self2\x0bmsrp-pri\
+ces3\x0blist-prices3\x01\0\x04\0'[method]api.blocking-initialize-pricing\x014\x04\
+\0\x1e[method]api.initialize-pricing\x014\x01@\x03\x04self2\x08currencys\x04zone\
+s\0\x1c\x04\0\x1e[method]api.blocking-get-price\x015\x01i\x0a\x01@\x03\x04self2\x08\
+currencys\x04zones\06\x04\0\x15[method]api.get-price\x017\x04\0#[method]api.bloc\
+king-update-pricing\x014\x04\0\x1a[method]api.update-pricing\x014\x01@\x01\x04se\
+lf2\0!\x04\0\x18[method]api.blocking-get\x018\x01i\x0b\x01@\x01\x04self2\09\x04\0\
+\x0f[method]api.get\x01:\x03\x01\x1fgolem:pricing-stub/stub-pricing\x05\x07\x01B\
+\x07\x01r\x03\x0aproduct-ids\x04names\x0bdescriptions\x04\0\x07product\x03\0\0\x01\
+@\x02\x04names\x0bdescriptions\x01\0\x04\0\x12initialize-product\x01\x02\x01k\x01\
+\x01@\0\0\x03\x04\0\x03get\x01\x04\x03\x01\x11golem:product/api\x05\x08\x02\x03\0\
+\x04\x07product\x01B@\x02\x03\x02\x01\x04\x04\0\x0dgolem-rpc-uri\x03\0\0\x02\x03\
+\x02\x01\x01\x04\0\x10wasi-io-pollable\x03\0\x02\x02\x03\x02\x01\x09\x04\0\x07pr\
+oduct\x03\0\x04\x04\0\x12future-save-result\x03\x01\x04\0\x12future-load-result\x03\
+\x01\x04\0\x11future-get-result\x03\x01\x04\0\x0dsave-snapshot\x03\x01\x04\0\x0d\
+load-snapshot\x03\x01\x04\0\x03api\x03\x01\x01h\x06\x01i\x03\x01@\x01\x04self\x0c\
+\0\x0d\x04\0$[method]future-save-result.subscribe\x01\x0e\x01p}\x01k\x0f\x01@\x01\
+\x04self\x0c\0\x10\x04\0\x1e[method]future-save-result.get\x01\x11\x01h\x07\x01@\
+\x01\x04self\x12\0\x0d\x04\0$[method]future-load-result.subscribe\x01\x13\x01j\0\
+\x01s\x01k\x14\x01@\x01\x04self\x12\0\x15\x04\0\x1e[method]future-load-result.ge\
+t\x01\x16\x01h\x08\x01@\x01\x04self\x17\0\x0d\x04\0#[method]future-get-result.su\
+bscribe\x01\x18\x01k\x05\x01k\x19\x01@\x01\x04self\x17\0\x1a\x04\0\x1d[method]fu\
+ture-get-result.get\x01\x1b\x01i\x09\x01@\x01\x08location\x01\0\x1c\x04\0\x1a[co\
+nstructor]save-snapshot\x01\x1d\x01h\x09\x01@\x01\x04self\x1e\0\x0f\x04\0#[metho\
+d]save-snapshot.blocking-save\x01\x1f\x01i\x06\x01@\x01\x04self\x1e\0\x20\x04\0\x1a\
+[method]save-snapshot.save\x01!\x01i\x0a\x01@\x01\x08location\x01\0\"\x04\0\x1a[\
+constructor]load-snapshot\x01#\x01h\x0a\x01@\x02\x04self$\x05bytes\x0f\0\x14\x04\
+\0#[method]load-snapshot.blocking-load\x01%\x01i\x07\x01@\x02\x04self$\x05bytes\x0f\
+\0&\x04\0\x1a[method]load-snapshot.load\x01'\x01i\x0b\x01@\x01\x08location\x01\0\
+(\x04\0\x10[constructor]api\x01)\x01h\x0b\x01@\x03\x04self*\x04names\x0bdescript\
+ions\x01\0\x04\0'[method]api.blocking-initialize-product\x01+\x04\0\x1e[method]a\
+pi.initialize-product\x01+\x01@\x01\x04self*\0\x19\x04\0\x18[method]api.blocking\
+-get\x01,\x01i\x08\x01@\x01\x04self*\0-\x04\0\x0f[method]api.get\x01.\x03\x01\x1f\
+golem:product-stub/stub-product\x05\x0a\x01B\x03\x01p}\x01@\0\0\0\x04\0\x04save\x01\
+\x01\x04\x01\x1dgolem:api/save-snapshot@0.2.0\x05\x0b\x01B\x04\x01p}\x01j\0\x01s\
+\x01@\x01\x05bytes\0\0\x01\x04\0\x04load\x01\x02\x04\x01\x1dgolem:api/load-snaps\
+hot@0.2.0\x05\x0c\x01B.\x01m\x03\x03new\x07shipped\x09cancelled\x04\0\x0corder-s\
+tatus\x03\0\0\x01ks\x01r\x09\x07street1s\x07street2\x02\x04citys\x0fstate-or-reg\
+ions\x07countrys\x0bpostal-codes\x04name\x02\x0dbusiness-name\x02\x0cphone-numbe\
+r\x02\x04\0\x07address\x03\0\x03\x01r\x04\x0aproduct-ids\x04names\x05pricev\x08q\
+uantityy\x04\0\x0aorder-item\x03\0\x05\x01p\x06\x01k\x04\x01r\x09\x08order-ids\x07\
+user-ids\x0corder-status\x01\x05items\x07\x0fbilling-address\x08\x10shipping-add\
+ress\x08\x05totalv\x08currencys\x09timestampw\x04\0\x05order\x03\0\x09\x01r\x07\x07\
+user-ids\x05items\x07\x0fbilling-address\x08\x10shipping-address\x08\x05totalv\x08\
+currencys\x09timestampw\x04\0\x0ccreate-order\x03\0\x0b\x01r\x02\x07messages\x0a\
+product-ids\x04\0\x17product-not-found-error\x03\0\x0d\x01r\x02\x07messages\x0ap\
+roduct-ids\x04\0\x17pricing-not-found-error\x03\0\x0f\x01r\x01\x07messages\x04\0\
+\x17address-not-valid-error\x03\0\x11\x01r\x02\x07messages\x0aproduct-ids\x04\0\x14\
+item-not-found-error\x03\0\x13\x01r\x01\x07messages\x04\0\x11empty-items-error\x03\
+\0\x15\x01r\x01\x07messages\x04\0\x1dbilling-address-not-set-error\x03\0\x17\x01\
+r\x02\x07messages\x06status\x01\x04\0\x18action-not-allowed-error\x03\0\x19\x01q\
+\x06\x11product-not-found\x01\x0e\0\x11pricing-not-found\x01\x10\0\x11address-no\
+t-valid\x01\x12\0\x0eitem-not-found\x01\x14\0\x0bempty-items\x01\x16\0\x12action\
+-not-allowed\x01\x1a\0\x04\0\x05error\x03\0\x1b\x01@\x01\x04data\x0c\x01\0\x04\0\
+\x10initialize-order\x01\x1d\x01j\0\x01\x1c\x01@\x02\x0aproduct-ids\x08quantityy\
+\0\x1e\x04\0\x08add-item\x01\x1f\x01@\x01\x0aproduct-ids\0\x1e\x04\0\x0bremove-i\
+tem\x01\x20\x04\0\x14update-item-quantity\x01\x1f\x01@\x01\x07address\x04\0\x1e\x04\
+\0\x17update-shipping-address\x01!\x04\0\x16update-billing-address\x01!\x01@\0\0\
+\x1e\x04\0\x0aship-order\x01\"\x04\0\x0ccancel-order\x01\"\x01k\x0a\x01@\0\0#\x04\
+\0\x03get\x01$\x04\x01\x0fgolem:order/api\x05\x0d\x04\x01\x11golem:order/order\x04\
+\0\x0b\x0b\x01\0\x05order\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit\
+-component\x070.208.1\x10wit-bindgen-rust\x060.25.0";
 
 #[inline(never)]
 #[doc(hidden)]

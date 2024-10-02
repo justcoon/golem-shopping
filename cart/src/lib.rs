@@ -152,7 +152,7 @@ impl Guest for Component {
                 }
             }
 
-            state.total = domain::cart::get_total_price(state.items.clone());
+            state.recalculate_total();
 
             Ok(())
         })
@@ -165,9 +165,7 @@ impl Guest for Component {
                 product_id, state.user_id
             );
 
-            if state.items.iter().any(|item| item.product_id == product_id) {
-                state.items.retain(|item| item.product_id != product_id);
-                state.total = domain::cart::get_total_price(state.items.clone());
+            if state.remove_item(product_id.clone()) {
                 Ok(())
             } else {
                 Err(item_not_found_error(product_id))
@@ -182,18 +180,9 @@ impl Guest for Component {
                 product_id, quantity, state.user_id
             );
 
-            let mut updated = false;
-
-            for item in &mut state.items {
-                if item.product_id == product_id {
-                    item.quantity = quantity;
-                    updated = true;
-                }
-            }
+            let updated = state.update_item_quantity(product_id.clone(), quantity);
 
             if updated {
-                state.total = domain::cart::get_total_price(state.items.clone());
-
                 Ok(())
             } else {
                 Err(item_not_found_error(product_id))
@@ -208,11 +197,7 @@ impl Guest for Component {
 
             create_order(order_id.clone(), state.clone())?;
 
-            state.items.clear();
-            state.total = 0f32;
-            state.shipping_address = None;
-            state.billing_address = None;
-            state.previous_order_ids.push(order_id.clone());
+            state.order_created(order_id.clone());
 
             Ok(OrderConfirmation { order_id })
         })
@@ -247,15 +232,16 @@ impl Guest for Component {
 
 impl save_snapshot::Guest for Component {
     fn save() -> Vec<u8> {
-        with_state(|state| serde_json::to_vec_pretty(&state).expect("Failed to serialize state"))
+        with_state(|state| {
+            domain::cart::serdes::serialize(state).expect("Failed to serialize state")
+        })
     }
 }
 
 impl load_snapshot::Guest for Component {
     fn load(bytes: Vec<u8>) -> Result<(), String> {
         with_state(|state| {
-            let value: domain::cart::Cart =
-                serde_json::from_slice(&bytes).map_err(|err| err.to_string())?;
+            let value = domain::cart::serdes::deserialize(&bytes)?;
             if value.user_id != state.user_id {
                 Err("Invalid state".to_string())
             } else {
