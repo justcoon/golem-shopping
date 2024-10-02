@@ -6,6 +6,14 @@ interface stub-pricing {
   use golem:pricing/api.{pricing-item};
   use golem:pricing/api.{pricing};
 
+  resource future-save-result {
+    subscribe: func() -> wasi-io-pollable;
+    get: func() -> option<list<u8>>;
+  }
+  resource future-load-result {
+    subscribe: func() -> wasi-io-pollable;
+    get: func() -> option<result<_, string>>;
+  }
   resource future-get-price-result {
     subscribe: func() -> wasi-io-pollable;
     get: func() -> option<option<pricing-item>>;
@@ -14,6 +22,18 @@ interface stub-pricing {
     subscribe: func() -> wasi-io-pollable;
     get: func() -> option<option<pricing>>;
   }
+  resource save-snapshot {
+    constructor(location: golem-rpc-uri);
+    blocking-save: func() -> list<u8>;
+    save: func() -> future-save-result;
+  }
+
+  resource load-snapshot {
+    constructor(location: golem-rpc-uri);
+    blocking-load: func(bytes: list<u8>) -> result<_, string>;
+    load: func(bytes: list<u8>) -> future-load-result;
+  }
+
   resource api {
     constructor(location: golem-rpc-uri);
     blocking-initialize-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>);

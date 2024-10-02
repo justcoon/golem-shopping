@@ -1,5 +1,7 @@
 mod bindings;
+mod domain;
 
+use crate::bindings::exports::golem::api::{load_snapshot, save_snapshot};
 use crate::bindings::exports::golem::product::api::*;
 use std::cell::RefCell;
 use std::env;
@@ -7,18 +9,14 @@ use std::env;
 struct Component;
 
 thread_local! {
-    static STATE: RefCell<Option<Product>> = const { RefCell::new(None) };
+    static STATE: RefCell<Option<domain::product::Product>> = const { RefCell::new(None) };
 }
 
-fn with_state<T>(f: impl FnOnce(&mut Product) -> T) -> T {
+fn with_state<T>(f: impl FnOnce(&mut domain::product::Product) -> T) -> T {
     STATE.with_borrow_mut(|state| {
         if state.is_none() {
             let worker_name = env::var("GOLEM_WORKER_NAME").expect("GOLEM_WORKER_NAME must be set");
-            let product = Product {
-                product_id: worker_name,
-                name: "undefined".to_string(),
-                description: "undefined".to_string(),
-            };
+            let product = domain::product::Product::new(worker_name);
             *state = Some(product);
         }
 
@@ -40,7 +38,28 @@ impl Guest for Component {
         STATE.with_borrow(|state| {
             println!("Getting product");
 
-            state.clone()
+            state.clone().map(|state| state.into())
+        })
+    }
+}
+impl save_snapshot::Guest for Component {
+    fn save() -> Vec<u8> {
+        with_state(|state| {
+            domain::product::serdes::serialize(state).expect("Failed to serialize state")
+        })
+    }
+}
+
+impl load_snapshot::Guest for Component {
+    fn load(bytes: Vec<u8>) -> Result<(), String> {
+        with_state(|state| {
+            let value = domain::product::serdes::deserialize(&bytes)?;
+            if value.product_id != state.product_id {
+                Err("Invalid state".to_string())
+            } else {
+                state.clone_from(&value);
+                Ok(())
+            }
         })
     }
 }

@@ -74,6 +74,8 @@ dependencies = [
  "golem-rust",
  "once_cell",
  "rand",
+ "serde",
+ "serde_json",
  "uuid",
  "wit-bindgen-rt",
 ]
@@ -156,9 +158,9 @@ dependencies = [
 
 [[package]]
 name = "golem-wasm-rpc"
-version = "1.0.2"
+version = "1.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "aeeb1d3e3cfd9c96a6032ed5969533b048ee6d995f1713e717ea5103916b6c70"
+checksum = "6e5137fe5950679be704177c8fec9ef5d4c195bb874707d6d35035a892a9183f"
 dependencies = [
  "cargo_metadata",
  "prost-build",
@@ -245,6 +247,8 @@ dependencies = [
  "golem-rust",
  "once_cell",
  "rand",
+ "serde",
+ "serde_json",
  "wit-bindgen-rt",
 ]
 
@@ -291,6 +295,8 @@ version = "0.0.1"
 dependencies = [
  "once_cell",
  "rand",
+ "serde",
+ "serde_json",
  "wit-bindgen-rt",
 ]
 
@@ -317,6 +323,8 @@ version = "0.0.1"
 dependencies = [
  "once_cell",
  "rand",
+ "serde",
+ "serde_json",
  "wit-bindgen-rt",
 ]
 

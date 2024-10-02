@@ -49,17 +49,46 @@ interface api {
     timestamp: u64,
   }
 
-  enum error-code {
-    product-not-found,
-    pricing-not-found,
-    address-not-valid,
-    item-not-found,
-    action-not-allowed,
+  record product-not-found-error {
+    message: string,
+    product-id: string,
   }
 
-  record error {
-    code: error-code,
+  record pricing-not-found-error {
     message: string,
+    product-id: string,
+  }
+
+  record address-not-valid-error {
+    message: string,
+  }
+
+
+  record item-not-found-error {
+    message: string,
+    product-id: string,
+  }
+
+  record empty-items-error {
+    message: string,
+  }
+
+  record billing-address-not-set-error {
+    message: string,
+  }
+
+  record action-not-allowed-error {
+    message: string,
+    status: order-status,
+  }
+
+  variant error {
+    product-not-found(product-not-found-error),
+    pricing-not-found(pricing-not-found-error),
+    address-not-valid(address-not-valid-error),
+    item-not-found(item-not-found-error),
+    empty-items(empty-items-error),
+    action-not-allowed(action-not-allowed-error),
   }
 
   initialize-order: func(data: create-order) -> ();
@@ -85,7 +114,8 @@ world order {
   import golem: pricing-stub/stub-pricing;
   import golem: product-stub/stub-product;
 
-  import golem: api/host@0.2.0;
+  export golem:api/save-snapshot@0.2.0;
+  export golem:api/load-snapshot@0.2.0;
 
   export api;
 }

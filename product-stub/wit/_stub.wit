@@ -5,10 +5,30 @@ interface stub-product {
   use wasi:io/poll@0.2.0.{pollable as wasi-io-pollable};
   use golem:product/api.{product};
 
+  resource future-save-result {
+    subscribe: func() -> wasi-io-pollable;
+    get: func() -> option<list<u8>>;
+  }
+  resource future-load-result {
+    subscribe: func() -> wasi-io-pollable;
+    get: func() -> option<result<_, string>>;
+  }
   resource future-get-result {
     subscribe: func() -> wasi-io-pollable;
     get: func() -> option<option<product>>;
   }
+  resource save-snapshot {
+    constructor(location: golem-rpc-uri);
+    blocking-save: func() -> list<u8>;
+    save: func() -> future-save-result;
+  }
+
+  resource load-snapshot {
+    constructor(location: golem-rpc-uri);
+    blocking-load: func(bytes: list<u8>) -> result<_, string>;
+    load: func(bytes: list<u8>) -> future-load-result;
+  }
+
   resource api {
     constructor(location: golem-rpc-uri);
     blocking-initialize-product: func(name: string, description: string);

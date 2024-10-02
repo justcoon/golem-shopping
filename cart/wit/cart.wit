@@ -37,18 +37,40 @@ interface api {
     order-id: string,
   }
 
-  enum error-code {
-    product-not-found,
-    pricing-not-found,
-    address-not-valid,
-    item-not-found,
-    empty-items,
-    billing-address-not-set,
+  record product-not-found-error {
+    message: string,
+    product-id: string,
   }
 
-  record error {
-    code: error-code,
+  record pricing-not-found-error {
     message: string,
+    product-id: string,
+  }
+
+  record address-not-valid-error {
+    message: string,
+  }
+
+  record item-not-found-error {
+    message: string,
+    product-id: string,
+  }
+
+  record empty-items-error {
+    message: string,
+  }
+
+  record billing-address-not-set-error {
+    message: string,
+  }
+
+  variant error {
+    product-not-found(product-not-found-error),
+    pricing-not-found(pricing-not-found-error),
+    address-not-valid(address-not-valid-error),
+    item-not-found(item-not-found-error),
+    empty-items(empty-items-error),
+    billing-address-not-set(billing-address-not-set-error),
   }
 
   add-item: func(product-id: string, quantity: u32) -> result<_, error>;
@@ -71,7 +93,8 @@ world cart {
   import golem: product-stub/stub-product;
   import golem: order-stub/stub-order;
 
-  import golem: api/host@0.2.0;
+  export golem:api/save-snapshot@0.2.0;
+  export golem:api/load-snapshot@0.2.0;
 
   export api;
 }
