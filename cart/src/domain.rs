@@ -2,6 +2,9 @@ pub mod cart {
     use crate::bindings;
     use serde::{Deserialize, Serialize};
 
+    pub const CURRENCY_DEFAULT: &str = "USD";
+    pub const PRICING_ZONE_DEFAULT: &str = "global";
+
     #[derive(Clone, Serialize, Deserialize)]
     pub struct Address {
         pub street1: String,
@@ -83,7 +86,7 @@ pub mod cart {
                 billing_address: None,
                 shipping_address: None,
                 total: 0.0,
-                currency: "USD".to_string(),
+                currency: CURRENCY_DEFAULT.to_string(),
                 timestamp: 0,
                 previous_order_ids: vec![],
             }
@@ -103,6 +106,12 @@ pub mod cart {
 
         pub fn has_item(&self, product_id: String) -> bool {
             self.items.clone().into_iter().any(|item| item.product_id == product_id)
+        }
+
+        pub fn add_item(&mut self, item: CartItem) -> bool {
+            self.items.push(item);
+            self.recalculate_total();
+            true
         }
 
         pub fn update_item_quantity(&mut self, product_id: String, quantity: u32) -> bool {

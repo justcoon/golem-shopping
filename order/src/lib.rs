@@ -6,18 +6,21 @@ use crate::bindings::exports::golem::order::api::*;
 use crate::bindings::golem::pricing::api::PricingItem;
 use crate::bindings::golem::product_stub::stub_product::Product;
 use std::cell::RefCell;
-use std::env;
 
 struct Component;
 
+fn get_worker_urn(component_id: String, worker_name: String) -> String {
+    format!("urn:worker:{component_id}/{}", worker_name)
+}
+
 fn get_product_worker_urn(product_id: String) -> String {
     let component_id = std::env::var("PRODUCT_COMPONENT_ID").expect("PRODUCT_COMPONENT_ID not set");
-    format!("urn:worker:{component_id}/{}", product_id)
+    get_worker_urn(component_id, product_id)
 }
 
 fn get_pricing_worker_urn(product_id: String) -> String {
     let component_id = std::env::var("PRICING_COMPONENT_ID").expect("PRICING_COMPONENT_ID not set");
-    format!("urn:worker:{component_id}/{}", product_id)
+    get_worker_urn(component_id, product_id)
 }
 
 fn get_product(product_id: String) -> Option<Product> {
@@ -74,7 +77,8 @@ thread_local! {
 fn with_state<T>(f: impl FnOnce(&mut domain::order::Order) -> T) -> T {
     STATE.with_borrow_mut(|state| {
         if state.is_none() {
-            let worker_name = env::var("GOLEM_WORKER_NAME").expect("GOLEM_WORKER_NAME must be set");
+            let worker_name =
+                std::env::var("GOLEM_WORKER_NAME").expect("GOLEM_WORKER_NAME must be set");
             let value = domain::order::Order::new(worker_name, "".to_string());
             *state = Some(value);
         }
@@ -105,24 +109,18 @@ impl Guest for Component {
             );
 
             if state.order_status == domain::order::OrderStatus::New {
-                let mut updated = false;
-                for item in &mut state.items {
-                    if item.product_id == product_id {
-                        item.quantity += quantity;
-                        updated = true;
-                    }
-                }
+                let updated = state.update_item_quantity(product_id.clone(), quantity);
 
                 if !updated {
                     let product = get_product(product_id.clone());
                     let pricing = get_pricing(
                         product_id.clone(),
                         state.currency.clone(),
-                        "global".to_string(),
+                        domain::order::PRICING_ZONE_DEFAULT.to_string(),
                     );
                     match (product, pricing) {
                         (Some(product), Some(pricing)) => {
-                            state.items.push(domain::order::OrderItem {
+                            state.add_item(domain::order::OrderItem {
                                 product_id,
                                 name: product.name,
                                 price: pricing.price,
@@ -133,8 +131,6 @@ impl Guest for Component {
                         _ => return Err(pricing_not_found_error(product_id)),
                     }
                 }
-
-                state.recalculate_total();
 
                 Ok(())
             } else {
