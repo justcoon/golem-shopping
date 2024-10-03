@@ -44,3 +44,7 @@ golem-cloud-cli component add --component-name product target/wasm32-wasi/releas
 golem-cloud-cli component add --component-name cart target/wasm32-wasi/release/cart_composed.wasm
 golem-cloud-cli component add --component-name order target/wasm32-wasi/release/order_composed.wasm
 ```
+
+```
+golem-cloud-cli worker add --component-name cart  --worker-name user10 --env PRODUCT_COMPONENT_ID=35ec4b88-00e2-4948-a2b0-d6d9527fa437 --env PRICING_COMPONENT_ID=83ab925a-32e4-4c9d-bbe9-2c3b874ebcf1 --env ORDER_COMPONENT_ID=98570ba9-0c35-4f80-ae7d-54a8ff957e64
+```

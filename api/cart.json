@@ -1,0 +1,454 @@
+{
+  "id": "cart",
+  "version": "0.0.1",
+  "routes": [
+    {
+      "method": "Get",
+      "path": "/v1/cart/{user-id}",
+      "binding": {
+        "componentId": {
+          "componentId": "1dea2b41-497d-4011-9698-30718dd83d47",
+          "version": 13
+        },
+        "workerName": "${let id: str = request.path.user-id;\nid}",
+        "idempotencyKey": null,
+        "response": "${let result = golem:cart/api.{get}();\nmatch result {  some(x) => {status: 200u64, body: x}, none => {status: 404u64, body: {message: \"not found\"}} } }",
+        "responseMappingInput": {
+          "types": {}
+        },
+        "workerNameInput": {
+          "types": {
+            "request": {
+              "type": "Record",
+              "fields": [
+                {
+                  "name": "path",
+                  "typ": {
+                    "type": "Record",
+                    "fields": [
+                      {
+                        "name": "user-id",
+                        "typ": {
+                          "type": "Str"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "idempotencyKeyInput": null
+      }
+    },
+    {
+      "method": "Put",
+      "path": "/v1/cart/{user-id}/items",
+      "binding": {
+        "componentId": {
+          "componentId": "1dea2b41-497d-4011-9698-30718dd83d47",
+          "version": 13
+        },
+        "workerName": "${let id: str = request.path.user-id;\nid}",
+        "idempotencyKey": null,
+        "response": "${let result = golem:cart/api.{add-item}(request.body.product-id, request.body.quantity);\nmatch result {  ok(x) => {status: 200u64, body: x}, err(x) => {status: 400u64, body: {error: x}} } }",
+        "responseMappingInput": {
+          "types": {
+            "request": {
+              "type": "Record",
+              "fields": [
+                {
+                  "name": "body",
+                  "typ": {
+                    "type": "Record",
+                    "fields": [
+                      {
+                        "name": "product-id",
+                        "typ": {
+                          "type": "Str"
+                        }
+                      },
+                      {
+                        "name": "quantity",
+                        "typ": {
+                          "type": "U32"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "workerNameInput": {
+          "types": {
+            "request": {
+              "type": "Record",
+              "fields": [
+                {
+                  "name": "path",
+                  "typ": {
+                    "type": "Record",
+                    "fields": [
+                      {
+                        "name": "user-id",
+                        "typ": {
+                          "type": "Str"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "idempotencyKeyInput": null
+      }
+    },
+    {
+      "method": "Post",
+      "path": "/v1/cart/{user-id}/checkout",
+      "binding": {
+        "componentId": {
+          "componentId": "1dea2b41-497d-4011-9698-30718dd83d47",
+          "version": 13
+        },
+        "workerName": "${let id: str = request.path.user-id;\nid}",
+        "idempotencyKey": null,
+        "response": "${let result = golem:cart/api.{checkout}();\nmatch result {  ok(x) => {status: 200u64, body: x}, err(x) => {status: 400u64, body: {error: x}} } }",
+        "responseMappingInput": {
+          "types": {}
+        },
+        "workerNameInput": {
+          "types": {
+            "request": {
+              "type": "Record",
+              "fields": [
+                {
+                  "name": "path",
+                  "typ": {
+                    "type": "Record",
+                    "fields": [
+                      {
+                        "name": "user-id",
+                        "typ": {
+                          "type": "Str"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "idempotencyKeyInput": null
+      }
+    },
+    {
+      "method": "Put",
+      "path": "/v1/cart/{user-id}/billing-address",
+      "binding": {
+        "componentId": {
+          "componentId": "1dea2b41-497d-4011-9698-30718dd83d47",
+          "version": 13
+        },
+        "workerName": "${let id: str = request.path.user-id;\nid}",
+        "idempotencyKey": null,
+        "response": "${let result = golem:cart/api.{update-billing-address}(request.body);\nmatch result {  ok(x) => {status: 200u64, body: x}, err(x) => {status: 400u64, body: {error: x}} } }",
+        "responseMappingInput": {
+          "types": {
+            "request": {
+              "type": "Record",
+              "fields": [
+                {
+                  "name": "body",
+                  "typ": {
+                    "type": "Record",
+                    "fields": [
+                      {
+                        "name": "street1",
+                        "typ": {
+                          "type": "Str"
+                        }
+                      },
+                      {
+                        "name": "street2",
+                        "typ": {
+                          "type": "Option",
+                          "inner": {
+                            "type": "Str"
+                          }
+                        }
+                      },
+                      {
+                        "name": "city",
+                        "typ": {
+                          "type": "Str"
+                        }
+                      },
+                      {
+                        "name": "state-or-region",
+                        "typ": {
+                          "type": "Str"
+                        }
+                      },
+                      {
+                        "name": "country",
+                        "typ": {
+                          "type": "Str"
+                        }
+                      },
+                      {
+                        "name": "postal-code",
+                        "typ": {
+                          "type": "Str"
+                        }
+                      },
+                      {
+                        "name": "name",
+                        "typ": {
+                          "type": "Option",
+                          "inner": {
+                            "type": "Str"
+                          }
+                        }
+                      },
+                      {
+                        "name": "business-name",
+                        "typ": {
+                          "type": "Option",
+                          "inner": {
+                            "type": "Str"
+                          }
+                        }
+                      },
+                      {
+                        "name": "phone-number",
+                        "typ": {
+                          "type": "Option",
+                          "inner": {
+                            "type": "Str"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "workerNameInput": {
+          "types": {
+            "request": {
+              "type": "Record",
+              "fields": [
+                {
+                  "name": "path",
+                  "typ": {
+                    "type": "Record",
+                    "fields": [
+                      {
+                        "name": "user-id",
+                        "typ": {
+                          "type": "Str"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "idempotencyKeyInput": null
+      }
+    },
+    {
+      "method": "Put",
+      "path": "/v1/cart/{user-id}/shipping-address",
+      "binding": {
+        "componentId": {
+          "componentId": "1dea2b41-497d-4011-9698-30718dd83d47",
+          "version": 13
+        },
+        "workerName": "${let id: str = request.path.user-id;\nid}",
+        "idempotencyKey": null,
+        "response": "${let result = golem:cart/api.{update-shipping-address}(request.body);\nmatch result {  ok(x) => {status: 200u64, body: x}, err(x) => {status: 400u64, body: {error: x}} } }",
+        "responseMappingInput": {
+          "types": {
+            "request": {
+              "type": "Record",
+              "fields": [
+                {
+                  "name": "body",
+                  "typ": {
+                    "type": "Record",
+                    "fields": [
+                      {
+                        "name": "street1",
+                        "typ": {
+                          "type": "Str"
+                        }
+                      },
+                      {
+                        "name": "street2",
+                        "typ": {
+                          "type": "Option",
+                          "inner": {
+                            "type": "Str"
+                          }
+                        }
+                      },
+                      {
+                        "name": "city",
+                        "typ": {
+                          "type": "Str"
+                        }
+                      },
+                      {
+                        "name": "state-or-region",
+                        "typ": {
+                          "type": "Str"
+                        }
+                      },
+                      {
+                        "name": "country",
+                        "typ": {
+                          "type": "Str"
+                        }
+                      },
+                      {
+                        "name": "postal-code",
+                        "typ": {
+                          "type": "Str"
+                        }
+                      },
+                      {
+                        "name": "name",
+                        "typ": {
+                          "type": "Option",
+                          "inner": {
+                            "type": "Str"
+                          }
+                        }
+                      },
+                      {
+                        "name": "business-name",
+                        "typ": {
+                          "type": "Option",
+                          "inner": {
+                            "type": "Str"
+                          }
+                        }
+                      },
+                      {
+                        "name": "phone-number",
+                        "typ": {
+                          "type": "Option",
+                          "inner": {
+                            "type": "Str"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "workerNameInput": {
+          "types": {
+            "request": {
+              "type": "Record",
+              "fields": [
+                {
+                  "name": "path",
+                  "typ": {
+                    "type": "Record",
+                    "fields": [
+                      {
+                        "name": "user-id",
+                        "typ": {
+                          "type": "Str"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "idempotencyKeyInput": null
+      }
+    },
+    {
+      "method": "Delete",
+      "path": "/v1/cart/{user-id}/item/{product-id}",
+      "binding": {
+        "componentId": {
+          "componentId": "1dea2b41-497d-4011-9698-30718dd83d47",
+          "version": 13
+        },
+        "workerName": "${let id: str = request.path.user-id;\nid}",
+        "idempotencyKey": null,
+        "response": "${let result = golem:cart/api.{remove-item}(request.path.product-id);\nmatch result {  ok(x) => {status: 200u64, body: x}, err(x) => {status: 400u64, body: {error: x}} } }",
+        "responseMappingInput": {
+          "types": {
+            "request": {
+              "type": "Record",
+              "fields": [
+                {
+                  "name": "path",
+                  "typ": {
+                    "type": "Record",
+                    "fields": [
+                      {
+                        "name": "product-id",
+                        "typ": {
+                          "type": "Str"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "workerNameInput": {
+          "types": {
+            "request": {
+              "type": "Record",
+              "fields": [
+                {
+                  "name": "path",
+                  "typ": {
+                    "type": "Record",
+                    "fields": [
+                      {
+                        "name": "user-id",
+                        "typ": {
+                          "type": "Str"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "idempotencyKeyInput": null
+      }
+    }
+  ],
+  "draft": true,
+  "createdAt": "2024-10-03T20:27:31.699893Z"
+}
