@@ -1,0 +1,106 @@
+{
+  "id": "order",
+  "version": "0.0.1",
+  "routes": [
+    {
+      "method": "Get",
+      "path": "/v1/order/{order-id}",
+      "binding": {
+        "componentId": {
+          "componentId": "98570ba9-0c35-4f80-ae7d-54a8ff957e64",
+          "version": 8
+        },
+        "workerName": "${let id: str = request.path.order-id;\nid}",
+        "idempotencyKey": null,
+        "response": "${let result = golem:order/api.{get}();\nmatch result {  some(x) => {status: 200u64, body: x}, none => {status: 404u64, body: {message: \"not found\"}} } }"
+      }
+    },
+    {
+      "method": "Put",
+      "path": "/v1/order/{order-id}/items/{product-id}",
+      "binding": {
+        "componentId": {
+          "componentId": "98570ba9-0c35-4f80-ae7d-54a8ff957e64",
+          "version": 8
+        },
+        "workerName": "${let id: str = request.path.order-id;\nid}",
+        "idempotencyKey": null,
+        "response": "${let result = golem:order/api.{add-item}(request.path.product-id, request.body.quantity);\nmatch result {  ok(_) => {status: 200u64, body: {message: \"item added\"}}, err(x) => {status: 400u64, body: {error: x}} } }",
+
+        "idempotencyKeyInput": null
+      }
+    },
+    {
+      "method": "Post",
+      "path": "/v1/order/{order-id}/ship-order",
+      "binding": {
+        "componentId": {
+          "componentId": "98570ba9-0c35-4f80-ae7d-54a8ff957e64",
+          "version": 8
+        },
+        "workerName": "${let id: str = request.path.order-id;\nid}",
+        "idempotencyKey": null,
+        "response": "${let result = golem:order/api.{ship-order}();\nmatch result {  ok(_) => {status: 200u64, body: {message: \"order shipped\"}}, err(x) => {status: 400u64, body: {error: x}} } }",
+        "idempotencyKeyInput": null
+      }
+    },
+    {
+      "method": "Post",
+      "path": "/v1/order/{order-id}/cancel-order",
+      "binding": {
+        "componentId": {
+          "componentId": "98570ba9-0c35-4f80-ae7d-54a8ff957e64",
+          "version": 8
+        },
+        "workerName": "${let id: str = request.path.order-id;\nid}",
+        "idempotencyKey": null,
+        "response": "${let result = golem:order/api.{cancel-order}();\nmatch result {  ok(_) => {status: 200u64, body: {message: \"order cancelled\"}}, err(x) => {status: 400u64, body: {error: x}} } }",
+        "idempotencyKeyInput": null
+      }
+    },
+    {
+      "method": "Put",
+      "path": "/v1/order/{order-id}/billing-address",
+      "binding": {
+        "componentId": {
+          "componentId": "98570ba9-0c35-4f80-ae7d-54a8ff957e64",
+          "version": 8
+        },
+        "workerName": "${let id: str = request.path.order-id;\nid}",
+        "idempotencyKey": null,
+        "response": "${let result = golem:order/api.{update-billing-address}(request.body);\nmatch result {  ok(_) => {status: 200u64, body: {message: \"address set\"}}, err(x) => {status: 400u64, body: {error: x}} } }",
+        "idempotencyKeyInput": null
+      }
+    },
+    {
+      "method": "Put",
+      "path": "/v1/order/{order-id}/shipping-address",
+      "binding": {
+        "componentId": {
+          "componentId": "98570ba9-0c35-4f80-ae7d-54a8ff957e64",
+          "version": 8
+        },
+        "workerName": "${let id: str = request.path.order-id;\nid}",
+        "idempotencyKey": null,
+        "response": "${let result = golem:order/api.{update-shipping-address}(request.body);\nmatch result {  ok(_) => {status: 200u64, body: {message: \"address set\"}}, err(x) => {status: 400u64, body: {error: x}} } }",
+        "idempotencyKeyInput": null
+      }
+    },
+    {
+      "method": "Delete",
+      "path": "/v1/order/{order-id}/items/{product-id}",
+      "binding": {
+        "componentId": {
+          "componentId": "98570ba9-0c35-4f80-ae7d-54a8ff957e64",
+          "version": 8
+        },
+        "workerName": "${let id: str = request.path.order-id;\nid}",
+        "idempotencyKey": null,
+        "response": "${let result = golem:order/api.{remove-item}(request.path.product-id);\nmatch result {  ok(_) => {status: 200u64, body: {message: \"item removed\"}}, err(x) => {status: 400u64, body: {error: x}} } }",
+
+        "idempotencyKeyInput": null
+      }
+    }
+  ],
+  "draft": true
+}
