@@ -1,5 +1,6 @@
 [workspace]
 members = ["cart", "pricing", "product", "order", "product-stub", "pricing-stub", "order-stub"]
+exclude = ["benchmark"]
 resolver = "2"
 
 [profile.release]
