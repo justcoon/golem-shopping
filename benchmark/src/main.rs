@@ -1,12 +1,18 @@
 mod domain;
+mod goose_ext;
 
 use goose::prelude::*;
+use goose_ext::GooseRequestExt;
 use rand::seq::SliceRandom;
-use reqwest::header::HeaderMap;
 use std::time::Duration;
 
 #[tokio::main]
 async fn main() -> Result<(), GooseError> {
+    let custom_host = match std::env::var("HOST") {
+        Ok(host) => host,
+        Err(_) => "".to_string(),
+    };
+
     GooseAttack::initialize()?
         .register_scenario(
             scenario!("Get Products")
@@ -26,6 +32,7 @@ async fn main() -> Result<(), GooseError> {
                 .set_wait_time(Duration::from_secs(5), Duration::from_secs(15))?
                 .register_transaction(transaction!(create_and_checkout_cart)),
         )
+        .set_default(GooseDefault::Host, custom_host.as_str())?
         .execute()
         .await?;
 
@@ -35,14 +42,8 @@ async fn main() -> Result<(), GooseError> {
 async fn get_products(user: &mut GooseUser) -> TransactionResult {
     let product_id = rand_product_id();
 
-    let request_builder = user
-        .get_request_builder(&GooseMethod::Get, format!("/v1/product/{product_id}").as_str())?
-        .headers(get_headers());
-
-    let request =
-        GooseRequest::builder().set_request_builder(request_builder).name("product-get").build();
-
-    let _goose = user.request(request).await?;
+    let _goose =
+        user.get_request("product-get", format!("/v1/product/{product_id}").as_str()).await?;
 
     Ok(())
 }
@@ -50,20 +51,14 @@ async fn get_products(user: &mut GooseUser) -> TransactionResult {
 async fn get_pricing(user: &mut GooseUser) -> TransactionResult {
     let product_id = rand_product_id();
 
-    let request_builder = user
-        .get_request_builder(&GooseMethod::Get, format!("/v1/pricing/{product_id}").as_str())?
-        .headers(get_headers());
-
-    let request =
-        GooseRequest::builder().set_request_builder(request_builder).name("pricing-get").build();
-
-    let _goose = user.request(request).await?;
+    let _goose =
+        user.get_request("pricing-get", format!("/v1/pricing/{product_id}").as_str()).await?;
 
     Ok(())
 }
 
 async fn create_and_checkout_cart(user: &mut GooseUser) -> TransactionResult {
-    let item_count = 3;
+    let item_count = 4;
 
     let product_ids = get_product_ids();
     let product_ids: Vec<_> =
@@ -74,65 +69,42 @@ async fn create_and_checkout_cart(user: &mut GooseUser) -> TransactionResult {
     let address = get_addresses().choose(&mut rand::thread_rng()).unwrap().to_owned();
 
     for product_id in product_ids.iter() {
-        let request_builder = user
-            .get_request_builder(
-                &GooseMethod::Put,
-                format!("/v1/cart/{user_id}/items/{product_id}").as_str(),
-            )?
-            .headers(get_headers())
-            .json(&domain::common::AddItem::new(1));
-
         let _goose = user
-            .request(
-                GooseRequest::builder()
-                    .set_request_builder(request_builder)
-                    .name("cart-add-item")
-                    .build(),
+            .put_request(
+                "cart-add-item",
+                format!("/v1/cart/{user_id}/items/{product_id}").as_str(),
+                &domain::common::AddItem::new(1),
             )
             .await?;
     }
 
-    let request_builder = user
-        .get_request_builder(
-            &GooseMethod::Put,
-            format!("/v1/cart/{user_id}/billing-address").as_str(),
-        )?
-        .headers(get_headers())
-        .json(&address);
+    let product_id = product_ids[0];
 
     let _goose = user
-        .request(
-            GooseRequest::builder()
-                .set_request_builder(request_builder)
-                .name("cart-set-billing-address")
-                .build(),
+        .delete_request(
+            "cart-delete-item",
+            format!("/v1/cart/{user_id}/items/{product_id}").as_str(),
         )
         .await?;
 
-    let request_builder = user
-        .get_request_builder(&GooseMethod::Post, format!("/v1/cart/{user_id}/checkout").as_str())?
-        .headers(get_headers());
+    let _goose = user
+        .put_request(
+            "cart-set-billing-address",
+            format!("/v1/cart/{user_id}/billing-address").as_str(),
+            &address,
+        )
+        .await?;
 
     let _goose = user
-        .request(
-            GooseRequest::builder()
-                .set_request_builder(request_builder)
-                .name("cart-checkout")
-                .build(),
+        .post_request(
+            "cart-checkout",
+            format!("/v1/cart/{user_id}/checkout").as_str(),
+            &serde_json::Value::Null,
         )
         .await?;
 
     Ok(())
 }
-
-fn get_headers() -> HeaderMap {
-    let mut headers = HeaderMap::new();
-    headers.insert("content-type", "application/json".parse().unwrap());
-    headers.insert("accept", "application/json".parse().unwrap());
-    headers.insert("host", "golem-shopping.test.local".parse().unwrap());
-    headers
-}
-
 fn rand_product_id() -> String {
     let product_ids = get_product_ids();
 
