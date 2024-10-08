@@ -53,5 +53,5 @@ golem-cli worker add --component-name cart  --worker-name user001 --env PRODUCT_
 ```
 
 see also:
-* [API Definitions and Deployments](../api/README.md)
-* [benchmark](../benchmark/README.md)
+* [API Definitions and Deployments](./api/README.md)
+* [benchmark](./benchmark/README.md)
