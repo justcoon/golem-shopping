@@ -1,0 +1,93 @@
+{
+  "id": "cart",
+  "version": "0.0.1",
+  "routes": [
+    {
+      "method": "Get",
+      "path": "/v1/cart/{user-id}",
+      "binding": {
+        "componentId": {
+          "componentId": "1dea2b41-497d-4011-9698-30718dd83d47",
+          "version": 13
+        },
+        "workerName": "${let id: str = request.path.user-id;\nid}",
+        "idempotencyKey": null,
+        "response": "${let result = golem:cart/api.{get}();\nmatch result {  some(x) => {status: 200u64, body: x}, none => {status: 404u64, body: {message: \"not found\"}} } }",
+        "idempotencyKeyInput": null
+      }
+    },
+    {
+      "method": "Put",
+      "path": "/v1/cart/{user-id}/items/{product-id}",
+      "binding": {
+        "componentId": {
+          "componentId": "1dea2b41-497d-4011-9698-30718dd83d47",
+          "version": 13
+        },
+        "workerName": "${let id: str = request.path.user-id;\nid}",
+        "idempotencyKey": null,
+        "response": "${let result = golem:cart/api.{add-item}(request.path.product-id, request.body.quantity);\nmatch result {  ok(_) => {status: 200u64, body: {message: \"item added\"}}, err(x) => {status: 400u64, body: {error: x}} } }",
+
+        "idempotencyKeyInput": null
+      }
+    },
+    {
+      "method": "Post",
+      "path": "/v1/cart/{user-id}/checkout",
+      "binding": {
+        "componentId": {
+          "componentId": "1dea2b41-497d-4011-9698-30718dd83d47",
+          "version": 13
+        },
+        "workerName": "${let id: str = request.path.user-id;\nid}",
+        "idempotencyKey": null,
+        "response": "${let result = golem:cart/api.{checkout}();\nmatch result {  ok(x) => {status: 200u64, body: x}, err(x) => {status: 400u64, body: {error: x}} } }",
+        "idempotencyKeyInput": null
+      }
+    },
+    {
+      "method": "Put",
+      "path": "/v1/cart/{user-id}/billing-address",
+      "binding": {
+        "componentId": {
+          "componentId": "1dea2b41-497d-4011-9698-30718dd83d47",
+          "version": 13
+        },
+        "workerName": "${let id: str = request.path.user-id;\nid}",
+        "idempotencyKey": null,
+        "response": "${let result = golem:cart/api.{update-billing-address}(request.body);\nmatch result {  ok(_) => {status: 200u64, body: {message: \"address set\"}}, err(x) => {status: 400u64, body: {error: x}} } }",
+        "idempotencyKeyInput": null
+      }
+    },
+    {
+      "method": "Put",
+      "path": "/v1/cart/{user-id}/shipping-address",
+      "binding": {
+        "componentId": {
+          "componentId": "1dea2b41-497d-4011-9698-30718dd83d47",
+          "version": 13
+        },
+        "workerName": "${let id: str = request.path.user-id;\nid}",
+        "idempotencyKey": null,
+        "response": "${let result = golem:cart/api.{update-shipping-address}(request.body);\nmatch result {  ok(_) => {status: 200u64, body: {message: \"address set\"}}, err(x) => {status: 400u64, body: {error: x}} } }",
+        "idempotencyKeyInput": null
+      }
+    },
+    {
+      "method": "Delete",
+      "path": "/v1/cart/{user-id}/items/{product-id}",
+      "binding": {
+        "componentId": {
+          "componentId": "1dea2b41-497d-4011-9698-30718dd83d47",
+          "version": 13
+        },
+        "workerName": "${let id: str = request.path.user-id;\nid}",
+        "idempotencyKey": null,
+        "response": "${let result = golem:cart/api.{remove-item}(request.path.product-id);\nmatch result {  ok(_) => {status: 200u64, body: {message: \"item removed\"}}, err(x) => {status: 400u64, body: {error: x}} } }",
+
+        "idempotencyKeyInput": null
+      }
+    }
+  ],
+  "draft": true
+}

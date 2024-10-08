@@ -10,7 +10,7 @@ use std::cell::RefCell;
 struct Component;
 
 fn get_worker_urn(component_id: String, worker_name: String) -> String {
-    format!("urn:worker:{component_id}/{}", worker_name)
+    format!("urn:worker:{component_id}/{worker_name}")
 }
 
 fn get_product_worker_urn(product_id: String) -> String {
