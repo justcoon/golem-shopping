@@ -1,6 +1,7 @@
 use async_trait::async_trait;
 use goose::goose::{GooseMethod, GooseRequest, GooseResponse, GooseUser, TransactionError};
 use reqwest::header::{HeaderMap, ACCEPT, CONTENT_TYPE, HOST};
+use serde::de::DeserializeOwned;
 use serde::Serialize;
 
 #[async_trait]
@@ -101,4 +102,19 @@ fn get_headers() -> HeaderMap {
         headers.insert(HOST, host.parse().unwrap());
     }
     headers
+}
+
+#[async_trait]
+pub trait GooseResponseExt {
+    async fn json<T: DeserializeOwned>(self) -> Result<T, Box<TransactionError>>;
+}
+
+#[async_trait]
+impl GooseResponseExt for GooseResponse {
+    async fn json<T: DeserializeOwned>(self) -> Result<T, Box<TransactionError>> {
+        match self.response {
+            Ok(response) => response.json().await.map_err(|e| Box::new(e.into())),
+            Err(e) => Err(Box::new(e.into())),
+        }
+    }
 }

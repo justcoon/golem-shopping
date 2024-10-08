@@ -1,5 +1,5 @@
 ---
-base: 'https://golem-shopping.dev-api.golem.cloud'
+base: '{{ HOST }}'
 iterations: 1
 concurrency: 1
 rampup: 1
@@ -11,6 +11,7 @@ plan:
       method: POST
       body: '{ "name": "{{ item.name }}", "description": "{{ item.description }}" }'
       headers:
+        host: '{{ API_HOST }}'
         Content-Type: 'application/json'
         Accept: 'application/json'
     with_items_from_csv:
@@ -22,27 +23,9 @@ plan:
       method: POST
       body: '{{ item.body }}'
       headers:
+        host: '{{ API_HOST }}'
         Content-Type: 'application/json'
         Accept: 'application/json'
     with_items_from_csv:
       file_name: ./fixtures/prices.csv
       quote_char: "\'"
-
-#  - name: GET product, index {{ index }}
-#    request:
-#      url: /v1/product/{{ item.product-id }}
-#      method: GET
-#      headers:
-#        Accept: 'application/json'
-#    with_items_from_csv:
-#      file_name: ./fixtures/products.csv
-#
-#  - name: GET pricing, index {{ index }}
-#    request:
-#      url: /v1/pricing/{{ item.product-id }}
-#      method: GET
-#      headers:
-#        Accept: 'application/json'
-#    with_items_from_csv:
-#      file_name: ./fixtures/prices.csv
-#      quote_char: "\'"
