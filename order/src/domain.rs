@@ -6,6 +6,7 @@ pub mod order {
     pub const PRICING_ZONE_DEFAULT: &str = "global";
 
     #[derive(Clone, Serialize, Deserialize)]
+    #[serde(rename_all = "kebab-case")]
     pub struct Address {
         pub street1: String,
         pub street2: Option<String>,
@@ -51,9 +52,11 @@ pub mod order {
     }
 
     #[derive(Clone, Serialize, Deserialize)]
+    #[serde(rename_all = "kebab-case")]
     pub struct Order {
         pub order_id: String,
         pub user_id: String,
+        pub email: Option<String>,
         pub order_status: OrderStatus,
         pub items: Vec<OrderItem>,
         pub billing_address: Option<Address>,
@@ -68,6 +71,7 @@ pub mod order {
             Self {
                 order_id,
                 user_id,
+                email: None,
                 order_status: OrderStatus::New,
                 items: vec![],
                 shipping_address: None,
@@ -122,6 +126,7 @@ pub mod order {
     }
 
     #[derive(Clone, Serialize, Deserialize)]
+    #[serde(rename_all = "kebab-case")]
     pub struct OrderItem {
         pub product_id: String,
         pub name: String,
@@ -156,6 +161,7 @@ pub mod order {
             Self {
                 order_id: value.order_id,
                 user_id: value.user_id,
+                email: value.email,
                 items: value.items.into_iter().map(|item| item.into()).collect(),
                 total: value.total,
                 order_status: value.order_status.into(),
@@ -172,6 +178,7 @@ pub mod order {
             Self {
                 order_id: value.order_id,
                 user_id: value.user_id,
+                email: value.email,
                 items: value.items.into_iter().map(|item| item.into()).collect(),
                 total: value.total,
                 order_status: value.order_status.into(),
@@ -184,6 +191,7 @@ pub mod order {
     }
 
     #[derive(Clone, Copy, Eq, PartialEq, Serialize, Deserialize)]
+    #[serde(rename_all = "kebab-case")]
     pub enum OrderStatus {
         New,
         Shipped,

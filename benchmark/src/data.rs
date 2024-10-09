@@ -1,5 +1,6 @@
 use crate::domain;
 use rand::prelude::SliceRandom;
+use rand::Rng;
 
 pub fn rand_product_id() -> String {
     let product_ids = get_product_ids();
@@ -13,6 +14,11 @@ pub fn get_product_ids() -> Vec<String> {
 
 pub fn get_user_ids() -> Vec<String> {
     (1..=4).map(|v| format!("user{:03}", v)).collect()
+}
+
+pub fn get_email(user: String) -> String {
+    let num = rand::thread_rng().gen_range(0..100);
+    format!("{}-{:03}@test.com", user, num)
 }
 
 pub fn get_addresses() -> Vec<domain::common::Address> {

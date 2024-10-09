@@ -24,6 +24,7 @@ interface api {
 
   record cart {
     user-id: string,
+    email: option<string>,
     items: list<cart-item>,
     billing-address: option<address>,
     shipping-address: option<address>,
@@ -51,6 +52,10 @@ interface api {
     message: string,
   }
 
+  record email-not-valid-error {
+    message: string,
+  }
+
   record item-not-found-error {
     message: string,
     product-id: string,
@@ -64,26 +69,57 @@ interface api {
     message: string,
   }
 
-  variant error {
-    product-not-found(product-not-found-error),
-    pricing-not-found(pricing-not-found-error),
-    address-not-valid(address-not-valid-error),
-    item-not-found(item-not-found-error),
-    empty-items(empty-items-error),
-    billing-address-not-set(billing-address-not-set-error),
+  record empty-email-error {
+    message: string,
   }
 
-  add-item: func(product-id: string, quantity: u32) -> result<_, error>;
+  record order-create-error {
+    message: string
+  }
 
-  remove-item: func(product-id: string) -> result<_, error>;
+  variant add-item-error {
+    product-not-found(product-not-found-error),
+    pricing-not-found(pricing-not-found-error),
+  }
 
-  update-item-quantity: func(product-id: string, quantity: u32) -> result<_, error>;
+  variant remove-item-error {
+    item-not-found(item-not-found-error),
+  }
 
-  update-shipping-address: func(address: address) -> result<_, error>;
+  variant update-item-quantity-error {
+    item-not-found(item-not-found-error),
+  }
 
-  update-billing-address: func(address: address) -> result<_, error>;
+  variant update-address-error {
+    address-not-valid(address-not-valid-error),
+  }
 
-  checkout: func() -> result<order-confirmation, error>;
+  variant update-email-error {
+   email-not-valid(email-not-valid-error),
+  }
+
+  variant checkout-error {
+    product-not-found(product-not-found-error),
+    pricing-not-found(pricing-not-found-error),
+    empty-items(empty-items-error),
+    empty-email(empty-email-error),
+    billing-address-not-set(billing-address-not-set-error),
+    order-create(order-create-error),
+  }
+
+  add-item: func(product-id: string, quantity: u32) -> result<_, add-item-error>;
+
+  remove-item: func(product-id: string) -> result<_, remove-item-error>;
+
+  update-item-quantity: func(product-id: string, quantity: u32) -> result<_, update-item-quantity-error>;
+
+  update-email: func(email: string) -> result<_, update-email-error>;
+
+  update-shipping-address: func(address: address) -> result<_, update-address-error>;
+
+  update-billing-address: func(address: address) -> result<_, update-address-error>;
+
+  checkout: func() -> result<order-confirmation, checkout-error>;
 
   get: func() -> option<cart>;
 }

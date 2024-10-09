@@ -6,6 +6,7 @@ pub mod cart {
     pub const PRICING_ZONE_DEFAULT: &str = "global";
 
     #[derive(Clone, Serialize, Deserialize)]
+    #[serde(rename_all = "kebab-case")]
     pub struct Address {
         pub street1: String,
         pub street2: Option<String>,
@@ -67,8 +68,10 @@ pub mod cart {
     }
 
     #[derive(Clone, Serialize, Deserialize)]
+    #[serde(rename_all = "kebab-case")]
     pub struct Cart {
         pub user_id: String,
+        pub email: Option<String>,
         pub items: Vec<CartItem>,
         pub billing_address: Option<Address>,
         pub shipping_address: Option<Address>,
@@ -82,6 +85,7 @@ pub mod cart {
         pub fn new(user_id: String) -> Self {
             Self {
                 user_id,
+                email: None,
                 items: vec![],
                 billing_address: None,
                 shipping_address: None,
@@ -144,6 +148,7 @@ pub mod cart {
     }
 
     #[derive(Clone, Serialize, Deserialize)]
+    #[serde(rename_all = "kebab-case")]
     pub struct CartItem {
         pub product_id: String,
         pub name: String,
@@ -172,17 +177,21 @@ pub mod cart {
         }
     }
 
-    impl From<Cart> for bindings::golem::order::api::CreateOrder {
-        fn from(value: Cart) -> Self {
-            Self {
+    impl TryFrom<Cart> for bindings::golem::order::api::CreateOrder {
+        type Error = String;
+
+        fn try_from(value: Cart) -> Result<Self, Self::Error> {
+            let email = value.email.ok_or("Missing email")?;
+            Ok(Self {
                 user_id: value.user_id,
+                email,
                 items: value.items.into_iter().map(|item| item.into()).collect(),
                 total: value.total,
                 currency: value.currency,
                 timestamp: value.timestamp,
                 shipping_address: value.shipping_address.map(|a| a.into()),
                 billing_address: value.billing_address.map(|a| a.into()),
-            }
+            })
         }
     }
 
@@ -190,6 +199,7 @@ pub mod cart {
         fn from(value: Cart) -> Self {
             Self {
                 user_id: value.user_id,
+                email: value.email,
                 items: value.items.into_iter().map(|item| item.into()).collect(),
                 total: value.total,
                 currency: value.currency,

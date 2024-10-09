@@ -5,8 +5,9 @@ use crate::bindings::exports::golem::api::{load_snapshot, save_snapshot};
 use crate::bindings::exports::golem::cart::api::*;
 use crate::bindings::golem::pricing_stub::stub_pricing::PricingItem;
 use crate::bindings::golem::product_stub::stub_product::Product;
+use email_address::EmailAddress;
 use std::cell::RefCell;
-
+use std::str::FromStr;
 use uuid::Uuid;
 
 struct Component;
@@ -56,19 +57,21 @@ fn get_pricing(product_id: String, currency: String, zone: String) -> Option<Pri
     api.blocking_get_price(&currency, &zone)
 }
 
-fn validate_cart(cart: domain::cart::Cart) -> Result<(), Error> {
+fn validate_cart(cart: domain::cart::Cart) -> Result<(), CheckoutError> {
     if cart.items.is_empty() {
-        Err(Error::EmptyItems(EmptyItemsError { message: "Empty items".to_string() }))
+        Err(CheckoutError::EmptyItems(EmptyItemsError { message: "Empty items".to_string() }))
     } else if cart.billing_address.is_none() {
-        Err(Error::BillingAddressNotSet(BillingAddressNotSetError {
+        Err(CheckoutError::BillingAddressNotSet(BillingAddressNotSetError {
             message: "Billing address not set".to_string(),
         }))
+    } else if cart.email.is_none() {
+        Err(CheckoutError::EmptyEmail(EmptyEmailError { message: "Email not set".to_string() }))
     } else {
         Ok(())
     }
 }
 
-fn create_order(order_id: String, cart: domain::cart::Cart) -> Result<String, Error> {
+fn create_order(order_id: String, cart: domain::cart::Cart) -> Result<String, CheckoutError> {
     println!("Creating order: {}", order_id);
 
     validate_cart(cart.clone())?;
@@ -78,29 +81,28 @@ fn create_order(order_id: String, cart: domain::cart::Cart) -> Result<String, Er
 
     let api = Api::new(&Uri { value: get_order_worker_urn(order_id.clone()) });
 
-    let order = cart.into();
+    let order =
+        cart.try_into().map_err(|e| CheckoutError::OrderCreate(OrderCreateError { message: e }))?;
 
-    api.blocking_initialize_order(&order);
+    api.blocking_initialize_order(&order).map_err(|_| {
+        CheckoutError::OrderCreate(OrderCreateError {
+            message: "Failed to create order".to_string(),
+        })
+    })?;
 
     Ok(order_id)
 }
 
-fn item_not_found_error(product_id: String) -> Error {
-    Error::ItemNotFound(ItemNotFoundError { message: "Item not found".to_string(), product_id })
+fn item_not_found_error(product_id: String) -> ItemNotFoundError {
+    ItemNotFoundError { message: "Item not found".to_string(), product_id }
 }
 
-fn pricing_not_found_error(product_id: String) -> Error {
-    Error::PricingNotFound(PricingNotFoundError {
-        message: "Pricing not found".to_string(),
-        product_id,
-    })
+fn pricing_not_found_error(product_id: String) -> PricingNotFoundError {
+    PricingNotFoundError { message: "Pricing not found".to_string(), product_id }
 }
 
-fn product_not_found_error(product_id: String) -> Error {
-    Error::ProductNotFound(ProductNotFoundError {
-        message: "Product not found".to_string(),
-        product_id,
-    })
+fn product_not_found_error(product_id: String) -> ProductNotFoundError {
+    ProductNotFoundError { message: "Product not found".to_string(), product_id }
 }
 
 thread_local! {
@@ -121,7 +123,7 @@ fn with_state<T>(f: impl FnOnce(&mut domain::cart::Cart) -> T) -> T {
 }
 
 impl Guest for Component {
-    fn add_item(product_id: String, quantity: u32) -> Result<(), Error> {
+    fn add_item(product_id: String, quantity: u32) -> Result<(), AddItemError> {
         with_state(|state| {
             println!(
                 "Adding item with product {} to the cart of user {}",
@@ -147,16 +149,38 @@ impl Guest for Component {
                         });
                     }
                     (None, _) => {
-                        return Err(product_not_found_error(product_id));
+                        return Err(AddItemError::ProductNotFound(product_not_found_error(
+                            product_id,
+                        )));
                     }
-                    _ => return Err(pricing_not_found_error(product_id)),
+                    _ => {
+                        return Err(AddItemError::PricingNotFound(pricing_not_found_error(
+                            product_id,
+                        )))
+                    }
                 }
             }
             Ok(())
         })
     }
 
-    fn remove_item(product_id: String) -> Result<(), Error> {
+    fn update_email(email: String) -> Result<(), UpdateEmailError> {
+        with_state(|state| {
+            println!("Updating email {} for the cart of user {}", email, state.user_id);
+
+            match EmailAddress::from_str(email.as_str()) {
+                Ok(_) => {
+                    state.email = Some(email);
+                    Ok(())
+                }
+                Err(e) => Err(UpdateEmailError::EmailNotValid(EmailNotValidError {
+                    message: format!("Invalid email: {e}"),
+                })),
+            }
+        })
+    }
+
+    fn remove_item(product_id: String) -> Result<(), RemoveItemError> {
         with_state(|state| {
             println!(
                 "Removing item with product {} from the cart of user {}",
@@ -166,12 +190,15 @@ impl Guest for Component {
             if state.remove_item(product_id.clone()) {
                 Ok(())
             } else {
-                Err(item_not_found_error(product_id))
+                Err(RemoveItemError::ItemNotFound(item_not_found_error(product_id)))
             }
         })
     }
 
-    fn update_item_quantity(product_id: String, quantity: u32) -> Result<(), Error> {
+    fn update_item_quantity(
+        product_id: String,
+        quantity: u32,
+    ) -> Result<(), UpdateItemQuantityError> {
         with_state(|state| {
             println!(
                 "Updating quantity of item with product {} to {} in the cart of user {}",
@@ -183,12 +210,12 @@ impl Guest for Component {
             if updated {
                 Ok(())
             } else {
-                Err(item_not_found_error(product_id))
+                Err(UpdateItemQuantityError::ItemNotFound(item_not_found_error(product_id)))
             }
         })
     }
 
-    fn checkout() -> Result<OrderConfirmation, Error> {
+    fn checkout() -> Result<OrderConfirmation, CheckoutError> {
         with_state(|state| {
             let order_id = generate_order_id();
             println!("Checkout for order {}", order_id);
@@ -201,7 +228,7 @@ impl Guest for Component {
         })
     }
 
-    fn update_billing_address(address: Address) -> Result<(), Error> {
+    fn update_billing_address(address: Address) -> Result<(), UpdateAddressError> {
         with_state(|state| {
             println!("Updating billing address in the cart of user {}", state.user_id);
 
@@ -210,7 +237,7 @@ impl Guest for Component {
         })
     }
 
-    fn update_shipping_address(address: Address) -> Result<(), Error> {
+    fn update_shipping_address(address: Address) -> Result<(), UpdateAddressError> {
         with_state(|state| {
             println!("Updating shipping address in the cart of user {}", state.user_id);
 

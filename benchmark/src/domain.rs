@@ -26,6 +26,18 @@ pub mod common {
             Self { quantity }
         }
     }
+
+    #[derive(Clone, Debug, Serialize, Deserialize)]
+    #[serde(rename_all = "kebab-case")]
+    pub struct SetEmail {
+        pub email: String,
+    }
+
+    impl SetEmail {
+        pub fn new(email: String) -> Self {
+            Self { email }
+        }
+    }
 }
 
 pub mod cart {

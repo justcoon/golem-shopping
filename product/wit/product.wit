@@ -5,10 +5,11 @@ interface api {
   record product {
     product-id: string,
     name: string,
-    description: string
+    description: string,
+    tags: list<string>
   }
 
-  initialize-product: func(name: string, description: string) -> ();
+  initialize-product: func(name: string, description: string, tags: list<string>) -> ();
 
   get: func() -> option<product>;
 }

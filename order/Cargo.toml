@@ -61,6 +61,7 @@ path = "wit/deps/random"
 path = "wit/deps/sockets"
 
 [dependencies]
+email_address = "0.2.9"
 golem-rust = "1.1.0"
 once_cell = "1.17.1"
 rand = "0.8.5"

@@ -246,6 +246,13 @@ for FutureGetResult {
                                 .string()
                                 .expect("string not found")
                                 .to_string(),
+                            tags: record
+                                .field(3usize)
+                                .expect("record field not found")
+                                .list_elements(|item| {
+                                    item.string().expect("string not found").to_string()
+                                })
+                                .expect("list not found"),
                         }
                     }))
             })
@@ -260,7 +267,12 @@ impl crate::bindings::exports::golem::product_stub::stub_product::GuestApi for A
             rpc: WasmRpc::new(&location),
         }
     }
-    fn blocking_initialize_product(&self, name: String, description: String) -> () {
+    fn blocking_initialize_product(
+        &self,
+        name: String,
+        description: String,
+        tags: Vec<String>,
+    ) -> () {
         let result = self
             .rpc
             .invoke_and_await(
@@ -268,6 +280,11 @@ impl crate::bindings::exports::golem::product_stub::stub_product::GuestApi for A
                 &[
                     WitValue::builder().string(&name),
                     WitValue::builder().string(&description),
+                    WitValue::builder()
+                        .list_fn(
+                            &tags,
+                            |item, item_builder| { item_builder.string(item) },
+                        ),
                 ],
             )
             .expect(
@@ -278,7 +295,12 @@ impl crate::bindings::exports::golem::product_stub::stub_product::GuestApi for A
             );
         ()
     }
-    fn initialize_product(&self, name: String, description: String) -> () {
+    fn initialize_product(
+        &self,
+        name: String,
+        description: String,
+        tags: Vec<String>,
+    ) -> () {
         let result = self
             .rpc
             .invoke(
@@ -286,6 +308,11 @@ impl crate::bindings::exports::golem::product_stub::stub_product::GuestApi for A
                 &[
                     WitValue::builder().string(&name),
                     WitValue::builder().string(&description),
+                    WitValue::builder()
+                        .list_fn(
+                            &tags,
+                            |item, item_builder| { item_builder.string(item) },
+                        ),
                 ],
             )
             .expect(
@@ -331,6 +358,13 @@ impl crate::bindings::exports::golem::product_stub::stub_product::GuestApi for A
                         .string()
                         .expect("string not found")
                         .to_string(),
+                    tags: record
+                        .field(3usize)
+                        .expect("record field not found")
+                        .list_elements(|item| {
+                            item.string().expect("string not found").to_string()
+                        })
+                        .expect("list not found"),
                 }
             }))
     }

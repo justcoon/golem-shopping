@@ -31,6 +31,7 @@ interface api {
     order-id: string,
     user-id: string,
     order-status: order-status,
+    email: option<string>,
     items: list<order-item>,
     billing-address: option<address>,
     shipping-address: option<address>,
@@ -41,6 +42,7 @@ interface api {
 
   record create-order {
     user-id: string,
+    email: string,
     items: list<order-item>,
     billing-address: option<address>,
     shipping-address: option<address>,
@@ -63,6 +65,9 @@ interface api {
     message: string,
   }
 
+  record email-not-valid-error {
+    message: string,
+  }
 
   record item-not-found-error {
     message: string,
@@ -73,8 +78,17 @@ interface api {
     message: string,
   }
 
+  record empty-email-error {
+    message: string,
+  }
+
   record billing-address-not-set-error {
     message: string,
+  }
+
+  variant update-email-error {
+    email-not-valid(email-not-valid-error),
+    action-not-allowed(action-not-allowed-error),
   }
 
   record action-not-allowed-error {
@@ -82,30 +96,59 @@ interface api {
     status: order-status,
   }
 
-  variant error {
+  variant add-item-error {
     product-not-found(product-not-found-error),
     pricing-not-found(pricing-not-found-error),
-    address-not-valid(address-not-valid-error),
-    item-not-found(item-not-found-error),
-    empty-items(empty-items-error),
     action-not-allowed(action-not-allowed-error),
   }
 
-  initialize-order: func(data: create-order) -> ();
+  variant remove-item-error {
+    item-not-found(item-not-found-error),
+    action-not-allowed(action-not-allowed-error),
+  }
 
-  add-item: func(product-id: string, quantity: u32) -> result<_, error>;
+  variant update-item-quantity-error {
+    item-not-found(item-not-found-error),
+    action-not-allowed(action-not-allowed-error),
+  }
 
-  remove-item: func(product-id: string) -> result<_, error>;
+  variant update-address-error {
+    address-not-valid(address-not-valid-error),
+    action-not-allowed(action-not-allowed-error),
+  }
 
-  update-item-quantity: func(product-id: string, quantity: u32) -> result<_, error>;
+  variant ship-order-error {
+    empty-items(empty-items-error),
+    empty-email(empty-email-error),
+    billing-address-not-set(billing-address-not-set-error),
+    action-not-allowed(action-not-allowed-error),
+  }
 
-  update-shipping-address: func(address: address) -> result<_, error>;
+  variant cancel-order-error {
+    action-not-allowed(action-not-allowed-error),
+  }
 
-  update-billing-address: func(address: address) -> result<_, error>;
+  variant init-order-error {
+    action-not-allowed(action-not-allowed-error),
+  }
 
-  ship-order: func() -> result<_, error>;
+  initialize-order: func(data: create-order) -> result<_, init-order-error>;
 
-  cancel-order: func() -> result<_, error>;
+  update-email: func(email: string) -> result<_, update-email-error>;
+
+  add-item: func(product-id: string, quantity: u32) -> result<_, add-item-error>;
+
+  remove-item: func(product-id: string) -> result<_, remove-item-error>;
+
+  update-item-quantity: func(product-id: string, quantity: u32) -> result<_, update-item-quantity-error>;
+
+  update-shipping-address: func(address: address) -> result<_, update-address-error>;
+
+  update-billing-address: func(address: address) -> result<_, update-address-error>;
+
+  ship-order: func() -> result<_, ship-order-error>;
+
+  cancel-order: func() -> result<_, cancel-order-error>;
 
   get: func() -> option<order>;
 }

@@ -6,6 +6,8 @@ use crate::bindings::exports::golem::order::api::*;
 use crate::bindings::golem::pricing::api::PricingItem;
 use crate::bindings::golem::product_stub::stub_product::Product;
 use std::cell::RefCell;
+use std::str::FromStr;
+use email_address::EmailAddress;
 
 struct Component;
 
@@ -45,29 +47,23 @@ fn get_pricing(product_id: String, currency: String, zone: String) -> Option<Pri
     api.blocking_get_price(&currency, &zone)
 }
 
-fn action_not_allowed_error(status: domain::order::OrderStatus) -> Error {
-    Error::ActionNotAllowed(ActionNotAllowedError {
+fn action_not_allowed_error(status: domain::order::OrderStatus) -> ActionNotAllowedError {
+    ActionNotAllowedError {
         message: "Can not update order with status".to_string(),
         status: status.into(),
-    })
+    }
 }
 
-fn item_not_found_error(product_id: String) -> Error {
-    Error::ItemNotFound(ItemNotFoundError { message: "Item not found".to_string(), product_id })
+fn item_not_found_error(product_id: String) -> ItemNotFoundError {
+    ItemNotFoundError { message: "Item not found".to_string(), product_id }
 }
 
-fn pricing_not_found_error(product_id: String) -> Error {
-    Error::PricingNotFound(PricingNotFoundError {
-        message: "Pricing not found".to_string(),
-        product_id,
-    })
+fn pricing_not_found_error(product_id: String) -> PricingNotFoundError {
+    PricingNotFoundError { message: "Pricing not found".to_string(), product_id }
 }
 
-fn product_not_found_error(product_id: String) -> Error {
-    Error::ProductNotFound(ProductNotFoundError {
-        message: "Product not found".to_string(),
-        product_id,
-    })
+fn product_not_found_error(product_id: String) -> ProductNotFoundError {
+    ProductNotFoundError { message: "Product not found".to_string(), product_id }
 }
 
 thread_local! {
@@ -88,20 +84,48 @@ fn with_state<T>(f: impl FnOnce(&mut domain::order::Order) -> T) -> T {
 }
 
 impl Guest for Component {
-    fn initialize_order(data: CreateOrder) {
+    fn initialize_order(data: CreateOrder) -> Result<(), InitOrderError> {
         with_state(|state| {
             println!("Initializing order {} for user {}", state.order_id, data.user_id);
-            state.user_id = data.user_id;
-            state.currency = data.currency;
-            state.timestamp = data.timestamp;
-            state.billing_address = data.billing_address.map(|v| v.into());
-            state.shipping_address = data.shipping_address.map(|v| v.into());
-            state.total = data.total;
-            state.items = data.items.into_iter().map(|item| item.into()).collect();
-        });
+            if state.order_status == domain::order::OrderStatus::New {
+                state.user_id = data.user_id;
+                state.email = Some(data.email);
+                state.currency = data.currency;
+                state.timestamp = data.timestamp;
+                state.billing_address = data.billing_address.map(|v| v.into());
+                state.shipping_address = data.shipping_address.map(|v| v.into());
+                state.total = data.total;
+                state.items = data.items.into_iter().map(|item| item.into()).collect();
+
+                Ok(())
+            } else {
+                Err(InitOrderError::ActionNotAllowed(action_not_allowed_error(state.order_status)))
+            }
+        })
     }
 
-    fn add_item(product_id: String, quantity: u32) -> Result<(), Error> {
+
+    fn update_email(email: String) -> Result<(), UpdateEmailError> {
+        with_state(|state| {
+            println!("Updating email {} for the order {} of user {}", email, state.order_id, state.user_id);
+
+            if state.order_status == domain::order::OrderStatus::New {
+                match EmailAddress::from_str(email.as_str()) {
+                    Ok(_) => {
+                        state.email = Some(email);
+                        Ok(())
+                    }
+                    Err(e) => Err(UpdateEmailError::EmailNotValid(EmailNotValidError {
+                        message: format!("Invalid email: {e}"),
+                    })),
+                }
+            } else {
+                Err(UpdateEmailError::ActionNotAllowed(action_not_allowed_error(state.order_status)))
+            }
+        })
+    }
+
+    fn add_item(product_id: String, quantity: u32) -> Result<(), AddItemError> {
         with_state(|state| {
             println!(
                 "Adding item with product {} to the order {} of user {}",
@@ -127,19 +151,27 @@ impl Guest for Component {
                                 quantity,
                             });
                         }
-                        (None, _) => return Err(product_not_found_error(product_id)),
-                        _ => return Err(pricing_not_found_error(product_id)),
+                        (None, _) => {
+                            return Err(AddItemError::ProductNotFound(product_not_found_error(
+                                product_id,
+                            )));
+                        }
+                        _ => {
+                            return Err(AddItemError::PricingNotFound(pricing_not_found_error(
+                                product_id,
+                            )))
+                        }
                     }
                 }
 
                 Ok(())
             } else {
-                Err(action_not_allowed_error(state.order_status))
+                Err(AddItemError::ActionNotAllowed(action_not_allowed_error(state.order_status)))
             }
         })
     }
 
-    fn remove_item(product_id: String) -> Result<(), Error> {
+    fn remove_item(product_id: String) -> Result<(), RemoveItemError> {
         with_state(|state| {
             println!(
                 "Removing item with product {} from the order {} of user {}",
@@ -149,15 +181,18 @@ impl Guest for Component {
                 if state.remove_item(product_id.clone()) {
                     Ok(())
                 } else {
-                    Err(item_not_found_error(product_id))
+                    Err(RemoveItemError::ItemNotFound(item_not_found_error(product_id)))
                 }
             } else {
-                Err(action_not_allowed_error(state.order_status))
+                Err(RemoveItemError::ActionNotAllowed(action_not_allowed_error(state.order_status)))
             }
         })
     }
 
-    fn update_item_quantity(product_id: String, quantity: u32) -> Result<(), Error> {
+    fn update_item_quantity(
+        product_id: String,
+        quantity: u32,
+    ) -> Result<(), UpdateItemQuantityError> {
         with_state(|state| {
             println!(
                 "Updating quantity of item with product {} to {} in the order {} of user {}",
@@ -169,15 +204,17 @@ impl Guest for Component {
                 if updated {
                     Ok(())
                 } else {
-                    Err(item_not_found_error(product_id))
+                    Err(UpdateItemQuantityError::ItemNotFound(item_not_found_error(product_id)))
                 }
             } else {
-                Err(action_not_allowed_error(state.order_status))
+                Err(UpdateItemQuantityError::ActionNotAllowed(action_not_allowed_error(
+                    state.order_status,
+                )))
             }
         })
     }
 
-    fn cancel_order() -> Result<(), Error> {
+    fn cancel_order() -> Result<(), CancelOrderError> {
         with_state(|state| {
             println!("Cancelling order {} of user {}", state.order_id, state.user_id);
 
@@ -187,26 +224,34 @@ impl Guest for Component {
                 Ok(())
             } else {
                 println!("Cancelling order {} of user {}", state.order_id, state.user_id);
-
-                Err(action_not_allowed_error(state.order_status))
+                Err(CancelOrderError::ActionNotAllowed(action_not_allowed_error(
+                    state.order_status,
+                )))
             }
         })
     }
 
-    fn ship_order() -> Result<(), Error> {
+    fn ship_order() -> Result<(), ShipOrderError> {
         with_state(|state| {
-            if state.order_status == domain::order::OrderStatus::New {
-                println!("Shipping order {} of user {}", state.order_id, state.user_id);
+            println!("Shipping order {} of user {}", state.order_id, state.user_id);
+            if state.order_status != domain::order::OrderStatus::New {
+                Err(ShipOrderError::ActionNotAllowed(action_not_allowed_error(state.order_status)))
+            } else if state.items.is_empty() {
+                Err(ShipOrderError::EmptyItems(EmptyItemsError { message: "Empty items".to_string() }))
+            } else if state.billing_address.is_none() {
+                Err(ShipOrderError::BillingAddressNotSet(BillingAddressNotSetError {
+                    message: "Billing address not set".to_string(),
+                }))
+            } else if state.email.is_none() {
+                Err(ShipOrderError::EmptyEmail(EmptyEmailError { message: "Email not set".to_string() }))
+            } else {
                 state.order_status = domain::order::OrderStatus::Shipped;
                 Ok(())
-            } else {
-                println!("Shipping order {} of user {}", state.order_id, state.user_id);
-                Err(action_not_allowed_error(state.order_status))
             }
         })
     }
 
-    fn update_billing_address(address: Address) -> Result<(), Error> {
+    fn update_billing_address(address: Address) -> Result<(), UpdateAddressError> {
         with_state(|state| {
             println!(
                 "Updating billing address in the order {} of user {}",
@@ -216,12 +261,14 @@ impl Guest for Component {
                 state.billing_address = Some(address.into());
                 Ok(())
             } else {
-                Err(action_not_allowed_error(state.order_status))
+                Err(UpdateAddressError::ActionNotAllowed(action_not_allowed_error(
+                    state.order_status,
+                )))
             }
         })
     }
 
-    fn update_shipping_address(address: Address) -> Result<(), Error> {
+    fn update_shipping_address(address: Address) -> Result<(), UpdateAddressError> {
         with_state(|state| {
             println!(
                 "Updating shipping address in the order {} of user {}",
@@ -231,7 +278,9 @@ impl Guest for Component {
                 state.shipping_address = Some(address.into());
                 Ok(())
             } else {
-                Err(action_not_allowed_error(state.order_status))
+                Err(UpdateAddressError::ActionNotAllowed(action_not_allowed_error(
+                    state.order_status,
+                )))
             }
         })
     }
