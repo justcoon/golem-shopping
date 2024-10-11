@@ -31,8 +31,8 @@ interface stub-product {
 
   resource api {
     constructor(location: golem-rpc-uri);
-    blocking-initialize-product: func(name: string, description: string);
-    initialize-product: func(name: string, description: string);
+    blocking-initialize-product: func(name: string, description: string, tags: list<string>);
+    initialize-product: func(name: string, description: string, tags: list<string>);
     blocking-get: func() -> option<product>;
     get: func() -> future-get-result;
   }

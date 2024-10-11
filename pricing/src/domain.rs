@@ -4,6 +4,7 @@ pub mod pricing {
     use std::collections::HashMap;
 
     #[derive(Clone, Serialize, Deserialize)]
+    #[serde(rename_all = "kebab-case")]
     pub struct Pricing {
         pub product_id: String,
         pub msrp_prices: Vec<PricingItem>,
@@ -50,6 +51,7 @@ pub mod pricing {
     }
 
     #[derive(Clone, Serialize, Deserialize)]
+    #[serde(rename_all = "kebab-case")]
     pub struct PricingItem {
         pub price: f32,
         pub currency: String,

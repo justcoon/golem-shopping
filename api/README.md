@@ -25,10 +25,10 @@ API definitions:
 variables substitution in API definitions template files:
 
 ```
-CART_COMPONENT_ID="1dea2b41-497d-4011-9698-30718dd83d47"  CART_COMPONENT_VERSION=13  envsubst < cart.json.tmpl > cart.json
-ORDER_COMPONENT_ID="98570ba9-0c35-4f80-ae7d-54a8ff957e64"  ORDER_COMPONENT_VERSION=8  envsubst < order.json.tmpl > order.json
-PRICING_COMPONENT_ID="83ab925a-32e4-4c9d-bbe9-2c3b874ebcf1"  PRICING_COMPONENT_VERSION=4  envsubst < pricing.json.tmpl > pricing.json
-PRODUCT_COMPONENT_ID="35ec4b88-00e2-4948-a2b0-d6d9527fa437"  PRODUCT_COMPONENT_VERSION=3  envsubst < product.json.tmpl > product.json
+CART_COMPONENT_ID="df93bd28-e341-453f-9dd7-3fc6bec20b23"  CART_COMPONENT_VERSION=0  envsubst < cart.json.tmpl > cart.json
+ORDER_COMPONENT_ID="2982f02f-97bc-4539-801c-a5483a9c2d03"  ORDER_COMPONENT_VERSION=0  envsubst < order.json.tmpl > order.json
+PRICING_COMPONENT_ID="6f7a022d-e600-40ec-bb5e-44cb94339d98"  PRICING_COMPONENT_VERSION=0  envsubst < pricing.json.tmpl > pricing.json
+PRODUCT_COMPONENT_ID="ef4b7e5f-c2ff-451f-becc-2f20e313ba29"  PRODUCT_COMPONENT_VERSION=0  envsubst < product.json.tmpl > product.json
 ```
 
 add API definitions with golem-cli

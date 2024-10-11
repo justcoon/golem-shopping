@@ -9,13 +9,14 @@ plan:
     request:
       url: /v1/product/{{ item.product-id }}
       method: POST
-      body: '{ "name": "{{ item.name }}", "description": "{{ item.description }}" }'
+      body: '{{ item.body }}'
       headers:
         host: '{{ API_HOST }}'
         Content-Type: 'application/json'
         Accept: 'application/json'
     with_items_from_csv:
       file_name: ./fixtures/products.csv
+      quote_char: "\'"
 
   - name: Create pricing, index {{ index }}
     request:

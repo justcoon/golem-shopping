@@ -20,6 +20,12 @@ pub struct Api {
     rpc: WasmRpc,
 }
 impl Api {}
+pub struct FutureInitializeOrderResult {
+    pub future_invoke_result: FutureInvokeResult,
+}
+pub struct FutureUpdateEmailResult {
+    pub future_invoke_result: FutureInvokeResult,
+}
 pub struct FutureAddItemResult {
     pub future_invoke_result: FutureInvokeResult,
 }
@@ -51,6 +57,8 @@ impl crate::bindings::exports::golem::order_stub::stub_order::Guest for Componen
     type LoadSnapshot = crate::LoadSnapshot;
     type FutureLoadResult = crate::FutureLoadResult;
     type Api = crate::Api;
+    type FutureInitializeOrderResult = crate::FutureInitializeOrderResult;
+    type FutureUpdateEmailResult = crate::FutureUpdateEmailResult;
     type FutureAddItemResult = crate::FutureAddItemResult;
     type FutureRemoveItemResult = crate::FutureRemoveItemResult;
     type FutureUpdateItemQuantityResult = crate::FutureUpdateItemQuantityResult;
@@ -231,6 +239,171 @@ for LoadSnapshot {
         })
     }
 }
+impl crate::bindings::exports::golem::order_stub::stub_order::GuestFutureInitializeOrderResult
+for FutureInitializeOrderResult {
+    fn subscribe(&self) -> bindings::wasi::io::poll::Pollable {
+        let pollable = self.future_invoke_result.subscribe();
+        let pollable = unsafe {
+            bindings::wasi::io::poll::Pollable::from_handle(pollable.take_handle())
+        };
+        pollable
+    }
+    fn get(
+        &self,
+    ) -> Option<Result<(), crate::bindings::golem::order::api::InitOrderError>> {
+        self.future_invoke_result
+            .get()
+            .map(|result| {
+                let result = result
+                    .expect(
+                        &format!(
+                            "Failed to invoke remote {}",
+                            "golem:order/api.{initialize-order}"
+                        ),
+                    );
+                ({
+                    let result = result
+                        .tuple_element(0)
+                        .expect("tuple not found")
+                        .result()
+                        .expect("result not found");
+                    match result {
+                        Ok(ok_value) => Ok(()),
+                        Err(err_value) => {
+                            Err({
+                                let (case_idx, inner) = err_value
+                                    .expect("result err value not found")
+                                    .variant()
+                                    .expect("variant not found");
+                                match case_idx {
+                                    0u32 => {
+                                        crate::bindings::golem::order::api::InitOrderError::ActionNotAllowed({
+                                            let record = inner.expect("variant case not found");
+                                            crate::bindings::golem::order::api::ActionNotAllowedError {
+                                                message: record
+                                                    .field(0usize)
+                                                    .expect("record field not found")
+                                                    .string()
+                                                    .expect("string not found")
+                                                    .to_string(),
+                                                status: {
+                                                    let case_idx = record
+                                                        .field(1usize)
+                                                        .expect("record field not found")
+                                                        .enum_value()
+                                                        .expect("enum not found");
+                                                    match case_idx {
+                                                        0u32 => crate::bindings::golem::order::api::OrderStatus::New,
+                                                        1u32 => {
+                                                            crate::bindings::golem::order::api::OrderStatus::Shipped
+                                                        }
+                                                        2u32 => {
+                                                            crate::bindings::golem::order::api::OrderStatus::Cancelled
+                                                        }
+                                                        _ => unreachable!("invalid enum case index"),
+                                                    }
+                                                },
+                                            }
+                                        })
+                                    }
+                                    _ => unreachable!("invalid variant case index"),
+                                }
+                            })
+                        }
+                    }
+                })
+            })
+    }
+}
+impl crate::bindings::exports::golem::order_stub::stub_order::GuestFutureUpdateEmailResult
+for FutureUpdateEmailResult {
+    fn subscribe(&self) -> bindings::wasi::io::poll::Pollable {
+        let pollable = self.future_invoke_result.subscribe();
+        let pollable = unsafe {
+            bindings::wasi::io::poll::Pollable::from_handle(pollable.take_handle())
+        };
+        pollable
+    }
+    fn get(
+        &self,
+    ) -> Option<Result<(), crate::bindings::golem::order::api::UpdateEmailError>> {
+        self.future_invoke_result
+            .get()
+            .map(|result| {
+                let result = result
+                    .expect(
+                        &format!(
+                            "Failed to invoke remote {}",
+                            "golem:order/api.{update-email}"
+                        ),
+                    );
+                ({
+                    let result = result
+                        .tuple_element(0)
+                        .expect("tuple not found")
+                        .result()
+                        .expect("result not found");
+                    match result {
+                        Ok(ok_value) => Ok(()),
+                        Err(err_value) => {
+                            Err({
+                                let (case_idx, inner) = err_value
+                                    .expect("result err value not found")
+                                    .variant()
+                                    .expect("variant not found");
+                                match case_idx {
+                                    0u32 => {
+                                        crate::bindings::golem::order::api::UpdateEmailError::EmailNotValid({
+                                            let record = inner.expect("variant case not found");
+                                            crate::bindings::golem::order::api::EmailNotValidError {
+                                                message: record
+                                                    .field(0usize)
+                                                    .expect("record field not found")
+                                                    .string()
+                                                    .expect("string not found")
+                                                    .to_string(),
+                                            }
+                                        })
+                                    }
+                                    1u32 => {
+                                        crate::bindings::golem::order::api::UpdateEmailError::ActionNotAllowed({
+                                            let record = inner.expect("variant case not found");
+                                            crate::bindings::golem::order::api::ActionNotAllowedError {
+                                                message: record
+                                                    .field(0usize)
+                                                    .expect("record field not found")
+                                                    .string()
+                                                    .expect("string not found")
+                                                    .to_string(),
+                                                status: {
+                                                    let case_idx = record
+                                                        .field(1usize)
+                                                        .expect("record field not found")
+                                                        .enum_value()
+                                                        .expect("enum not found");
+                                                    match case_idx {
+                                                        0u32 => crate::bindings::golem::order::api::OrderStatus::New,
+                                                        1u32 => {
+                                                            crate::bindings::golem::order::api::OrderStatus::Shipped
+                                                        }
+                                                        2u32 => {
+                                                            crate::bindings::golem::order::api::OrderStatus::Cancelled
+                                                        }
+                                                        _ => unreachable!("invalid enum case index"),
+                                                    }
+                                                },
+                                            }
+                                        })
+                                    }
+                                    _ => unreachable!("invalid variant case index"),
+                                }
+                            })
+                        }
+                    }
+                })
+            })
+    }
+}
 impl crate::bindings::exports::golem::order_stub::stub_order::GuestFutureAddItemResult
 for FutureAddItemResult {
     fn subscribe(&self) -> bindings::wasi::io::poll::Pollable {
@@ -240,7 +413,9 @@ for FutureAddItemResult {
         };
         pollable
     }
-    fn get(&self) -> Option<Result<(), crate::bindings::golem::order::api::Error>> {
+    fn get(
+        &self,
+    ) -> Option<Result<(), crate::bindings::golem::order::api::AddItemError>> {
         self.future_invoke_result
             .get()
             .map(|result| {
@@ -266,7 +441,7 @@ for FutureAddItemResult {
                                     .expect("variant not found");
                                 match case_idx {
                                     0u32 => {
-                                        crate::bindings::golem::order::api::Error::ProductNotFound({
+                                        crate::bindings::golem::order::api::AddItemError::ProductNotFound({
                                             let record = inner.expect("variant case not found");
                                             crate::bindings::golem::order::api::ProductNotFoundError {
                                                 message: record
@@ -285,7 +460,7 @@ for FutureAddItemResult {
                                         })
                                     }
                                     1u32 => {
-                                        crate::bindings::golem::order::api::Error::PricingNotFound({
+                                        crate::bindings::golem::order::api::AddItemError::PricingNotFound({
                                             let record = inner.expect("variant case not found");
                                             crate::bindings::golem::order::api::PricingNotFoundError {
                                                 message: record
@@ -304,52 +479,7 @@ for FutureAddItemResult {
                                         })
                                     }
                                     2u32 => {
-                                        crate::bindings::golem::order::api::Error::AddressNotValid({
-                                            let record = inner.expect("variant case not found");
-                                            crate::bindings::golem::order::api::AddressNotValidError {
-                                                message: record
-                                                    .field(0usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                            }
-                                        })
-                                    }
-                                    3u32 => {
-                                        crate::bindings::golem::order::api::Error::ItemNotFound({
-                                            let record = inner.expect("variant case not found");
-                                            crate::bindings::golem::order::api::ItemNotFoundError {
-                                                message: record
-                                                    .field(0usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                                product_id: record
-                                                    .field(1usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                            }
-                                        })
-                                    }
-                                    4u32 => {
-                                        crate::bindings::golem::order::api::Error::EmptyItems({
-                                            let record = inner.expect("variant case not found");
-                                            crate::bindings::golem::order::api::EmptyItemsError {
-                                                message: record
-                                                    .field(0usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                            }
-                                        })
-                                    }
-                                    5u32 => {
-                                        crate::bindings::golem::order::api::Error::ActionNotAllowed({
+                                        crate::bindings::golem::order::api::AddItemError::ActionNotAllowed({
                                             let record = inner.expect("variant case not found");
                                             crate::bindings::golem::order::api::ActionNotAllowedError {
                                                 message: record
@@ -396,7 +526,9 @@ for FutureRemoveItemResult {
         };
         pollable
     }
-    fn get(&self) -> Option<Result<(), crate::bindings::golem::order::api::Error>> {
+    fn get(
+        &self,
+    ) -> Option<Result<(), crate::bindings::golem::order::api::RemoveItemError>> {
         self.future_invoke_result
             .get()
             .map(|result| {
@@ -422,58 +554,7 @@ for FutureRemoveItemResult {
                                     .expect("variant not found");
                                 match case_idx {
                                     0u32 => {
-                                        crate::bindings::golem::order::api::Error::ProductNotFound({
-                                            let record = inner.expect("variant case not found");
-                                            crate::bindings::golem::order::api::ProductNotFoundError {
-                                                message: record
-                                                    .field(0usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                                product_id: record
-                                                    .field(1usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                            }
-                                        })
-                                    }
-                                    1u32 => {
-                                        crate::bindings::golem::order::api::Error::PricingNotFound({
-                                            let record = inner.expect("variant case not found");
-                                            crate::bindings::golem::order::api::PricingNotFoundError {
-                                                message: record
-                                                    .field(0usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                                product_id: record
-                                                    .field(1usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                            }
-                                        })
-                                    }
-                                    2u32 => {
-                                        crate::bindings::golem::order::api::Error::AddressNotValid({
-                                            let record = inner.expect("variant case not found");
-                                            crate::bindings::golem::order::api::AddressNotValidError {
-                                                message: record
-                                                    .field(0usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                            }
-                                        })
-                                    }
-                                    3u32 => {
-                                        crate::bindings::golem::order::api::Error::ItemNotFound({
+                                        crate::bindings::golem::order::api::RemoveItemError::ItemNotFound({
                                             let record = inner.expect("variant case not found");
                                             crate::bindings::golem::order::api::ItemNotFoundError {
                                                 message: record
@@ -491,21 +572,8 @@ for FutureRemoveItemResult {
                                             }
                                         })
                                     }
-                                    4u32 => {
-                                        crate::bindings::golem::order::api::Error::EmptyItems({
-                                            let record = inner.expect("variant case not found");
-                                            crate::bindings::golem::order::api::EmptyItemsError {
-                                                message: record
-                                                    .field(0usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                            }
-                                        })
-                                    }
-                                    5u32 => {
-                                        crate::bindings::golem::order::api::Error::ActionNotAllowed({
+                                    1u32 => {
+                                        crate::bindings::golem::order::api::RemoveItemError::ActionNotAllowed({
                                             let record = inner.expect("variant case not found");
                                             crate::bindings::golem::order::api::ActionNotAllowedError {
                                                 message: record
@@ -552,7 +620,11 @@ for FutureUpdateItemQuantityResult {
         };
         pollable
     }
-    fn get(&self) -> Option<Result<(), crate::bindings::golem::order::api::Error>> {
+    fn get(
+        &self,
+    ) -> Option<
+        Result<(), crate::bindings::golem::order::api::UpdateItemQuantityError>,
+    > {
         self.future_invoke_result
             .get()
             .map(|result| {
@@ -579,58 +651,7 @@ for FutureUpdateItemQuantityResult {
                                     .expect("variant not found");
                                 match case_idx {
                                     0u32 => {
-                                        crate::bindings::golem::order::api::Error::ProductNotFound({
-                                            let record = inner.expect("variant case not found");
-                                            crate::bindings::golem::order::api::ProductNotFoundError {
-                                                message: record
-                                                    .field(0usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                                product_id: record
-                                                    .field(1usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                            }
-                                        })
-                                    }
-                                    1u32 => {
-                                        crate::bindings::golem::order::api::Error::PricingNotFound({
-                                            let record = inner.expect("variant case not found");
-                                            crate::bindings::golem::order::api::PricingNotFoundError {
-                                                message: record
-                                                    .field(0usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                                product_id: record
-                                                    .field(1usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                            }
-                                        })
-                                    }
-                                    2u32 => {
-                                        crate::bindings::golem::order::api::Error::AddressNotValid({
-                                            let record = inner.expect("variant case not found");
-                                            crate::bindings::golem::order::api::AddressNotValidError {
-                                                message: record
-                                                    .field(0usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                            }
-                                        })
-                                    }
-                                    3u32 => {
-                                        crate::bindings::golem::order::api::Error::ItemNotFound({
+                                        crate::bindings::golem::order::api::UpdateItemQuantityError::ItemNotFound({
                                             let record = inner.expect("variant case not found");
                                             crate::bindings::golem::order::api::ItemNotFoundError {
                                                 message: record
@@ -648,21 +669,8 @@ for FutureUpdateItemQuantityResult {
                                             }
                                         })
                                     }
-                                    4u32 => {
-                                        crate::bindings::golem::order::api::Error::EmptyItems({
-                                            let record = inner.expect("variant case not found");
-                                            crate::bindings::golem::order::api::EmptyItemsError {
-                                                message: record
-                                                    .field(0usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                            }
-                                        })
-                                    }
-                                    5u32 => {
-                                        crate::bindings::golem::order::api::Error::ActionNotAllowed({
+                                    1u32 => {
+                                        crate::bindings::golem::order::api::UpdateItemQuantityError::ActionNotAllowed({
                                             let record = inner.expect("variant case not found");
                                             crate::bindings::golem::order::api::ActionNotAllowedError {
                                                 message: record
@@ -709,7 +717,9 @@ for FutureUpdateShippingAddressResult {
         };
         pollable
     }
-    fn get(&self) -> Option<Result<(), crate::bindings::golem::order::api::Error>> {
+    fn get(
+        &self,
+    ) -> Option<Result<(), crate::bindings::golem::order::api::UpdateAddressError>> {
         self.future_invoke_result
             .get()
             .map(|result| {
@@ -736,45 +746,7 @@ for FutureUpdateShippingAddressResult {
                                     .expect("variant not found");
                                 match case_idx {
                                     0u32 => {
-                                        crate::bindings::golem::order::api::Error::ProductNotFound({
-                                            let record = inner.expect("variant case not found");
-                                            crate::bindings::golem::order::api::ProductNotFoundError {
-                                                message: record
-                                                    .field(0usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                                product_id: record
-                                                    .field(1usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                            }
-                                        })
-                                    }
-                                    1u32 => {
-                                        crate::bindings::golem::order::api::Error::PricingNotFound({
-                                            let record = inner.expect("variant case not found");
-                                            crate::bindings::golem::order::api::PricingNotFoundError {
-                                                message: record
-                                                    .field(0usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                                product_id: record
-                                                    .field(1usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                            }
-                                        })
-                                    }
-                                    2u32 => {
-                                        crate::bindings::golem::order::api::Error::AddressNotValid({
+                                        crate::bindings::golem::order::api::UpdateAddressError::AddressNotValid({
                                             let record = inner.expect("variant case not found");
                                             crate::bindings::golem::order::api::AddressNotValidError {
                                                 message: record
@@ -786,40 +758,8 @@ for FutureUpdateShippingAddressResult {
                                             }
                                         })
                                     }
-                                    3u32 => {
-                                        crate::bindings::golem::order::api::Error::ItemNotFound({
-                                            let record = inner.expect("variant case not found");
-                                            crate::bindings::golem::order::api::ItemNotFoundError {
-                                                message: record
-                                                    .field(0usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                                product_id: record
-                                                    .field(1usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                            }
-                                        })
-                                    }
-                                    4u32 => {
-                                        crate::bindings::golem::order::api::Error::EmptyItems({
-                                            let record = inner.expect("variant case not found");
-                                            crate::bindings::golem::order::api::EmptyItemsError {
-                                                message: record
-                                                    .field(0usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                            }
-                                        })
-                                    }
-                                    5u32 => {
-                                        crate::bindings::golem::order::api::Error::ActionNotAllowed({
+                                    1u32 => {
+                                        crate::bindings::golem::order::api::UpdateAddressError::ActionNotAllowed({
                                             let record = inner.expect("variant case not found");
                                             crate::bindings::golem::order::api::ActionNotAllowedError {
                                                 message: record
@@ -866,7 +806,9 @@ for FutureUpdateBillingAddressResult {
         };
         pollable
     }
-    fn get(&self) -> Option<Result<(), crate::bindings::golem::order::api::Error>> {
+    fn get(
+        &self,
+    ) -> Option<Result<(), crate::bindings::golem::order::api::UpdateAddressError>> {
         self.future_invoke_result
             .get()
             .map(|result| {
@@ -893,45 +835,7 @@ for FutureUpdateBillingAddressResult {
                                     .expect("variant not found");
                                 match case_idx {
                                     0u32 => {
-                                        crate::bindings::golem::order::api::Error::ProductNotFound({
-                                            let record = inner.expect("variant case not found");
-                                            crate::bindings::golem::order::api::ProductNotFoundError {
-                                                message: record
-                                                    .field(0usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                                product_id: record
-                                                    .field(1usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                            }
-                                        })
-                                    }
-                                    1u32 => {
-                                        crate::bindings::golem::order::api::Error::PricingNotFound({
-                                            let record = inner.expect("variant case not found");
-                                            crate::bindings::golem::order::api::PricingNotFoundError {
-                                                message: record
-                                                    .field(0usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                                product_id: record
-                                                    .field(1usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                            }
-                                        })
-                                    }
-                                    2u32 => {
-                                        crate::bindings::golem::order::api::Error::AddressNotValid({
+                                        crate::bindings::golem::order::api::UpdateAddressError::AddressNotValid({
                                             let record = inner.expect("variant case not found");
                                             crate::bindings::golem::order::api::AddressNotValidError {
                                                 message: record
@@ -943,40 +847,8 @@ for FutureUpdateBillingAddressResult {
                                             }
                                         })
                                     }
-                                    3u32 => {
-                                        crate::bindings::golem::order::api::Error::ItemNotFound({
-                                            let record = inner.expect("variant case not found");
-                                            crate::bindings::golem::order::api::ItemNotFoundError {
-                                                message: record
-                                                    .field(0usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                                product_id: record
-                                                    .field(1usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                            }
-                                        })
-                                    }
-                                    4u32 => {
-                                        crate::bindings::golem::order::api::Error::EmptyItems({
-                                            let record = inner.expect("variant case not found");
-                                            crate::bindings::golem::order::api::EmptyItemsError {
-                                                message: record
-                                                    .field(0usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                            }
-                                        })
-                                    }
-                                    5u32 => {
-                                        crate::bindings::golem::order::api::Error::ActionNotAllowed({
+                                    1u32 => {
+                                        crate::bindings::golem::order::api::UpdateAddressError::ActionNotAllowed({
                                             let record = inner.expect("variant case not found");
                                             crate::bindings::golem::order::api::ActionNotAllowedError {
                                                 message: record
@@ -1023,7 +895,9 @@ for FutureShipOrderResult {
         };
         pollable
     }
-    fn get(&self) -> Option<Result<(), crate::bindings::golem::order::api::Error>> {
+    fn get(
+        &self,
+    ) -> Option<Result<(), crate::bindings::golem::order::api::ShipOrderError>> {
         self.future_invoke_result
             .get()
             .map(|result| {
@@ -1049,77 +923,7 @@ for FutureShipOrderResult {
                                     .expect("variant not found");
                                 match case_idx {
                                     0u32 => {
-                                        crate::bindings::golem::order::api::Error::ProductNotFound({
-                                            let record = inner.expect("variant case not found");
-                                            crate::bindings::golem::order::api::ProductNotFoundError {
-                                                message: record
-                                                    .field(0usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                                product_id: record
-                                                    .field(1usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                            }
-                                        })
-                                    }
-                                    1u32 => {
-                                        crate::bindings::golem::order::api::Error::PricingNotFound({
-                                            let record = inner.expect("variant case not found");
-                                            crate::bindings::golem::order::api::PricingNotFoundError {
-                                                message: record
-                                                    .field(0usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                                product_id: record
-                                                    .field(1usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                            }
-                                        })
-                                    }
-                                    2u32 => {
-                                        crate::bindings::golem::order::api::Error::AddressNotValid({
-                                            let record = inner.expect("variant case not found");
-                                            crate::bindings::golem::order::api::AddressNotValidError {
-                                                message: record
-                                                    .field(0usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                            }
-                                        })
-                                    }
-                                    3u32 => {
-                                        crate::bindings::golem::order::api::Error::ItemNotFound({
-                                            let record = inner.expect("variant case not found");
-                                            crate::bindings::golem::order::api::ItemNotFoundError {
-                                                message: record
-                                                    .field(0usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                                product_id: record
-                                                    .field(1usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                            }
-                                        })
-                                    }
-                                    4u32 => {
-                                        crate::bindings::golem::order::api::Error::EmptyItems({
+                                        crate::bindings::golem::order::api::ShipOrderError::EmptyItems({
                                             let record = inner.expect("variant case not found");
                                             crate::bindings::golem::order::api::EmptyItemsError {
                                                 message: record
@@ -1131,8 +935,34 @@ for FutureShipOrderResult {
                                             }
                                         })
                                     }
-                                    5u32 => {
-                                        crate::bindings::golem::order::api::Error::ActionNotAllowed({
+                                    1u32 => {
+                                        crate::bindings::golem::order::api::ShipOrderError::EmptyEmail({
+                                            let record = inner.expect("variant case not found");
+                                            crate::bindings::golem::order::api::EmptyEmailError {
+                                                message: record
+                                                    .field(0usize)
+                                                    .expect("record field not found")
+                                                    .string()
+                                                    .expect("string not found")
+                                                    .to_string(),
+                                            }
+                                        })
+                                    }
+                                    2u32 => {
+                                        crate::bindings::golem::order::api::ShipOrderError::BillingAddressNotSet({
+                                            let record = inner.expect("variant case not found");
+                                            crate::bindings::golem::order::api::BillingAddressNotSetError {
+                                                message: record
+                                                    .field(0usize)
+                                                    .expect("record field not found")
+                                                    .string()
+                                                    .expect("string not found")
+                                                    .to_string(),
+                                            }
+                                        })
+                                    }
+                                    3u32 => {
+                                        crate::bindings::golem::order::api::ShipOrderError::ActionNotAllowed({
                                             let record = inner.expect("variant case not found");
                                             crate::bindings::golem::order::api::ActionNotAllowedError {
                                                 message: record
@@ -1179,7 +1009,9 @@ for FutureCancelOrderResult {
         };
         pollable
     }
-    fn get(&self) -> Option<Result<(), crate::bindings::golem::order::api::Error>> {
+    fn get(
+        &self,
+    ) -> Option<Result<(), crate::bindings::golem::order::api::CancelOrderError>> {
         self.future_invoke_result
             .get()
             .map(|result| {
@@ -1206,90 +1038,7 @@ for FutureCancelOrderResult {
                                     .expect("variant not found");
                                 match case_idx {
                                     0u32 => {
-                                        crate::bindings::golem::order::api::Error::ProductNotFound({
-                                            let record = inner.expect("variant case not found");
-                                            crate::bindings::golem::order::api::ProductNotFoundError {
-                                                message: record
-                                                    .field(0usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                                product_id: record
-                                                    .field(1usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                            }
-                                        })
-                                    }
-                                    1u32 => {
-                                        crate::bindings::golem::order::api::Error::PricingNotFound({
-                                            let record = inner.expect("variant case not found");
-                                            crate::bindings::golem::order::api::PricingNotFoundError {
-                                                message: record
-                                                    .field(0usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                                product_id: record
-                                                    .field(1usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                            }
-                                        })
-                                    }
-                                    2u32 => {
-                                        crate::bindings::golem::order::api::Error::AddressNotValid({
-                                            let record = inner.expect("variant case not found");
-                                            crate::bindings::golem::order::api::AddressNotValidError {
-                                                message: record
-                                                    .field(0usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                            }
-                                        })
-                                    }
-                                    3u32 => {
-                                        crate::bindings::golem::order::api::Error::ItemNotFound({
-                                            let record = inner.expect("variant case not found");
-                                            crate::bindings::golem::order::api::ItemNotFoundError {
-                                                message: record
-                                                    .field(0usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                                product_id: record
-                                                    .field(1usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                            }
-                                        })
-                                    }
-                                    4u32 => {
-                                        crate::bindings::golem::order::api::Error::EmptyItems({
-                                            let record = inner.expect("variant case not found");
-                                            crate::bindings::golem::order::api::EmptyItemsError {
-                                                message: record
-                                                    .field(0usize)
-                                                    .expect("record field not found")
-                                                    .string()
-                                                    .expect("string not found")
-                                                    .to_string(),
-                                            }
-                                        })
-                                    }
-                                    5u32 => {
-                                        crate::bindings::golem::order::api::Error::ActionNotAllowed({
+                                        crate::bindings::golem::order::api::CancelOrderError::ActionNotAllowed({
                                             let record = inner.expect("variant case not found");
                                             crate::bindings::golem::order::api::ActionNotAllowedError {
                                                 message: record
@@ -1381,8 +1130,16 @@ for FutureGetResult {
                                     _ => unreachable!("invalid enum case index"),
                                 }
                             },
-                            items: record
+                            email: record
                                 .field(3usize)
+                                .expect("record field not found")
+                                .option()
+                                .expect("option not found")
+                                .map(|inner| {
+                                    inner.string().expect("string not found").to_string()
+                                }),
+                            items: record
+                                .field(4usize)
                                 .expect("record field not found")
                                 .list_elements(|item| {
                                     let record = item;
@@ -1413,78 +1170,6 @@ for FutureGetResult {
                                 })
                                 .expect("list not found"),
                             billing_address: record
-                                .field(4usize)
-                                .expect("record field not found")
-                                .option()
-                                .expect("option not found")
-                                .map(|inner| {
-                                    let record = inner;
-                                    crate::bindings::golem::order::api::Address {
-                                        street1: record
-                                            .field(0usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                        street2: record
-                                            .field(1usize)
-                                            .expect("record field not found")
-                                            .option()
-                                            .expect("option not found")
-                                            .map(|inner| {
-                                                inner.string().expect("string not found").to_string()
-                                            }),
-                                        city: record
-                                            .field(2usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                        state_or_region: record
-                                            .field(3usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                        country: record
-                                            .field(4usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                        postal_code: record
-                                            .field(5usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                        name: record
-                                            .field(6usize)
-                                            .expect("record field not found")
-                                            .option()
-                                            .expect("option not found")
-                                            .map(|inner| {
-                                                inner.string().expect("string not found").to_string()
-                                            }),
-                                        business_name: record
-                                            .field(7usize)
-                                            .expect("record field not found")
-                                            .option()
-                                            .expect("option not found")
-                                            .map(|inner| {
-                                                inner.string().expect("string not found").to_string()
-                                            }),
-                                        phone_number: record
-                                            .field(8usize)
-                                            .expect("record field not found")
-                                            .option()
-                                            .expect("option not found")
-                                            .map(|inner| {
-                                                inner.string().expect("string not found").to_string()
-                                            }),
-                                    }
-                                }),
-                            shipping_address: record
                                 .field(5usize)
                                 .expect("record field not found")
                                 .option()
@@ -1556,19 +1241,91 @@ for FutureGetResult {
                                             }),
                                     }
                                 }),
-                            total: record
+                            shipping_address: record
                                 .field(6usize)
+                                .expect("record field not found")
+                                .option()
+                                .expect("option not found")
+                                .map(|inner| {
+                                    let record = inner;
+                                    crate::bindings::golem::order::api::Address {
+                                        street1: record
+                                            .field(0usize)
+                                            .expect("record field not found")
+                                            .string()
+                                            .expect("string not found")
+                                            .to_string(),
+                                        street2: record
+                                            .field(1usize)
+                                            .expect("record field not found")
+                                            .option()
+                                            .expect("option not found")
+                                            .map(|inner| {
+                                                inner.string().expect("string not found").to_string()
+                                            }),
+                                        city: record
+                                            .field(2usize)
+                                            .expect("record field not found")
+                                            .string()
+                                            .expect("string not found")
+                                            .to_string(),
+                                        state_or_region: record
+                                            .field(3usize)
+                                            .expect("record field not found")
+                                            .string()
+                                            .expect("string not found")
+                                            .to_string(),
+                                        country: record
+                                            .field(4usize)
+                                            .expect("record field not found")
+                                            .string()
+                                            .expect("string not found")
+                                            .to_string(),
+                                        postal_code: record
+                                            .field(5usize)
+                                            .expect("record field not found")
+                                            .string()
+                                            .expect("string not found")
+                                            .to_string(),
+                                        name: record
+                                            .field(6usize)
+                                            .expect("record field not found")
+                                            .option()
+                                            .expect("option not found")
+                                            .map(|inner| {
+                                                inner.string().expect("string not found").to_string()
+                                            }),
+                                        business_name: record
+                                            .field(7usize)
+                                            .expect("record field not found")
+                                            .option()
+                                            .expect("option not found")
+                                            .map(|inner| {
+                                                inner.string().expect("string not found").to_string()
+                                            }),
+                                        phone_number: record
+                                            .field(8usize)
+                                            .expect("record field not found")
+                                            .option()
+                                            .expect("option not found")
+                                            .map(|inner| {
+                                                inner.string().expect("string not found").to_string()
+                                            }),
+                                    }
+                                }),
+                            total: record
+                                .field(7usize)
                                 .expect("record field not found")
                                 .f32()
                                 .expect("f32 not found"),
                             currency: record
-                                .field(7usize)
+                                .field(8usize)
                                 .expect("record field not found")
                                 .string()
                                 .expect("string not found")
                                 .to_string(),
                             timestamp: record
-                                .field(8usize)
+                                .field(9usize)
                                 .expect("record field not found")
                                 .u64()
                                 .expect("u64 not found"),
@@ -1589,7 +1346,7 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
     fn blocking_initialize_order(
         &self,
         data: crate::bindings::golem::order::api::CreateOrder,
-    ) -> () {
+    ) -> Result<(), crate::bindings::golem::order::api::InitOrderError> {
         let result = self
             .rpc
             .invoke_and_await(
@@ -1599,6 +1356,8 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                         .record()
                         .item()
                         .string(&data.user_id)
+                        .item()
+                        .string(&data.email)
                         .item()
                         .list_fn(
                             &data.items,
@@ -1823,21 +1582,73 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                     "golem:order/api.{initialize-order}"
                 ),
             );
-        ()
+        ({
+            let result = result
+                .tuple_element(0)
+                .expect("tuple not found")
+                .result()
+                .expect("result not found");
+            match result {
+                Ok(ok_value) => Ok(()),
+                Err(err_value) => {
+                    Err({
+                        let (case_idx, inner) = err_value
+                            .expect("result err value not found")
+                            .variant()
+                            .expect("variant not found");
+                        match case_idx {
+                            0u32 => {
+                                crate::bindings::golem::order::api::InitOrderError::ActionNotAllowed({
+                                    let record = inner.expect("variant case not found");
+                                    crate::bindings::golem::order::api::ActionNotAllowedError {
+                                        message: record
+                                            .field(0usize)
+                                            .expect("record field not found")
+                                            .string()
+                                            .expect("string not found")
+                                            .to_string(),
+                                        status: {
+                                            let case_idx = record
+                                                .field(1usize)
+                                                .expect("record field not found")
+                                                .enum_value()
+                                                .expect("enum not found");
+                                            match case_idx {
+                                                0u32 => crate::bindings::golem::order::api::OrderStatus::New,
+                                                1u32 => {
+                                                    crate::bindings::golem::order::api::OrderStatus::Shipped
+                                                }
+                                                2u32 => {
+                                                    crate::bindings::golem::order::api::OrderStatus::Cancelled
+                                                }
+                                                _ => unreachable!("invalid enum case index"),
+                                            }
+                                        },
+                                    }
+                                })
+                            }
+                            _ => unreachable!("invalid variant case index"),
+                        }
+                    })
+                }
+            }
+        })
     }
     fn initialize_order(
         &self,
         data: crate::bindings::golem::order::api::CreateOrder,
-    ) -> () {
+    ) -> crate::bindings::exports::golem::order_stub::stub_order::FutureInitializeOrderResult {
         let result = self
             .rpc
-            .invoke(
+            .async_invoke_and_await(
                 "golem:order/api.{initialize-order}",
                 &[
                     WitValue::builder()
                         .record()
                         .item()
                         .string(&data.user_id)
+                        .item()
+                        .string(&data.email)
                         .item()
                         .list_fn(
                             &data.items,
@@ -2055,19 +1866,111 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                         .u64(data.timestamp)
                         .finish(),
                 ],
+            );
+        crate::bindings::exports::golem::order_stub::stub_order::FutureInitializeOrderResult::new(FutureInitializeOrderResult {
+            future_invoke_result: result,
+        })
+    }
+    fn blocking_update_email(
+        &self,
+        email: String,
+    ) -> Result<(), crate::bindings::golem::order::api::UpdateEmailError> {
+        let result = self
+            .rpc
+            .invoke_and_await(
+                "golem:order/api.{update-email}",
+                &[WitValue::builder().string(&email)],
             )
             .expect(
                 &format!(
-                    "Failed to invoke remote {}", "golem:order/api.{initialize-order}"
+                    "Failed to invoke-and-await remote {}",
+                    "golem:order/api.{update-email}"
                 ),
             );
-        ()
+        ({
+            let result = result
+                .tuple_element(0)
+                .expect("tuple not found")
+                .result()
+                .expect("result not found");
+            match result {
+                Ok(ok_value) => Ok(()),
+                Err(err_value) => {
+                    Err({
+                        let (case_idx, inner) = err_value
+                            .expect("result err value not found")
+                            .variant()
+                            .expect("variant not found");
+                        match case_idx {
+                            0u32 => {
+                                crate::bindings::golem::order::api::UpdateEmailError::EmailNotValid({
+                                    let record = inner.expect("variant case not found");
+                                    crate::bindings::golem::order::api::EmailNotValidError {
+                                        message: record
+                                            .field(0usize)
+                                            .expect("record field not found")
+                                            .string()
+                                            .expect("string not found")
+                                            .to_string(),
+                                    }
+                                })
+                            }
+                            1u32 => {
+                                crate::bindings::golem::order::api::UpdateEmailError::ActionNotAllowed({
+                                    let record = inner.expect("variant case not found");
+                                    crate::bindings::golem::order::api::ActionNotAllowedError {
+                                        message: record
+                                            .field(0usize)
+                                            .expect("record field not found")
+                                            .string()
+                                            .expect("string not found")
+                                            .to_string(),
+                                        status: {
+                                            let case_idx = record
+                                                .field(1usize)
+                                                .expect("record field not found")
+                                                .enum_value()
+                                                .expect("enum not found");
+                                            match case_idx {
+                                                0u32 => crate::bindings::golem::order::api::OrderStatus::New,
+                                                1u32 => {
+                                                    crate::bindings::golem::order::api::OrderStatus::Shipped
+                                                }
+                                                2u32 => {
+                                                    crate::bindings::golem::order::api::OrderStatus::Cancelled
+                                                }
+                                                _ => unreachable!("invalid enum case index"),
+                                            }
+                                        },
+                                    }
+                                })
+                            }
+                            _ => unreachable!("invalid variant case index"),
+                        }
+                    })
+                }
+            }
+        })
+    }
+    fn update_email(
+        &self,
+        email: String,
+    ) -> crate::bindings::exports::golem::order_stub::stub_order::FutureUpdateEmailResult {
+        let result = self
+            .rpc
+            .async_invoke_and_await(
+                "golem:order/api.{update-email}",
+                &[WitValue::builder().string(&email)],
+            );
+        crate::bindings::exports::golem::order_stub::stub_order::FutureUpdateEmailResult::new(FutureUpdateEmailResult {
+            future_invoke_result: result,
+        })
     }
     fn blocking_add_item(
         &self,
         product_id: String,
         quantity: u32,
-    ) -> Result<(), crate::bindings::golem::order::api::Error> {
+    ) -> Result<(), crate::bindings::golem::order::api::AddItemError> {
         let result = self
             .rpc
             .invoke_and_await(
@@ -2098,7 +2001,7 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                             .expect("variant not found");
                         match case_idx {
                             0u32 => {
-                                crate::bindings::golem::order::api::Error::ProductNotFound({
+                                crate::bindings::golem::order::api::AddItemError::ProductNotFound({
                                     let record = inner.expect("variant case not found");
                                     crate::bindings::golem::order::api::ProductNotFoundError {
                                         message: record
@@ -2117,7 +2020,7 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                                 })
                             }
                             1u32 => {
-                                crate::bindings::golem::order::api::Error::PricingNotFound({
+                                crate::bindings::golem::order::api::AddItemError::PricingNotFound({
                                     let record = inner.expect("variant case not found");
                                     crate::bindings::golem::order::api::PricingNotFoundError {
                                         message: record
@@ -2136,52 +2039,7 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                                 })
                             }
                             2u32 => {
-                                crate::bindings::golem::order::api::Error::AddressNotValid({
-                                    let record = inner.expect("variant case not found");
-                                    crate::bindings::golem::order::api::AddressNotValidError {
-                                        message: record
-                                            .field(0usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                    }
-                                })
-                            }
-                            3u32 => {
-                                crate::bindings::golem::order::api::Error::ItemNotFound({
-                                    let record = inner.expect("variant case not found");
-                                    crate::bindings::golem::order::api::ItemNotFoundError {
-                                        message: record
-                                            .field(0usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                        product_id: record
-                                            .field(1usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                    }
-                                })
-                            }
-                            4u32 => {
-                                crate::bindings::golem::order::api::Error::EmptyItems({
-                                    let record = inner.expect("variant case not found");
-                                    crate::bindings::golem::order::api::EmptyItemsError {
-                                        message: record
-                                            .field(0usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                    }
-                                })
-                            }
-                            5u32 => {
-                                crate::bindings::golem::order::api::Error::ActionNotAllowed({
+                                crate::bindings::golem::order::api::AddItemError::ActionNotAllowed({
                                     let record = inner.expect("variant case not found");
                                     crate::bindings::golem::order::api::ActionNotAllowedError {
                                         message: record
@@ -2238,7 +2096,7 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
     fn blocking_remove_item(
         &self,
         product_id: String,
-    ) -> Result<(), crate::bindings::golem::order::api::Error> {
+    ) -> Result<(), crate::bindings::golem::order::api::RemoveItemError> {
         let result = self
             .rpc
             .invoke_and_await(
@@ -2267,58 +2125,7 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                             .expect("variant not found");
                         match case_idx {
                             0u32 => {
-                                crate::bindings::golem::order::api::Error::ProductNotFound({
-                                    let record = inner.expect("variant case not found");
-                                    crate::bindings::golem::order::api::ProductNotFoundError {
-                                        message: record
-                                            .field(0usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                        product_id: record
-                                            .field(1usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                    }
-                                })
-                            }
-                            1u32 => {
-                                crate::bindings::golem::order::api::Error::PricingNotFound({
-                                    let record = inner.expect("variant case not found");
-                                    crate::bindings::golem::order::api::PricingNotFoundError {
-                                        message: record
-                                            .field(0usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                        product_id: record
-                                            .field(1usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                    }
-                                })
-                            }
-                            2u32 => {
-                                crate::bindings::golem::order::api::Error::AddressNotValid({
-                                    let record = inner.expect("variant case not found");
-                                    crate::bindings::golem::order::api::AddressNotValidError {
-                                        message: record
-                                            .field(0usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                    }
-                                })
-                            }
-                            3u32 => {
-                                crate::bindings::golem::order::api::Error::ItemNotFound({
+                                crate::bindings::golem::order::api::RemoveItemError::ItemNotFound({
                                     let record = inner.expect("variant case not found");
                                     crate::bindings::golem::order::api::ItemNotFoundError {
                                         message: record
@@ -2336,21 +2143,8 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                                     }
                                 })
                             }
-                            4u32 => {
-                                crate::bindings::golem::order::api::Error::EmptyItems({
-                                    let record = inner.expect("variant case not found");
-                                    crate::bindings::golem::order::api::EmptyItemsError {
-                                        message: record
-                                            .field(0usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                    }
-                                })
-                            }
-                            5u32 => {
-                                crate::bindings::golem::order::api::Error::ActionNotAllowed({
+                            1u32 => {
+                                crate::bindings::golem::order::api::RemoveItemError::ActionNotAllowed({
                                     let record = inner.expect("variant case not found");
                                     crate::bindings::golem::order::api::ActionNotAllowedError {
                                         message: record
@@ -2404,7 +2198,7 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
         &self,
         product_id: String,
         quantity: u32,
-    ) -> Result<(), crate::bindings::golem::order::api::Error> {
+    ) -> Result<(), crate::bindings::golem::order::api::UpdateItemQuantityError> {
         let result = self
             .rpc
             .invoke_and_await(
@@ -2436,58 +2230,7 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                             .expect("variant not found");
                         match case_idx {
                             0u32 => {
-                                crate::bindings::golem::order::api::Error::ProductNotFound({
-                                    let record = inner.expect("variant case not found");
-                                    crate::bindings::golem::order::api::ProductNotFoundError {
-                                        message: record
-                                            .field(0usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                        product_id: record
-                                            .field(1usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                    }
-                                })
-                            }
-                            1u32 => {
-                                crate::bindings::golem::order::api::Error::PricingNotFound({
-                                    let record = inner.expect("variant case not found");
-                                    crate::bindings::golem::order::api::PricingNotFoundError {
-                                        message: record
-                                            .field(0usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                        product_id: record
-                                            .field(1usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                    }
-                                })
-                            }
-                            2u32 => {
-                                crate::bindings::golem::order::api::Error::AddressNotValid({
-                                    let record = inner.expect("variant case not found");
-                                    crate::bindings::golem::order::api::AddressNotValidError {
-                                        message: record
-                                            .field(0usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                    }
-                                })
-                            }
-                            3u32 => {
-                                crate::bindings::golem::order::api::Error::ItemNotFound({
+                                crate::bindings::golem::order::api::UpdateItemQuantityError::ItemNotFound({
                                     let record = inner.expect("variant case not found");
                                     crate::bindings::golem::order::api::ItemNotFoundError {
                                         message: record
@@ -2505,21 +2248,8 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                                     }
                                 })
                             }
-                            4u32 => {
-                                crate::bindings::golem::order::api::Error::EmptyItems({
-                                    let record = inner.expect("variant case not found");
-                                    crate::bindings::golem::order::api::EmptyItemsError {
-                                        message: record
-                                            .field(0usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                    }
-                                })
-                            }
-                            5u32 => {
-                                crate::bindings::golem::order::api::Error::ActionNotAllowed({
+                            1u32 => {
+                                crate::bindings::golem::order::api::UpdateItemQuantityError::ActionNotAllowed({
                                     let record = inner.expect("variant case not found");
                                     crate::bindings::golem::order::api::ActionNotAllowedError {
                                         message: record
@@ -2576,7 +2306,7 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
     fn blocking_update_shipping_address(
         &self,
         address: crate::bindings::golem::order::api::Address,
-    ) -> Result<(), crate::bindings::golem::order::api::Error> {
+    ) -> Result<(), crate::bindings::golem::order::api::UpdateAddressError> {
         let result = self
             .rpc
             .invoke_and_await(
@@ -2647,45 +2377,7 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                             .expect("variant not found");
                         match case_idx {
                             0u32 => {
-                                crate::bindings::golem::order::api::Error::ProductNotFound({
-                                    let record = inner.expect("variant case not found");
-                                    crate::bindings::golem::order::api::ProductNotFoundError {
-                                        message: record
-                                            .field(0usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                        product_id: record
-                                            .field(1usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                    }
-                                })
-                            }
-                            1u32 => {
-                                crate::bindings::golem::order::api::Error::PricingNotFound({
-                                    let record = inner.expect("variant case not found");
-                                    crate::bindings::golem::order::api::PricingNotFoundError {
-                                        message: record
-                                            .field(0usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                        product_id: record
-                                            .field(1usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                    }
-                                })
-                            }
-                            2u32 => {
-                                crate::bindings::golem::order::api::Error::AddressNotValid({
+                                crate::bindings::golem::order::api::UpdateAddressError::AddressNotValid({
                                     let record = inner.expect("variant case not found");
                                     crate::bindings::golem::order::api::AddressNotValidError {
                                         message: record
@@ -2697,40 +2389,8 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                                     }
                                 })
                             }
-                            3u32 => {
-                                crate::bindings::golem::order::api::Error::ItemNotFound({
-                                    let record = inner.expect("variant case not found");
-                                    crate::bindings::golem::order::api::ItemNotFoundError {
-                                        message: record
-                                            .field(0usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                        product_id: record
-                                            .field(1usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                    }
-                                })
-                            }
-                            4u32 => {
-                                crate::bindings::golem::order::api::Error::EmptyItems({
-                                    let record = inner.expect("variant case not found");
-                                    crate::bindings::golem::order::api::EmptyItemsError {
-                                        message: record
-                                            .field(0usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                    }
-                                })
-                            }
-                            5u32 => {
-                                crate::bindings::golem::order::api::Error::ActionNotAllowed({
+                            1u32 => {
+                                crate::bindings::golem::order::api::UpdateAddressError::ActionNotAllowed({
                                     let record = inner.expect("variant case not found");
                                     crate::bindings::golem::order::api::ActionNotAllowedError {
                                         message: record
@@ -2825,7 +2485,7 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
     fn blocking_update_billing_address(
         &self,
         address: crate::bindings::golem::order::api::Address,
-    ) -> Result<(), crate::bindings::golem::order::api::Error> {
+    ) -> Result<(), crate::bindings::golem::order::api::UpdateAddressError> {
         let result = self
             .rpc
             .invoke_and_await(
@@ -2896,45 +2556,7 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                             .expect("variant not found");
                         match case_idx {
                             0u32 => {
-                                crate::bindings::golem::order::api::Error::ProductNotFound({
-                                    let record = inner.expect("variant case not found");
-                                    crate::bindings::golem::order::api::ProductNotFoundError {
-                                        message: record
-                                            .field(0usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                        product_id: record
-                                            .field(1usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                    }
-                                })
-                            }
-                            1u32 => {
-                                crate::bindings::golem::order::api::Error::PricingNotFound({
-                                    let record = inner.expect("variant case not found");
-                                    crate::bindings::golem::order::api::PricingNotFoundError {
-                                        message: record
-                                            .field(0usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                        product_id: record
-                                            .field(1usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                    }
-                                })
-                            }
-                            2u32 => {
-                                crate::bindings::golem::order::api::Error::AddressNotValid({
+                                crate::bindings::golem::order::api::UpdateAddressError::AddressNotValid({
                                     let record = inner.expect("variant case not found");
                                     crate::bindings::golem::order::api::AddressNotValidError {
                                         message: record
@@ -2946,40 +2568,8 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                                     }
                                 })
                             }
-                            3u32 => {
-                                crate::bindings::golem::order::api::Error::ItemNotFound({
-                                    let record = inner.expect("variant case not found");
-                                    crate::bindings::golem::order::api::ItemNotFoundError {
-                                        message: record
-                                            .field(0usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                        product_id: record
-                                            .field(1usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                    }
-                                })
-                            }
-                            4u32 => {
-                                crate::bindings::golem::order::api::Error::EmptyItems({
-                                    let record = inner.expect("variant case not found");
-                                    crate::bindings::golem::order::api::EmptyItemsError {
-                                        message: record
-                                            .field(0usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                    }
-                                })
-                            }
-                            5u32 => {
-                                crate::bindings::golem::order::api::Error::ActionNotAllowed({
+                            1u32 => {
+                                crate::bindings::golem::order::api::UpdateAddressError::ActionNotAllowed({
                                     let record = inner.expect("variant case not found");
                                     crate::bindings::golem::order::api::ActionNotAllowedError {
                                         message: record
@@ -3073,7 +2663,7 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
     }
     fn blocking_ship_order(
         &self,
-    ) -> Result<(), crate::bindings::golem::order::api::Error> {
+    ) -> Result<(), crate::bindings::golem::order::api::ShipOrderError> {
         let result = self
             .rpc
             .invoke_and_await("golem:order/api.{ship-order}", &[])
@@ -3099,77 +2689,7 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                             .expect("variant not found");
                         match case_idx {
                             0u32 => {
-                                crate::bindings::golem::order::api::Error::ProductNotFound({
-                                    let record = inner.expect("variant case not found");
-                                    crate::bindings::golem::order::api::ProductNotFoundError {
-                                        message: record
-                                            .field(0usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                        product_id: record
-                                            .field(1usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                    }
-                                })
-                            }
-                            1u32 => {
-                                crate::bindings::golem::order::api::Error::PricingNotFound({
-                                    let record = inner.expect("variant case not found");
-                                    crate::bindings::golem::order::api::PricingNotFoundError {
-                                        message: record
-                                            .field(0usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                        product_id: record
-                                            .field(1usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                    }
-                                })
-                            }
-                            2u32 => {
-                                crate::bindings::golem::order::api::Error::AddressNotValid({
-                                    let record = inner.expect("variant case not found");
-                                    crate::bindings::golem::order::api::AddressNotValidError {
-                                        message: record
-                                            .field(0usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                    }
-                                })
-                            }
-                            3u32 => {
-                                crate::bindings::golem::order::api::Error::ItemNotFound({
-                                    let record = inner.expect("variant case not found");
-                                    crate::bindings::golem::order::api::ItemNotFoundError {
-                                        message: record
-                                            .field(0usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                        product_id: record
-                                            .field(1usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                    }
-                                })
-                            }
-                            4u32 => {
-                                crate::bindings::golem::order::api::Error::EmptyItems({
+                                crate::bindings::golem::order::api::ShipOrderError::EmptyItems({
                                     let record = inner.expect("variant case not found");
                                     crate::bindings::golem::order::api::EmptyItemsError {
                                         message: record
@@ -3181,8 +2701,34 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                                     }
                                 })
                             }
-                            5u32 => {
-                                crate::bindings::golem::order::api::Error::ActionNotAllowed({
+                            1u32 => {
+                                crate::bindings::golem::order::api::ShipOrderError::EmptyEmail({
+                                    let record = inner.expect("variant case not found");
+                                    crate::bindings::golem::order::api::EmptyEmailError {
+                                        message: record
+                                            .field(0usize)
+                                            .expect("record field not found")
+                                            .string()
+                                            .expect("string not found")
+                                            .to_string(),
+                                    }
+                                })
+                            }
+                            2u32 => {
+                                crate::bindings::golem::order::api::ShipOrderError::BillingAddressNotSet({
+                                    let record = inner.expect("variant case not found");
+                                    crate::bindings::golem::order::api::BillingAddressNotSetError {
+                                        message: record
+                                            .field(0usize)
+                                            .expect("record field not found")
+                                            .string()
+                                            .expect("string not found")
+                                            .to_string(),
+                                    }
+                                })
+                            }
+                            3u32 => {
+                                crate::bindings::golem::order::api::ShipOrderError::ActionNotAllowed({
                                     let record = inner.expect("variant case not found");
                                     crate::bindings::golem::order::api::ActionNotAllowedError {
                                         message: record
@@ -3230,7 +2776,7 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
     }
     fn blocking_cancel_order(
         &self,
-    ) -> Result<(), crate::bindings::golem::order::api::Error> {
+    ) -> Result<(), crate::bindings::golem::order::api::CancelOrderError> {
         let result = self
             .rpc
             .invoke_and_await("golem:order/api.{cancel-order}", &[])
@@ -3256,90 +2802,7 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                             .expect("variant not found");
                         match case_idx {
                             0u32 => {
-                                crate::bindings::golem::order::api::Error::ProductNotFound({
-                                    let record = inner.expect("variant case not found");
-                                    crate::bindings::golem::order::api::ProductNotFoundError {
-                                        message: record
-                                            .field(0usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                        product_id: record
-                                            .field(1usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                    }
-                                })
-                            }
-                            1u32 => {
-                                crate::bindings::golem::order::api::Error::PricingNotFound({
-                                    let record = inner.expect("variant case not found");
-                                    crate::bindings::golem::order::api::PricingNotFoundError {
-                                        message: record
-                                            .field(0usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                        product_id: record
-                                            .field(1usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                    }
-                                })
-                            }
-                            2u32 => {
-                                crate::bindings::golem::order::api::Error::AddressNotValid({
-                                    let record = inner.expect("variant case not found");
-                                    crate::bindings::golem::order::api::AddressNotValidError {
-                                        message: record
-                                            .field(0usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                    }
-                                })
-                            }
-                            3u32 => {
-                                crate::bindings::golem::order::api::Error::ItemNotFound({
-                                    let record = inner.expect("variant case not found");
-                                    crate::bindings::golem::order::api::ItemNotFoundError {
-                                        message: record
-                                            .field(0usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                        product_id: record
-                                            .field(1usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                    }
-                                })
-                            }
-                            4u32 => {
-                                crate::bindings::golem::order::api::Error::EmptyItems({
-                                    let record = inner.expect("variant case not found");
-                                    crate::bindings::golem::order::api::EmptyItemsError {
-                                        message: record
-                                            .field(0usize)
-                                            .expect("record field not found")
-                                            .string()
-                                            .expect("string not found")
-                                            .to_string(),
-                                    }
-                                })
-                            }
-                            5u32 => {
-                                crate::bindings::golem::order::api::Error::ActionNotAllowed({
+                                crate::bindings::golem::order::api::CancelOrderError::ActionNotAllowed({
                                     let record = inner.expect("variant case not found");
                                     crate::bindings::golem::order::api::ActionNotAllowedError {
                                         message: record
@@ -3429,8 +2892,16 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                             _ => unreachable!("invalid enum case index"),
                         }
                     },
-                    items: record
+                    email: record
                         .field(3usize)
+                        .expect("record field not found")
+                        .option()
+                        .expect("option not found")
+                        .map(|inner| {
+                            inner.string().expect("string not found").to_string()
+                        }),
+                    items: record
+                        .field(4usize)
                         .expect("record field not found")
                         .list_elements(|item| {
                             let record = item;
@@ -3461,78 +2932,6 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                         })
                         .expect("list not found"),
                     billing_address: record
-                        .field(4usize)
-                        .expect("record field not found")
-                        .option()
-                        .expect("option not found")
-                        .map(|inner| {
-                            let record = inner;
-                            crate::bindings::golem::order::api::Address {
-                                street1: record
-                                    .field(0usize)
-                                    .expect("record field not found")
-                                    .string()
-                                    .expect("string not found")
-                                    .to_string(),
-                                street2: record
-                                    .field(1usize)
-                                    .expect("record field not found")
-                                    .option()
-                                    .expect("option not found")
-                                    .map(|inner| {
-                                        inner.string().expect("string not found").to_string()
-                                    }),
-                                city: record
-                                    .field(2usize)
-                                    .expect("record field not found")
-                                    .string()
-                                    .expect("string not found")
-                                    .to_string(),
-                                state_or_region: record
-                                    .field(3usize)
-                                    .expect("record field not found")
-                                    .string()
-                                    .expect("string not found")
-                                    .to_string(),
-                                country: record
-                                    .field(4usize)
-                                    .expect("record field not found")
-                                    .string()
-                                    .expect("string not found")
-                                    .to_string(),
-                                postal_code: record
-                                    .field(5usize)
-                                    .expect("record field not found")
-                                    .string()
-                                    .expect("string not found")
-                                    .to_string(),
-                                name: record
-                                    .field(6usize)
-                                    .expect("record field not found")
-                                    .option()
-                                    .expect("option not found")
-                                    .map(|inner| {
-                                        inner.string().expect("string not found").to_string()
-                                    }),
-                                business_name: record
-                                    .field(7usize)
-                                    .expect("record field not found")
-                                    .option()
-                                    .expect("option not found")
-                                    .map(|inner| {
-                                        inner.string().expect("string not found").to_string()
-                                    }),
-                                phone_number: record
-                                    .field(8usize)
-                                    .expect("record field not found")
-                                    .option()
-                                    .expect("option not found")
-                                    .map(|inner| {
-                                        inner.string().expect("string not found").to_string()
-                                    }),
-                            }
-                        }),
-                    shipping_address: record
                         .field(5usize)
                         .expect("record field not found")
                         .option()
@@ -3604,19 +3003,91 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                                     }),
                             }
                         }),
-                    total: record
+                    shipping_address: record
                         .field(6usize)
+                        .expect("record field not found")
+                        .option()
+                        .expect("option not found")
+                        .map(|inner| {
+                            let record = inner;
+                            crate::bindings::golem::order::api::Address {
+                                street1: record
+                                    .field(0usize)
+                                    .expect("record field not found")
+                                    .string()
+                                    .expect("string not found")
+                                    .to_string(),
+                                street2: record
+                                    .field(1usize)
+                                    .expect("record field not found")
+                                    .option()
+                                    .expect("option not found")
+                                    .map(|inner| {
+                                        inner.string().expect("string not found").to_string()
+                                    }),
+                                city: record
+                                    .field(2usize)
+                                    .expect("record field not found")
+                                    .string()
+                                    .expect("string not found")
+                                    .to_string(),
+                                state_or_region: record
+                                    .field(3usize)
+                                    .expect("record field not found")
+                                    .string()
+                                    .expect("string not found")
+                                    .to_string(),
+                                country: record
+                                    .field(4usize)
+                                    .expect("record field not found")
+                                    .string()
+                                    .expect("string not found")
+                                    .to_string(),
+                                postal_code: record
+                                    .field(5usize)
+                                    .expect("record field not found")
+                                    .string()
+                                    .expect("string not found")
+                                    .to_string(),
+                                name: record
+                                    .field(6usize)
+                                    .expect("record field not found")
+                                    .option()
+                                    .expect("option not found")
+                                    .map(|inner| {
+                                        inner.string().expect("string not found").to_string()
+                                    }),
+                                business_name: record
+                                    .field(7usize)
+                                    .expect("record field not found")
+                                    .option()
+                                    .expect("option not found")
+                                    .map(|inner| {
+                                        inner.string().expect("string not found").to_string()
+                                    }),
+                                phone_number: record
+                                    .field(8usize)
+                                    .expect("record field not found")
+                                    .option()
+                                    .expect("option not found")
+                                    .map(|inner| {
+                                        inner.string().expect("string not found").to_string()
+                                    }),
+                            }
+                        }),
+                    total: record
+                        .field(7usize)
                         .expect("record field not found")
                         .f32()
                         .expect("f32 not found"),
                     currency: record
-                        .field(7usize)
+                        .field(8usize)
                         .expect("record field not found")
                         .string()
                         .expect("string not found")
                         .to_string(),
                     timestamp: record
-                        .field(8usize)
+                        .field(9usize)
                         .expect("record field not found")
                         .u64()
                         .expect("u64 not found"),

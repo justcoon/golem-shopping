@@ -3,27 +3,39 @@ pub mod product {
     use serde::{Deserialize, Serialize};
 
     #[derive(Clone, Serialize, Deserialize)]
+    #[serde(rename_all = "kebab-case")]
     pub struct Product {
         pub product_id: String,
         pub name: String,
         pub description: String,
+        pub tags: Vec<String>,
     }
 
     impl Product {
         pub fn new(product_id: String) -> Self {
-            Self { product_id, name: "".to_string(), description: "".to_string() }
+            Self { product_id, name: "".to_string(), description: "".to_string(), tags: vec![] }
         }
     }
 
     impl From<bindings::exports::golem::product::api::Product> for Product {
         fn from(value: bindings::exports::golem::product::api::Product) -> Self {
-            Self { product_id: value.product_id, name: value.name, description: value.description }
+            Self {
+                product_id: value.product_id,
+                name: value.name,
+                description: value.description,
+                tags: value.tags,
+            }
         }
     }
 
     impl From<Product> for bindings::exports::golem::product::api::Product {
         fn from(value: Product) -> Self {
-            Self { product_id: value.product_id, name: value.name, description: value.description }
+            Self {
+                product_id: value.product_id,
+                name: value.name,
+                description: value.description,
+                tags: value.tags,
+            }
         }
     }
 

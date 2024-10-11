@@ -47,6 +47,20 @@
     },
     {
       "method": "Put",
+      "path": "/v1/cart/{user-id}/email",
+      "binding": {
+        "componentId": {
+          "componentId": "$CART_COMPONENT_ID",
+          "version": $CART_COMPONENT_VERSION
+        },
+        "workerName": "${let id: str = request.path.user-id;\nid}",
+        "idempotencyKey": null,
+        "response": "${let email: str = request.body.email;\nlet result = golem:cart/api.{update-email}(email);\nmatch result {  ok(_) => {status: 200u64, body: {message: \"email set\"}}, err(x) => {status: 400u64, body: {error: x}} } }",
+        "idempotencyKeyInput": null
+      }
+    },
+    {
+      "method": "Put",
       "path": "/v1/cart/{user-id}/billing-address",
       "binding": {
         "componentId": {

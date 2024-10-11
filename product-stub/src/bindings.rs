@@ -17,6 +17,7 @@ pub mod golem {
                 pub product_id: _rt::String,
                 pub name: _rt::String,
                 pub description: _rt::String,
+                pub tags: _rt::Vec<_rt::String>,
             }
             impl ::core::fmt::Debug for Product {
                 fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
@@ -24,11 +25,12 @@ pub mod golem {
                         .field("product-id", &self.product_id)
                         .field("name", &self.name)
                         .field("description", &self.description)
+                        .field("tags", &self.tags)
                         .finish()
                 }
             }
             #[allow(unused_unsafe, clippy::all)]
-            pub fn initialize_product(name: &str, description: &str) {
+            pub fn initialize_product(name: &str, description: &str, tags: &[_rt::String]) {
                 unsafe {
                     let vec0 = name;
                     let ptr0 = vec0.as_ptr().cast::<u8>();
@@ -36,27 +38,68 @@ pub mod golem {
                     let vec1 = description;
                     let ptr1 = vec1.as_ptr().cast::<u8>();
                     let len1 = vec1.len();
+                    let vec3 = tags;
+                    let len3 = vec3.len();
+                    let layout3 = _rt::alloc::Layout::from_size_align_unchecked(vec3.len() * 8, 4);
+                    let result3 = if layout3.size() != 0 {
+                        let ptr = _rt::alloc::alloc(layout3).cast::<u8>();
+                        if ptr.is_null() {
+                            _rt::alloc::handle_alloc_error(layout3);
+                        }
+                        ptr
+                    } else {
+                        {
+                            ::core::ptr::null_mut()
+                        }
+                    };
+                    for (i, e) in vec3.into_iter().enumerate() {
+                        let base = result3.add(i * 8);
+                        {
+                            let vec2 = e;
+                            let ptr2 = vec2.as_ptr().cast::<u8>();
+                            let len2 = vec2.len();
+                            *base.add(4).cast::<usize>() = len2;
+                            *base.add(0).cast::<*mut u8>() = ptr2.cast_mut();
+                        }
+                    }
 
                     #[cfg(target_arch = "wasm32")]
                     #[link(wasm_import_module = "golem:product/api")]
                     extern "C" {
                         #[link_name = "initialize-product"]
-                        fn wit_import(_: *mut u8, _: usize, _: *mut u8, _: usize);
+                        fn wit_import(
+                            _: *mut u8,
+                            _: usize,
+                            _: *mut u8,
+                            _: usize,
+                            _: *mut u8,
+                            _: usize,
+                        );
                     }
 
                     #[cfg(not(target_arch = "wasm32"))]
-                    fn wit_import(_: *mut u8, _: usize, _: *mut u8, _: usize) {
+                    fn wit_import(
+                        _: *mut u8,
+                        _: usize,
+                        _: *mut u8,
+                        _: usize,
+                        _: *mut u8,
+                        _: usize,
+                    ) {
                         unreachable!()
                     }
-                    wit_import(ptr0.cast_mut(), len0, ptr1.cast_mut(), len1);
+                    wit_import(ptr0.cast_mut(), len0, ptr1.cast_mut(), len1, result3, len3);
+                    if layout3.size() != 0 {
+                        _rt::alloc::dealloc(result3.cast(), layout3);
+                    }
                 }
             }
             #[allow(unused_unsafe, clippy::all)]
             pub fn get() -> Option<Product> {
                 unsafe {
                     #[repr(align(4))]
-                    struct RetArea([::core::mem::MaybeUninit<u8>; 28]);
-                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 28]);
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 36]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 36]);
                     let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                     #[cfg(target_arch = "wasm32")]
                     #[link(wasm_import_module = "golem:product/api")]
@@ -87,11 +130,31 @@ pub mod golem {
                                 let l9 = *ptr0.add(24).cast::<usize>();
                                 let len10 = l9;
                                 let bytes10 = _rt::Vec::from_raw_parts(l8.cast(), len10, len10);
+                                let l11 = *ptr0.add(28).cast::<*mut u8>();
+                                let l12 = *ptr0.add(32).cast::<usize>();
+                                let base16 = l11;
+                                let len16 = l12;
+                                let mut result16 = _rt::Vec::with_capacity(len16);
+                                for i in 0..len16 {
+                                    let base = base16.add(i * 8);
+                                    let e16 = {
+                                        let l13 = *base.add(0).cast::<*mut u8>();
+                                        let l14 = *base.add(4).cast::<usize>();
+                                        let len15 = l14;
+                                        let bytes15 =
+                                            _rt::Vec::from_raw_parts(l13.cast(), len15, len15);
+
+                                        _rt::string_lift(bytes15)
+                                    };
+                                    result16.push(e16);
+                                }
+                                _rt::cabi_dealloc(base16, len16 * 8, 4);
 
                                 Product {
                                     product_id: _rt::string_lift(bytes4),
                                     name: _rt::string_lift(bytes7),
                                     description: _rt::string_lift(bytes10),
+                                    tags: result16,
                                 }
                             };
                             Some(e)
@@ -3447,6 +3510,7 @@ pub mod exports {
                                         product_id: product_id2,
                                         name: name2,
                                         description: description2,
+                                        tags: tags2,
                                     } = e;
                                     let vec3 = (product_id2.into_bytes()).into_boxed_slice();
                                     let ptr3 = vec3.as_ptr().cast::<u8>();
@@ -3466,6 +3530,36 @@ pub mod exports {
                                     ::core::mem::forget(vec5);
                                     *ptr1.add(28).cast::<usize>() = len5;
                                     *ptr1.add(24).cast::<*mut u8>() = ptr5.cast_mut();
+                                    let vec7 = tags2;
+                                    let len7 = vec7.len();
+                                    let layout7 = _rt::alloc::Layout::from_size_align_unchecked(
+                                        vec7.len() * 8,
+                                        4,
+                                    );
+                                    let result7 = if layout7.size() != 0 {
+                                        let ptr = _rt::alloc::alloc(layout7).cast::<u8>();
+                                        if ptr.is_null() {
+                                            _rt::alloc::handle_alloc_error(layout7);
+                                        }
+                                        ptr
+                                    } else {
+                                        {
+                                            ::core::ptr::null_mut()
+                                        }
+                                    };
+                                    for (i, e) in vec7.into_iter().enumerate() {
+                                        let base = result7.add(i * 8);
+                                        {
+                                            let vec6 = (e.into_bytes()).into_boxed_slice();
+                                            let ptr6 = vec6.as_ptr().cast::<u8>();
+                                            let len6 = vec6.len();
+                                            ::core::mem::forget(vec6);
+                                            *base.add(4).cast::<usize>() = len6;
+                                            *base.add(0).cast::<*mut u8>() = ptr6.cast_mut();
+                                        }
+                                    }
+                                    *ptr1.add(36).cast::<usize>() = len7;
+                                    *ptr1.add(32).cast::<*mut u8>() = result7;
                                 }
                                 None => {
                                     *ptr1.add(4).cast::<u8>() = (0i32) as u8;
@@ -3502,6 +3596,19 @@ pub mod exports {
                                     let l6 = *arg0.add(24).cast::<*mut u8>();
                                     let l7 = *arg0.add(28).cast::<usize>();
                                     _rt::cabi_dealloc(l6, l7, 1);
+                                    let l10 = *arg0.add(32).cast::<*mut u8>();
+                                    let l11 = *arg0.add(36).cast::<usize>();
+                                    let base12 = l10;
+                                    let len12 = l11;
+                                    for i in 0..len12 {
+                                        let base = base12.add(i * 8);
+                                        {
+                                            let l8 = *base.add(0).cast::<*mut u8>();
+                                            let l9 = *base.add(4).cast::<usize>();
+                                            _rt::cabi_dealloc(l8, l9, 1);
+                                        }
+                                    }
+                                    _rt::cabi_dealloc(base12, len12 * 8, 4);
                                 }
                             }
                         }
@@ -3674,6 +3781,8 @@ pub mod exports {
                     arg2: usize,
                     arg3: *mut u8,
                     arg4: usize,
+                    arg5: *mut u8,
+                    arg6: usize,
                 ) {
                     #[cfg(target_arch = "wasm32")]
                     _rt::run_ctors_once();
@@ -3681,10 +3790,27 @@ pub mod exports {
                     let bytes0 = _rt::Vec::from_raw_parts(arg1.cast(), len0, len0);
                     let len1 = arg4;
                     let bytes1 = _rt::Vec::from_raw_parts(arg3.cast(), len1, len1);
+                    let base5 = arg5;
+                    let len5 = arg6;
+                    let mut result5 = _rt::Vec::with_capacity(len5);
+                    for i in 0..len5 {
+                        let base = base5.add(i * 8);
+                        let e5 = {
+                            let l2 = *base.add(0).cast::<*mut u8>();
+                            let l3 = *base.add(4).cast::<usize>();
+                            let len4 = l3;
+                            let bytes4 = _rt::Vec::from_raw_parts(l2.cast(), len4, len4);
+
+                            _rt::string_lift(bytes4)
+                        };
+                        result5.push(e5);
+                    }
+                    _rt::cabi_dealloc(base5, len5 * 8, 4);
                     T::blocking_initialize_product(
                         ApiBorrow::lift(arg0 as u32 as usize).get(),
                         _rt::string_lift(bytes0),
                         _rt::string_lift(bytes1),
+                        result5,
                     );
                 }
                 #[doc(hidden)]
@@ -3695,6 +3821,8 @@ pub mod exports {
                     arg2: usize,
                     arg3: *mut u8,
                     arg4: usize,
+                    arg5: *mut u8,
+                    arg6: usize,
                 ) {
                     #[cfg(target_arch = "wasm32")]
                     _rt::run_ctors_once();
@@ -3702,10 +3830,27 @@ pub mod exports {
                     let bytes0 = _rt::Vec::from_raw_parts(arg1.cast(), len0, len0);
                     let len1 = arg4;
                     let bytes1 = _rt::Vec::from_raw_parts(arg3.cast(), len1, len1);
+                    let base5 = arg5;
+                    let len5 = arg6;
+                    let mut result5 = _rt::Vec::with_capacity(len5);
+                    for i in 0..len5 {
+                        let base = base5.add(i * 8);
+                        let e5 = {
+                            let l2 = *base.add(0).cast::<*mut u8>();
+                            let l3 = *base.add(4).cast::<usize>();
+                            let len4 = l3;
+                            let bytes4 = _rt::Vec::from_raw_parts(l2.cast(), len4, len4);
+
+                            _rt::string_lift(bytes4)
+                        };
+                        result5.push(e5);
+                    }
+                    _rt::cabi_dealloc(base5, len5 * 8, 4);
                     T::initialize_product(
                         ApiBorrow::lift(arg0 as u32 as usize).get(),
                         _rt::string_lift(bytes0),
                         _rt::string_lift(bytes1),
+                        result5,
                     );
                 }
                 #[doc(hidden)]
@@ -3724,6 +3869,7 @@ pub mod exports {
                                 product_id: product_id2,
                                 name: name2,
                                 description: description2,
+                                tags: tags2,
                             } = e;
                             let vec3 = (product_id2.into_bytes()).into_boxed_slice();
                             let ptr3 = vec3.as_ptr().cast::<u8>();
@@ -3743,6 +3889,34 @@ pub mod exports {
                             ::core::mem::forget(vec5);
                             *ptr1.add(24).cast::<usize>() = len5;
                             *ptr1.add(20).cast::<*mut u8>() = ptr5.cast_mut();
+                            let vec7 = tags2;
+                            let len7 = vec7.len();
+                            let layout7 =
+                                _rt::alloc::Layout::from_size_align_unchecked(vec7.len() * 8, 4);
+                            let result7 = if layout7.size() != 0 {
+                                let ptr = _rt::alloc::alloc(layout7).cast::<u8>();
+                                if ptr.is_null() {
+                                    _rt::alloc::handle_alloc_error(layout7);
+                                }
+                                ptr
+                            } else {
+                                {
+                                    ::core::ptr::null_mut()
+                                }
+                            };
+                            for (i, e) in vec7.into_iter().enumerate() {
+                                let base = result7.add(i * 8);
+                                {
+                                    let vec6 = (e.into_bytes()).into_boxed_slice();
+                                    let ptr6 = vec6.as_ptr().cast::<u8>();
+                                    let len6 = vec6.len();
+                                    ::core::mem::forget(vec6);
+                                    *base.add(4).cast::<usize>() = len6;
+                                    *base.add(0).cast::<*mut u8>() = ptr6.cast_mut();
+                                }
+                            }
+                            *ptr1.add(32).cast::<usize>() = len7;
+                            *ptr1.add(28).cast::<*mut u8>() = result7;
                         }
                         None => {
                             *ptr1.add(0).cast::<u8>() = (0i32) as u8;
@@ -3766,6 +3940,19 @@ pub mod exports {
                             let l5 = *arg0.add(20).cast::<*mut u8>();
                             let l6 = *arg0.add(24).cast::<usize>();
                             _rt::cabi_dealloc(l5, l6, 1);
+                            let l9 = *arg0.add(28).cast::<*mut u8>();
+                            let l10 = *arg0.add(32).cast::<usize>();
+                            let base11 = l9;
+                            let len11 = l10;
+                            for i in 0..len11 {
+                                let base = base11.add(i * 8);
+                                {
+                                    let l7 = *base.add(0).cast::<*mut u8>();
+                                    let l8 = *base.add(4).cast::<usize>();
+                                    _rt::cabi_dealloc(l7, l8, 1);
+                                }
+                            }
+                            _rt::cabi_dealloc(base11, len11 * 8, 4);
                         }
                     }
                 }
@@ -4077,8 +4264,14 @@ pub mod exports {
                         &self,
                         name: _rt::String,
                         description: _rt::String,
+                        tags: _rt::Vec<_rt::String>,
                     );
-                    fn initialize_product(&self, name: _rt::String, description: _rt::String);
+                    fn initialize_product(
+                        &self,
+                        name: _rt::String,
+                        description: _rt::String,
+                        tags: _rt::Vec<_rt::String>,
+                    );
                     fn blocking_get(&self) -> Option<Product>;
                     fn get(&self) -> FutureGetResult;
                 }
@@ -4160,12 +4353,12 @@ pub mod exports {
               $($path_to_types)*::_export_constructor_api_cabi::<<$ty as $($path_to_types)*::Guest>::Api>(arg0, arg1)
             }
             #[export_name = "golem:product-stub/stub-product#[method]api.blocking-initialize-product"]
-            unsafe extern "C" fn export_method_api_blocking_initialize_product(arg0: *mut u8,arg1: *mut u8,arg2: usize,arg3: *mut u8,arg4: usize,) {
-              $($path_to_types)*::_export_method_api_blocking_initialize_product_cabi::<<$ty as $($path_to_types)*::Guest>::Api>(arg0, arg1, arg2, arg3, arg4)
+            unsafe extern "C" fn export_method_api_blocking_initialize_product(arg0: *mut u8,arg1: *mut u8,arg2: usize,arg3: *mut u8,arg4: usize,arg5: *mut u8,arg6: usize,) {
+              $($path_to_types)*::_export_method_api_blocking_initialize_product_cabi::<<$ty as $($path_to_types)*::Guest>::Api>(arg0, arg1, arg2, arg3, arg4, arg5, arg6)
             }
             #[export_name = "golem:product-stub/stub-product#[method]api.initialize-product"]
-            unsafe extern "C" fn export_method_api_initialize_product(arg0: *mut u8,arg1: *mut u8,arg2: usize,arg3: *mut u8,arg4: usize,) {
-              $($path_to_types)*::_export_method_api_initialize_product_cabi::<<$ty as $($path_to_types)*::Guest>::Api>(arg0, arg1, arg2, arg3, arg4)
+            unsafe extern "C" fn export_method_api_initialize_product(arg0: *mut u8,arg1: *mut u8,arg2: usize,arg3: *mut u8,arg4: usize,arg5: *mut u8,arg6: usize,) {
+              $($path_to_types)*::_export_method_api_initialize_product_cabi::<<$ty as $($path_to_types)*::Guest>::Api>(arg0, arg1, arg2, arg3, arg4, arg5, arg6)
             }
             #[export_name = "golem:product-stub/stub-product#[method]api.blocking-get"]
             unsafe extern "C" fn export_method_api_blocking_get(arg0: *mut u8,) -> *mut u8 {
@@ -4256,8 +4449,8 @@ pub mod exports {
                 #[doc(hidden)]
                 pub(crate) use __export_golem_product_stub_stub_product_cabi;
                 #[repr(align(4))]
-                struct _RetArea([::core::mem::MaybeUninit<u8>; 32]);
-                static mut _RET_AREA: _RetArea = _RetArea([::core::mem::MaybeUninit::uninit(); 32]);
+                struct _RetArea([::core::mem::MaybeUninit<u8>; 40]);
+                static mut _RET_AREA: _RetArea = _RetArea([::core::mem::MaybeUninit::uninit(); 40]);
             }
         }
     }
@@ -4575,8 +4768,8 @@ pub(crate) use __export_wasm_rpc_stub_product_impl as export;
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.25.0:wasm-rpc-stub-product:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 2571] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xff\x12\x01A\x02\x01\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 2595] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\x97\x13\x01A\x02\x01\
 A\x0b\x01B\x0a\x04\0\x08pollable\x03\x01\x01h\0\x01@\x01\x04self\x01\0\x7f\x04\0\
 \x16[method]pollable.ready\x01\x02\x01@\x01\x04self\x01\x01\0\x04\0\x16[method]p\
 ollable.block\x01\x03\x01p\x01\x01py\x01@\x01\x02in\x04\0\x05\x04\0\x04poll\x01\x06\
@@ -4601,35 +4794,36 @@ d]wasm-rpc.invoke\x01\x1c\x01i\x14\x01@\x03\x04self\x17\x0dfunction-names\x0ffun
 ction-params\x18\0\x1d\x04\0'[method]wasm-rpc.async-invoke-and-await\x01\x1e\x01\
 h\x14\x01i\x01\x01@\x01\x04self\x1f\0\x20\x04\0&[method]future-invoke-result.sub\
 scribe\x01!\x01k\x19\x01@\x01\x04self\x1f\0\"\x04\0\x20[method]future-invoke-res\
-ult.get\x01#\x03\x01\x15golem:rpc/types@0.1.0\x05\x02\x01B\x07\x01r\x03\x0aprodu\
-ct-ids\x04names\x0bdescriptions\x04\0\x07product\x03\0\0\x01@\x02\x04names\x0bde\
-scriptions\x01\0\x04\0\x12initialize-product\x01\x02\x01k\x01\x01@\0\0\x03\x04\0\
-\x03get\x01\x04\x03\x01\x11golem:product/api\x05\x03\x02\x03\0\x01\x03uri\x02\x03\
-\0\x02\x07product\x01B@\x02\x03\x02\x01\x04\x04\0\x0dgolem-rpc-uri\x03\0\0\x02\x03\
-\x02\x01\x01\x04\0\x10wasi-io-pollable\x03\0\x02\x02\x03\x02\x01\x05\x04\0\x07pr\
-oduct\x03\0\x04\x04\0\x12future-save-result\x03\x01\x04\0\x12future-load-result\x03\
-\x01\x04\0\x11future-get-result\x03\x01\x04\0\x0dsave-snapshot\x03\x01\x04\0\x0d\
-load-snapshot\x03\x01\x04\0\x03api\x03\x01\x01h\x06\x01i\x03\x01@\x01\x04self\x0c\
-\0\x0d\x04\0$[method]future-save-result.subscribe\x01\x0e\x01p}\x01k\x0f\x01@\x01\
-\x04self\x0c\0\x10\x04\0\x1e[method]future-save-result.get\x01\x11\x01h\x07\x01@\
-\x01\x04self\x12\0\x0d\x04\0$[method]future-load-result.subscribe\x01\x13\x01j\0\
-\x01s\x01k\x14\x01@\x01\x04self\x12\0\x15\x04\0\x1e[method]future-load-result.ge\
-t\x01\x16\x01h\x08\x01@\x01\x04self\x17\0\x0d\x04\0#[method]future-get-result.su\
-bscribe\x01\x18\x01k\x05\x01k\x19\x01@\x01\x04self\x17\0\x1a\x04\0\x1d[method]fu\
-ture-get-result.get\x01\x1b\x01i\x09\x01@\x01\x08location\x01\0\x1c\x04\0\x1a[co\
-nstructor]save-snapshot\x01\x1d\x01h\x09\x01@\x01\x04self\x1e\0\x0f\x04\0#[metho\
-d]save-snapshot.blocking-save\x01\x1f\x01i\x06\x01@\x01\x04self\x1e\0\x20\x04\0\x1a\
-[method]save-snapshot.save\x01!\x01i\x0a\x01@\x01\x08location\x01\0\"\x04\0\x1a[\
-constructor]load-snapshot\x01#\x01h\x0a\x01@\x02\x04self$\x05bytes\x0f\0\x14\x04\
-\0#[method]load-snapshot.blocking-load\x01%\x01i\x07\x01@\x02\x04self$\x05bytes\x0f\
-\0&\x04\0\x1a[method]load-snapshot.load\x01'\x01i\x0b\x01@\x01\x08location\x01\0\
-(\x04\0\x10[constructor]api\x01)\x01h\x0b\x01@\x03\x04self*\x04names\x0bdescript\
-ions\x01\0\x04\0'[method]api.blocking-initialize-product\x01+\x04\0\x1e[method]a\
-pi.initialize-product\x01+\x01@\x01\x04self*\0\x19\x04\0\x18[method]api.blocking\
--get\x01,\x01i\x08\x01@\x01\x04self*\0-\x04\0\x0f[method]api.get\x01.\x04\x01\x1f\
-golem:product-stub/stub-product\x05\x06\x04\x01(golem:product-stub/wasm-rpc-stub\
--product\x04\0\x0b\x1b\x01\0\x15wasm-rpc-stub-product\x03\0\0\0G\x09producers\x01\
-\x0cprocessed-by\x02\x0dwit-component\x070.208.1\x10wit-bindgen-rust\x060.25.0";
+ult.get\x01#\x03\x01\x15golem:rpc/types@0.1.0\x05\x02\x01B\x08\x01ps\x01r\x04\x0a\
+product-ids\x04names\x0bdescriptions\x04tags\0\x04\0\x07product\x03\0\x01\x01@\x03\
+\x04names\x0bdescriptions\x04tags\0\x01\0\x04\0\x12initialize-product\x01\x03\x01\
+k\x02\x01@\0\0\x04\x04\0\x03get\x01\x05\x03\x01\x11golem:product/api\x05\x03\x02\
+\x03\0\x01\x03uri\x02\x03\0\x02\x07product\x01BA\x02\x03\x02\x01\x04\x04\0\x0dgo\
+lem-rpc-uri\x03\0\0\x02\x03\x02\x01\x01\x04\0\x10wasi-io-pollable\x03\0\x02\x02\x03\
+\x02\x01\x05\x04\0\x07product\x03\0\x04\x04\0\x12future-save-result\x03\x01\x04\0\
+\x12future-load-result\x03\x01\x04\0\x11future-get-result\x03\x01\x04\0\x0dsave-\
+snapshot\x03\x01\x04\0\x0dload-snapshot\x03\x01\x04\0\x03api\x03\x01\x01h\x06\x01\
+i\x03\x01@\x01\x04self\x0c\0\x0d\x04\0$[method]future-save-result.subscribe\x01\x0e\
+\x01p}\x01k\x0f\x01@\x01\x04self\x0c\0\x10\x04\0\x1e[method]future-save-result.g\
+et\x01\x11\x01h\x07\x01@\x01\x04self\x12\0\x0d\x04\0$[method]future-load-result.\
+subscribe\x01\x13\x01j\0\x01s\x01k\x14\x01@\x01\x04self\x12\0\x15\x04\0\x1e[meth\
+od]future-load-result.get\x01\x16\x01h\x08\x01@\x01\x04self\x17\0\x0d\x04\0#[met\
+hod]future-get-result.subscribe\x01\x18\x01k\x05\x01k\x19\x01@\x01\x04self\x17\0\
+\x1a\x04\0\x1d[method]future-get-result.get\x01\x1b\x01i\x09\x01@\x01\x08locatio\
+n\x01\0\x1c\x04\0\x1a[constructor]save-snapshot\x01\x1d\x01h\x09\x01@\x01\x04sel\
+f\x1e\0\x0f\x04\0#[method]save-snapshot.blocking-save\x01\x1f\x01i\x06\x01@\x01\x04\
+self\x1e\0\x20\x04\0\x1a[method]save-snapshot.save\x01!\x01i\x0a\x01@\x01\x08loc\
+ation\x01\0\"\x04\0\x1a[constructor]load-snapshot\x01#\x01h\x0a\x01@\x02\x04self\
+$\x05bytes\x0f\0\x14\x04\0#[method]load-snapshot.blocking-load\x01%\x01i\x07\x01\
+@\x02\x04self$\x05bytes\x0f\0&\x04\0\x1a[method]load-snapshot.load\x01'\x01i\x0b\
+\x01@\x01\x08location\x01\0(\x04\0\x10[constructor]api\x01)\x01h\x0b\x01ps\x01@\x04\
+\x04self*\x04names\x0bdescriptions\x04tags+\x01\0\x04\0'[method]api.blocking-ini\
+tialize-product\x01,\x04\0\x1e[method]api.initialize-product\x01,\x01@\x01\x04se\
+lf*\0\x19\x04\0\x18[method]api.blocking-get\x01-\x01i\x08\x01@\x01\x04self*\0.\x04\
+\0\x0f[method]api.get\x01/\x04\x01\x1fgolem:product-stub/stub-product\x05\x06\x04\
+\x01(golem:product-stub/wasm-rpc-stub-product\x04\0\x0b\x1b\x01\0\x15wasm-rpc-st\
+ub-product\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit-component\x070\
+.208.1\x10wit-bindgen-rust\x060.25.0";
 
 #[inline(never)]
 #[doc(hidden)]

@@ -17,6 +17,20 @@
     },
     {
       "method": "Put",
+      "path": "/v1/order/{order-id}/email",
+      "binding": {
+        "componentId": {
+          "componentId": "$ORDER_COMPONENT_ID",
+          "version": $ORDER_COMPONENT_VERSION
+        },
+        "workerName": "${let id: str = request.path.order-id;\nid}",
+        "idempotencyKey": null,
+        "response": "${let email: str = request.body.email;\nlet result = golem:order/api.{update-email}(email);\nmatch result {  ok(_) => {status: 200u64, body: {message: \"email set\"}}, err(x) => {status: 400u64, body: {error: x}} } }",
+        "idempotencyKeyInput": null
+      }
+    },
+    {
+      "method": "Put",
       "path": "/v1/order/{order-id}/items/{product-id}",
       "binding": {
         "componentId": {

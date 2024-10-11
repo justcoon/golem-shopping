@@ -26,7 +26,7 @@
         },
         "workerName": "${let id: str = request.path.product-id;\nid}",
         "idempotencyKey": null,
-        "response": "${let name: str = request.body.name;\nlet description: str = request.body.description;\ngolem:product/api.{initialize-product}(name, description);\n{status: 200u64, body: {message: \"created\"}}}",
+        "response": "${let name: str = request.body.name;\nlet description: str = request.body.description;\nlet tags: list<str> = request.body.tags;\ngolem:product/api.{initialize-product}(name, description, tags);\n{status: 200u64, body: {message: \"created\"}}}",
         "idempotencyKeyInput": null
       }
     }

@@ -67,6 +67,8 @@ async fn create_and_checkout_cart(user: &mut GooseUser) -> TransactionResult {
 
     let address = data::get_addresses().choose(&mut rand::thread_rng()).unwrap().to_owned();
 
+    let set_email = domain::common::SetEmail::new(data::get_email(user_id.clone()));
+
     for product_id in product_ids.iter() {
         let _response = user
             .put_request(
@@ -84,6 +86,10 @@ async fn create_and_checkout_cart(user: &mut GooseUser) -> TransactionResult {
             "cart-delete-item",
             format!("/v1/cart/{user_id}/items/{product_id}").as_str(),
         )
+        .await?;
+
+    let _response = user
+        .put_request("cart-set-email", format!("/v1/cart/{user_id}/email").as_str(), &set_email)
         .await?;
 
     let _response = user

@@ -7,8 +7,8 @@
       "path": "/v1/cart/{user-id}",
       "binding": {
         "componentId": {
-          "componentId": "1dea2b41-497d-4011-9698-30718dd83d47",
-          "version": 13
+          "componentId": "df93bd28-e341-453f-9dd7-3fc6bec20b23",
+          "version": 0
         },
         "workerName": "${let id: str = request.path.user-id;\nid}",
         "idempotencyKey": null,
@@ -21,8 +21,8 @@
       "path": "/v1/cart/{user-id}/items/{product-id}",
       "binding": {
         "componentId": {
-          "componentId": "1dea2b41-497d-4011-9698-30718dd83d47",
-          "version": 13
+          "componentId": "df93bd28-e341-453f-9dd7-3fc6bec20b23",
+          "version": 0
         },
         "workerName": "${let id: str = request.path.user-id;\nid}",
         "idempotencyKey": null,
@@ -36,8 +36,8 @@
       "path": "/v1/cart/{user-id}/checkout",
       "binding": {
         "componentId": {
-          "componentId": "1dea2b41-497d-4011-9698-30718dd83d47",
-          "version": 13
+          "componentId": "df93bd28-e341-453f-9dd7-3fc6bec20b23",
+          "version": 0
         },
         "workerName": "${let id: str = request.path.user-id;\nid}",
         "idempotencyKey": null,
@@ -47,11 +47,25 @@
     },
     {
       "method": "Put",
+      "path": "/v1/cart/{user-id}/email",
+      "binding": {
+        "componentId": {
+          "componentId": "df93bd28-e341-453f-9dd7-3fc6bec20b23",
+          "version": 0
+        },
+        "workerName": "${let id: str = request.path.user-id;\nid}",
+        "idempotencyKey": null,
+        "response": "${let email: str = request.body.email;\nlet result = golem:cart/api.{update-email}(email);\nmatch result {  ok(_) => {status: 200u64, body: {message: \"email set\"}}, err(x) => {status: 400u64, body: {error: x}} } }",
+        "idempotencyKeyInput": null
+      }
+    },
+    {
+      "method": "Put",
       "path": "/v1/cart/{user-id}/billing-address",
       "binding": {
         "componentId": {
-          "componentId": "1dea2b41-497d-4011-9698-30718dd83d47",
-          "version": 13
+          "componentId": "df93bd28-e341-453f-9dd7-3fc6bec20b23",
+          "version": 0
         },
         "workerName": "${let id: str = request.path.user-id;\nid}",
         "idempotencyKey": null,
@@ -64,8 +78,8 @@
       "path": "/v1/cart/{user-id}/shipping-address",
       "binding": {
         "componentId": {
-          "componentId": "1dea2b41-497d-4011-9698-30718dd83d47",
-          "version": 13
+          "componentId": "df93bd28-e341-453f-9dd7-3fc6bec20b23",
+          "version": 0
         },
         "workerName": "${let id: str = request.path.user-id;\nid}",
         "idempotencyKey": null,
@@ -78,8 +92,8 @@
       "path": "/v1/cart/{user-id}/items/{product-id}",
       "binding": {
         "componentId": {
-          "componentId": "1dea2b41-497d-4011-9698-30718dd83d47",
-          "version": 13
+          "componentId": "df93bd28-e341-453f-9dd7-3fc6bec20b23",
+          "version": 0
         },
         "workerName": "${let id: str = request.path.user-id;\nid}",
         "idempotencyKey": null,
