@@ -8,7 +8,7 @@
       "binding": {
         "componentId": {
           "componentId": "2982f02f-97bc-4539-801c-a5483a9c2d03",
-          "version": 0
+          "version": 1
         },
         "workerName": "${let id: str = request.path.order-id;\nid}",
         "idempotencyKey": null,
@@ -21,7 +21,7 @@
       "binding": {
         "componentId": {
           "componentId": "2982f02f-97bc-4539-801c-a5483a9c2d03",
-          "version": 0
+          "version": 1
         },
         "workerName": "${let id: str = request.path.order-id;\nid}",
         "idempotencyKey": null,
@@ -35,7 +35,7 @@
       "binding": {
         "componentId": {
           "componentId": "2982f02f-97bc-4539-801c-a5483a9c2d03",
-          "version": 0
+          "version": 1
         },
         "workerName": "${let id: str = request.path.order-id;\nid}",
         "idempotencyKey": null,
@@ -50,7 +50,7 @@
       "binding": {
         "componentId": {
           "componentId": "2982f02f-97bc-4539-801c-a5483a9c2d03",
-          "version": 0
+          "version": 1
         },
         "workerName": "${let id: str = request.path.order-id;\nid}",
         "idempotencyKey": null,
@@ -64,7 +64,7 @@
       "binding": {
         "componentId": {
           "componentId": "2982f02f-97bc-4539-801c-a5483a9c2d03",
-          "version": 0
+          "version": 1
         },
         "workerName": "${let id: str = request.path.order-id;\nid}",
         "idempotencyKey": null,
@@ -78,7 +78,7 @@
       "binding": {
         "componentId": {
           "componentId": "2982f02f-97bc-4539-801c-a5483a9c2d03",
-          "version": 0
+          "version": 1
         },
         "workerName": "${let id: str = request.path.order-id;\nid}",
         "idempotencyKey": null,
@@ -92,7 +92,7 @@
       "binding": {
         "componentId": {
           "componentId": "2982f02f-97bc-4539-801c-a5483a9c2d03",
-          "version": 0
+          "version": 1
         },
         "workerName": "${let id: str = request.path.order-id;\nid}",
         "idempotencyKey": null,
@@ -106,7 +106,7 @@
       "binding": {
         "componentId": {
           "componentId": "2982f02f-97bc-4539-801c-a5483a9c2d03",
-          "version": 0
+          "version": 1
         },
         "workerName": "${let id: str = request.path.order-id;\nid}",
         "idempotencyKey": null,

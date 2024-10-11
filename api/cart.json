@@ -8,7 +8,7 @@
       "binding": {
         "componentId": {
           "componentId": "df93bd28-e341-453f-9dd7-3fc6bec20b23",
-          "version": 0
+          "version": 1
         },
         "workerName": "${let id: str = request.path.user-id;\nid}",
         "idempotencyKey": null,
@@ -22,7 +22,7 @@
       "binding": {
         "componentId": {
           "componentId": "df93bd28-e341-453f-9dd7-3fc6bec20b23",
-          "version": 0
+          "version": 1
         },
         "workerName": "${let id: str = request.path.user-id;\nid}",
         "idempotencyKey": null,
@@ -37,7 +37,7 @@
       "binding": {
         "componentId": {
           "componentId": "df93bd28-e341-453f-9dd7-3fc6bec20b23",
-          "version": 0
+          "version": 1
         },
         "workerName": "${let id: str = request.path.user-id;\nid}",
         "idempotencyKey": null,
@@ -51,7 +51,7 @@
       "binding": {
         "componentId": {
           "componentId": "df93bd28-e341-453f-9dd7-3fc6bec20b23",
-          "version": 0
+          "version": 1
         },
         "workerName": "${let id: str = request.path.user-id;\nid}",
         "idempotencyKey": null,
@@ -65,7 +65,7 @@
       "binding": {
         "componentId": {
           "componentId": "df93bd28-e341-453f-9dd7-3fc6bec20b23",
-          "version": 0
+          "version": 1
         },
         "workerName": "${let id: str = request.path.user-id;\nid}",
         "idempotencyKey": null,
@@ -79,7 +79,7 @@
       "binding": {
         "componentId": {
           "componentId": "df93bd28-e341-453f-9dd7-3fc6bec20b23",
-          "version": 0
+          "version": 1
         },
         "workerName": "${let id: str = request.path.user-id;\nid}",
         "idempotencyKey": null,
@@ -93,7 +93,7 @@
       "binding": {
         "componentId": {
           "componentId": "df93bd28-e341-453f-9dd7-3fc6bec20b23",
-          "version": 0
+          "version": 1
         },
         "workerName": "${let id: str = request.path.user-id;\nid}",
         "idempotencyKey": null,
