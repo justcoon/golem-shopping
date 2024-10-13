@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -euo pipefail
+#set -euo pipefail
 
 GOLEM_COMMAND="golem-cli"
 
@@ -30,7 +30,6 @@ function update_component() {
 function update_workers() {
   ${GOLEM_COMMAND} component try-update-workers --component-name=${1?}
 }
-
 
 function get_component_id() {
   ${GOLEM_COMMAND} component get --component-name=${1?} --format json | jq -r '.componentUrn' | sed 's/urn:component://'
@@ -64,7 +63,7 @@ function delete_api_definition() {
   VERSION=$(get_api_definition_version ${1?})
   if [[ -n "${VERSION}" ]]; then
     echo "Deleting API definition: ${1?} with version ${VERSION}"
-    ${GOLEM_COMMAND} api-definition delete --id ${1?}
+    ${GOLEM_COMMAND} api-definition delete --id ${1?} --version ${VERSION}
   else
     echo "API definition ${1?} does not exist"
   fi
@@ -114,11 +113,66 @@ function deploy_api_definitions() {
 }
 
 function delete_api_deployment() {
+    echo "Deleting API deployment for site: ${API_SITE}"
     ${GOLEM_COMMAND} api-deployment delete ${API_SITE}
 }
 
-init_api_definitions_files
+function api_deploy() {
+  init_api_definitions_files
+  add_api_definitions
+  deploy_api_definitions
+}
 
-add_api_definitions
+function api_undeploy() {
+  delete_api_deployment
 
-deploy_api_definitions
+  delete_api_definition cart
+  delete_api_definition order
+  delete_api_definition pricing
+  delete_api_definition product
+}
+
+function create_cart_workers() {
+    arr=("$@")
+
+    ORDER_COMPONENT_ID=$(get_component_id $ORDER_COMPONENT_NAME)
+    PRICING_COMPONENT_ID=$(get_component_id $PRICING_COMPONENT_NAME)
+    PRODUCT_COMPONENT_ID=$(get_component_id $PRODUCT_COMPONENT_NAME)
+
+    for i in "${arr[@]}"; do
+        ${GOLEM_COMMAND}  worker add --component-name ${CART_COMPONENT_NAME}  --worker-name ${i} --env PRODUCT_COMPONENT_ID="${PRODUCT_COMPONENT_ID}" --env PRICING_COMPONENT_ID="${PRICING_COMPONENT_ID}" --env ORDER_COMPONENT_ID="${ORDER_COMPONENT_ID}"
+    done
+}
+
+function update_worker() {
+  echo "Updating worker: '${1?}'"
+  ${GOLEM_COMMAND} component try-update-workers --component-name=${1?} --update-mode manual
+}
+
+function update_workers() {
+    update_worker $CART_COMPONENT_NAME
+    update_worker $ORDER_COMPONENT_NAME
+    update_worker $PRICING_COMPONENT_NAME
+    update_worker $PRODUCT_COMPONENT_NAME
+}
+
+for arg in "$@"; do
+    case $arg in
+      api-deploy)
+        api_deploy
+        ;;
+      api-undeploy)
+        api_undeploy
+        ;;
+      create-cart-workers)
+        create_cart_workers "user021" "user022" "user023" "user024"
+        ;;
+      update-workers)
+        update_workers
+        ;;
+      *)
+        echo "Invalid argument: $arg"
+        exit 1
+        ;;
+    esac
+  done
