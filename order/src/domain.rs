@@ -86,10 +86,6 @@ pub mod order {
             self.total = get_total_price(self.items.clone());
         }
 
-        pub fn has_item(&self, product_id: String) -> bool {
-            self.items.clone().into_iter().any(|item| item.product_id == product_id)
-        }
-
         pub fn add_item(&mut self, item: OrderItem) -> bool {
             self.items.push(item);
             self.recalculate_total();
