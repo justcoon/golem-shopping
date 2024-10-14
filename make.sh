@@ -76,6 +76,10 @@ function add_or_update_components() {
   add_or_update_component ${PRODUCT_COMPONENT_NAME} ${PRODUCT_COMPONENT_NAME}
 }
 
+function build_components() {
+  cargo make release-build-flow
+}
+
 function init_api_definitions_files() {
   CART_COMPONENT_ID=$(get_component_id $CART_COMPONENT_NAME)
   CART_COMPONENT_VERSION=$(get_component_version $CART_COMPONENT_NAME)
@@ -193,25 +197,44 @@ function update_workers() {
     update_worker $PRODUCT_COMPONENT_NAME
 }
 
+function help() {
+    echo "Usage: $0 <command>"
+    echo "Commands:"
+    echo "  build-components - build all components"
+    echo "  add-components - add or update components to golem"
+    echo "  create-cart-workers - create cart workers for the given users"
+    echo "  deploy-api - deploy api definitions"
+    echo "  undeploy-api - undeploy api definitions"
+    echo "  update-workers - update all workers to latest version"
+    echo "  help - display this help message"
+}
+
 for arg in "$@"; do
     case $arg in
+      build-components)
+        build_components
+        ;;
+      add-components)
+        add_or_update_components
+        ;;
+      create-cart-workers)
+        create_cart_workers "user011" "user012" "user013" "user014"
+        ;;
       deploy-api)
         deploy_api
         ;;
       undeploy-api)
         undeploy_api
         ;;
-      create-cart-workers)
-        create_cart_workers "user011" "user012" "user013" "user014"
-        ;;
-      add-components)
-        add_or_update_components
-        ;;
       update-workers)
         update_workers
         ;;
+      help)
+        help
+        ;;
       *)
         echo "Invalid argument: $arg"
+        help
         exit 1
         ;;
     esac
