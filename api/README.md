@@ -43,3 +43,7 @@ deploy with golem-cli
 ```
 golem-cli api-deployment deploy --subdomain golem-shopping --host test.local  --definition order/0.0.1 --definition cart/0.0.1 --definition pricing/0.0.1 --definition product/0.0.1
 ```
+
+references
+* [golem rib](https://github.com/fcsonline/golem-rib)
+* [making custom apis](https://learn.golem.cloud/docs/invoke/making-custom-apis)

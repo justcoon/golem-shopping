@@ -39,6 +39,43 @@ function get_component_version() {
   ${GOLEM_COMMAND} component get --component-name=${1?} --format json | jq -r '.componentVersion'
 }
 
+function get_component_wasm_file() {
+  echo "target/wasm32-wasi/release/${1?}.wasm"
+}
+
+function add_component() {
+  ${GOLEM_COMMAND} component add --component-name ${1?} ${2?}
+}
+
+function update_component() {
+  ${GOLEM_COMMAND} component update --component-name ${1?} ${2?}
+}
+
+function add_or_update_component() {
+  WASM_FILE=$(get_component_wasm_file ${2?})
+
+  if [[ -f "${WASM_FILE}" ]]; then
+    VERSION=$(get_component_version ${1?})
+
+    if [[ -n "${VERSION}" ]]; then
+      echo "Updating component: ${1?}"
+      update_component ${1?} ${WASM_FILE}
+    else
+      echo "Adding component: ${1?}"
+      add_component ${1?} ${WASM_FILE}
+    fi
+  else
+    echo "WASM file: ${WASM_FILE}, of component: ${1?} does not exist"
+  fi
+}
+
+function add_or_update_components() {
+  add_or_update_component ${CART_COMPONENT_NAME} "${CART_COMPONENT_NAME}_composed"
+  add_or_update_component ${ORDER_COMPONENT_NAME} "${ORDER_COMPONENT_NAME}_composed"
+  add_or_update_component ${PRICING_COMPONENT_NAME} ${PRICING_COMPONENT_NAME}
+  add_or_update_component ${PRODUCT_COMPONENT_NAME} ${PRODUCT_COMPONENT_NAME}
+}
+
 function init_api_definitions_files() {
   CART_COMPONENT_ID=$(get_component_id $CART_COMPONENT_NAME)
   CART_COMPONENT_VERSION=$(get_component_version $CART_COMPONENT_NAME)
@@ -166,6 +203,9 @@ for arg in "$@"; do
         ;;
       create-cart-workers)
         create_cart_workers "user021" "user022" "user023" "user024"
+        ;;
+      add-components)
+        add_or_update_components
         ;;
       update-workers)
         update_workers
