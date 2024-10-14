@@ -154,13 +154,13 @@ function delete_api_deployment() {
     ${GOLEM_COMMAND} api-deployment delete ${API_SITE}
 }
 
-function api_deploy() {
+function deploy_api() {
   init_api_definitions_files
   add_api_definitions
   deploy_api_definitions
 }
 
-function api_undeploy() {
+function undeploy_api() {
   delete_api_deployment
 
   delete_api_definition cart
@@ -195,14 +195,14 @@ function update_workers() {
 
 for arg in "$@"; do
     case $arg in
-      api-deploy)
-        api_deploy
+      deploy-api)
+        deploy_api
         ;;
-      api-undeploy)
-        api_undeploy
+      undeploy-api)
+        undeploy_api
         ;;
       create-cart-workers)
-        create_cart_workers "user021" "user022" "user023" "user024"
+        create_cart_workers "user011" "user012" "user013" "user014"
         ;;
       add-components)
         add_or_update_components
