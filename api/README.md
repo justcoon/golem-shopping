@@ -1,23 +1,25 @@
-## API Definitions and Deployments
+## API
+
+REST API definitions for golem components, which utilize [golem workers api gateway](https://learn.golem.cloud/docs/invoke/making-custom-apis)
 
 API definitions:
 * cart: 
-  * template: cart.json.tmpl
+  * template: [cart.json.tmpl](./cart.json.tmpl)
   * env variables:
     * CART_COMPONENT_ID
     * CART_COMPONENT_VERSION
 * order:
-  * template: order.json.tmpl
+  * template: [order.json.tmpl](./order.json.tmpl)
   * env variables:
     * ORDER_COMPONENT_ID
     * ORDER_COMPONENT_VERSION
 * pricing:
-  * template: pricing.json.tmpl
+  * template: [pricing.json.tmpl](./pricing.json.tmpl)
   * env variables:
     * PRICING_COMPONENT_ID
     * PRICING_COMPONENT_VERSION
 * product:
-  * template: product.json.tmpl
+  * template: [product.json.tmpl](./product.json.tmpl)
   * env variables:
     * PRODUCT_COMPONENT_ID
     * PRODUCT_COMPONENT_VERSION
@@ -43,3 +45,7 @@ deploy with golem-cli
 ```
 golem-cli api-deployment deploy --subdomain golem-shopping --host test.local  --definition order/0.0.1 --definition cart/0.0.1 --definition pricing/0.0.1 --definition product/0.0.1
 ```
+
+references
+* [golem rib](https://github.com/fcsonline/golem-rib)
+* [making custom apis](https://learn.golem.cloud/docs/invoke/making-custom-apis)

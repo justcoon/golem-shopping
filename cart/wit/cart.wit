@@ -3,17 +3,14 @@ package golem: cart;
 interface api {
 
   record address {
-    street1: string,
-    street2: option<string>,
+    street: string,
     city: string,
     state-or-region: string,
     country: string,
     postal-code: string,
     name: option<string>,
-    business-name: option<string>,
     phone-number: option<string>
   }
-
 
   record cart-item {
     product-id: string,

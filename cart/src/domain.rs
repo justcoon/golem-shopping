@@ -8,26 +8,22 @@ pub mod cart {
     #[derive(Clone, Serialize, Deserialize)]
     #[serde(rename_all = "kebab-case")]
     pub struct Address {
-        pub street1: String,
-        pub street2: Option<String>,
+        pub street: String,
         pub city: String,
         pub state_or_region: String,
         pub country: String,
         pub postal_code: String,
         pub name: Option<String>,
-        pub business_name: Option<String>,
         pub phone_number: Option<String>,
     }
 
     impl From<bindings::exports::golem::cart::api::Address> for Address {
         fn from(value: bindings::exports::golem::cart::api::Address) -> Self {
             Self {
-                street1: value.street1,
-                street2: value.street2,
+                street: value.street,
                 state_or_region: value.state_or_region,
                 phone_number: value.phone_number,
                 postal_code: value.postal_code,
-                business_name: value.business_name,
                 name: value.name,
                 city: value.city,
                 country: value.country,
@@ -38,12 +34,10 @@ pub mod cart {
     impl From<Address> for bindings::exports::golem::cart::api::Address {
         fn from(value: Address) -> Self {
             Self {
-                street1: value.street1,
-                street2: value.street2,
+                street: value.street,
                 state_or_region: value.state_or_region,
                 phone_number: value.phone_number,
                 postal_code: value.postal_code,
-                business_name: value.business_name,
                 name: value.name,
                 city: value.city,
                 country: value.country,
@@ -54,12 +48,10 @@ pub mod cart {
     impl From<Address> for bindings::golem::order::api::Address {
         fn from(value: Address) -> Self {
             Self {
-                street1: value.street1,
-                street2: value.street2,
+                street: value.street,
                 state_or_region: value.state_or_region,
                 phone_number: value.phone_number,
                 postal_code: value.postal_code,
-                business_name: value.business_name,
                 name: value.name,
                 city: value.city,
                 country: value.country,
@@ -106,10 +98,6 @@ pub mod cart {
 
         pub fn recalculate_total(&mut self) {
             self.total = get_total_price(self.items.clone());
-        }
-
-        pub fn has_item(&self, product_id: String) -> bool {
-            self.items.clone().into_iter().any(|item| item.product_id == product_id)
         }
 
         pub fn add_item(&mut self, item: CartItem) -> bool {

@@ -1177,54 +1177,38 @@ for FutureGetResult {
                                 .map(|inner| {
                                     let record = inner;
                                     crate::bindings::golem::order::api::Address {
-                                        street1: record
+                                        street: record
                                             .field(0usize)
                                             .expect("record field not found")
                                             .string()
                                             .expect("string not found")
                                             .to_string(),
-                                        street2: record
-                                            .field(1usize)
-                                            .expect("record field not found")
-                                            .option()
-                                            .expect("option not found")
-                                            .map(|inner| {
-                                                inner.string().expect("string not found").to_string()
-                                            }),
                                         city: record
-                                            .field(2usize)
+                                            .field(1usize)
                                             .expect("record field not found")
                                             .string()
                                             .expect("string not found")
                                             .to_string(),
                                         state_or_region: record
-                                            .field(3usize)
+                                            .field(2usize)
                                             .expect("record field not found")
                                             .string()
                                             .expect("string not found")
                                             .to_string(),
                                         country: record
-                                            .field(4usize)
+                                            .field(3usize)
                                             .expect("record field not found")
                                             .string()
                                             .expect("string not found")
                                             .to_string(),
                                         postal_code: record
-                                            .field(5usize)
+                                            .field(4usize)
                                             .expect("record field not found")
                                             .string()
                                             .expect("string not found")
                                             .to_string(),
                                         name: record
-                                            .field(6usize)
-                                            .expect("record field not found")
-                                            .option()
-                                            .expect("option not found")
-                                            .map(|inner| {
-                                                inner.string().expect("string not found").to_string()
-                                            }),
-                                        business_name: record
-                                            .field(7usize)
+                                            .field(5usize)
                                             .expect("record field not found")
                                             .option()
                                             .expect("option not found")
@@ -1232,7 +1216,7 @@ for FutureGetResult {
                                                 inner.string().expect("string not found").to_string()
                                             }),
                                         phone_number: record
-                                            .field(8usize)
+                                            .field(6usize)
                                             .expect("record field not found")
                                             .option()
                                             .expect("option not found")
@@ -1249,54 +1233,38 @@ for FutureGetResult {
                                 .map(|inner| {
                                     let record = inner;
                                     crate::bindings::golem::order::api::Address {
-                                        street1: record
+                                        street: record
                                             .field(0usize)
                                             .expect("record field not found")
                                             .string()
                                             .expect("string not found")
                                             .to_string(),
-                                        street2: record
-                                            .field(1usize)
-                                            .expect("record field not found")
-                                            .option()
-                                            .expect("option not found")
-                                            .map(|inner| {
-                                                inner.string().expect("string not found").to_string()
-                                            }),
                                         city: record
-                                            .field(2usize)
+                                            .field(1usize)
                                             .expect("record field not found")
                                             .string()
                                             .expect("string not found")
                                             .to_string(),
                                         state_or_region: record
-                                            .field(3usize)
+                                            .field(2usize)
                                             .expect("record field not found")
                                             .string()
                                             .expect("string not found")
                                             .to_string(),
                                         country: record
-                                            .field(4usize)
+                                            .field(3usize)
                                             .expect("record field not found")
                                             .string()
                                             .expect("string not found")
                                             .to_string(),
                                         postal_code: record
-                                            .field(5usize)
+                                            .field(4usize)
                                             .expect("record field not found")
                                             .string()
                                             .expect("string not found")
                                             .to_string(),
                                         name: record
-                                            .field(6usize)
-                                            .expect("record field not found")
-                                            .option()
-                                            .expect("option not found")
-                                            .map(|inner| {
-                                                inner.string().expect("string not found").to_string()
-                                            }),
-                                        business_name: record
-                                            .field(7usize)
+                                            .field(5usize)
                                             .expect("record field not found")
                                             .option()
                                             .expect("option not found")
@@ -1304,7 +1272,7 @@ for FutureGetResult {
                                                 inner.string().expect("string not found").to_string()
                                             }),
                                         phone_number: record
-                                            .field(8usize)
+                                            .field(6usize)
                                             .expect("record field not found")
                                             .option()
                                             .expect("option not found")
@@ -1382,23 +1350,7 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                                 some_builder
                                     .record()
                                     .item()
-                                    .string(&data.billing_address.as_ref().unwrap().street1)
-                                    .item()
-                                    .option_fn(
-                                        data.billing_address.as_ref().unwrap().street2.is_some(),
-                                        |some_builder| {
-                                            some_builder
-                                                .string(
-                                                    data
-                                                        .billing_address
-                                                        .as_ref()
-                                                        .unwrap()
-                                                        .street2
-                                                        .as_ref()
-                                                        .unwrap(),
-                                                )
-                                        },
-                                    )
+                                    .string(&data.billing_address.as_ref().unwrap().street)
                                     .item()
                                     .string(&data.billing_address.as_ref().unwrap().city)
                                     .item()
@@ -1420,27 +1372,6 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                                                         .as_ref()
                                                         .unwrap()
                                                         .name
-                                                        .as_ref()
-                                                        .unwrap(),
-                                                )
-                                        },
-                                    )
-                                    .item()
-                                    .option_fn(
-                                        data
-                                            .billing_address
-                                            .as_ref()
-                                            .unwrap()
-                                            .business_name
-                                            .is_some(),
-                                        |some_builder| {
-                                            some_builder
-                                                .string(
-                                                    data
-                                                        .billing_address
-                                                        .as_ref()
-                                                        .unwrap()
-                                                        .business_name
                                                         .as_ref()
                                                         .unwrap(),
                                                 )
@@ -1477,23 +1408,7 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                                 some_builder
                                     .record()
                                     .item()
-                                    .string(&data.shipping_address.as_ref().unwrap().street1)
-                                    .item()
-                                    .option_fn(
-                                        data.shipping_address.as_ref().unwrap().street2.is_some(),
-                                        |some_builder| {
-                                            some_builder
-                                                .string(
-                                                    data
-                                                        .shipping_address
-                                                        .as_ref()
-                                                        .unwrap()
-                                                        .street2
-                                                        .as_ref()
-                                                        .unwrap(),
-                                                )
-                                        },
-                                    )
+                                    .string(&data.shipping_address.as_ref().unwrap().street)
                                     .item()
                                     .string(&data.shipping_address.as_ref().unwrap().city)
                                     .item()
@@ -1517,27 +1432,6 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                                                         .as_ref()
                                                         .unwrap()
                                                         .name
-                                                        .as_ref()
-                                                        .unwrap(),
-                                                )
-                                        },
-                                    )
-                                    .item()
-                                    .option_fn(
-                                        data
-                                            .shipping_address
-                                            .as_ref()
-                                            .unwrap()
-                                            .business_name
-                                            .is_some(),
-                                        |some_builder| {
-                                            some_builder
-                                                .string(
-                                                    data
-                                                        .shipping_address
-                                                        .as_ref()
-                                                        .unwrap()
-                                                        .business_name
                                                         .as_ref()
                                                         .unwrap(),
                                                 )
@@ -1673,23 +1567,7 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                                 some_builder
                                     .record()
                                     .item()
-                                    .string(&data.billing_address.as_ref().unwrap().street1)
-                                    .item()
-                                    .option_fn(
-                                        data.billing_address.as_ref().unwrap().street2.is_some(),
-                                        |some_builder| {
-                                            some_builder
-                                                .string(
-                                                    data
-                                                        .billing_address
-                                                        .as_ref()
-                                                        .unwrap()
-                                                        .street2
-                                                        .as_ref()
-                                                        .unwrap(),
-                                                )
-                                        },
-                                    )
+                                    .string(&data.billing_address.as_ref().unwrap().street)
                                     .item()
                                     .string(&data.billing_address.as_ref().unwrap().city)
                                     .item()
@@ -1711,27 +1589,6 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                                                         .as_ref()
                                                         .unwrap()
                                                         .name
-                                                        .as_ref()
-                                                        .unwrap(),
-                                                )
-                                        },
-                                    )
-                                    .item()
-                                    .option_fn(
-                                        data
-                                            .billing_address
-                                            .as_ref()
-                                            .unwrap()
-                                            .business_name
-                                            .is_some(),
-                                        |some_builder| {
-                                            some_builder
-                                                .string(
-                                                    data
-                                                        .billing_address
-                                                        .as_ref()
-                                                        .unwrap()
-                                                        .business_name
                                                         .as_ref()
                                                         .unwrap(),
                                                 )
@@ -1768,23 +1625,7 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                                 some_builder
                                     .record()
                                     .item()
-                                    .string(&data.shipping_address.as_ref().unwrap().street1)
-                                    .item()
-                                    .option_fn(
-                                        data.shipping_address.as_ref().unwrap().street2.is_some(),
-                                        |some_builder| {
-                                            some_builder
-                                                .string(
-                                                    data
-                                                        .shipping_address
-                                                        .as_ref()
-                                                        .unwrap()
-                                                        .street2
-                                                        .as_ref()
-                                                        .unwrap(),
-                                                )
-                                        },
-                                    )
+                                    .string(&data.shipping_address.as_ref().unwrap().street)
                                     .item()
                                     .string(&data.shipping_address.as_ref().unwrap().city)
                                     .item()
@@ -1808,27 +1649,6 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                                                         .as_ref()
                                                         .unwrap()
                                                         .name
-                                                        .as_ref()
-                                                        .unwrap(),
-                                                )
-                                        },
-                                    )
-                                    .item()
-                                    .option_fn(
-                                        data
-                                            .shipping_address
-                                            .as_ref()
-                                            .unwrap()
-                                            .business_name
-                                            .is_some(),
-                                        |some_builder| {
-                                            some_builder
-                                                .string(
-                                                    data
-                                                        .shipping_address
-                                                        .as_ref()
-                                                        .unwrap()
-                                                        .business_name
                                                         .as_ref()
                                                         .unwrap(),
                                                 )
@@ -2315,14 +2135,7 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                     WitValue::builder()
                         .record()
                         .item()
-                        .string(&address.street1)
-                        .item()
-                        .option_fn(
-                            address.street2.is_some(),
-                            |some_builder| {
-                                some_builder.string(address.street2.as_ref().unwrap())
-                            },
-                        )
+                        .string(&address.street)
                         .item()
                         .string(&address.city)
                         .item()
@@ -2336,13 +2149,6 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                             address.name.is_some(),
                             |some_builder| {
                                 some_builder.string(address.name.as_ref().unwrap())
-                            },
-                        )
-                        .item()
-                        .option_fn(
-                            address.business_name.is_some(),
-                            |some_builder| {
-                                some_builder.string(address.business_name.as_ref().unwrap())
                             },
                         )
                         .item()
@@ -2438,14 +2244,7 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                     WitValue::builder()
                         .record()
                         .item()
-                        .string(&address.street1)
-                        .item()
-                        .option_fn(
-                            address.street2.is_some(),
-                            |some_builder| {
-                                some_builder.string(address.street2.as_ref().unwrap())
-                            },
-                        )
+                        .string(&address.street)
                         .item()
                         .string(&address.city)
                         .item()
@@ -2459,13 +2258,6 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                             address.name.is_some(),
                             |some_builder| {
                                 some_builder.string(address.name.as_ref().unwrap())
-                            },
-                        )
-                        .item()
-                        .option_fn(
-                            address.business_name.is_some(),
-                            |some_builder| {
-                                some_builder.string(address.business_name.as_ref().unwrap())
                             },
                         )
                         .item()
@@ -2494,14 +2286,7 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                     WitValue::builder()
                         .record()
                         .item()
-                        .string(&address.street1)
-                        .item()
-                        .option_fn(
-                            address.street2.is_some(),
-                            |some_builder| {
-                                some_builder.string(address.street2.as_ref().unwrap())
-                            },
-                        )
+                        .string(&address.street)
                         .item()
                         .string(&address.city)
                         .item()
@@ -2515,13 +2300,6 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                             address.name.is_some(),
                             |some_builder| {
                                 some_builder.string(address.name.as_ref().unwrap())
-                            },
-                        )
-                        .item()
-                        .option_fn(
-                            address.business_name.is_some(),
-                            |some_builder| {
-                                some_builder.string(address.business_name.as_ref().unwrap())
                             },
                         )
                         .item()
@@ -2617,14 +2395,7 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                     WitValue::builder()
                         .record()
                         .item()
-                        .string(&address.street1)
-                        .item()
-                        .option_fn(
-                            address.street2.is_some(),
-                            |some_builder| {
-                                some_builder.string(address.street2.as_ref().unwrap())
-                            },
-                        )
+                        .string(&address.street)
                         .item()
                         .string(&address.city)
                         .item()
@@ -2638,13 +2409,6 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                             address.name.is_some(),
                             |some_builder| {
                                 some_builder.string(address.name.as_ref().unwrap())
-                            },
-                        )
-                        .item()
-                        .option_fn(
-                            address.business_name.is_some(),
-                            |some_builder| {
-                                some_builder.string(address.business_name.as_ref().unwrap())
                             },
                         )
                         .item()
@@ -2939,54 +2703,38 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                         .map(|inner| {
                             let record = inner;
                             crate::bindings::golem::order::api::Address {
-                                street1: record
+                                street: record
                                     .field(0usize)
                                     .expect("record field not found")
                                     .string()
                                     .expect("string not found")
                                     .to_string(),
-                                street2: record
-                                    .field(1usize)
-                                    .expect("record field not found")
-                                    .option()
-                                    .expect("option not found")
-                                    .map(|inner| {
-                                        inner.string().expect("string not found").to_string()
-                                    }),
                                 city: record
-                                    .field(2usize)
+                                    .field(1usize)
                                     .expect("record field not found")
                                     .string()
                                     .expect("string not found")
                                     .to_string(),
                                 state_or_region: record
-                                    .field(3usize)
+                                    .field(2usize)
                                     .expect("record field not found")
                                     .string()
                                     .expect("string not found")
                                     .to_string(),
                                 country: record
-                                    .field(4usize)
+                                    .field(3usize)
                                     .expect("record field not found")
                                     .string()
                                     .expect("string not found")
                                     .to_string(),
                                 postal_code: record
-                                    .field(5usize)
+                                    .field(4usize)
                                     .expect("record field not found")
                                     .string()
                                     .expect("string not found")
                                     .to_string(),
                                 name: record
-                                    .field(6usize)
-                                    .expect("record field not found")
-                                    .option()
-                                    .expect("option not found")
-                                    .map(|inner| {
-                                        inner.string().expect("string not found").to_string()
-                                    }),
-                                business_name: record
-                                    .field(7usize)
+                                    .field(5usize)
                                     .expect("record field not found")
                                     .option()
                                     .expect("option not found")
@@ -2994,7 +2742,7 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                                         inner.string().expect("string not found").to_string()
                                     }),
                                 phone_number: record
-                                    .field(8usize)
+                                    .field(6usize)
                                     .expect("record field not found")
                                     .option()
                                     .expect("option not found")
@@ -3011,54 +2759,38 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                         .map(|inner| {
                             let record = inner;
                             crate::bindings::golem::order::api::Address {
-                                street1: record
+                                street: record
                                     .field(0usize)
                                     .expect("record field not found")
                                     .string()
                                     .expect("string not found")
                                     .to_string(),
-                                street2: record
-                                    .field(1usize)
-                                    .expect("record field not found")
-                                    .option()
-                                    .expect("option not found")
-                                    .map(|inner| {
-                                        inner.string().expect("string not found").to_string()
-                                    }),
                                 city: record
-                                    .field(2usize)
+                                    .field(1usize)
                                     .expect("record field not found")
                                     .string()
                                     .expect("string not found")
                                     .to_string(),
                                 state_or_region: record
-                                    .field(3usize)
+                                    .field(2usize)
                                     .expect("record field not found")
                                     .string()
                                     .expect("string not found")
                                     .to_string(),
                                 country: record
-                                    .field(4usize)
+                                    .field(3usize)
                                     .expect("record field not found")
                                     .string()
                                     .expect("string not found")
                                     .to_string(),
                                 postal_code: record
-                                    .field(5usize)
+                                    .field(4usize)
                                     .expect("record field not found")
                                     .string()
                                     .expect("string not found")
                                     .to_string(),
                                 name: record
-                                    .field(6usize)
-                                    .expect("record field not found")
-                                    .option()
-                                    .expect("option not found")
-                                    .map(|inner| {
-                                        inner.string().expect("string not found").to_string()
-                                    }),
-                                business_name: record
-                                    .field(7usize)
+                                    .field(5usize)
                                     .expect("record field not found")
                                     .option()
                                     .expect("option not found")
@@ -3066,7 +2798,7 @@ impl crate::bindings::exports::golem::order_stub::stub_order::GuestApi for Api {
                                         inner.string().expect("string not found").to_string()
                                     }),
                                 phone_number: record
-                                    .field(8usize)
+                                    .field(6usize)
                                     .expect("record field not found")
                                     .option()
                                     .expect("option not found")
