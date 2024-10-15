@@ -48,27 +48,23 @@ pub mod golem {
 
             #[derive(Clone)]
             pub struct Address {
-                pub street1: _rt::String,
-                pub street2: Option<_rt::String>,
+                pub street: _rt::String,
                 pub city: _rt::String,
                 pub state_or_region: _rt::String,
                 pub country: _rt::String,
                 pub postal_code: _rt::String,
                 pub name: Option<_rt::String>,
-                pub business_name: Option<_rt::String>,
                 pub phone_number: Option<_rt::String>,
             }
             impl ::core::fmt::Debug for Address {
                 fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
                     f.debug_struct("Address")
-                        .field("street1", &self.street1)
-                        .field("street2", &self.street2)
+                        .field("street", &self.street)
                         .field("city", &self.city)
                         .field("state-or-region", &self.state_or_region)
                         .field("country", &self.country)
                         .field("postal-code", &self.postal_code)
                         .field("name", &self.name)
-                        .field("business-name", &self.business_name)
                         .field("phone-number", &self.phone_number)
                         .finish()
                 }
@@ -444,8 +440,8 @@ pub mod golem {
             pub fn initialize_order(data: &CreateOrder) -> Result<(), InitOrderError> {
                 unsafe {
                     #[repr(align(8))]
-                    struct RetArea([::core::mem::MaybeUninit<u8>; 232]);
-                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 232]);
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 184]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 184]);
                     let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                     let CreateOrder {
                         user_id: user_id1,
@@ -510,55 +506,53 @@ pub mod golem {
                         Some(e) => {
                             *ptr0.add(24).cast::<u8>() = (1i32) as u8;
                             let Address {
-                                street1: street18,
-                                street2: street28,
+                                street: street8,
                                 city: city8,
                                 state_or_region: state_or_region8,
                                 country: country8,
                                 postal_code: postal_code8,
                                 name: name8,
-                                business_name: business_name8,
                                 phone_number: phone_number8,
                             } = e;
-                            let vec9 = street18;
+                            let vec9 = street8;
                             let ptr9 = vec9.as_ptr().cast::<u8>();
                             let len9 = vec9.len();
                             *ptr0.add(32).cast::<usize>() = len9;
                             *ptr0.add(28).cast::<*mut u8>() = ptr9.cast_mut();
-                            match street28 {
-                                Some(e) => {
-                                    *ptr0.add(36).cast::<u8>() = (1i32) as u8;
-                                    let vec10 = e;
-                                    let ptr10 = vec10.as_ptr().cast::<u8>();
-                                    let len10 = vec10.len();
-                                    *ptr0.add(44).cast::<usize>() = len10;
-                                    *ptr0.add(40).cast::<*mut u8>() = ptr10.cast_mut();
-                                }
-                                None => {
-                                    *ptr0.add(36).cast::<u8>() = (0i32) as u8;
-                                }
-                            };
-                            let vec11 = city8;
+                            let vec10 = city8;
+                            let ptr10 = vec10.as_ptr().cast::<u8>();
+                            let len10 = vec10.len();
+                            *ptr0.add(40).cast::<usize>() = len10;
+                            *ptr0.add(36).cast::<*mut u8>() = ptr10.cast_mut();
+                            let vec11 = state_or_region8;
                             let ptr11 = vec11.as_ptr().cast::<u8>();
                             let len11 = vec11.len();
-                            *ptr0.add(52).cast::<usize>() = len11;
-                            *ptr0.add(48).cast::<*mut u8>() = ptr11.cast_mut();
-                            let vec12 = state_or_region8;
+                            *ptr0.add(48).cast::<usize>() = len11;
+                            *ptr0.add(44).cast::<*mut u8>() = ptr11.cast_mut();
+                            let vec12 = country8;
                             let ptr12 = vec12.as_ptr().cast::<u8>();
                             let len12 = vec12.len();
-                            *ptr0.add(60).cast::<usize>() = len12;
-                            *ptr0.add(56).cast::<*mut u8>() = ptr12.cast_mut();
-                            let vec13 = country8;
+                            *ptr0.add(56).cast::<usize>() = len12;
+                            *ptr0.add(52).cast::<*mut u8>() = ptr12.cast_mut();
+                            let vec13 = postal_code8;
                             let ptr13 = vec13.as_ptr().cast::<u8>();
                             let len13 = vec13.len();
-                            *ptr0.add(68).cast::<usize>() = len13;
-                            *ptr0.add(64).cast::<*mut u8>() = ptr13.cast_mut();
-                            let vec14 = postal_code8;
-                            let ptr14 = vec14.as_ptr().cast::<u8>();
-                            let len14 = vec14.len();
-                            *ptr0.add(76).cast::<usize>() = len14;
-                            *ptr0.add(72).cast::<*mut u8>() = ptr14.cast_mut();
+                            *ptr0.add(64).cast::<usize>() = len13;
+                            *ptr0.add(60).cast::<*mut u8>() = ptr13.cast_mut();
                             match name8 {
+                                Some(e) => {
+                                    *ptr0.add(68).cast::<u8>() = (1i32) as u8;
+                                    let vec14 = e;
+                                    let ptr14 = vec14.as_ptr().cast::<u8>();
+                                    let len14 = vec14.len();
+                                    *ptr0.add(76).cast::<usize>() = len14;
+                                    *ptr0.add(72).cast::<*mut u8>() = ptr14.cast_mut();
+                                }
+                                None => {
+                                    *ptr0.add(68).cast::<u8>() = (0i32) as u8;
+                                }
+                            };
+                            match phone_number8 {
                                 Some(e) => {
                                     *ptr0.add(80).cast::<u8>() = (1i32) as u8;
                                     let vec15 = e;
@@ -571,32 +565,6 @@ pub mod golem {
                                     *ptr0.add(80).cast::<u8>() = (0i32) as u8;
                                 }
                             };
-                            match business_name8 {
-                                Some(e) => {
-                                    *ptr0.add(92).cast::<u8>() = (1i32) as u8;
-                                    let vec16 = e;
-                                    let ptr16 = vec16.as_ptr().cast::<u8>();
-                                    let len16 = vec16.len();
-                                    *ptr0.add(100).cast::<usize>() = len16;
-                                    *ptr0.add(96).cast::<*mut u8>() = ptr16.cast_mut();
-                                }
-                                None => {
-                                    *ptr0.add(92).cast::<u8>() = (0i32) as u8;
-                                }
-                            };
-                            match phone_number8 {
-                                Some(e) => {
-                                    *ptr0.add(104).cast::<u8>() = (1i32) as u8;
-                                    let vec17 = e;
-                                    let ptr17 = vec17.as_ptr().cast::<u8>();
-                                    let len17 = vec17.len();
-                                    *ptr0.add(112).cast::<usize>() = len17;
-                                    *ptr0.add(108).cast::<*mut u8>() = ptr17.cast_mut();
-                                }
-                                None => {
-                                    *ptr0.add(104).cast::<u8>() = (0i32) as u8;
-                                }
-                            };
                         }
                         None => {
                             *ptr0.add(24).cast::<u8>() = (0i32) as u8;
@@ -604,108 +572,80 @@ pub mod golem {
                     };
                     match shipping_address1 {
                         Some(e) => {
-                            *ptr0.add(116).cast::<u8>() = (1i32) as u8;
+                            *ptr0.add(92).cast::<u8>() = (1i32) as u8;
                             let Address {
-                                street1: street118,
-                                street2: street218,
-                                city: city18,
-                                state_or_region: state_or_region18,
-                                country: country18,
-                                postal_code: postal_code18,
-                                name: name18,
-                                business_name: business_name18,
-                                phone_number: phone_number18,
+                                street: street16,
+                                city: city16,
+                                state_or_region: state_or_region16,
+                                country: country16,
+                                postal_code: postal_code16,
+                                name: name16,
+                                phone_number: phone_number16,
                             } = e;
-                            let vec19 = street118;
+                            let vec17 = street16;
+                            let ptr17 = vec17.as_ptr().cast::<u8>();
+                            let len17 = vec17.len();
+                            *ptr0.add(100).cast::<usize>() = len17;
+                            *ptr0.add(96).cast::<*mut u8>() = ptr17.cast_mut();
+                            let vec18 = city16;
+                            let ptr18 = vec18.as_ptr().cast::<u8>();
+                            let len18 = vec18.len();
+                            *ptr0.add(108).cast::<usize>() = len18;
+                            *ptr0.add(104).cast::<*mut u8>() = ptr18.cast_mut();
+                            let vec19 = state_or_region16;
                             let ptr19 = vec19.as_ptr().cast::<u8>();
                             let len19 = vec19.len();
-                            *ptr0.add(124).cast::<usize>() = len19;
-                            *ptr0.add(120).cast::<*mut u8>() = ptr19.cast_mut();
-                            match street218 {
-                                Some(e) => {
-                                    *ptr0.add(128).cast::<u8>() = (1i32) as u8;
-                                    let vec20 = e;
-                                    let ptr20 = vec20.as_ptr().cast::<u8>();
-                                    let len20 = vec20.len();
-                                    *ptr0.add(136).cast::<usize>() = len20;
-                                    *ptr0.add(132).cast::<*mut u8>() = ptr20.cast_mut();
-                                }
-                                None => {
-                                    *ptr0.add(128).cast::<u8>() = (0i32) as u8;
-                                }
-                            };
-                            let vec21 = city18;
+                            *ptr0.add(116).cast::<usize>() = len19;
+                            *ptr0.add(112).cast::<*mut u8>() = ptr19.cast_mut();
+                            let vec20 = country16;
+                            let ptr20 = vec20.as_ptr().cast::<u8>();
+                            let len20 = vec20.len();
+                            *ptr0.add(124).cast::<usize>() = len20;
+                            *ptr0.add(120).cast::<*mut u8>() = ptr20.cast_mut();
+                            let vec21 = postal_code16;
                             let ptr21 = vec21.as_ptr().cast::<u8>();
                             let len21 = vec21.len();
-                            *ptr0.add(144).cast::<usize>() = len21;
-                            *ptr0.add(140).cast::<*mut u8>() = ptr21.cast_mut();
-                            let vec22 = state_or_region18;
-                            let ptr22 = vec22.as_ptr().cast::<u8>();
-                            let len22 = vec22.len();
-                            *ptr0.add(152).cast::<usize>() = len22;
-                            *ptr0.add(148).cast::<*mut u8>() = ptr22.cast_mut();
-                            let vec23 = country18;
-                            let ptr23 = vec23.as_ptr().cast::<u8>();
-                            let len23 = vec23.len();
-                            *ptr0.add(160).cast::<usize>() = len23;
-                            *ptr0.add(156).cast::<*mut u8>() = ptr23.cast_mut();
-                            let vec24 = postal_code18;
-                            let ptr24 = vec24.as_ptr().cast::<u8>();
-                            let len24 = vec24.len();
-                            *ptr0.add(168).cast::<usize>() = len24;
-                            *ptr0.add(164).cast::<*mut u8>() = ptr24.cast_mut();
-                            match name18 {
+                            *ptr0.add(132).cast::<usize>() = len21;
+                            *ptr0.add(128).cast::<*mut u8>() = ptr21.cast_mut();
+                            match name16 {
                                 Some(e) => {
-                                    *ptr0.add(172).cast::<u8>() = (1i32) as u8;
-                                    let vec25 = e;
-                                    let ptr25 = vec25.as_ptr().cast::<u8>();
-                                    let len25 = vec25.len();
-                                    *ptr0.add(180).cast::<usize>() = len25;
-                                    *ptr0.add(176).cast::<*mut u8>() = ptr25.cast_mut();
+                                    *ptr0.add(136).cast::<u8>() = (1i32) as u8;
+                                    let vec22 = e;
+                                    let ptr22 = vec22.as_ptr().cast::<u8>();
+                                    let len22 = vec22.len();
+                                    *ptr0.add(144).cast::<usize>() = len22;
+                                    *ptr0.add(140).cast::<*mut u8>() = ptr22.cast_mut();
                                 }
                                 None => {
-                                    *ptr0.add(172).cast::<u8>() = (0i32) as u8;
+                                    *ptr0.add(136).cast::<u8>() = (0i32) as u8;
                                 }
                             };
-                            match business_name18 {
+                            match phone_number16 {
                                 Some(e) => {
-                                    *ptr0.add(184).cast::<u8>() = (1i32) as u8;
-                                    let vec26 = e;
-                                    let ptr26 = vec26.as_ptr().cast::<u8>();
-                                    let len26 = vec26.len();
-                                    *ptr0.add(192).cast::<usize>() = len26;
-                                    *ptr0.add(188).cast::<*mut u8>() = ptr26.cast_mut();
+                                    *ptr0.add(148).cast::<u8>() = (1i32) as u8;
+                                    let vec23 = e;
+                                    let ptr23 = vec23.as_ptr().cast::<u8>();
+                                    let len23 = vec23.len();
+                                    *ptr0.add(156).cast::<usize>() = len23;
+                                    *ptr0.add(152).cast::<*mut u8>() = ptr23.cast_mut();
                                 }
                                 None => {
-                                    *ptr0.add(184).cast::<u8>() = (0i32) as u8;
-                                }
-                            };
-                            match phone_number18 {
-                                Some(e) => {
-                                    *ptr0.add(196).cast::<u8>() = (1i32) as u8;
-                                    let vec27 = e;
-                                    let ptr27 = vec27.as_ptr().cast::<u8>();
-                                    let len27 = vec27.len();
-                                    *ptr0.add(204).cast::<usize>() = len27;
-                                    *ptr0.add(200).cast::<*mut u8>() = ptr27.cast_mut();
-                                }
-                                None => {
-                                    *ptr0.add(196).cast::<u8>() = (0i32) as u8;
+                                    *ptr0.add(148).cast::<u8>() = (0i32) as u8;
                                 }
                             };
                         }
                         None => {
-                            *ptr0.add(116).cast::<u8>() = (0i32) as u8;
+                            *ptr0.add(92).cast::<u8>() = (0i32) as u8;
                         }
                     };
-                    *ptr0.add(208).cast::<f32>() = _rt::as_f32(total1);
-                    let vec28 = currency1;
-                    let ptr28 = vec28.as_ptr().cast::<u8>();
-                    let len28 = vec28.len();
-                    *ptr0.add(216).cast::<usize>() = len28;
-                    *ptr0.add(212).cast::<*mut u8>() = ptr28.cast_mut();
-                    *ptr0.add(224).cast::<i64>() = _rt::as_i64(timestamp1);
-                    let ptr29 = ret_area.0.as_mut_ptr().cast::<u8>();
+                    *ptr0.add(160).cast::<f32>() = _rt::as_f32(total1);
+                    let vec24 = currency1;
+                    let ptr24 = vec24.as_ptr().cast::<u8>();
+                    let len24 = vec24.len();
+                    *ptr0.add(168).cast::<usize>() = len24;
+                    *ptr0.add(164).cast::<*mut u8>() = ptr24.cast_mut();
+                    *ptr0.add(176).cast::<i64>() = _rt::as_i64(timestamp1);
+                    let ptr25 = ret_area.0.as_mut_ptr().cast::<u8>();
                     #[cfg(target_arch = "wasm32")]
                     #[link(wasm_import_module = "golem:order/api")]
                     extern "C" {
@@ -717,40 +657,40 @@ pub mod golem {
                     fn wit_import(_: *mut u8, _: *mut u8) {
                         unreachable!()
                     }
-                    wit_import(ptr0, ptr29);
-                    let l30 = i32::from(*ptr29.add(0).cast::<u8>());
+                    wit_import(ptr0, ptr25);
+                    let l26 = i32::from(*ptr25.add(0).cast::<u8>());
                     if layout7.size() != 0 {
                         _rt::alloc::dealloc(result7.cast(), layout7);
                     }
-                    match l30 {
+                    match l26 {
                         0 => {
                             let e = ();
                             Ok(e)
                         }
                         1 => {
                             let e = {
-                                let l31 = i32::from(*ptr29.add(4).cast::<u8>());
-                                let v36 = match l31 {
+                                let l27 = i32::from(*ptr25.add(4).cast::<u8>());
+                                let v32 = match l27 {
                                     n => {
                                         debug_assert_eq!(n, 0, "invalid enum discriminant");
-                                        let e36 = {
-                                            let l32 = *ptr29.add(8).cast::<*mut u8>();
-                                            let l33 = *ptr29.add(12).cast::<usize>();
-                                            let len34 = l33;
-                                            let bytes34 =
-                                                _rt::Vec::from_raw_parts(l32.cast(), len34, len34);
-                                            let l35 = i32::from(*ptr29.add(16).cast::<u8>());
+                                        let e32 = {
+                                            let l28 = *ptr25.add(8).cast::<*mut u8>();
+                                            let l29 = *ptr25.add(12).cast::<usize>();
+                                            let len30 = l29;
+                                            let bytes30 =
+                                                _rt::Vec::from_raw_parts(l28.cast(), len30, len30);
+                                            let l31 = i32::from(*ptr25.add(16).cast::<u8>());
 
                                             ActionNotAllowedError {
-                                                message: _rt::string_lift(bytes34),
-                                                status: OrderStatus::_lift(l35 as u8),
+                                                message: _rt::string_lift(bytes30),
+                                                status: OrderStatus::_lift(l31 as u8),
                                             }
                                         };
-                                        InitOrderError::ActionNotAllowed(e36)
+                                        InitOrderError::ActionNotAllowed(e32)
                                     }
                                 };
 
-                                v36
+                                v32
                             };
                             Err(e)
                         }
@@ -1093,154 +1033,163 @@ pub mod golem {
             pub fn update_shipping_address(address: &Address) -> Result<(), UpdateAddressError> {
                 unsafe {
                     #[repr(align(4))]
-                    struct RetArea([::core::mem::MaybeUninit<u8>; 88]);
-                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 88]);
-                    let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 20]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 20]);
                     let Address {
-                        street1: street11,
-                        street2: street21,
-                        city: city1,
-                        state_or_region: state_or_region1,
-                        country: country1,
-                        postal_code: postal_code1,
-                        name: name1,
-                        business_name: business_name1,
-                        phone_number: phone_number1,
+                        street: street0,
+                        city: city0,
+                        state_or_region: state_or_region0,
+                        country: country0,
+                        postal_code: postal_code0,
+                        name: name0,
+                        phone_number: phone_number0,
                     } = address;
-                    let vec2 = street11;
+                    let vec1 = street0;
+                    let ptr1 = vec1.as_ptr().cast::<u8>();
+                    let len1 = vec1.len();
+                    let vec2 = city0;
                     let ptr2 = vec2.as_ptr().cast::<u8>();
                     let len2 = vec2.len();
-                    *ptr0.add(4).cast::<usize>() = len2;
-                    *ptr0.add(0).cast::<*mut u8>() = ptr2.cast_mut();
-                    match street21 {
-                        Some(e) => {
-                            *ptr0.add(8).cast::<u8>() = (1i32) as u8;
-                            let vec3 = e;
-                            let ptr3 = vec3.as_ptr().cast::<u8>();
-                            let len3 = vec3.len();
-                            *ptr0.add(16).cast::<usize>() = len3;
-                            *ptr0.add(12).cast::<*mut u8>() = ptr3.cast_mut();
-                        }
-                        None => {
-                            *ptr0.add(8).cast::<u8>() = (0i32) as u8;
-                        }
-                    };
-                    let vec4 = city1;
+                    let vec3 = state_or_region0;
+                    let ptr3 = vec3.as_ptr().cast::<u8>();
+                    let len3 = vec3.len();
+                    let vec4 = country0;
                     let ptr4 = vec4.as_ptr().cast::<u8>();
                     let len4 = vec4.len();
-                    *ptr0.add(24).cast::<usize>() = len4;
-                    *ptr0.add(20).cast::<*mut u8>() = ptr4.cast_mut();
-                    let vec5 = state_or_region1;
+                    let vec5 = postal_code0;
                     let ptr5 = vec5.as_ptr().cast::<u8>();
                     let len5 = vec5.len();
-                    *ptr0.add(32).cast::<usize>() = len5;
-                    *ptr0.add(28).cast::<*mut u8>() = ptr5.cast_mut();
-                    let vec6 = country1;
-                    let ptr6 = vec6.as_ptr().cast::<u8>();
-                    let len6 = vec6.len();
-                    *ptr0.add(40).cast::<usize>() = len6;
-                    *ptr0.add(36).cast::<*mut u8>() = ptr6.cast_mut();
-                    let vec7 = postal_code1;
-                    let ptr7 = vec7.as_ptr().cast::<u8>();
-                    let len7 = vec7.len();
-                    *ptr0.add(48).cast::<usize>() = len7;
-                    *ptr0.add(44).cast::<*mut u8>() = ptr7.cast_mut();
-                    match name1 {
+                    let (result7_0, result7_1, result7_2) = match name0 {
                         Some(e) => {
-                            *ptr0.add(52).cast::<u8>() = (1i32) as u8;
+                            let vec6 = e;
+                            let ptr6 = vec6.as_ptr().cast::<u8>();
+                            let len6 = vec6.len();
+
+                            (1i32, ptr6.cast_mut(), len6)
+                        }
+                        None => (0i32, ::core::ptr::null_mut(), 0usize),
+                    };
+                    let (result9_0, result9_1, result9_2) = match phone_number0 {
+                        Some(e) => {
                             let vec8 = e;
                             let ptr8 = vec8.as_ptr().cast::<u8>();
                             let len8 = vec8.len();
-                            *ptr0.add(60).cast::<usize>() = len8;
-                            *ptr0.add(56).cast::<*mut u8>() = ptr8.cast_mut();
+
+                            (1i32, ptr8.cast_mut(), len8)
                         }
-                        None => {
-                            *ptr0.add(52).cast::<u8>() = (0i32) as u8;
-                        }
+                        None => (0i32, ::core::ptr::null_mut(), 0usize),
                     };
-                    match business_name1 {
-                        Some(e) => {
-                            *ptr0.add(64).cast::<u8>() = (1i32) as u8;
-                            let vec9 = e;
-                            let ptr9 = vec9.as_ptr().cast::<u8>();
-                            let len9 = vec9.len();
-                            *ptr0.add(72).cast::<usize>() = len9;
-                            *ptr0.add(68).cast::<*mut u8>() = ptr9.cast_mut();
-                        }
-                        None => {
-                            *ptr0.add(64).cast::<u8>() = (0i32) as u8;
-                        }
-                    };
-                    match phone_number1 {
-                        Some(e) => {
-                            *ptr0.add(76).cast::<u8>() = (1i32) as u8;
-                            let vec10 = e;
-                            let ptr10 = vec10.as_ptr().cast::<u8>();
-                            let len10 = vec10.len();
-                            *ptr0.add(84).cast::<usize>() = len10;
-                            *ptr0.add(80).cast::<*mut u8>() = ptr10.cast_mut();
-                        }
-                        None => {
-                            *ptr0.add(76).cast::<u8>() = (0i32) as u8;
-                        }
-                    };
-                    let ptr11 = ret_area.0.as_mut_ptr().cast::<u8>();
+                    let ptr10 = ret_area.0.as_mut_ptr().cast::<u8>();
                     #[cfg(target_arch = "wasm32")]
                     #[link(wasm_import_module = "golem:order/api")]
                     extern "C" {
                         #[link_name = "update-shipping-address"]
-                        fn wit_import(_: *mut u8, _: *mut u8);
+                        fn wit_import(
+                            _: *mut u8,
+                            _: usize,
+                            _: *mut u8,
+                            _: usize,
+                            _: *mut u8,
+                            _: usize,
+                            _: *mut u8,
+                            _: usize,
+                            _: *mut u8,
+                            _: usize,
+                            _: i32,
+                            _: *mut u8,
+                            _: usize,
+                            _: i32,
+                            _: *mut u8,
+                            _: usize,
+                            _: *mut u8,
+                        );
                     }
 
                     #[cfg(not(target_arch = "wasm32"))]
-                    fn wit_import(_: *mut u8, _: *mut u8) {
+                    fn wit_import(
+                        _: *mut u8,
+                        _: usize,
+                        _: *mut u8,
+                        _: usize,
+                        _: *mut u8,
+                        _: usize,
+                        _: *mut u8,
+                        _: usize,
+                        _: *mut u8,
+                        _: usize,
+                        _: i32,
+                        _: *mut u8,
+                        _: usize,
+                        _: i32,
+                        _: *mut u8,
+                        _: usize,
+                        _: *mut u8,
+                    ) {
                         unreachable!()
                     }
-                    wit_import(ptr0, ptr11);
-                    let l12 = i32::from(*ptr11.add(0).cast::<u8>());
-                    match l12 {
+                    wit_import(
+                        ptr1.cast_mut(),
+                        len1,
+                        ptr2.cast_mut(),
+                        len2,
+                        ptr3.cast_mut(),
+                        len3,
+                        ptr4.cast_mut(),
+                        len4,
+                        ptr5.cast_mut(),
+                        len5,
+                        result7_0,
+                        result7_1,
+                        result7_2,
+                        result9_0,
+                        result9_1,
+                        result9_2,
+                        ptr10,
+                    );
+                    let l11 = i32::from(*ptr10.add(0).cast::<u8>());
+                    match l11 {
                         0 => {
                             let e = ();
                             Ok(e)
                         }
                         1 => {
                             let e = {
-                                let l13 = i32::from(*ptr11.add(4).cast::<u8>());
-                                let v21 = match l13 {
+                                let l12 = i32::from(*ptr10.add(4).cast::<u8>());
+                                let v20 = match l12 {
                                     0 => {
-                                        let e21 = {
-                                            let l14 = *ptr11.add(8).cast::<*mut u8>();
-                                            let l15 = *ptr11.add(12).cast::<usize>();
-                                            let len16 = l15;
-                                            let bytes16 =
-                                                _rt::Vec::from_raw_parts(l14.cast(), len16, len16);
+                                        let e20 = {
+                                            let l13 = *ptr10.add(8).cast::<*mut u8>();
+                                            let l14 = *ptr10.add(12).cast::<usize>();
+                                            let len15 = l14;
+                                            let bytes15 =
+                                                _rt::Vec::from_raw_parts(l13.cast(), len15, len15);
 
                                             AddressNotValidError {
-                                                message: _rt::string_lift(bytes16),
+                                                message: _rt::string_lift(bytes15),
                                             }
                                         };
-                                        UpdateAddressError::AddressNotValid(e21)
+                                        UpdateAddressError::AddressNotValid(e20)
                                     }
                                     n => {
                                         debug_assert_eq!(n, 1, "invalid enum discriminant");
-                                        let e21 = {
-                                            let l17 = *ptr11.add(8).cast::<*mut u8>();
-                                            let l18 = *ptr11.add(12).cast::<usize>();
-                                            let len19 = l18;
-                                            let bytes19 =
-                                                _rt::Vec::from_raw_parts(l17.cast(), len19, len19);
-                                            let l20 = i32::from(*ptr11.add(16).cast::<u8>());
+                                        let e20 = {
+                                            let l16 = *ptr10.add(8).cast::<*mut u8>();
+                                            let l17 = *ptr10.add(12).cast::<usize>();
+                                            let len18 = l17;
+                                            let bytes18 =
+                                                _rt::Vec::from_raw_parts(l16.cast(), len18, len18);
+                                            let l19 = i32::from(*ptr10.add(16).cast::<u8>());
 
                                             ActionNotAllowedError {
-                                                message: _rt::string_lift(bytes19),
-                                                status: OrderStatus::_lift(l20 as u8),
+                                                message: _rt::string_lift(bytes18),
+                                                status: OrderStatus::_lift(l19 as u8),
                                             }
                                         };
-                                        UpdateAddressError::ActionNotAllowed(e21)
+                                        UpdateAddressError::ActionNotAllowed(e20)
                                     }
                                 };
 
-                                v21
+                                v20
                             };
                             Err(e)
                         }
@@ -1252,154 +1201,163 @@ pub mod golem {
             pub fn update_billing_address(address: &Address) -> Result<(), UpdateAddressError> {
                 unsafe {
                     #[repr(align(4))]
-                    struct RetArea([::core::mem::MaybeUninit<u8>; 88]);
-                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 88]);
-                    let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 20]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 20]);
                     let Address {
-                        street1: street11,
-                        street2: street21,
-                        city: city1,
-                        state_or_region: state_or_region1,
-                        country: country1,
-                        postal_code: postal_code1,
-                        name: name1,
-                        business_name: business_name1,
-                        phone_number: phone_number1,
+                        street: street0,
+                        city: city0,
+                        state_or_region: state_or_region0,
+                        country: country0,
+                        postal_code: postal_code0,
+                        name: name0,
+                        phone_number: phone_number0,
                     } = address;
-                    let vec2 = street11;
+                    let vec1 = street0;
+                    let ptr1 = vec1.as_ptr().cast::<u8>();
+                    let len1 = vec1.len();
+                    let vec2 = city0;
                     let ptr2 = vec2.as_ptr().cast::<u8>();
                     let len2 = vec2.len();
-                    *ptr0.add(4).cast::<usize>() = len2;
-                    *ptr0.add(0).cast::<*mut u8>() = ptr2.cast_mut();
-                    match street21 {
-                        Some(e) => {
-                            *ptr0.add(8).cast::<u8>() = (1i32) as u8;
-                            let vec3 = e;
-                            let ptr3 = vec3.as_ptr().cast::<u8>();
-                            let len3 = vec3.len();
-                            *ptr0.add(16).cast::<usize>() = len3;
-                            *ptr0.add(12).cast::<*mut u8>() = ptr3.cast_mut();
-                        }
-                        None => {
-                            *ptr0.add(8).cast::<u8>() = (0i32) as u8;
-                        }
-                    };
-                    let vec4 = city1;
+                    let vec3 = state_or_region0;
+                    let ptr3 = vec3.as_ptr().cast::<u8>();
+                    let len3 = vec3.len();
+                    let vec4 = country0;
                     let ptr4 = vec4.as_ptr().cast::<u8>();
                     let len4 = vec4.len();
-                    *ptr0.add(24).cast::<usize>() = len4;
-                    *ptr0.add(20).cast::<*mut u8>() = ptr4.cast_mut();
-                    let vec5 = state_or_region1;
+                    let vec5 = postal_code0;
                     let ptr5 = vec5.as_ptr().cast::<u8>();
                     let len5 = vec5.len();
-                    *ptr0.add(32).cast::<usize>() = len5;
-                    *ptr0.add(28).cast::<*mut u8>() = ptr5.cast_mut();
-                    let vec6 = country1;
-                    let ptr6 = vec6.as_ptr().cast::<u8>();
-                    let len6 = vec6.len();
-                    *ptr0.add(40).cast::<usize>() = len6;
-                    *ptr0.add(36).cast::<*mut u8>() = ptr6.cast_mut();
-                    let vec7 = postal_code1;
-                    let ptr7 = vec7.as_ptr().cast::<u8>();
-                    let len7 = vec7.len();
-                    *ptr0.add(48).cast::<usize>() = len7;
-                    *ptr0.add(44).cast::<*mut u8>() = ptr7.cast_mut();
-                    match name1 {
+                    let (result7_0, result7_1, result7_2) = match name0 {
                         Some(e) => {
-                            *ptr0.add(52).cast::<u8>() = (1i32) as u8;
+                            let vec6 = e;
+                            let ptr6 = vec6.as_ptr().cast::<u8>();
+                            let len6 = vec6.len();
+
+                            (1i32, ptr6.cast_mut(), len6)
+                        }
+                        None => (0i32, ::core::ptr::null_mut(), 0usize),
+                    };
+                    let (result9_0, result9_1, result9_2) = match phone_number0 {
+                        Some(e) => {
                             let vec8 = e;
                             let ptr8 = vec8.as_ptr().cast::<u8>();
                             let len8 = vec8.len();
-                            *ptr0.add(60).cast::<usize>() = len8;
-                            *ptr0.add(56).cast::<*mut u8>() = ptr8.cast_mut();
+
+                            (1i32, ptr8.cast_mut(), len8)
                         }
-                        None => {
-                            *ptr0.add(52).cast::<u8>() = (0i32) as u8;
-                        }
+                        None => (0i32, ::core::ptr::null_mut(), 0usize),
                     };
-                    match business_name1 {
-                        Some(e) => {
-                            *ptr0.add(64).cast::<u8>() = (1i32) as u8;
-                            let vec9 = e;
-                            let ptr9 = vec9.as_ptr().cast::<u8>();
-                            let len9 = vec9.len();
-                            *ptr0.add(72).cast::<usize>() = len9;
-                            *ptr0.add(68).cast::<*mut u8>() = ptr9.cast_mut();
-                        }
-                        None => {
-                            *ptr0.add(64).cast::<u8>() = (0i32) as u8;
-                        }
-                    };
-                    match phone_number1 {
-                        Some(e) => {
-                            *ptr0.add(76).cast::<u8>() = (1i32) as u8;
-                            let vec10 = e;
-                            let ptr10 = vec10.as_ptr().cast::<u8>();
-                            let len10 = vec10.len();
-                            *ptr0.add(84).cast::<usize>() = len10;
-                            *ptr0.add(80).cast::<*mut u8>() = ptr10.cast_mut();
-                        }
-                        None => {
-                            *ptr0.add(76).cast::<u8>() = (0i32) as u8;
-                        }
-                    };
-                    let ptr11 = ret_area.0.as_mut_ptr().cast::<u8>();
+                    let ptr10 = ret_area.0.as_mut_ptr().cast::<u8>();
                     #[cfg(target_arch = "wasm32")]
                     #[link(wasm_import_module = "golem:order/api")]
                     extern "C" {
                         #[link_name = "update-billing-address"]
-                        fn wit_import(_: *mut u8, _: *mut u8);
+                        fn wit_import(
+                            _: *mut u8,
+                            _: usize,
+                            _: *mut u8,
+                            _: usize,
+                            _: *mut u8,
+                            _: usize,
+                            _: *mut u8,
+                            _: usize,
+                            _: *mut u8,
+                            _: usize,
+                            _: i32,
+                            _: *mut u8,
+                            _: usize,
+                            _: i32,
+                            _: *mut u8,
+                            _: usize,
+                            _: *mut u8,
+                        );
                     }
 
                     #[cfg(not(target_arch = "wasm32"))]
-                    fn wit_import(_: *mut u8, _: *mut u8) {
+                    fn wit_import(
+                        _: *mut u8,
+                        _: usize,
+                        _: *mut u8,
+                        _: usize,
+                        _: *mut u8,
+                        _: usize,
+                        _: *mut u8,
+                        _: usize,
+                        _: *mut u8,
+                        _: usize,
+                        _: i32,
+                        _: *mut u8,
+                        _: usize,
+                        _: i32,
+                        _: *mut u8,
+                        _: usize,
+                        _: *mut u8,
+                    ) {
                         unreachable!()
                     }
-                    wit_import(ptr0, ptr11);
-                    let l12 = i32::from(*ptr11.add(0).cast::<u8>());
-                    match l12 {
+                    wit_import(
+                        ptr1.cast_mut(),
+                        len1,
+                        ptr2.cast_mut(),
+                        len2,
+                        ptr3.cast_mut(),
+                        len3,
+                        ptr4.cast_mut(),
+                        len4,
+                        ptr5.cast_mut(),
+                        len5,
+                        result7_0,
+                        result7_1,
+                        result7_2,
+                        result9_0,
+                        result9_1,
+                        result9_2,
+                        ptr10,
+                    );
+                    let l11 = i32::from(*ptr10.add(0).cast::<u8>());
+                    match l11 {
                         0 => {
                             let e = ();
                             Ok(e)
                         }
                         1 => {
                             let e = {
-                                let l13 = i32::from(*ptr11.add(4).cast::<u8>());
-                                let v21 = match l13 {
+                                let l12 = i32::from(*ptr10.add(4).cast::<u8>());
+                                let v20 = match l12 {
                                     0 => {
-                                        let e21 = {
-                                            let l14 = *ptr11.add(8).cast::<*mut u8>();
-                                            let l15 = *ptr11.add(12).cast::<usize>();
-                                            let len16 = l15;
-                                            let bytes16 =
-                                                _rt::Vec::from_raw_parts(l14.cast(), len16, len16);
+                                        let e20 = {
+                                            let l13 = *ptr10.add(8).cast::<*mut u8>();
+                                            let l14 = *ptr10.add(12).cast::<usize>();
+                                            let len15 = l14;
+                                            let bytes15 =
+                                                _rt::Vec::from_raw_parts(l13.cast(), len15, len15);
 
                                             AddressNotValidError {
-                                                message: _rt::string_lift(bytes16),
+                                                message: _rt::string_lift(bytes15),
                                             }
                                         };
-                                        UpdateAddressError::AddressNotValid(e21)
+                                        UpdateAddressError::AddressNotValid(e20)
                                     }
                                     n => {
                                         debug_assert_eq!(n, 1, "invalid enum discriminant");
-                                        let e21 = {
-                                            let l17 = *ptr11.add(8).cast::<*mut u8>();
-                                            let l18 = *ptr11.add(12).cast::<usize>();
-                                            let len19 = l18;
-                                            let bytes19 =
-                                                _rt::Vec::from_raw_parts(l17.cast(), len19, len19);
-                                            let l20 = i32::from(*ptr11.add(16).cast::<u8>());
+                                        let e20 = {
+                                            let l16 = *ptr10.add(8).cast::<*mut u8>();
+                                            let l17 = *ptr10.add(12).cast::<usize>();
+                                            let len18 = l17;
+                                            let bytes18 =
+                                                _rt::Vec::from_raw_parts(l16.cast(), len18, len18);
+                                            let l19 = i32::from(*ptr10.add(16).cast::<u8>());
 
                                             ActionNotAllowedError {
-                                                message: _rt::string_lift(bytes19),
-                                                status: OrderStatus::_lift(l20 as u8),
+                                                message: _rt::string_lift(bytes18),
+                                                status: OrderStatus::_lift(l19 as u8),
                                             }
                                         };
-                                        UpdateAddressError::ActionNotAllowed(e21)
+                                        UpdateAddressError::ActionNotAllowed(e20)
                                     }
                                 };
 
-                                v21
+                                v20
                             };
                             Err(e)
                         }
@@ -1561,8 +1519,8 @@ pub mod golem {
             pub fn get() -> Option<Order> {
                 unsafe {
                     #[repr(align(8))]
-                    struct RetArea([::core::mem::MaybeUninit<u8>; 256]);
-                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 256]);
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 208]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 208]);
                     let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                     #[cfg(target_arch = "wasm32")]
                     #[link(wasm_import_module = "golem:order/api")]
@@ -1623,13 +1581,13 @@ pub mod golem {
                                 }
                                 _rt::cabi_dealloc(base23, len23 * 24, 4);
                                 let l24 = i32::from(*ptr0.add(48).cast::<u8>());
-                                let l56 = i32::from(*ptr0.add(140).cast::<u8>());
-                                let l88 = *ptr0.add(232).cast::<f32>();
-                                let l89 = *ptr0.add(236).cast::<*mut u8>();
-                                let l90 = *ptr0.add(240).cast::<usize>();
-                                let len91 = l90;
-                                let bytes91 = _rt::Vec::from_raw_parts(l89.cast(), len91, len91);
-                                let l92 = *ptr0.add(248).cast::<i64>();
+                                let l48 = i32::from(*ptr0.add(116).cast::<u8>());
+                                let l72 = *ptr0.add(184).cast::<f32>();
+                                let l73 = *ptr0.add(188).cast::<*mut u8>();
+                                let l74 = *ptr0.add(192).cast::<usize>();
+                                let len75 = l74;
+                                let bytes75 = _rt::Vec::from_raw_parts(l73.cast(), len75, len75);
+                                let l76 = *ptr0.add(200).cast::<i64>();
 
                                 Order {
                                     order_id: _rt::string_lift(bytes4),
@@ -1667,72 +1625,70 @@ pub mod golem {
                                                     len27,
                                                     len27,
                                                 );
-                                                let l28 = i32::from(*ptr0.add(60).cast::<u8>());
-                                                let l32 = *ptr0.add(72).cast::<*mut u8>();
-                                                let l33 = *ptr0.add(76).cast::<usize>();
-                                                let len34 = l33;
-                                                let bytes34 = _rt::Vec::from_raw_parts(
-                                                    l32.cast(),
-                                                    len34,
-                                                    len34,
+                                                let l28 = *ptr0.add(60).cast::<*mut u8>();
+                                                let l29 = *ptr0.add(64).cast::<usize>();
+                                                let len30 = l29;
+                                                let bytes30 = _rt::Vec::from_raw_parts(
+                                                    l28.cast(),
+                                                    len30,
+                                                    len30,
                                                 );
-                                                let l35 = *ptr0.add(80).cast::<*mut u8>();
-                                                let l36 = *ptr0.add(84).cast::<usize>();
-                                                let len37 = l36;
-                                                let bytes37 = _rt::Vec::from_raw_parts(
-                                                    l35.cast(),
-                                                    len37,
-                                                    len37,
+                                                let l31 = *ptr0.add(68).cast::<*mut u8>();
+                                                let l32 = *ptr0.add(72).cast::<usize>();
+                                                let len33 = l32;
+                                                let bytes33 = _rt::Vec::from_raw_parts(
+                                                    l31.cast(),
+                                                    len33,
+                                                    len33,
                                                 );
-                                                let l38 = *ptr0.add(88).cast::<*mut u8>();
-                                                let l39 = *ptr0.add(92).cast::<usize>();
-                                                let len40 = l39;
-                                                let bytes40 = _rt::Vec::from_raw_parts(
-                                                    l38.cast(),
-                                                    len40,
-                                                    len40,
+                                                let l34 = *ptr0.add(76).cast::<*mut u8>();
+                                                let l35 = *ptr0.add(80).cast::<usize>();
+                                                let len36 = l35;
+                                                let bytes36 = _rt::Vec::from_raw_parts(
+                                                    l34.cast(),
+                                                    len36,
+                                                    len36,
                                                 );
-                                                let l41 = *ptr0.add(96).cast::<*mut u8>();
-                                                let l42 = *ptr0.add(100).cast::<usize>();
-                                                let len43 = l42;
-                                                let bytes43 = _rt::Vec::from_raw_parts(
-                                                    l41.cast(),
-                                                    len43,
-                                                    len43,
+                                                let l37 = *ptr0.add(84).cast::<*mut u8>();
+                                                let l38 = *ptr0.add(88).cast::<usize>();
+                                                let len39 = l38;
+                                                let bytes39 = _rt::Vec::from_raw_parts(
+                                                    l37.cast(),
+                                                    len39,
+                                                    len39,
                                                 );
+                                                let l40 = i32::from(*ptr0.add(92).cast::<u8>());
                                                 let l44 = i32::from(*ptr0.add(104).cast::<u8>());
-                                                let l48 = i32::from(*ptr0.add(116).cast::<u8>());
-                                                let l52 = i32::from(*ptr0.add(128).cast::<u8>());
 
                                                 Address {
-                                                    street1: _rt::string_lift(bytes27),
-                                                    street2: match l28 {
+                                                    street: _rt::string_lift(bytes27),
+                                                    city: _rt::string_lift(bytes30),
+                                                    state_or_region: _rt::string_lift(bytes33),
+                                                    country: _rt::string_lift(bytes36),
+                                                    postal_code: _rt::string_lift(bytes39),
+                                                    name: match l40 {
                                                         0 => None,
                                                         1 => {
                                                             let e = {
-                                                                let l29 =
-                                                                    *ptr0.add(64).cast::<*mut u8>();
-                                                                let l30 =
-                                                                    *ptr0.add(68).cast::<usize>();
-                                                                let len31 = l30;
-                                                                let bytes31 =
+                                                                let l41 =
+                                                                    *ptr0.add(96).cast::<*mut u8>();
+                                                                let l42 =
+                                                                    *ptr0.add(100).cast::<usize>();
+                                                                let len43 = l42;
+                                                                let bytes43 =
                                                                     _rt::Vec::from_raw_parts(
-                                                                        l29.cast(),
-                                                                        len31,
-                                                                        len31,
+                                                                        l41.cast(),
+                                                                        len43,
+                                                                        len43,
                                                                     );
 
-                                                                _rt::string_lift(bytes31)
+                                                                _rt::string_lift(bytes43)
                                                             };
                                                             Some(e)
                                                         }
                                                         _ => _rt::invalid_enum_discriminant(),
                                                     },
-                                                    city: _rt::string_lift(bytes34),
-                                                    state_or_region: _rt::string_lift(bytes37),
-                                                    country: _rt::string_lift(bytes40),
-                                                    postal_code: _rt::string_lift(bytes43),
-                                                    name: match l44 {
+                                                    phone_number: match l44 {
                                                         0 => None,
                                                         1 => {
                                                             let e = {
@@ -1755,200 +1711,106 @@ pub mod golem {
                                                         }
                                                         _ => _rt::invalid_enum_discriminant(),
                                                     },
-                                                    business_name: match l48 {
-                                                        0 => None,
-                                                        1 => {
-                                                            let e = {
-                                                                let l49 = *ptr0
-                                                                    .add(120)
-                                                                    .cast::<*mut u8>();
-                                                                let l50 =
-                                                                    *ptr0.add(124).cast::<usize>();
-                                                                let len51 = l50;
-                                                                let bytes51 =
-                                                                    _rt::Vec::from_raw_parts(
-                                                                        l49.cast(),
-                                                                        len51,
-                                                                        len51,
-                                                                    );
-
-                                                                _rt::string_lift(bytes51)
-                                                            };
-                                                            Some(e)
-                                                        }
-                                                        _ => _rt::invalid_enum_discriminant(),
-                                                    },
-                                                    phone_number: match l52 {
-                                                        0 => None,
-                                                        1 => {
-                                                            let e = {
-                                                                let l53 = *ptr0
-                                                                    .add(132)
-                                                                    .cast::<*mut u8>();
-                                                                let l54 =
-                                                                    *ptr0.add(136).cast::<usize>();
-                                                                let len55 = l54;
-                                                                let bytes55 =
-                                                                    _rt::Vec::from_raw_parts(
-                                                                        l53.cast(),
-                                                                        len55,
-                                                                        len55,
-                                                                    );
-
-                                                                _rt::string_lift(bytes55)
-                                                            };
-                                                            Some(e)
-                                                        }
-                                                        _ => _rt::invalid_enum_discriminant(),
-                                                    },
                                                 }
                                             };
                                             Some(e)
                                         }
                                         _ => _rt::invalid_enum_discriminant(),
                                     },
-                                    shipping_address: match l56 {
+                                    shipping_address: match l48 {
                                         0 => None,
                                         1 => {
                                             let e = {
-                                                let l57 = *ptr0.add(144).cast::<*mut u8>();
-                                                let l58 = *ptr0.add(148).cast::<usize>();
-                                                let len59 = l58;
-                                                let bytes59 = _rt::Vec::from_raw_parts(
-                                                    l57.cast(),
-                                                    len59,
-                                                    len59,
+                                                let l49 = *ptr0.add(120).cast::<*mut u8>();
+                                                let l50 = *ptr0.add(124).cast::<usize>();
+                                                let len51 = l50;
+                                                let bytes51 = _rt::Vec::from_raw_parts(
+                                                    l49.cast(),
+                                                    len51,
+                                                    len51,
                                                 );
-                                                let l60 = i32::from(*ptr0.add(152).cast::<u8>());
-                                                let l64 = *ptr0.add(164).cast::<*mut u8>();
-                                                let l65 = *ptr0.add(168).cast::<usize>();
-                                                let len66 = l65;
-                                                let bytes66 = _rt::Vec::from_raw_parts(
-                                                    l64.cast(),
-                                                    len66,
-                                                    len66,
+                                                let l52 = *ptr0.add(128).cast::<*mut u8>();
+                                                let l53 = *ptr0.add(132).cast::<usize>();
+                                                let len54 = l53;
+                                                let bytes54 = _rt::Vec::from_raw_parts(
+                                                    l52.cast(),
+                                                    len54,
+                                                    len54,
                                                 );
-                                                let l67 = *ptr0.add(172).cast::<*mut u8>();
-                                                let l68 = *ptr0.add(176).cast::<usize>();
-                                                let len69 = l68;
-                                                let bytes69 = _rt::Vec::from_raw_parts(
-                                                    l67.cast(),
-                                                    len69,
-                                                    len69,
+                                                let l55 = *ptr0.add(136).cast::<*mut u8>();
+                                                let l56 = *ptr0.add(140).cast::<usize>();
+                                                let len57 = l56;
+                                                let bytes57 = _rt::Vec::from_raw_parts(
+                                                    l55.cast(),
+                                                    len57,
+                                                    len57,
                                                 );
-                                                let l70 = *ptr0.add(180).cast::<*mut u8>();
-                                                let l71 = *ptr0.add(184).cast::<usize>();
-                                                let len72 = l71;
-                                                let bytes72 = _rt::Vec::from_raw_parts(
-                                                    l70.cast(),
-                                                    len72,
-                                                    len72,
+                                                let l58 = *ptr0.add(144).cast::<*mut u8>();
+                                                let l59 = *ptr0.add(148).cast::<usize>();
+                                                let len60 = l59;
+                                                let bytes60 = _rt::Vec::from_raw_parts(
+                                                    l58.cast(),
+                                                    len60,
+                                                    len60,
                                                 );
-                                                let l73 = *ptr0.add(188).cast::<*mut u8>();
-                                                let l74 = *ptr0.add(192).cast::<usize>();
-                                                let len75 = l74;
-                                                let bytes75 = _rt::Vec::from_raw_parts(
-                                                    l73.cast(),
-                                                    len75,
-                                                    len75,
+                                                let l61 = *ptr0.add(152).cast::<*mut u8>();
+                                                let l62 = *ptr0.add(156).cast::<usize>();
+                                                let len63 = l62;
+                                                let bytes63 = _rt::Vec::from_raw_parts(
+                                                    l61.cast(),
+                                                    len63,
+                                                    len63,
                                                 );
-                                                let l76 = i32::from(*ptr0.add(196).cast::<u8>());
-                                                let l80 = i32::from(*ptr0.add(208).cast::<u8>());
-                                                let l84 = i32::from(*ptr0.add(220).cast::<u8>());
+                                                let l64 = i32::from(*ptr0.add(160).cast::<u8>());
+                                                let l68 = i32::from(*ptr0.add(172).cast::<u8>());
 
                                                 Address {
-                                                    street1: _rt::string_lift(bytes59),
-                                                    street2: match l60 {
+                                                    street: _rt::string_lift(bytes51),
+                                                    city: _rt::string_lift(bytes54),
+                                                    state_or_region: _rt::string_lift(bytes57),
+                                                    country: _rt::string_lift(bytes60),
+                                                    postal_code: _rt::string_lift(bytes63),
+                                                    name: match l64 {
                                                         0 => None,
                                                         1 => {
                                                             let e = {
-                                                                let l61 = *ptr0
-                                                                    .add(156)
+                                                                let l65 = *ptr0
+                                                                    .add(164)
                                                                     .cast::<*mut u8>();
-                                                                let l62 =
-                                                                    *ptr0.add(160).cast::<usize>();
-                                                                let len63 = l62;
-                                                                let bytes63 =
+                                                                let l66 =
+                                                                    *ptr0.add(168).cast::<usize>();
+                                                                let len67 = l66;
+                                                                let bytes67 =
                                                                     _rt::Vec::from_raw_parts(
-                                                                        l61.cast(),
-                                                                        len63,
-                                                                        len63,
+                                                                        l65.cast(),
+                                                                        len67,
+                                                                        len67,
                                                                     );
 
-                                                                _rt::string_lift(bytes63)
+                                                                _rt::string_lift(bytes67)
                                                             };
                                                             Some(e)
                                                         }
                                                         _ => _rt::invalid_enum_discriminant(),
                                                     },
-                                                    city: _rt::string_lift(bytes66),
-                                                    state_or_region: _rt::string_lift(bytes69),
-                                                    country: _rt::string_lift(bytes72),
-                                                    postal_code: _rt::string_lift(bytes75),
-                                                    name: match l76 {
+                                                    phone_number: match l68 {
                                                         0 => None,
                                                         1 => {
                                                             let e = {
-                                                                let l77 = *ptr0
-                                                                    .add(200)
+                                                                let l69 = *ptr0
+                                                                    .add(176)
                                                                     .cast::<*mut u8>();
-                                                                let l78 =
-                                                                    *ptr0.add(204).cast::<usize>();
-                                                                let len79 = l78;
-                                                                let bytes79 =
+                                                                let l70 =
+                                                                    *ptr0.add(180).cast::<usize>();
+                                                                let len71 = l70;
+                                                                let bytes71 =
                                                                     _rt::Vec::from_raw_parts(
-                                                                        l77.cast(),
-                                                                        len79,
-                                                                        len79,
+                                                                        l69.cast(),
+                                                                        len71,
+                                                                        len71,
                                                                     );
 
-                                                                _rt::string_lift(bytes79)
-                                                            };
-                                                            Some(e)
-                                                        }
-                                                        _ => _rt::invalid_enum_discriminant(),
-                                                    },
-                                                    business_name: match l80 {
-                                                        0 => None,
-                                                        1 => {
-                                                            let e = {
-                                                                let l81 = *ptr0
-                                                                    .add(212)
-                                                                    .cast::<*mut u8>();
-                                                                let l82 =
-                                                                    *ptr0.add(216).cast::<usize>();
-                                                                let len83 = l82;
-                                                                let bytes83 =
-                                                                    _rt::Vec::from_raw_parts(
-                                                                        l81.cast(),
-                                                                        len83,
-                                                                        len83,
-                                                                    );
-
-                                                                _rt::string_lift(bytes83)
-                                                            };
-                                                            Some(e)
-                                                        }
-                                                        _ => _rt::invalid_enum_discriminant(),
-                                                    },
-                                                    phone_number: match l84 {
-                                                        0 => None,
-                                                        1 => {
-                                                            let e = {
-                                                                let l85 = *ptr0
-                                                                    .add(224)
-                                                                    .cast::<*mut u8>();
-                                                                let l86 =
-                                                                    *ptr0.add(228).cast::<usize>();
-                                                                let len87 = l86;
-                                                                let bytes87 =
-                                                                    _rt::Vec::from_raw_parts(
-                                                                        l85.cast(),
-                                                                        len87,
-                                                                        len87,
-                                                                    );
-
-                                                                _rt::string_lift(bytes87)
+                                                                _rt::string_lift(bytes71)
                                                             };
                                                             Some(e)
                                                         }
@@ -1960,9 +1822,9 @@ pub mod golem {
                                         }
                                         _ => _rt::invalid_enum_discriminant(),
                                     },
-                                    total: l88,
-                                    currency: _rt::string_lift(bytes91),
-                                    timestamp: l92 as u64,
+                                    total: l72,
+                                    currency: _rt::string_lift(bytes75),
+                                    timestamp: l76 as u64,
                                 }
                             };
                             Some(e)
@@ -3897,8 +3759,8 @@ pub mod golem {
                 pub fn get(&self) -> Option<Option<Order>> {
                     unsafe {
                         #[repr(align(8))]
-                        struct RetArea([::core::mem::MaybeUninit<u8>; 264]);
-                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 264]);
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 216]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 216]);
                         let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
                         #[link(wasm_import_module = "golem:order-stub/stub-order")]
@@ -3973,17 +3835,17 @@ pub mod golem {
                                                 }
                                                 _rt::cabi_dealloc(base24, len24 * 24, 4);
                                                 let l25 = i32::from(*ptr0.add(56).cast::<u8>());
-                                                let l57 = i32::from(*ptr0.add(148).cast::<u8>());
-                                                let l89 = *ptr0.add(240).cast::<f32>();
-                                                let l90 = *ptr0.add(244).cast::<*mut u8>();
-                                                let l91 = *ptr0.add(248).cast::<usize>();
-                                                let len92 = l91;
-                                                let bytes92 = _rt::Vec::from_raw_parts(
-                                                    l90.cast(),
-                                                    len92,
-                                                    len92,
+                                                let l49 = i32::from(*ptr0.add(124).cast::<u8>());
+                                                let l73 = *ptr0.add(192).cast::<f32>();
+                                                let l74 = *ptr0.add(196).cast::<*mut u8>();
+                                                let l75 = *ptr0.add(200).cast::<usize>();
+                                                let len76 = l75;
+                                                let bytes76 = _rt::Vec::from_raw_parts(
+                                                    l74.cast(),
+                                                    len76,
+                                                    len76,
                                                 );
-                                                let l93 = *ptr0.add(256).cast::<i64>();
+                                                let l77 = *ptr0.add(208).cast::<i64>();
 
                                                 super::super::super::golem::order::api::Order{
                               order_id: _rt::string_lift(bytes5),
@@ -4013,49 +3875,47 @@ pub mod golem {
                                     let l27 = *ptr0.add(64).cast::<usize>();
                                     let len28 = l27;
                                     let bytes28 = _rt::Vec::from_raw_parts(l26.cast(), len28, len28);
-                                    let l29 = i32::from(*ptr0.add(68).cast::<u8>());
-                                    let l33 = *ptr0.add(80).cast::<*mut u8>();
-                                    let l34 = *ptr0.add(84).cast::<usize>();
-                                    let len35 = l34;
-                                    let bytes35 = _rt::Vec::from_raw_parts(l33.cast(), len35, len35);
-                                    let l36 = *ptr0.add(88).cast::<*mut u8>();
-                                    let l37 = *ptr0.add(92).cast::<usize>();
-                                    let len38 = l37;
-                                    let bytes38 = _rt::Vec::from_raw_parts(l36.cast(), len38, len38);
-                                    let l39 = *ptr0.add(96).cast::<*mut u8>();
-                                    let l40 = *ptr0.add(100).cast::<usize>();
-                                    let len41 = l40;
-                                    let bytes41 = _rt::Vec::from_raw_parts(l39.cast(), len41, len41);
-                                    let l42 = *ptr0.add(104).cast::<*mut u8>();
-                                    let l43 = *ptr0.add(108).cast::<usize>();
-                                    let len44 = l43;
-                                    let bytes44 = _rt::Vec::from_raw_parts(l42.cast(), len44, len44);
+                                    let l29 = *ptr0.add(68).cast::<*mut u8>();
+                                    let l30 = *ptr0.add(72).cast::<usize>();
+                                    let len31 = l30;
+                                    let bytes31 = _rt::Vec::from_raw_parts(l29.cast(), len31, len31);
+                                    let l32 = *ptr0.add(76).cast::<*mut u8>();
+                                    let l33 = *ptr0.add(80).cast::<usize>();
+                                    let len34 = l33;
+                                    let bytes34 = _rt::Vec::from_raw_parts(l32.cast(), len34, len34);
+                                    let l35 = *ptr0.add(84).cast::<*mut u8>();
+                                    let l36 = *ptr0.add(88).cast::<usize>();
+                                    let len37 = l36;
+                                    let bytes37 = _rt::Vec::from_raw_parts(l35.cast(), len37, len37);
+                                    let l38 = *ptr0.add(92).cast::<*mut u8>();
+                                    let l39 = *ptr0.add(96).cast::<usize>();
+                                    let len40 = l39;
+                                    let bytes40 = _rt::Vec::from_raw_parts(l38.cast(), len40, len40);
+                                    let l41 = i32::from(*ptr0.add(100).cast::<u8>());
                                     let l45 = i32::from(*ptr0.add(112).cast::<u8>());
-                                    let l49 = i32::from(*ptr0.add(124).cast::<u8>());
-                                    let l53 = i32::from(*ptr0.add(136).cast::<u8>());
 
                                     super::super::super::golem::order::api::Address{
-                                      street1: _rt::string_lift(bytes28),
-                                      street2: match l29 {
+                                      street: _rt::string_lift(bytes28),
+                                      city: _rt::string_lift(bytes31),
+                                      state_or_region: _rt::string_lift(bytes34),
+                                      country: _rt::string_lift(bytes37),
+                                      postal_code: _rt::string_lift(bytes40),
+                                      name: match l41 {
                                         0 => None,
                                         1 => {
                                           let e = {
-                                            let l30 = *ptr0.add(72).cast::<*mut u8>();
-                                            let l31 = *ptr0.add(76).cast::<usize>();
-                                            let len32 = l31;
-                                            let bytes32 = _rt::Vec::from_raw_parts(l30.cast(), len32, len32);
+                                            let l42 = *ptr0.add(104).cast::<*mut u8>();
+                                            let l43 = *ptr0.add(108).cast::<usize>();
+                                            let len44 = l43;
+                                            let bytes44 = _rt::Vec::from_raw_parts(l42.cast(), len44, len44);
 
-                                            _rt::string_lift(bytes32)
+                                            _rt::string_lift(bytes44)
                                           };
                                           Some(e)
                                         }
                                         _ => _rt::invalid_enum_discriminant(),
                                       },
-                                      city: _rt::string_lift(bytes35),
-                                      state_or_region: _rt::string_lift(bytes38),
-                                      country: _rt::string_lift(bytes41),
-                                      postal_code: _rt::string_lift(bytes44),
-                                      name: match l45 {
+                                      phone_number: match l45 {
                                         0 => None,
                                         1 => {
                                           let e = {
@@ -4070,132 +3930,70 @@ pub mod golem {
                                         }
                                         _ => _rt::invalid_enum_discriminant(),
                                       },
-                                      business_name: match l49 {
-                                        0 => None,
-                                        1 => {
-                                          let e = {
-                                            let l50 = *ptr0.add(128).cast::<*mut u8>();
-                                            let l51 = *ptr0.add(132).cast::<usize>();
-                                            let len52 = l51;
-                                            let bytes52 = _rt::Vec::from_raw_parts(l50.cast(), len52, len52);
-
-                                            _rt::string_lift(bytes52)
-                                          };
-                                          Some(e)
-                                        }
-                                        _ => _rt::invalid_enum_discriminant(),
-                                      },
-                                      phone_number: match l53 {
-                                        0 => None,
-                                        1 => {
-                                          let e = {
-                                            let l54 = *ptr0.add(140).cast::<*mut u8>();
-                                            let l55 = *ptr0.add(144).cast::<usize>();
-                                            let len56 = l55;
-                                            let bytes56 = _rt::Vec::from_raw_parts(l54.cast(), len56, len56);
-
-                                            _rt::string_lift(bytes56)
-                                          };
-                                          Some(e)
-                                        }
-                                        _ => _rt::invalid_enum_discriminant(),
-                                      },
                                     }
                                   };
                                   Some(e)
                                 }
                                 _ => _rt::invalid_enum_discriminant(),
                               },
-                              shipping_address: match l57 {
+                              shipping_address: match l49 {
                                 0 => None,
                                 1 => {
                                   let e = {
-                                    let l58 = *ptr0.add(152).cast::<*mut u8>();
-                                    let l59 = *ptr0.add(156).cast::<usize>();
-                                    let len60 = l59;
-                                    let bytes60 = _rt::Vec::from_raw_parts(l58.cast(), len60, len60);
-                                    let l61 = i32::from(*ptr0.add(160).cast::<u8>());
-                                    let l65 = *ptr0.add(172).cast::<*mut u8>();
-                                    let l66 = *ptr0.add(176).cast::<usize>();
-                                    let len67 = l66;
-                                    let bytes67 = _rt::Vec::from_raw_parts(l65.cast(), len67, len67);
-                                    let l68 = *ptr0.add(180).cast::<*mut u8>();
-                                    let l69 = *ptr0.add(184).cast::<usize>();
-                                    let len70 = l69;
-                                    let bytes70 = _rt::Vec::from_raw_parts(l68.cast(), len70, len70);
-                                    let l71 = *ptr0.add(188).cast::<*mut u8>();
-                                    let l72 = *ptr0.add(192).cast::<usize>();
-                                    let len73 = l72;
-                                    let bytes73 = _rt::Vec::from_raw_parts(l71.cast(), len73, len73);
-                                    let l74 = *ptr0.add(196).cast::<*mut u8>();
-                                    let l75 = *ptr0.add(200).cast::<usize>();
-                                    let len76 = l75;
-                                    let bytes76 = _rt::Vec::from_raw_parts(l74.cast(), len76, len76);
-                                    let l77 = i32::from(*ptr0.add(204).cast::<u8>());
-                                    let l81 = i32::from(*ptr0.add(216).cast::<u8>());
-                                    let l85 = i32::from(*ptr0.add(228).cast::<u8>());
+                                    let l50 = *ptr0.add(128).cast::<*mut u8>();
+                                    let l51 = *ptr0.add(132).cast::<usize>();
+                                    let len52 = l51;
+                                    let bytes52 = _rt::Vec::from_raw_parts(l50.cast(), len52, len52);
+                                    let l53 = *ptr0.add(136).cast::<*mut u8>();
+                                    let l54 = *ptr0.add(140).cast::<usize>();
+                                    let len55 = l54;
+                                    let bytes55 = _rt::Vec::from_raw_parts(l53.cast(), len55, len55);
+                                    let l56 = *ptr0.add(144).cast::<*mut u8>();
+                                    let l57 = *ptr0.add(148).cast::<usize>();
+                                    let len58 = l57;
+                                    let bytes58 = _rt::Vec::from_raw_parts(l56.cast(), len58, len58);
+                                    let l59 = *ptr0.add(152).cast::<*mut u8>();
+                                    let l60 = *ptr0.add(156).cast::<usize>();
+                                    let len61 = l60;
+                                    let bytes61 = _rt::Vec::from_raw_parts(l59.cast(), len61, len61);
+                                    let l62 = *ptr0.add(160).cast::<*mut u8>();
+                                    let l63 = *ptr0.add(164).cast::<usize>();
+                                    let len64 = l63;
+                                    let bytes64 = _rt::Vec::from_raw_parts(l62.cast(), len64, len64);
+                                    let l65 = i32::from(*ptr0.add(168).cast::<u8>());
+                                    let l69 = i32::from(*ptr0.add(180).cast::<u8>());
 
                                     super::super::super::golem::order::api::Address{
-                                      street1: _rt::string_lift(bytes60),
-                                      street2: match l61 {
+                                      street: _rt::string_lift(bytes52),
+                                      city: _rt::string_lift(bytes55),
+                                      state_or_region: _rt::string_lift(bytes58),
+                                      country: _rt::string_lift(bytes61),
+                                      postal_code: _rt::string_lift(bytes64),
+                                      name: match l65 {
                                         0 => None,
                                         1 => {
                                           let e = {
-                                            let l62 = *ptr0.add(164).cast::<*mut u8>();
-                                            let l63 = *ptr0.add(168).cast::<usize>();
-                                            let len64 = l63;
-                                            let bytes64 = _rt::Vec::from_raw_parts(l62.cast(), len64, len64);
+                                            let l66 = *ptr0.add(172).cast::<*mut u8>();
+                                            let l67 = *ptr0.add(176).cast::<usize>();
+                                            let len68 = l67;
+                                            let bytes68 = _rt::Vec::from_raw_parts(l66.cast(), len68, len68);
 
-                                            _rt::string_lift(bytes64)
+                                            _rt::string_lift(bytes68)
                                           };
                                           Some(e)
                                         }
                                         _ => _rt::invalid_enum_discriminant(),
                                       },
-                                      city: _rt::string_lift(bytes67),
-                                      state_or_region: _rt::string_lift(bytes70),
-                                      country: _rt::string_lift(bytes73),
-                                      postal_code: _rt::string_lift(bytes76),
-                                      name: match l77 {
+                                      phone_number: match l69 {
                                         0 => None,
                                         1 => {
                                           let e = {
-                                            let l78 = *ptr0.add(208).cast::<*mut u8>();
-                                            let l79 = *ptr0.add(212).cast::<usize>();
-                                            let len80 = l79;
-                                            let bytes80 = _rt::Vec::from_raw_parts(l78.cast(), len80, len80);
+                                            let l70 = *ptr0.add(184).cast::<*mut u8>();
+                                            let l71 = *ptr0.add(188).cast::<usize>();
+                                            let len72 = l71;
+                                            let bytes72 = _rt::Vec::from_raw_parts(l70.cast(), len72, len72);
 
-                                            _rt::string_lift(bytes80)
-                                          };
-                                          Some(e)
-                                        }
-                                        _ => _rt::invalid_enum_discriminant(),
-                                      },
-                                      business_name: match l81 {
-                                        0 => None,
-                                        1 => {
-                                          let e = {
-                                            let l82 = *ptr0.add(220).cast::<*mut u8>();
-                                            let l83 = *ptr0.add(224).cast::<usize>();
-                                            let len84 = l83;
-                                            let bytes84 = _rt::Vec::from_raw_parts(l82.cast(), len84, len84);
-
-                                            _rt::string_lift(bytes84)
-                                          };
-                                          Some(e)
-                                        }
-                                        _ => _rt::invalid_enum_discriminant(),
-                                      },
-                                      phone_number: match l85 {
-                                        0 => None,
-                                        1 => {
-                                          let e = {
-                                            let l86 = *ptr0.add(232).cast::<*mut u8>();
-                                            let l87 = *ptr0.add(236).cast::<usize>();
-                                            let len88 = l87;
-                                            let bytes88 = _rt::Vec::from_raw_parts(l86.cast(), len88, len88);
-
-                                            _rt::string_lift(bytes88)
+                                            _rt::string_lift(bytes72)
                                           };
                                           Some(e)
                                         }
@@ -4207,9 +4005,9 @@ pub mod golem {
                                 }
                                 _ => _rt::invalid_enum_discriminant(),
                               },
-                              total: l89,
-                              currency: _rt::string_lift(bytes92),
-                              timestamp: l93 as u64,
+                              total: l73,
+                              currency: _rt::string_lift(bytes76),
+                              timestamp: l77 as u64,
                             }
                                             };
                                             Some(e)
@@ -4426,8 +4224,8 @@ pub mod golem {
                 ) -> Result<(), InitOrderError> {
                     unsafe {
                         #[repr(align(8))]
-                        struct RetArea([::core::mem::MaybeUninit<u8>; 240]);
-                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 240]);
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 192]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 192]);
                         let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                         *ptr0.add(0).cast::<i32>() = (self).handle() as i32;
                         let super::super::super::golem::order::api::CreateOrder {
@@ -4494,55 +4292,53 @@ pub mod golem {
                             Some(e) => {
                                 *ptr0.add(32).cast::<u8>() = (1i32) as u8;
                                 let super::super::super::golem::order::api::Address {
-                                    street1: street18,
-                                    street2: street28,
+                                    street: street8,
                                     city: city8,
                                     state_or_region: state_or_region8,
                                     country: country8,
                                     postal_code: postal_code8,
                                     name: name8,
-                                    business_name: business_name8,
                                     phone_number: phone_number8,
                                 } = e;
-                                let vec9 = street18;
+                                let vec9 = street8;
                                 let ptr9 = vec9.as_ptr().cast::<u8>();
                                 let len9 = vec9.len();
                                 *ptr0.add(40).cast::<usize>() = len9;
                                 *ptr0.add(36).cast::<*mut u8>() = ptr9.cast_mut();
-                                match street28 {
-                                    Some(e) => {
-                                        *ptr0.add(44).cast::<u8>() = (1i32) as u8;
-                                        let vec10 = e;
-                                        let ptr10 = vec10.as_ptr().cast::<u8>();
-                                        let len10 = vec10.len();
-                                        *ptr0.add(52).cast::<usize>() = len10;
-                                        *ptr0.add(48).cast::<*mut u8>() = ptr10.cast_mut();
-                                    }
-                                    None => {
-                                        *ptr0.add(44).cast::<u8>() = (0i32) as u8;
-                                    }
-                                };
-                                let vec11 = city8;
+                                let vec10 = city8;
+                                let ptr10 = vec10.as_ptr().cast::<u8>();
+                                let len10 = vec10.len();
+                                *ptr0.add(48).cast::<usize>() = len10;
+                                *ptr0.add(44).cast::<*mut u8>() = ptr10.cast_mut();
+                                let vec11 = state_or_region8;
                                 let ptr11 = vec11.as_ptr().cast::<u8>();
                                 let len11 = vec11.len();
-                                *ptr0.add(60).cast::<usize>() = len11;
-                                *ptr0.add(56).cast::<*mut u8>() = ptr11.cast_mut();
-                                let vec12 = state_or_region8;
+                                *ptr0.add(56).cast::<usize>() = len11;
+                                *ptr0.add(52).cast::<*mut u8>() = ptr11.cast_mut();
+                                let vec12 = country8;
                                 let ptr12 = vec12.as_ptr().cast::<u8>();
                                 let len12 = vec12.len();
-                                *ptr0.add(68).cast::<usize>() = len12;
-                                *ptr0.add(64).cast::<*mut u8>() = ptr12.cast_mut();
-                                let vec13 = country8;
+                                *ptr0.add(64).cast::<usize>() = len12;
+                                *ptr0.add(60).cast::<*mut u8>() = ptr12.cast_mut();
+                                let vec13 = postal_code8;
                                 let ptr13 = vec13.as_ptr().cast::<u8>();
                                 let len13 = vec13.len();
-                                *ptr0.add(76).cast::<usize>() = len13;
-                                *ptr0.add(72).cast::<*mut u8>() = ptr13.cast_mut();
-                                let vec14 = postal_code8;
-                                let ptr14 = vec14.as_ptr().cast::<u8>();
-                                let len14 = vec14.len();
-                                *ptr0.add(84).cast::<usize>() = len14;
-                                *ptr0.add(80).cast::<*mut u8>() = ptr14.cast_mut();
+                                *ptr0.add(72).cast::<usize>() = len13;
+                                *ptr0.add(68).cast::<*mut u8>() = ptr13.cast_mut();
                                 match name8 {
+                                    Some(e) => {
+                                        *ptr0.add(76).cast::<u8>() = (1i32) as u8;
+                                        let vec14 = e;
+                                        let ptr14 = vec14.as_ptr().cast::<u8>();
+                                        let len14 = vec14.len();
+                                        *ptr0.add(84).cast::<usize>() = len14;
+                                        *ptr0.add(80).cast::<*mut u8>() = ptr14.cast_mut();
+                                    }
+                                    None => {
+                                        *ptr0.add(76).cast::<u8>() = (0i32) as u8;
+                                    }
+                                };
+                                match phone_number8 {
                                     Some(e) => {
                                         *ptr0.add(88).cast::<u8>() = (1i32) as u8;
                                         let vec15 = e;
@@ -4555,32 +4351,6 @@ pub mod golem {
                                         *ptr0.add(88).cast::<u8>() = (0i32) as u8;
                                     }
                                 };
-                                match business_name8 {
-                                    Some(e) => {
-                                        *ptr0.add(100).cast::<u8>() = (1i32) as u8;
-                                        let vec16 = e;
-                                        let ptr16 = vec16.as_ptr().cast::<u8>();
-                                        let len16 = vec16.len();
-                                        *ptr0.add(108).cast::<usize>() = len16;
-                                        *ptr0.add(104).cast::<*mut u8>() = ptr16.cast_mut();
-                                    }
-                                    None => {
-                                        *ptr0.add(100).cast::<u8>() = (0i32) as u8;
-                                    }
-                                };
-                                match phone_number8 {
-                                    Some(e) => {
-                                        *ptr0.add(112).cast::<u8>() = (1i32) as u8;
-                                        let vec17 = e;
-                                        let ptr17 = vec17.as_ptr().cast::<u8>();
-                                        let len17 = vec17.len();
-                                        *ptr0.add(120).cast::<usize>() = len17;
-                                        *ptr0.add(116).cast::<*mut u8>() = ptr17.cast_mut();
-                                    }
-                                    None => {
-                                        *ptr0.add(112).cast::<u8>() = (0i32) as u8;
-                                    }
-                                };
                             }
                             None => {
                                 *ptr0.add(32).cast::<u8>() = (0i32) as u8;
@@ -4588,108 +4358,80 @@ pub mod golem {
                         };
                         match shipping_address1 {
                             Some(e) => {
-                                *ptr0.add(124).cast::<u8>() = (1i32) as u8;
+                                *ptr0.add(100).cast::<u8>() = (1i32) as u8;
                                 let super::super::super::golem::order::api::Address {
-                                    street1: street118,
-                                    street2: street218,
-                                    city: city18,
-                                    state_or_region: state_or_region18,
-                                    country: country18,
-                                    postal_code: postal_code18,
-                                    name: name18,
-                                    business_name: business_name18,
-                                    phone_number: phone_number18,
+                                    street: street16,
+                                    city: city16,
+                                    state_or_region: state_or_region16,
+                                    country: country16,
+                                    postal_code: postal_code16,
+                                    name: name16,
+                                    phone_number: phone_number16,
                                 } = e;
-                                let vec19 = street118;
+                                let vec17 = street16;
+                                let ptr17 = vec17.as_ptr().cast::<u8>();
+                                let len17 = vec17.len();
+                                *ptr0.add(108).cast::<usize>() = len17;
+                                *ptr0.add(104).cast::<*mut u8>() = ptr17.cast_mut();
+                                let vec18 = city16;
+                                let ptr18 = vec18.as_ptr().cast::<u8>();
+                                let len18 = vec18.len();
+                                *ptr0.add(116).cast::<usize>() = len18;
+                                *ptr0.add(112).cast::<*mut u8>() = ptr18.cast_mut();
+                                let vec19 = state_or_region16;
                                 let ptr19 = vec19.as_ptr().cast::<u8>();
                                 let len19 = vec19.len();
-                                *ptr0.add(132).cast::<usize>() = len19;
-                                *ptr0.add(128).cast::<*mut u8>() = ptr19.cast_mut();
-                                match street218 {
-                                    Some(e) => {
-                                        *ptr0.add(136).cast::<u8>() = (1i32) as u8;
-                                        let vec20 = e;
-                                        let ptr20 = vec20.as_ptr().cast::<u8>();
-                                        let len20 = vec20.len();
-                                        *ptr0.add(144).cast::<usize>() = len20;
-                                        *ptr0.add(140).cast::<*mut u8>() = ptr20.cast_mut();
-                                    }
-                                    None => {
-                                        *ptr0.add(136).cast::<u8>() = (0i32) as u8;
-                                    }
-                                };
-                                let vec21 = city18;
+                                *ptr0.add(124).cast::<usize>() = len19;
+                                *ptr0.add(120).cast::<*mut u8>() = ptr19.cast_mut();
+                                let vec20 = country16;
+                                let ptr20 = vec20.as_ptr().cast::<u8>();
+                                let len20 = vec20.len();
+                                *ptr0.add(132).cast::<usize>() = len20;
+                                *ptr0.add(128).cast::<*mut u8>() = ptr20.cast_mut();
+                                let vec21 = postal_code16;
                                 let ptr21 = vec21.as_ptr().cast::<u8>();
                                 let len21 = vec21.len();
-                                *ptr0.add(152).cast::<usize>() = len21;
-                                *ptr0.add(148).cast::<*mut u8>() = ptr21.cast_mut();
-                                let vec22 = state_or_region18;
-                                let ptr22 = vec22.as_ptr().cast::<u8>();
-                                let len22 = vec22.len();
-                                *ptr0.add(160).cast::<usize>() = len22;
-                                *ptr0.add(156).cast::<*mut u8>() = ptr22.cast_mut();
-                                let vec23 = country18;
-                                let ptr23 = vec23.as_ptr().cast::<u8>();
-                                let len23 = vec23.len();
-                                *ptr0.add(168).cast::<usize>() = len23;
-                                *ptr0.add(164).cast::<*mut u8>() = ptr23.cast_mut();
-                                let vec24 = postal_code18;
-                                let ptr24 = vec24.as_ptr().cast::<u8>();
-                                let len24 = vec24.len();
-                                *ptr0.add(176).cast::<usize>() = len24;
-                                *ptr0.add(172).cast::<*mut u8>() = ptr24.cast_mut();
-                                match name18 {
+                                *ptr0.add(140).cast::<usize>() = len21;
+                                *ptr0.add(136).cast::<*mut u8>() = ptr21.cast_mut();
+                                match name16 {
                                     Some(e) => {
-                                        *ptr0.add(180).cast::<u8>() = (1i32) as u8;
-                                        let vec25 = e;
-                                        let ptr25 = vec25.as_ptr().cast::<u8>();
-                                        let len25 = vec25.len();
-                                        *ptr0.add(188).cast::<usize>() = len25;
-                                        *ptr0.add(184).cast::<*mut u8>() = ptr25.cast_mut();
+                                        *ptr0.add(144).cast::<u8>() = (1i32) as u8;
+                                        let vec22 = e;
+                                        let ptr22 = vec22.as_ptr().cast::<u8>();
+                                        let len22 = vec22.len();
+                                        *ptr0.add(152).cast::<usize>() = len22;
+                                        *ptr0.add(148).cast::<*mut u8>() = ptr22.cast_mut();
                                     }
                                     None => {
-                                        *ptr0.add(180).cast::<u8>() = (0i32) as u8;
+                                        *ptr0.add(144).cast::<u8>() = (0i32) as u8;
                                     }
                                 };
-                                match business_name18 {
+                                match phone_number16 {
                                     Some(e) => {
-                                        *ptr0.add(192).cast::<u8>() = (1i32) as u8;
-                                        let vec26 = e;
-                                        let ptr26 = vec26.as_ptr().cast::<u8>();
-                                        let len26 = vec26.len();
-                                        *ptr0.add(200).cast::<usize>() = len26;
-                                        *ptr0.add(196).cast::<*mut u8>() = ptr26.cast_mut();
+                                        *ptr0.add(156).cast::<u8>() = (1i32) as u8;
+                                        let vec23 = e;
+                                        let ptr23 = vec23.as_ptr().cast::<u8>();
+                                        let len23 = vec23.len();
+                                        *ptr0.add(164).cast::<usize>() = len23;
+                                        *ptr0.add(160).cast::<*mut u8>() = ptr23.cast_mut();
                                     }
                                     None => {
-                                        *ptr0.add(192).cast::<u8>() = (0i32) as u8;
-                                    }
-                                };
-                                match phone_number18 {
-                                    Some(e) => {
-                                        *ptr0.add(204).cast::<u8>() = (1i32) as u8;
-                                        let vec27 = e;
-                                        let ptr27 = vec27.as_ptr().cast::<u8>();
-                                        let len27 = vec27.len();
-                                        *ptr0.add(212).cast::<usize>() = len27;
-                                        *ptr0.add(208).cast::<*mut u8>() = ptr27.cast_mut();
-                                    }
-                                    None => {
-                                        *ptr0.add(204).cast::<u8>() = (0i32) as u8;
+                                        *ptr0.add(156).cast::<u8>() = (0i32) as u8;
                                     }
                                 };
                             }
                             None => {
-                                *ptr0.add(124).cast::<u8>() = (0i32) as u8;
+                                *ptr0.add(100).cast::<u8>() = (0i32) as u8;
                             }
                         };
-                        *ptr0.add(216).cast::<f32>() = _rt::as_f32(total1);
-                        let vec28 = currency1;
-                        let ptr28 = vec28.as_ptr().cast::<u8>();
-                        let len28 = vec28.len();
-                        *ptr0.add(224).cast::<usize>() = len28;
-                        *ptr0.add(220).cast::<*mut u8>() = ptr28.cast_mut();
-                        *ptr0.add(232).cast::<i64>() = _rt::as_i64(timestamp1);
-                        let ptr29 = ret_area.0.as_mut_ptr().cast::<u8>();
+                        *ptr0.add(168).cast::<f32>() = _rt::as_f32(total1);
+                        let vec24 = currency1;
+                        let ptr24 = vec24.as_ptr().cast::<u8>();
+                        let len24 = vec24.len();
+                        *ptr0.add(176).cast::<usize>() = len24;
+                        *ptr0.add(172).cast::<*mut u8>() = ptr24.cast_mut();
+                        *ptr0.add(184).cast::<i64>() = _rt::as_i64(timestamp1);
+                        let ptr25 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
                         #[link(wasm_import_module = "golem:order-stub/stub-order")]
                         extern "C" {
@@ -4701,44 +4443,44 @@ pub mod golem {
                         fn wit_import(_: *mut u8, _: *mut u8) {
                             unreachable!()
                         }
-                        wit_import(ptr0, ptr29);
-                        let l30 = i32::from(*ptr29.add(0).cast::<u8>());
+                        wit_import(ptr0, ptr25);
+                        let l26 = i32::from(*ptr25.add(0).cast::<u8>());
                         if layout7.size() != 0 {
                             _rt::alloc::dealloc(result7.cast(), layout7);
                         }
-                        match l30 {
+                        match l26 {
                             0 => {
                                 let e = ();
                                 Ok(e)
                             }
                             1 => {
                                 let e = {
-                                    let l31 = i32::from(*ptr29.add(4).cast::<u8>());
-                                    use super::super::super::golem::order::api::InitOrderError as V36;
-                                    let v36 = match l31 {
+                                    let l27 = i32::from(*ptr25.add(4).cast::<u8>());
+                                    use super::super::super::golem::order::api::InitOrderError as V32;
+                                    let v32 = match l27 {
                                         n => {
                                             debug_assert_eq!(n, 0, "invalid enum discriminant");
-                                            let e36 = {
-                                                let l32 = *ptr29.add(8).cast::<*mut u8>();
-                                                let l33 = *ptr29.add(12).cast::<usize>();
-                                                let len34 = l33;
-                                                let bytes34 = _rt::Vec::from_raw_parts(
-                                                    l32.cast(),
-                                                    len34,
-                                                    len34,
+                                            let e32 = {
+                                                let l28 = *ptr25.add(8).cast::<*mut u8>();
+                                                let l29 = *ptr25.add(12).cast::<usize>();
+                                                let len30 = l29;
+                                                let bytes30 = _rt::Vec::from_raw_parts(
+                                                    l28.cast(),
+                                                    len30,
+                                                    len30,
                                                 );
-                                                let l35 = i32::from(*ptr29.add(16).cast::<u8>());
+                                                let l31 = i32::from(*ptr25.add(16).cast::<u8>());
 
                                                 super::super::super::golem::order::api::ActionNotAllowedError{
-                                  message: _rt::string_lift(bytes34),
-                                  status: super::super::super::golem::order::api::OrderStatus::_lift(l35 as u8),
+                                  message: _rt::string_lift(bytes30),
+                                  status: super::super::super::golem::order::api::OrderStatus::_lift(l31 as u8),
                                 }
                                             };
-                                            V36::ActionNotAllowed(e36)
+                                            V32::ActionNotAllowed(e32)
                                         }
                                     };
 
-                                    v36
+                                    v32
                                 };
                                 Err(e)
                             }
@@ -4752,8 +4494,8 @@ pub mod golem {
                 pub fn initialize_order(&self, data: &CreateOrder) -> FutureInitializeOrderResult {
                     unsafe {
                         #[repr(align(8))]
-                        struct RetArea([::core::mem::MaybeUninit<u8>; 240]);
-                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 240]);
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 192]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 192]);
                         let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                         *ptr0.add(0).cast::<i32>() = (self).handle() as i32;
                         let super::super::super::golem::order::api::CreateOrder {
@@ -4820,55 +4562,53 @@ pub mod golem {
                             Some(e) => {
                                 *ptr0.add(32).cast::<u8>() = (1i32) as u8;
                                 let super::super::super::golem::order::api::Address {
-                                    street1: street18,
-                                    street2: street28,
+                                    street: street8,
                                     city: city8,
                                     state_or_region: state_or_region8,
                                     country: country8,
                                     postal_code: postal_code8,
                                     name: name8,
-                                    business_name: business_name8,
                                     phone_number: phone_number8,
                                 } = e;
-                                let vec9 = street18;
+                                let vec9 = street8;
                                 let ptr9 = vec9.as_ptr().cast::<u8>();
                                 let len9 = vec9.len();
                                 *ptr0.add(40).cast::<usize>() = len9;
                                 *ptr0.add(36).cast::<*mut u8>() = ptr9.cast_mut();
-                                match street28 {
-                                    Some(e) => {
-                                        *ptr0.add(44).cast::<u8>() = (1i32) as u8;
-                                        let vec10 = e;
-                                        let ptr10 = vec10.as_ptr().cast::<u8>();
-                                        let len10 = vec10.len();
-                                        *ptr0.add(52).cast::<usize>() = len10;
-                                        *ptr0.add(48).cast::<*mut u8>() = ptr10.cast_mut();
-                                    }
-                                    None => {
-                                        *ptr0.add(44).cast::<u8>() = (0i32) as u8;
-                                    }
-                                };
-                                let vec11 = city8;
+                                let vec10 = city8;
+                                let ptr10 = vec10.as_ptr().cast::<u8>();
+                                let len10 = vec10.len();
+                                *ptr0.add(48).cast::<usize>() = len10;
+                                *ptr0.add(44).cast::<*mut u8>() = ptr10.cast_mut();
+                                let vec11 = state_or_region8;
                                 let ptr11 = vec11.as_ptr().cast::<u8>();
                                 let len11 = vec11.len();
-                                *ptr0.add(60).cast::<usize>() = len11;
-                                *ptr0.add(56).cast::<*mut u8>() = ptr11.cast_mut();
-                                let vec12 = state_or_region8;
+                                *ptr0.add(56).cast::<usize>() = len11;
+                                *ptr0.add(52).cast::<*mut u8>() = ptr11.cast_mut();
+                                let vec12 = country8;
                                 let ptr12 = vec12.as_ptr().cast::<u8>();
                                 let len12 = vec12.len();
-                                *ptr0.add(68).cast::<usize>() = len12;
-                                *ptr0.add(64).cast::<*mut u8>() = ptr12.cast_mut();
-                                let vec13 = country8;
+                                *ptr0.add(64).cast::<usize>() = len12;
+                                *ptr0.add(60).cast::<*mut u8>() = ptr12.cast_mut();
+                                let vec13 = postal_code8;
                                 let ptr13 = vec13.as_ptr().cast::<u8>();
                                 let len13 = vec13.len();
-                                *ptr0.add(76).cast::<usize>() = len13;
-                                *ptr0.add(72).cast::<*mut u8>() = ptr13.cast_mut();
-                                let vec14 = postal_code8;
-                                let ptr14 = vec14.as_ptr().cast::<u8>();
-                                let len14 = vec14.len();
-                                *ptr0.add(84).cast::<usize>() = len14;
-                                *ptr0.add(80).cast::<*mut u8>() = ptr14.cast_mut();
+                                *ptr0.add(72).cast::<usize>() = len13;
+                                *ptr0.add(68).cast::<*mut u8>() = ptr13.cast_mut();
                                 match name8 {
+                                    Some(e) => {
+                                        *ptr0.add(76).cast::<u8>() = (1i32) as u8;
+                                        let vec14 = e;
+                                        let ptr14 = vec14.as_ptr().cast::<u8>();
+                                        let len14 = vec14.len();
+                                        *ptr0.add(84).cast::<usize>() = len14;
+                                        *ptr0.add(80).cast::<*mut u8>() = ptr14.cast_mut();
+                                    }
+                                    None => {
+                                        *ptr0.add(76).cast::<u8>() = (0i32) as u8;
+                                    }
+                                };
+                                match phone_number8 {
                                     Some(e) => {
                                         *ptr0.add(88).cast::<u8>() = (1i32) as u8;
                                         let vec15 = e;
@@ -4881,32 +4621,6 @@ pub mod golem {
                                         *ptr0.add(88).cast::<u8>() = (0i32) as u8;
                                     }
                                 };
-                                match business_name8 {
-                                    Some(e) => {
-                                        *ptr0.add(100).cast::<u8>() = (1i32) as u8;
-                                        let vec16 = e;
-                                        let ptr16 = vec16.as_ptr().cast::<u8>();
-                                        let len16 = vec16.len();
-                                        *ptr0.add(108).cast::<usize>() = len16;
-                                        *ptr0.add(104).cast::<*mut u8>() = ptr16.cast_mut();
-                                    }
-                                    None => {
-                                        *ptr0.add(100).cast::<u8>() = (0i32) as u8;
-                                    }
-                                };
-                                match phone_number8 {
-                                    Some(e) => {
-                                        *ptr0.add(112).cast::<u8>() = (1i32) as u8;
-                                        let vec17 = e;
-                                        let ptr17 = vec17.as_ptr().cast::<u8>();
-                                        let len17 = vec17.len();
-                                        *ptr0.add(120).cast::<usize>() = len17;
-                                        *ptr0.add(116).cast::<*mut u8>() = ptr17.cast_mut();
-                                    }
-                                    None => {
-                                        *ptr0.add(112).cast::<u8>() = (0i32) as u8;
-                                    }
-                                };
                             }
                             None => {
                                 *ptr0.add(32).cast::<u8>() = (0i32) as u8;
@@ -4914,107 +4628,79 @@ pub mod golem {
                         };
                         match shipping_address1 {
                             Some(e) => {
-                                *ptr0.add(124).cast::<u8>() = (1i32) as u8;
+                                *ptr0.add(100).cast::<u8>() = (1i32) as u8;
                                 let super::super::super::golem::order::api::Address {
-                                    street1: street118,
-                                    street2: street218,
-                                    city: city18,
-                                    state_or_region: state_or_region18,
-                                    country: country18,
-                                    postal_code: postal_code18,
-                                    name: name18,
-                                    business_name: business_name18,
-                                    phone_number: phone_number18,
+                                    street: street16,
+                                    city: city16,
+                                    state_or_region: state_or_region16,
+                                    country: country16,
+                                    postal_code: postal_code16,
+                                    name: name16,
+                                    phone_number: phone_number16,
                                 } = e;
-                                let vec19 = street118;
+                                let vec17 = street16;
+                                let ptr17 = vec17.as_ptr().cast::<u8>();
+                                let len17 = vec17.len();
+                                *ptr0.add(108).cast::<usize>() = len17;
+                                *ptr0.add(104).cast::<*mut u8>() = ptr17.cast_mut();
+                                let vec18 = city16;
+                                let ptr18 = vec18.as_ptr().cast::<u8>();
+                                let len18 = vec18.len();
+                                *ptr0.add(116).cast::<usize>() = len18;
+                                *ptr0.add(112).cast::<*mut u8>() = ptr18.cast_mut();
+                                let vec19 = state_or_region16;
                                 let ptr19 = vec19.as_ptr().cast::<u8>();
                                 let len19 = vec19.len();
-                                *ptr0.add(132).cast::<usize>() = len19;
-                                *ptr0.add(128).cast::<*mut u8>() = ptr19.cast_mut();
-                                match street218 {
-                                    Some(e) => {
-                                        *ptr0.add(136).cast::<u8>() = (1i32) as u8;
-                                        let vec20 = e;
-                                        let ptr20 = vec20.as_ptr().cast::<u8>();
-                                        let len20 = vec20.len();
-                                        *ptr0.add(144).cast::<usize>() = len20;
-                                        *ptr0.add(140).cast::<*mut u8>() = ptr20.cast_mut();
-                                    }
-                                    None => {
-                                        *ptr0.add(136).cast::<u8>() = (0i32) as u8;
-                                    }
-                                };
-                                let vec21 = city18;
+                                *ptr0.add(124).cast::<usize>() = len19;
+                                *ptr0.add(120).cast::<*mut u8>() = ptr19.cast_mut();
+                                let vec20 = country16;
+                                let ptr20 = vec20.as_ptr().cast::<u8>();
+                                let len20 = vec20.len();
+                                *ptr0.add(132).cast::<usize>() = len20;
+                                *ptr0.add(128).cast::<*mut u8>() = ptr20.cast_mut();
+                                let vec21 = postal_code16;
                                 let ptr21 = vec21.as_ptr().cast::<u8>();
                                 let len21 = vec21.len();
-                                *ptr0.add(152).cast::<usize>() = len21;
-                                *ptr0.add(148).cast::<*mut u8>() = ptr21.cast_mut();
-                                let vec22 = state_or_region18;
-                                let ptr22 = vec22.as_ptr().cast::<u8>();
-                                let len22 = vec22.len();
-                                *ptr0.add(160).cast::<usize>() = len22;
-                                *ptr0.add(156).cast::<*mut u8>() = ptr22.cast_mut();
-                                let vec23 = country18;
-                                let ptr23 = vec23.as_ptr().cast::<u8>();
-                                let len23 = vec23.len();
-                                *ptr0.add(168).cast::<usize>() = len23;
-                                *ptr0.add(164).cast::<*mut u8>() = ptr23.cast_mut();
-                                let vec24 = postal_code18;
-                                let ptr24 = vec24.as_ptr().cast::<u8>();
-                                let len24 = vec24.len();
-                                *ptr0.add(176).cast::<usize>() = len24;
-                                *ptr0.add(172).cast::<*mut u8>() = ptr24.cast_mut();
-                                match name18 {
+                                *ptr0.add(140).cast::<usize>() = len21;
+                                *ptr0.add(136).cast::<*mut u8>() = ptr21.cast_mut();
+                                match name16 {
                                     Some(e) => {
-                                        *ptr0.add(180).cast::<u8>() = (1i32) as u8;
-                                        let vec25 = e;
-                                        let ptr25 = vec25.as_ptr().cast::<u8>();
-                                        let len25 = vec25.len();
-                                        *ptr0.add(188).cast::<usize>() = len25;
-                                        *ptr0.add(184).cast::<*mut u8>() = ptr25.cast_mut();
+                                        *ptr0.add(144).cast::<u8>() = (1i32) as u8;
+                                        let vec22 = e;
+                                        let ptr22 = vec22.as_ptr().cast::<u8>();
+                                        let len22 = vec22.len();
+                                        *ptr0.add(152).cast::<usize>() = len22;
+                                        *ptr0.add(148).cast::<*mut u8>() = ptr22.cast_mut();
                                     }
                                     None => {
-                                        *ptr0.add(180).cast::<u8>() = (0i32) as u8;
+                                        *ptr0.add(144).cast::<u8>() = (0i32) as u8;
                                     }
                                 };
-                                match business_name18 {
+                                match phone_number16 {
                                     Some(e) => {
-                                        *ptr0.add(192).cast::<u8>() = (1i32) as u8;
-                                        let vec26 = e;
-                                        let ptr26 = vec26.as_ptr().cast::<u8>();
-                                        let len26 = vec26.len();
-                                        *ptr0.add(200).cast::<usize>() = len26;
-                                        *ptr0.add(196).cast::<*mut u8>() = ptr26.cast_mut();
+                                        *ptr0.add(156).cast::<u8>() = (1i32) as u8;
+                                        let vec23 = e;
+                                        let ptr23 = vec23.as_ptr().cast::<u8>();
+                                        let len23 = vec23.len();
+                                        *ptr0.add(164).cast::<usize>() = len23;
+                                        *ptr0.add(160).cast::<*mut u8>() = ptr23.cast_mut();
                                     }
                                     None => {
-                                        *ptr0.add(192).cast::<u8>() = (0i32) as u8;
-                                    }
-                                };
-                                match phone_number18 {
-                                    Some(e) => {
-                                        *ptr0.add(204).cast::<u8>() = (1i32) as u8;
-                                        let vec27 = e;
-                                        let ptr27 = vec27.as_ptr().cast::<u8>();
-                                        let len27 = vec27.len();
-                                        *ptr0.add(212).cast::<usize>() = len27;
-                                        *ptr0.add(208).cast::<*mut u8>() = ptr27.cast_mut();
-                                    }
-                                    None => {
-                                        *ptr0.add(204).cast::<u8>() = (0i32) as u8;
+                                        *ptr0.add(156).cast::<u8>() = (0i32) as u8;
                                     }
                                 };
                             }
                             None => {
-                                *ptr0.add(124).cast::<u8>() = (0i32) as u8;
+                                *ptr0.add(100).cast::<u8>() = (0i32) as u8;
                             }
                         };
-                        *ptr0.add(216).cast::<f32>() = _rt::as_f32(total1);
-                        let vec28 = currency1;
-                        let ptr28 = vec28.as_ptr().cast::<u8>();
-                        let len28 = vec28.len();
-                        *ptr0.add(224).cast::<usize>() = len28;
-                        *ptr0.add(220).cast::<*mut u8>() = ptr28.cast_mut();
-                        *ptr0.add(232).cast::<i64>() = _rt::as_i64(timestamp1);
+                        *ptr0.add(168).cast::<f32>() = _rt::as_f32(total1);
+                        let vec24 = currency1;
+                        let ptr24 = vec24.as_ptr().cast::<u8>();
+                        let len24 = vec24.len();
+                        *ptr0.add(176).cast::<usize>() = len24;
+                        *ptr0.add(172).cast::<*mut u8>() = ptr24.cast_mut();
+                        *ptr0.add(184).cast::<i64>() = _rt::as_i64(timestamp1);
 
                         #[cfg(target_arch = "wasm32")]
                         #[link(wasm_import_module = "golem:order-stub/stub-order")]
@@ -5533,60 +5219,58 @@ pub mod golem {
                 ) -> Result<(), UpdateAddressError> {
                     unsafe {
                         #[repr(align(4))]
-                        struct RetArea([::core::mem::MaybeUninit<u8>; 92]);
-                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 92]);
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 68]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 68]);
                         let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                         *ptr0.add(0).cast::<i32>() = (self).handle() as i32;
                         let super::super::super::golem::order::api::Address {
-                            street1: street11,
-                            street2: street21,
+                            street: street1,
                             city: city1,
                             state_or_region: state_or_region1,
                             country: country1,
                             postal_code: postal_code1,
                             name: name1,
-                            business_name: business_name1,
                             phone_number: phone_number1,
                         } = address;
-                        let vec2 = street11;
+                        let vec2 = street1;
                         let ptr2 = vec2.as_ptr().cast::<u8>();
                         let len2 = vec2.len();
                         *ptr0.add(8).cast::<usize>() = len2;
                         *ptr0.add(4).cast::<*mut u8>() = ptr2.cast_mut();
-                        match street21 {
-                            Some(e) => {
-                                *ptr0.add(12).cast::<u8>() = (1i32) as u8;
-                                let vec3 = e;
-                                let ptr3 = vec3.as_ptr().cast::<u8>();
-                                let len3 = vec3.len();
-                                *ptr0.add(20).cast::<usize>() = len3;
-                                *ptr0.add(16).cast::<*mut u8>() = ptr3.cast_mut();
-                            }
-                            None => {
-                                *ptr0.add(12).cast::<u8>() = (0i32) as u8;
-                            }
-                        };
-                        let vec4 = city1;
+                        let vec3 = city1;
+                        let ptr3 = vec3.as_ptr().cast::<u8>();
+                        let len3 = vec3.len();
+                        *ptr0.add(16).cast::<usize>() = len3;
+                        *ptr0.add(12).cast::<*mut u8>() = ptr3.cast_mut();
+                        let vec4 = state_or_region1;
                         let ptr4 = vec4.as_ptr().cast::<u8>();
                         let len4 = vec4.len();
-                        *ptr0.add(28).cast::<usize>() = len4;
-                        *ptr0.add(24).cast::<*mut u8>() = ptr4.cast_mut();
-                        let vec5 = state_or_region1;
+                        *ptr0.add(24).cast::<usize>() = len4;
+                        *ptr0.add(20).cast::<*mut u8>() = ptr4.cast_mut();
+                        let vec5 = country1;
                         let ptr5 = vec5.as_ptr().cast::<u8>();
                         let len5 = vec5.len();
-                        *ptr0.add(36).cast::<usize>() = len5;
-                        *ptr0.add(32).cast::<*mut u8>() = ptr5.cast_mut();
-                        let vec6 = country1;
+                        *ptr0.add(32).cast::<usize>() = len5;
+                        *ptr0.add(28).cast::<*mut u8>() = ptr5.cast_mut();
+                        let vec6 = postal_code1;
                         let ptr6 = vec6.as_ptr().cast::<u8>();
                         let len6 = vec6.len();
-                        *ptr0.add(44).cast::<usize>() = len6;
-                        *ptr0.add(40).cast::<*mut u8>() = ptr6.cast_mut();
-                        let vec7 = postal_code1;
-                        let ptr7 = vec7.as_ptr().cast::<u8>();
-                        let len7 = vec7.len();
-                        *ptr0.add(52).cast::<usize>() = len7;
-                        *ptr0.add(48).cast::<*mut u8>() = ptr7.cast_mut();
+                        *ptr0.add(40).cast::<usize>() = len6;
+                        *ptr0.add(36).cast::<*mut u8>() = ptr6.cast_mut();
                         match name1 {
+                            Some(e) => {
+                                *ptr0.add(44).cast::<u8>() = (1i32) as u8;
+                                let vec7 = e;
+                                let ptr7 = vec7.as_ptr().cast::<u8>();
+                                let len7 = vec7.len();
+                                *ptr0.add(52).cast::<usize>() = len7;
+                                *ptr0.add(48).cast::<*mut u8>() = ptr7.cast_mut();
+                            }
+                            None => {
+                                *ptr0.add(44).cast::<u8>() = (0i32) as u8;
+                            }
+                        };
+                        match phone_number1 {
                             Some(e) => {
                                 *ptr0.add(56).cast::<u8>() = (1i32) as u8;
                                 let vec8 = e;
@@ -5599,33 +5283,7 @@ pub mod golem {
                                 *ptr0.add(56).cast::<u8>() = (0i32) as u8;
                             }
                         };
-                        match business_name1 {
-                            Some(e) => {
-                                *ptr0.add(68).cast::<u8>() = (1i32) as u8;
-                                let vec9 = e;
-                                let ptr9 = vec9.as_ptr().cast::<u8>();
-                                let len9 = vec9.len();
-                                *ptr0.add(76).cast::<usize>() = len9;
-                                *ptr0.add(72).cast::<*mut u8>() = ptr9.cast_mut();
-                            }
-                            None => {
-                                *ptr0.add(68).cast::<u8>() = (0i32) as u8;
-                            }
-                        };
-                        match phone_number1 {
-                            Some(e) => {
-                                *ptr0.add(80).cast::<u8>() = (1i32) as u8;
-                                let vec10 = e;
-                                let ptr10 = vec10.as_ptr().cast::<u8>();
-                                let len10 = vec10.len();
-                                *ptr0.add(88).cast::<usize>() = len10;
-                                *ptr0.add(84).cast::<*mut u8>() = ptr10.cast_mut();
-                            }
-                            None => {
-                                *ptr0.add(80).cast::<u8>() = (0i32) as u8;
-                            }
-                        };
-                        let ptr11 = ret_area.0.as_mut_ptr().cast::<u8>();
+                        let ptr9 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
                         #[link(wasm_import_module = "golem:order-stub/stub-order")]
                         extern "C" {
@@ -5637,58 +5295,58 @@ pub mod golem {
                         fn wit_import(_: *mut u8, _: *mut u8) {
                             unreachable!()
                         }
-                        wit_import(ptr0, ptr11);
-                        let l12 = i32::from(*ptr11.add(0).cast::<u8>());
-                        match l12 {
+                        wit_import(ptr0, ptr9);
+                        let l10 = i32::from(*ptr9.add(0).cast::<u8>());
+                        match l10 {
                             0 => {
                                 let e = ();
                                 Ok(e)
                             }
                             1 => {
                                 let e = {
-                                    let l13 = i32::from(*ptr11.add(4).cast::<u8>());
-                                    use super::super::super::golem::order::api::UpdateAddressError as V21;
-                                    let v21 = match l13 {
+                                    let l11 = i32::from(*ptr9.add(4).cast::<u8>());
+                                    use super::super::super::golem::order::api::UpdateAddressError as V19;
+                                    let v19 = match l11 {
                                         0 => {
-                                            let e21 = {
-                                                let l14 = *ptr11.add(8).cast::<*mut u8>();
-                                                let l15 = *ptr11.add(12).cast::<usize>();
-                                                let len16 = l15;
-                                                let bytes16 = _rt::Vec::from_raw_parts(
-                                                    l14.cast(),
-                                                    len16,
-                                                    len16,
+                                            let e19 = {
+                                                let l12 = *ptr9.add(8).cast::<*mut u8>();
+                                                let l13 = *ptr9.add(12).cast::<usize>();
+                                                let len14 = l13;
+                                                let bytes14 = _rt::Vec::from_raw_parts(
+                                                    l12.cast(),
+                                                    len14,
+                                                    len14,
                                                 );
 
                                                 super::super::super::golem::order::api::AddressNotValidError{
-                                      message: _rt::string_lift(bytes16),
+                                      message: _rt::string_lift(bytes14),
                                     }
                                             };
-                                            V21::AddressNotValid(e21)
+                                            V19::AddressNotValid(e19)
                                         }
                                         n => {
                                             debug_assert_eq!(n, 1, "invalid enum discriminant");
-                                            let e21 = {
-                                                let l17 = *ptr11.add(8).cast::<*mut u8>();
-                                                let l18 = *ptr11.add(12).cast::<usize>();
-                                                let len19 = l18;
-                                                let bytes19 = _rt::Vec::from_raw_parts(
-                                                    l17.cast(),
-                                                    len19,
-                                                    len19,
+                                            let e19 = {
+                                                let l15 = *ptr9.add(8).cast::<*mut u8>();
+                                                let l16 = *ptr9.add(12).cast::<usize>();
+                                                let len17 = l16;
+                                                let bytes17 = _rt::Vec::from_raw_parts(
+                                                    l15.cast(),
+                                                    len17,
+                                                    len17,
                                                 );
-                                                let l20 = i32::from(*ptr11.add(16).cast::<u8>());
+                                                let l18 = i32::from(*ptr9.add(16).cast::<u8>());
 
                                                 super::super::super::golem::order::api::ActionNotAllowedError{
-                                      message: _rt::string_lift(bytes19),
-                                      status: super::super::super::golem::order::api::OrderStatus::_lift(l20 as u8),
+                                      message: _rt::string_lift(bytes17),
+                                      status: super::super::super::golem::order::api::OrderStatus::_lift(l18 as u8),
                                     }
                                             };
-                                            V21::ActionNotAllowed(e21)
+                                            V19::ActionNotAllowed(e19)
                                         }
                                     };
 
-                                    v21
+                                    v19
                                 };
                                 Err(e)
                             }
@@ -5705,60 +5363,58 @@ pub mod golem {
                 ) -> FutureUpdateShippingAddressResult {
                     unsafe {
                         #[repr(align(4))]
-                        struct RetArea([::core::mem::MaybeUninit<u8>; 92]);
-                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 92]);
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 68]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 68]);
                         let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                         *ptr0.add(0).cast::<i32>() = (self).handle() as i32;
                         let super::super::super::golem::order::api::Address {
-                            street1: street11,
-                            street2: street21,
+                            street: street1,
                             city: city1,
                             state_or_region: state_or_region1,
                             country: country1,
                             postal_code: postal_code1,
                             name: name1,
-                            business_name: business_name1,
                             phone_number: phone_number1,
                         } = address;
-                        let vec2 = street11;
+                        let vec2 = street1;
                         let ptr2 = vec2.as_ptr().cast::<u8>();
                         let len2 = vec2.len();
                         *ptr0.add(8).cast::<usize>() = len2;
                         *ptr0.add(4).cast::<*mut u8>() = ptr2.cast_mut();
-                        match street21 {
-                            Some(e) => {
-                                *ptr0.add(12).cast::<u8>() = (1i32) as u8;
-                                let vec3 = e;
-                                let ptr3 = vec3.as_ptr().cast::<u8>();
-                                let len3 = vec3.len();
-                                *ptr0.add(20).cast::<usize>() = len3;
-                                *ptr0.add(16).cast::<*mut u8>() = ptr3.cast_mut();
-                            }
-                            None => {
-                                *ptr0.add(12).cast::<u8>() = (0i32) as u8;
-                            }
-                        };
-                        let vec4 = city1;
+                        let vec3 = city1;
+                        let ptr3 = vec3.as_ptr().cast::<u8>();
+                        let len3 = vec3.len();
+                        *ptr0.add(16).cast::<usize>() = len3;
+                        *ptr0.add(12).cast::<*mut u8>() = ptr3.cast_mut();
+                        let vec4 = state_or_region1;
                         let ptr4 = vec4.as_ptr().cast::<u8>();
                         let len4 = vec4.len();
-                        *ptr0.add(28).cast::<usize>() = len4;
-                        *ptr0.add(24).cast::<*mut u8>() = ptr4.cast_mut();
-                        let vec5 = state_or_region1;
+                        *ptr0.add(24).cast::<usize>() = len4;
+                        *ptr0.add(20).cast::<*mut u8>() = ptr4.cast_mut();
+                        let vec5 = country1;
                         let ptr5 = vec5.as_ptr().cast::<u8>();
                         let len5 = vec5.len();
-                        *ptr0.add(36).cast::<usize>() = len5;
-                        *ptr0.add(32).cast::<*mut u8>() = ptr5.cast_mut();
-                        let vec6 = country1;
+                        *ptr0.add(32).cast::<usize>() = len5;
+                        *ptr0.add(28).cast::<*mut u8>() = ptr5.cast_mut();
+                        let vec6 = postal_code1;
                         let ptr6 = vec6.as_ptr().cast::<u8>();
                         let len6 = vec6.len();
-                        *ptr0.add(44).cast::<usize>() = len6;
-                        *ptr0.add(40).cast::<*mut u8>() = ptr6.cast_mut();
-                        let vec7 = postal_code1;
-                        let ptr7 = vec7.as_ptr().cast::<u8>();
-                        let len7 = vec7.len();
-                        *ptr0.add(52).cast::<usize>() = len7;
-                        *ptr0.add(48).cast::<*mut u8>() = ptr7.cast_mut();
+                        *ptr0.add(40).cast::<usize>() = len6;
+                        *ptr0.add(36).cast::<*mut u8>() = ptr6.cast_mut();
                         match name1 {
+                            Some(e) => {
+                                *ptr0.add(44).cast::<u8>() = (1i32) as u8;
+                                let vec7 = e;
+                                let ptr7 = vec7.as_ptr().cast::<u8>();
+                                let len7 = vec7.len();
+                                *ptr0.add(52).cast::<usize>() = len7;
+                                *ptr0.add(48).cast::<*mut u8>() = ptr7.cast_mut();
+                            }
+                            None => {
+                                *ptr0.add(44).cast::<u8>() = (0i32) as u8;
+                            }
+                        };
+                        match phone_number1 {
                             Some(e) => {
                                 *ptr0.add(56).cast::<u8>() = (1i32) as u8;
                                 let vec8 = e;
@@ -5769,32 +5425,6 @@ pub mod golem {
                             }
                             None => {
                                 *ptr0.add(56).cast::<u8>() = (0i32) as u8;
-                            }
-                        };
-                        match business_name1 {
-                            Some(e) => {
-                                *ptr0.add(68).cast::<u8>() = (1i32) as u8;
-                                let vec9 = e;
-                                let ptr9 = vec9.as_ptr().cast::<u8>();
-                                let len9 = vec9.len();
-                                *ptr0.add(76).cast::<usize>() = len9;
-                                *ptr0.add(72).cast::<*mut u8>() = ptr9.cast_mut();
-                            }
-                            None => {
-                                *ptr0.add(68).cast::<u8>() = (0i32) as u8;
-                            }
-                        };
-                        match phone_number1 {
-                            Some(e) => {
-                                *ptr0.add(80).cast::<u8>() = (1i32) as u8;
-                                let vec10 = e;
-                                let ptr10 = vec10.as_ptr().cast::<u8>();
-                                let len10 = vec10.len();
-                                *ptr0.add(88).cast::<usize>() = len10;
-                                *ptr0.add(84).cast::<*mut u8>() = ptr10.cast_mut();
-                            }
-                            None => {
-                                *ptr0.add(80).cast::<u8>() = (0i32) as u8;
                             }
                         };
                         #[cfg(target_arch = "wasm32")]
@@ -5821,60 +5451,58 @@ pub mod golem {
                 ) -> Result<(), UpdateAddressError> {
                     unsafe {
                         #[repr(align(4))]
-                        struct RetArea([::core::mem::MaybeUninit<u8>; 92]);
-                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 92]);
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 68]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 68]);
                         let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                         *ptr0.add(0).cast::<i32>() = (self).handle() as i32;
                         let super::super::super::golem::order::api::Address {
-                            street1: street11,
-                            street2: street21,
+                            street: street1,
                             city: city1,
                             state_or_region: state_or_region1,
                             country: country1,
                             postal_code: postal_code1,
                             name: name1,
-                            business_name: business_name1,
                             phone_number: phone_number1,
                         } = address;
-                        let vec2 = street11;
+                        let vec2 = street1;
                         let ptr2 = vec2.as_ptr().cast::<u8>();
                         let len2 = vec2.len();
                         *ptr0.add(8).cast::<usize>() = len2;
                         *ptr0.add(4).cast::<*mut u8>() = ptr2.cast_mut();
-                        match street21 {
-                            Some(e) => {
-                                *ptr0.add(12).cast::<u8>() = (1i32) as u8;
-                                let vec3 = e;
-                                let ptr3 = vec3.as_ptr().cast::<u8>();
-                                let len3 = vec3.len();
-                                *ptr0.add(20).cast::<usize>() = len3;
-                                *ptr0.add(16).cast::<*mut u8>() = ptr3.cast_mut();
-                            }
-                            None => {
-                                *ptr0.add(12).cast::<u8>() = (0i32) as u8;
-                            }
-                        };
-                        let vec4 = city1;
+                        let vec3 = city1;
+                        let ptr3 = vec3.as_ptr().cast::<u8>();
+                        let len3 = vec3.len();
+                        *ptr0.add(16).cast::<usize>() = len3;
+                        *ptr0.add(12).cast::<*mut u8>() = ptr3.cast_mut();
+                        let vec4 = state_or_region1;
                         let ptr4 = vec4.as_ptr().cast::<u8>();
                         let len4 = vec4.len();
-                        *ptr0.add(28).cast::<usize>() = len4;
-                        *ptr0.add(24).cast::<*mut u8>() = ptr4.cast_mut();
-                        let vec5 = state_or_region1;
+                        *ptr0.add(24).cast::<usize>() = len4;
+                        *ptr0.add(20).cast::<*mut u8>() = ptr4.cast_mut();
+                        let vec5 = country1;
                         let ptr5 = vec5.as_ptr().cast::<u8>();
                         let len5 = vec5.len();
-                        *ptr0.add(36).cast::<usize>() = len5;
-                        *ptr0.add(32).cast::<*mut u8>() = ptr5.cast_mut();
-                        let vec6 = country1;
+                        *ptr0.add(32).cast::<usize>() = len5;
+                        *ptr0.add(28).cast::<*mut u8>() = ptr5.cast_mut();
+                        let vec6 = postal_code1;
                         let ptr6 = vec6.as_ptr().cast::<u8>();
                         let len6 = vec6.len();
-                        *ptr0.add(44).cast::<usize>() = len6;
-                        *ptr0.add(40).cast::<*mut u8>() = ptr6.cast_mut();
-                        let vec7 = postal_code1;
-                        let ptr7 = vec7.as_ptr().cast::<u8>();
-                        let len7 = vec7.len();
-                        *ptr0.add(52).cast::<usize>() = len7;
-                        *ptr0.add(48).cast::<*mut u8>() = ptr7.cast_mut();
+                        *ptr0.add(40).cast::<usize>() = len6;
+                        *ptr0.add(36).cast::<*mut u8>() = ptr6.cast_mut();
                         match name1 {
+                            Some(e) => {
+                                *ptr0.add(44).cast::<u8>() = (1i32) as u8;
+                                let vec7 = e;
+                                let ptr7 = vec7.as_ptr().cast::<u8>();
+                                let len7 = vec7.len();
+                                *ptr0.add(52).cast::<usize>() = len7;
+                                *ptr0.add(48).cast::<*mut u8>() = ptr7.cast_mut();
+                            }
+                            None => {
+                                *ptr0.add(44).cast::<u8>() = (0i32) as u8;
+                            }
+                        };
+                        match phone_number1 {
                             Some(e) => {
                                 *ptr0.add(56).cast::<u8>() = (1i32) as u8;
                                 let vec8 = e;
@@ -5887,33 +5515,7 @@ pub mod golem {
                                 *ptr0.add(56).cast::<u8>() = (0i32) as u8;
                             }
                         };
-                        match business_name1 {
-                            Some(e) => {
-                                *ptr0.add(68).cast::<u8>() = (1i32) as u8;
-                                let vec9 = e;
-                                let ptr9 = vec9.as_ptr().cast::<u8>();
-                                let len9 = vec9.len();
-                                *ptr0.add(76).cast::<usize>() = len9;
-                                *ptr0.add(72).cast::<*mut u8>() = ptr9.cast_mut();
-                            }
-                            None => {
-                                *ptr0.add(68).cast::<u8>() = (0i32) as u8;
-                            }
-                        };
-                        match phone_number1 {
-                            Some(e) => {
-                                *ptr0.add(80).cast::<u8>() = (1i32) as u8;
-                                let vec10 = e;
-                                let ptr10 = vec10.as_ptr().cast::<u8>();
-                                let len10 = vec10.len();
-                                *ptr0.add(88).cast::<usize>() = len10;
-                                *ptr0.add(84).cast::<*mut u8>() = ptr10.cast_mut();
-                            }
-                            None => {
-                                *ptr0.add(80).cast::<u8>() = (0i32) as u8;
-                            }
-                        };
-                        let ptr11 = ret_area.0.as_mut_ptr().cast::<u8>();
+                        let ptr9 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
                         #[link(wasm_import_module = "golem:order-stub/stub-order")]
                         extern "C" {
@@ -5925,58 +5527,58 @@ pub mod golem {
                         fn wit_import(_: *mut u8, _: *mut u8) {
                             unreachable!()
                         }
-                        wit_import(ptr0, ptr11);
-                        let l12 = i32::from(*ptr11.add(0).cast::<u8>());
-                        match l12 {
+                        wit_import(ptr0, ptr9);
+                        let l10 = i32::from(*ptr9.add(0).cast::<u8>());
+                        match l10 {
                             0 => {
                                 let e = ();
                                 Ok(e)
                             }
                             1 => {
                                 let e = {
-                                    let l13 = i32::from(*ptr11.add(4).cast::<u8>());
-                                    use super::super::super::golem::order::api::UpdateAddressError as V21;
-                                    let v21 = match l13 {
+                                    let l11 = i32::from(*ptr9.add(4).cast::<u8>());
+                                    use super::super::super::golem::order::api::UpdateAddressError as V19;
+                                    let v19 = match l11 {
                                         0 => {
-                                            let e21 = {
-                                                let l14 = *ptr11.add(8).cast::<*mut u8>();
-                                                let l15 = *ptr11.add(12).cast::<usize>();
-                                                let len16 = l15;
-                                                let bytes16 = _rt::Vec::from_raw_parts(
-                                                    l14.cast(),
-                                                    len16,
-                                                    len16,
+                                            let e19 = {
+                                                let l12 = *ptr9.add(8).cast::<*mut u8>();
+                                                let l13 = *ptr9.add(12).cast::<usize>();
+                                                let len14 = l13;
+                                                let bytes14 = _rt::Vec::from_raw_parts(
+                                                    l12.cast(),
+                                                    len14,
+                                                    len14,
                                                 );
 
                                                 super::super::super::golem::order::api::AddressNotValidError{
-                                      message: _rt::string_lift(bytes16),
+                                      message: _rt::string_lift(bytes14),
                                     }
                                             };
-                                            V21::AddressNotValid(e21)
+                                            V19::AddressNotValid(e19)
                                         }
                                         n => {
                                             debug_assert_eq!(n, 1, "invalid enum discriminant");
-                                            let e21 = {
-                                                let l17 = *ptr11.add(8).cast::<*mut u8>();
-                                                let l18 = *ptr11.add(12).cast::<usize>();
-                                                let len19 = l18;
-                                                let bytes19 = _rt::Vec::from_raw_parts(
-                                                    l17.cast(),
-                                                    len19,
-                                                    len19,
+                                            let e19 = {
+                                                let l15 = *ptr9.add(8).cast::<*mut u8>();
+                                                let l16 = *ptr9.add(12).cast::<usize>();
+                                                let len17 = l16;
+                                                let bytes17 = _rt::Vec::from_raw_parts(
+                                                    l15.cast(),
+                                                    len17,
+                                                    len17,
                                                 );
-                                                let l20 = i32::from(*ptr11.add(16).cast::<u8>());
+                                                let l18 = i32::from(*ptr9.add(16).cast::<u8>());
 
                                                 super::super::super::golem::order::api::ActionNotAllowedError{
-                                      message: _rt::string_lift(bytes19),
-                                      status: super::super::super::golem::order::api::OrderStatus::_lift(l20 as u8),
+                                      message: _rt::string_lift(bytes17),
+                                      status: super::super::super::golem::order::api::OrderStatus::_lift(l18 as u8),
                                     }
                                             };
-                                            V21::ActionNotAllowed(e21)
+                                            V19::ActionNotAllowed(e19)
                                         }
                                     };
 
-                                    v21
+                                    v19
                                 };
                                 Err(e)
                             }
@@ -5993,60 +5595,58 @@ pub mod golem {
                 ) -> FutureUpdateBillingAddressResult {
                     unsafe {
                         #[repr(align(4))]
-                        struct RetArea([::core::mem::MaybeUninit<u8>; 92]);
-                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 92]);
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 68]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 68]);
                         let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                         *ptr0.add(0).cast::<i32>() = (self).handle() as i32;
                         let super::super::super::golem::order::api::Address {
-                            street1: street11,
-                            street2: street21,
+                            street: street1,
                             city: city1,
                             state_or_region: state_or_region1,
                             country: country1,
                             postal_code: postal_code1,
                             name: name1,
-                            business_name: business_name1,
                             phone_number: phone_number1,
                         } = address;
-                        let vec2 = street11;
+                        let vec2 = street1;
                         let ptr2 = vec2.as_ptr().cast::<u8>();
                         let len2 = vec2.len();
                         *ptr0.add(8).cast::<usize>() = len2;
                         *ptr0.add(4).cast::<*mut u8>() = ptr2.cast_mut();
-                        match street21 {
-                            Some(e) => {
-                                *ptr0.add(12).cast::<u8>() = (1i32) as u8;
-                                let vec3 = e;
-                                let ptr3 = vec3.as_ptr().cast::<u8>();
-                                let len3 = vec3.len();
-                                *ptr0.add(20).cast::<usize>() = len3;
-                                *ptr0.add(16).cast::<*mut u8>() = ptr3.cast_mut();
-                            }
-                            None => {
-                                *ptr0.add(12).cast::<u8>() = (0i32) as u8;
-                            }
-                        };
-                        let vec4 = city1;
+                        let vec3 = city1;
+                        let ptr3 = vec3.as_ptr().cast::<u8>();
+                        let len3 = vec3.len();
+                        *ptr0.add(16).cast::<usize>() = len3;
+                        *ptr0.add(12).cast::<*mut u8>() = ptr3.cast_mut();
+                        let vec4 = state_or_region1;
                         let ptr4 = vec4.as_ptr().cast::<u8>();
                         let len4 = vec4.len();
-                        *ptr0.add(28).cast::<usize>() = len4;
-                        *ptr0.add(24).cast::<*mut u8>() = ptr4.cast_mut();
-                        let vec5 = state_or_region1;
+                        *ptr0.add(24).cast::<usize>() = len4;
+                        *ptr0.add(20).cast::<*mut u8>() = ptr4.cast_mut();
+                        let vec5 = country1;
                         let ptr5 = vec5.as_ptr().cast::<u8>();
                         let len5 = vec5.len();
-                        *ptr0.add(36).cast::<usize>() = len5;
-                        *ptr0.add(32).cast::<*mut u8>() = ptr5.cast_mut();
-                        let vec6 = country1;
+                        *ptr0.add(32).cast::<usize>() = len5;
+                        *ptr0.add(28).cast::<*mut u8>() = ptr5.cast_mut();
+                        let vec6 = postal_code1;
                         let ptr6 = vec6.as_ptr().cast::<u8>();
                         let len6 = vec6.len();
-                        *ptr0.add(44).cast::<usize>() = len6;
-                        *ptr0.add(40).cast::<*mut u8>() = ptr6.cast_mut();
-                        let vec7 = postal_code1;
-                        let ptr7 = vec7.as_ptr().cast::<u8>();
-                        let len7 = vec7.len();
-                        *ptr0.add(52).cast::<usize>() = len7;
-                        *ptr0.add(48).cast::<*mut u8>() = ptr7.cast_mut();
+                        *ptr0.add(40).cast::<usize>() = len6;
+                        *ptr0.add(36).cast::<*mut u8>() = ptr6.cast_mut();
                         match name1 {
+                            Some(e) => {
+                                *ptr0.add(44).cast::<u8>() = (1i32) as u8;
+                                let vec7 = e;
+                                let ptr7 = vec7.as_ptr().cast::<u8>();
+                                let len7 = vec7.len();
+                                *ptr0.add(52).cast::<usize>() = len7;
+                                *ptr0.add(48).cast::<*mut u8>() = ptr7.cast_mut();
+                            }
+                            None => {
+                                *ptr0.add(44).cast::<u8>() = (0i32) as u8;
+                            }
+                        };
+                        match phone_number1 {
                             Some(e) => {
                                 *ptr0.add(56).cast::<u8>() = (1i32) as u8;
                                 let vec8 = e;
@@ -6057,32 +5657,6 @@ pub mod golem {
                             }
                             None => {
                                 *ptr0.add(56).cast::<u8>() = (0i32) as u8;
-                            }
-                        };
-                        match business_name1 {
-                            Some(e) => {
-                                *ptr0.add(68).cast::<u8>() = (1i32) as u8;
-                                let vec9 = e;
-                                let ptr9 = vec9.as_ptr().cast::<u8>();
-                                let len9 = vec9.len();
-                                *ptr0.add(76).cast::<usize>() = len9;
-                                *ptr0.add(72).cast::<*mut u8>() = ptr9.cast_mut();
-                            }
-                            None => {
-                                *ptr0.add(68).cast::<u8>() = (0i32) as u8;
-                            }
-                        };
-                        match phone_number1 {
-                            Some(e) => {
-                                *ptr0.add(80).cast::<u8>() = (1i32) as u8;
-                                let vec10 = e;
-                                let ptr10 = vec10.as_ptr().cast::<u8>();
-                                let len10 = vec10.len();
-                                *ptr0.add(88).cast::<usize>() = len10;
-                                *ptr0.add(84).cast::<*mut u8>() = ptr10.cast_mut();
-                            }
-                            None => {
-                                *ptr0.add(80).cast::<u8>() = (0i32) as u8;
                             }
                         };
                         #[cfg(target_arch = "wasm32")]
@@ -6312,8 +5886,8 @@ pub mod golem {
                 pub fn blocking_get(&self) -> Option<Order> {
                     unsafe {
                         #[repr(align(8))]
-                        struct RetArea([::core::mem::MaybeUninit<u8>; 256]);
-                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 256]);
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 208]);
+                        let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 208]);
                         let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
                         #[link(wasm_import_module = "golem:order-stub/stub-order")]
@@ -6374,14 +5948,14 @@ pub mod golem {
                                     }
                                     _rt::cabi_dealloc(base23, len23 * 24, 4);
                                     let l24 = i32::from(*ptr0.add(48).cast::<u8>());
-                                    let l56 = i32::from(*ptr0.add(140).cast::<u8>());
-                                    let l88 = *ptr0.add(232).cast::<f32>();
-                                    let l89 = *ptr0.add(236).cast::<*mut u8>();
-                                    let l90 = *ptr0.add(240).cast::<usize>();
-                                    let len91 = l90;
-                                    let bytes91 =
-                                        _rt::Vec::from_raw_parts(l89.cast(), len91, len91);
-                                    let l92 = *ptr0.add(248).cast::<i64>();
+                                    let l48 = i32::from(*ptr0.add(116).cast::<u8>());
+                                    let l72 = *ptr0.add(184).cast::<f32>();
+                                    let l73 = *ptr0.add(188).cast::<*mut u8>();
+                                    let l74 = *ptr0.add(192).cast::<usize>();
+                                    let len75 = l74;
+                                    let bytes75 =
+                                        _rt::Vec::from_raw_parts(l73.cast(), len75, len75);
+                                    let l76 = *ptr0.add(200).cast::<i64>();
 
                                     super::super::super::golem::order::api::Order{
                                 order_id: _rt::string_lift(bytes4),
@@ -6411,49 +5985,47 @@ pub mod golem {
                                       let l26 = *ptr0.add(56).cast::<usize>();
                                       let len27 = l26;
                                       let bytes27 = _rt::Vec::from_raw_parts(l25.cast(), len27, len27);
-                                      let l28 = i32::from(*ptr0.add(60).cast::<u8>());
-                                      let l32 = *ptr0.add(72).cast::<*mut u8>();
-                                      let l33 = *ptr0.add(76).cast::<usize>();
-                                      let len34 = l33;
-                                      let bytes34 = _rt::Vec::from_raw_parts(l32.cast(), len34, len34);
-                                      let l35 = *ptr0.add(80).cast::<*mut u8>();
-                                      let l36 = *ptr0.add(84).cast::<usize>();
-                                      let len37 = l36;
-                                      let bytes37 = _rt::Vec::from_raw_parts(l35.cast(), len37, len37);
-                                      let l38 = *ptr0.add(88).cast::<*mut u8>();
-                                      let l39 = *ptr0.add(92).cast::<usize>();
-                                      let len40 = l39;
-                                      let bytes40 = _rt::Vec::from_raw_parts(l38.cast(), len40, len40);
-                                      let l41 = *ptr0.add(96).cast::<*mut u8>();
-                                      let l42 = *ptr0.add(100).cast::<usize>();
-                                      let len43 = l42;
-                                      let bytes43 = _rt::Vec::from_raw_parts(l41.cast(), len43, len43);
+                                      let l28 = *ptr0.add(60).cast::<*mut u8>();
+                                      let l29 = *ptr0.add(64).cast::<usize>();
+                                      let len30 = l29;
+                                      let bytes30 = _rt::Vec::from_raw_parts(l28.cast(), len30, len30);
+                                      let l31 = *ptr0.add(68).cast::<*mut u8>();
+                                      let l32 = *ptr0.add(72).cast::<usize>();
+                                      let len33 = l32;
+                                      let bytes33 = _rt::Vec::from_raw_parts(l31.cast(), len33, len33);
+                                      let l34 = *ptr0.add(76).cast::<*mut u8>();
+                                      let l35 = *ptr0.add(80).cast::<usize>();
+                                      let len36 = l35;
+                                      let bytes36 = _rt::Vec::from_raw_parts(l34.cast(), len36, len36);
+                                      let l37 = *ptr0.add(84).cast::<*mut u8>();
+                                      let l38 = *ptr0.add(88).cast::<usize>();
+                                      let len39 = l38;
+                                      let bytes39 = _rt::Vec::from_raw_parts(l37.cast(), len39, len39);
+                                      let l40 = i32::from(*ptr0.add(92).cast::<u8>());
                                       let l44 = i32::from(*ptr0.add(104).cast::<u8>());
-                                      let l48 = i32::from(*ptr0.add(116).cast::<u8>());
-                                      let l52 = i32::from(*ptr0.add(128).cast::<u8>());
 
                                       super::super::super::golem::order::api::Address{
-                                        street1: _rt::string_lift(bytes27),
-                                        street2: match l28 {
+                                        street: _rt::string_lift(bytes27),
+                                        city: _rt::string_lift(bytes30),
+                                        state_or_region: _rt::string_lift(bytes33),
+                                        country: _rt::string_lift(bytes36),
+                                        postal_code: _rt::string_lift(bytes39),
+                                        name: match l40 {
                                           0 => None,
                                           1 => {
                                             let e = {
-                                              let l29 = *ptr0.add(64).cast::<*mut u8>();
-                                              let l30 = *ptr0.add(68).cast::<usize>();
-                                              let len31 = l30;
-                                              let bytes31 = _rt::Vec::from_raw_parts(l29.cast(), len31, len31);
+                                              let l41 = *ptr0.add(96).cast::<*mut u8>();
+                                              let l42 = *ptr0.add(100).cast::<usize>();
+                                              let len43 = l42;
+                                              let bytes43 = _rt::Vec::from_raw_parts(l41.cast(), len43, len43);
 
-                                              _rt::string_lift(bytes31)
+                                              _rt::string_lift(bytes43)
                                             };
                                             Some(e)
                                           }
                                           _ => _rt::invalid_enum_discriminant(),
                                         },
-                                        city: _rt::string_lift(bytes34),
-                                        state_or_region: _rt::string_lift(bytes37),
-                                        country: _rt::string_lift(bytes40),
-                                        postal_code: _rt::string_lift(bytes43),
-                                        name: match l44 {
+                                        phone_number: match l44 {
                                           0 => None,
                                           1 => {
                                             let e = {
@@ -6468,132 +6040,70 @@ pub mod golem {
                                           }
                                           _ => _rt::invalid_enum_discriminant(),
                                         },
-                                        business_name: match l48 {
-                                          0 => None,
-                                          1 => {
-                                            let e = {
-                                              let l49 = *ptr0.add(120).cast::<*mut u8>();
-                                              let l50 = *ptr0.add(124).cast::<usize>();
-                                              let len51 = l50;
-                                              let bytes51 = _rt::Vec::from_raw_parts(l49.cast(), len51, len51);
-
-                                              _rt::string_lift(bytes51)
-                                            };
-                                            Some(e)
-                                          }
-                                          _ => _rt::invalid_enum_discriminant(),
-                                        },
-                                        phone_number: match l52 {
-                                          0 => None,
-                                          1 => {
-                                            let e = {
-                                              let l53 = *ptr0.add(132).cast::<*mut u8>();
-                                              let l54 = *ptr0.add(136).cast::<usize>();
-                                              let len55 = l54;
-                                              let bytes55 = _rt::Vec::from_raw_parts(l53.cast(), len55, len55);
-
-                                              _rt::string_lift(bytes55)
-                                            };
-                                            Some(e)
-                                          }
-                                          _ => _rt::invalid_enum_discriminant(),
-                                        },
                                       }
                                     };
                                     Some(e)
                                   }
                                   _ => _rt::invalid_enum_discriminant(),
                                 },
-                                shipping_address: match l56 {
+                                shipping_address: match l48 {
                                   0 => None,
                                   1 => {
                                     let e = {
-                                      let l57 = *ptr0.add(144).cast::<*mut u8>();
-                                      let l58 = *ptr0.add(148).cast::<usize>();
-                                      let len59 = l58;
-                                      let bytes59 = _rt::Vec::from_raw_parts(l57.cast(), len59, len59);
-                                      let l60 = i32::from(*ptr0.add(152).cast::<u8>());
-                                      let l64 = *ptr0.add(164).cast::<*mut u8>();
-                                      let l65 = *ptr0.add(168).cast::<usize>();
-                                      let len66 = l65;
-                                      let bytes66 = _rt::Vec::from_raw_parts(l64.cast(), len66, len66);
-                                      let l67 = *ptr0.add(172).cast::<*mut u8>();
-                                      let l68 = *ptr0.add(176).cast::<usize>();
-                                      let len69 = l68;
-                                      let bytes69 = _rt::Vec::from_raw_parts(l67.cast(), len69, len69);
-                                      let l70 = *ptr0.add(180).cast::<*mut u8>();
-                                      let l71 = *ptr0.add(184).cast::<usize>();
-                                      let len72 = l71;
-                                      let bytes72 = _rt::Vec::from_raw_parts(l70.cast(), len72, len72);
-                                      let l73 = *ptr0.add(188).cast::<*mut u8>();
-                                      let l74 = *ptr0.add(192).cast::<usize>();
-                                      let len75 = l74;
-                                      let bytes75 = _rt::Vec::from_raw_parts(l73.cast(), len75, len75);
-                                      let l76 = i32::from(*ptr0.add(196).cast::<u8>());
-                                      let l80 = i32::from(*ptr0.add(208).cast::<u8>());
-                                      let l84 = i32::from(*ptr0.add(220).cast::<u8>());
+                                      let l49 = *ptr0.add(120).cast::<*mut u8>();
+                                      let l50 = *ptr0.add(124).cast::<usize>();
+                                      let len51 = l50;
+                                      let bytes51 = _rt::Vec::from_raw_parts(l49.cast(), len51, len51);
+                                      let l52 = *ptr0.add(128).cast::<*mut u8>();
+                                      let l53 = *ptr0.add(132).cast::<usize>();
+                                      let len54 = l53;
+                                      let bytes54 = _rt::Vec::from_raw_parts(l52.cast(), len54, len54);
+                                      let l55 = *ptr0.add(136).cast::<*mut u8>();
+                                      let l56 = *ptr0.add(140).cast::<usize>();
+                                      let len57 = l56;
+                                      let bytes57 = _rt::Vec::from_raw_parts(l55.cast(), len57, len57);
+                                      let l58 = *ptr0.add(144).cast::<*mut u8>();
+                                      let l59 = *ptr0.add(148).cast::<usize>();
+                                      let len60 = l59;
+                                      let bytes60 = _rt::Vec::from_raw_parts(l58.cast(), len60, len60);
+                                      let l61 = *ptr0.add(152).cast::<*mut u8>();
+                                      let l62 = *ptr0.add(156).cast::<usize>();
+                                      let len63 = l62;
+                                      let bytes63 = _rt::Vec::from_raw_parts(l61.cast(), len63, len63);
+                                      let l64 = i32::from(*ptr0.add(160).cast::<u8>());
+                                      let l68 = i32::from(*ptr0.add(172).cast::<u8>());
 
                                       super::super::super::golem::order::api::Address{
-                                        street1: _rt::string_lift(bytes59),
-                                        street2: match l60 {
+                                        street: _rt::string_lift(bytes51),
+                                        city: _rt::string_lift(bytes54),
+                                        state_or_region: _rt::string_lift(bytes57),
+                                        country: _rt::string_lift(bytes60),
+                                        postal_code: _rt::string_lift(bytes63),
+                                        name: match l64 {
                                           0 => None,
                                           1 => {
                                             let e = {
-                                              let l61 = *ptr0.add(156).cast::<*mut u8>();
-                                              let l62 = *ptr0.add(160).cast::<usize>();
-                                              let len63 = l62;
-                                              let bytes63 = _rt::Vec::from_raw_parts(l61.cast(), len63, len63);
+                                              let l65 = *ptr0.add(164).cast::<*mut u8>();
+                                              let l66 = *ptr0.add(168).cast::<usize>();
+                                              let len67 = l66;
+                                              let bytes67 = _rt::Vec::from_raw_parts(l65.cast(), len67, len67);
 
-                                              _rt::string_lift(bytes63)
+                                              _rt::string_lift(bytes67)
                                             };
                                             Some(e)
                                           }
                                           _ => _rt::invalid_enum_discriminant(),
                                         },
-                                        city: _rt::string_lift(bytes66),
-                                        state_or_region: _rt::string_lift(bytes69),
-                                        country: _rt::string_lift(bytes72),
-                                        postal_code: _rt::string_lift(bytes75),
-                                        name: match l76 {
+                                        phone_number: match l68 {
                                           0 => None,
                                           1 => {
                                             let e = {
-                                              let l77 = *ptr0.add(200).cast::<*mut u8>();
-                                              let l78 = *ptr0.add(204).cast::<usize>();
-                                              let len79 = l78;
-                                              let bytes79 = _rt::Vec::from_raw_parts(l77.cast(), len79, len79);
+                                              let l69 = *ptr0.add(176).cast::<*mut u8>();
+                                              let l70 = *ptr0.add(180).cast::<usize>();
+                                              let len71 = l70;
+                                              let bytes71 = _rt::Vec::from_raw_parts(l69.cast(), len71, len71);
 
-                                              _rt::string_lift(bytes79)
-                                            };
-                                            Some(e)
-                                          }
-                                          _ => _rt::invalid_enum_discriminant(),
-                                        },
-                                        business_name: match l80 {
-                                          0 => None,
-                                          1 => {
-                                            let e = {
-                                              let l81 = *ptr0.add(212).cast::<*mut u8>();
-                                              let l82 = *ptr0.add(216).cast::<usize>();
-                                              let len83 = l82;
-                                              let bytes83 = _rt::Vec::from_raw_parts(l81.cast(), len83, len83);
-
-                                              _rt::string_lift(bytes83)
-                                            };
-                                            Some(e)
-                                          }
-                                          _ => _rt::invalid_enum_discriminant(),
-                                        },
-                                        phone_number: match l84 {
-                                          0 => None,
-                                          1 => {
-                                            let e = {
-                                              let l85 = *ptr0.add(224).cast::<*mut u8>();
-                                              let l86 = *ptr0.add(228).cast::<usize>();
-                                              let len87 = l86;
-                                              let bytes87 = _rt::Vec::from_raw_parts(l85.cast(), len87, len87);
-
-                                              _rt::string_lift(bytes87)
+                                              _rt::string_lift(bytes71)
                                             };
                                             Some(e)
                                           }
@@ -6605,9 +6115,9 @@ pub mod golem {
                                   }
                                   _ => _rt::invalid_enum_discriminant(),
                                 },
-                                total: l88,
-                                currency: _rt::string_lift(bytes91),
-                                timestamp: l92 as u64,
+                                total: l72,
+                                currency: _rt::string_lift(bytes75),
+                                timestamp: l76 as u64,
                               }
                                 };
                                 Some(e)
@@ -12139,27 +11649,23 @@ pub mod exports {
                 use super::super::super::super::_rt;
                 #[derive(Clone)]
                 pub struct Address {
-                    pub street1: _rt::String,
-                    pub street2: Option<_rt::String>,
+                    pub street: _rt::String,
                     pub city: _rt::String,
                     pub state_or_region: _rt::String,
                     pub country: _rt::String,
                     pub postal_code: _rt::String,
                     pub name: Option<_rt::String>,
-                    pub business_name: Option<_rt::String>,
                     pub phone_number: Option<_rt::String>,
                 }
                 impl ::core::fmt::Debug for Address {
                     fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
                         f.debug_struct("Address")
-                            .field("street1", &self.street1)
-                            .field("street2", &self.street2)
+                            .field("street", &self.street)
                             .field("city", &self.city)
                             .field("state-or-region", &self.state_or_region)
                             .field("country", &self.country)
                             .field("postal-code", &self.postal_code)
                             .field("name", &self.name)
-                            .field("business-name", &self.business_name)
                             .field("phone-number", &self.phone_number)
                             .finish()
                     }
@@ -12742,43 +12248,59 @@ pub mod exports {
                 #[allow(non_snake_case)]
                 pub unsafe fn _export_update_shipping_address_cabi<T: Guest>(
                     arg0: *mut u8,
+                    arg1: usize,
+                    arg2: *mut u8,
+                    arg3: usize,
+                    arg4: *mut u8,
+                    arg5: usize,
+                    arg6: *mut u8,
+                    arg7: usize,
+                    arg8: *mut u8,
+                    arg9: usize,
+                    arg10: i32,
+                    arg11: *mut u8,
+                    arg12: usize,
+                    arg13: i32,
+                    arg14: *mut u8,
+                    arg15: usize,
                 ) -> *mut u8 {
                     #[cfg(target_arch = "wasm32")]
                     _rt::run_ctors_once();
-                    let l0 = *arg0.add(0).cast::<*mut u8>();
-                    let l1 = *arg0.add(4).cast::<usize>();
-                    let len2 = l1;
-                    let bytes2 = _rt::Vec::from_raw_parts(l0.cast(), len2, len2);
-                    let l3 = i32::from(*arg0.add(8).cast::<u8>());
-                    let l7 = *arg0.add(20).cast::<*mut u8>();
-                    let l8 = *arg0.add(24).cast::<usize>();
-                    let len9 = l8;
-                    let bytes9 = _rt::Vec::from_raw_parts(l7.cast(), len9, len9);
-                    let l10 = *arg0.add(28).cast::<*mut u8>();
-                    let l11 = *arg0.add(32).cast::<usize>();
-                    let len12 = l11;
-                    let bytes12 = _rt::Vec::from_raw_parts(l10.cast(), len12, len12);
-                    let l13 = *arg0.add(36).cast::<*mut u8>();
-                    let l14 = *arg0.add(40).cast::<usize>();
-                    let len15 = l14;
-                    let bytes15 = _rt::Vec::from_raw_parts(l13.cast(), len15, len15);
-                    let l16 = *arg0.add(44).cast::<*mut u8>();
-                    let l17 = *arg0.add(48).cast::<usize>();
-                    let len18 = l17;
-                    let bytes18 = _rt::Vec::from_raw_parts(l16.cast(), len18, len18);
-                    let l19 = i32::from(*arg0.add(52).cast::<u8>());
-                    let l23 = i32::from(*arg0.add(64).cast::<u8>());
-                    let l27 = i32::from(*arg0.add(76).cast::<u8>());
-                    let result31 = T::update_shipping_address(Address {
-                        street1: _rt::string_lift(bytes2),
-                        street2: match l3 {
+                    let len0 = arg1;
+                    let bytes0 = _rt::Vec::from_raw_parts(arg0.cast(), len0, len0);
+                    let len1 = arg3;
+                    let bytes1 = _rt::Vec::from_raw_parts(arg2.cast(), len1, len1);
+                    let len2 = arg5;
+                    let bytes2 = _rt::Vec::from_raw_parts(arg4.cast(), len2, len2);
+                    let len3 = arg7;
+                    let bytes3 = _rt::Vec::from_raw_parts(arg6.cast(), len3, len3);
+                    let len4 = arg9;
+                    let bytes4 = _rt::Vec::from_raw_parts(arg8.cast(), len4, len4);
+                    let result7 = T::update_shipping_address(Address {
+                        street: _rt::string_lift(bytes0),
+                        city: _rt::string_lift(bytes1),
+                        state_or_region: _rt::string_lift(bytes2),
+                        country: _rt::string_lift(bytes3),
+                        postal_code: _rt::string_lift(bytes4),
+                        name: match arg10 {
                             0 => None,
                             1 => {
                                 let e = {
-                                    let l4 = *arg0.add(12).cast::<*mut u8>();
-                                    let l5 = *arg0.add(16).cast::<usize>();
-                                    let len6 = l5;
-                                    let bytes6 = _rt::Vec::from_raw_parts(l4.cast(), len6, len6);
+                                    let len5 = arg12;
+                                    let bytes5 = _rt::Vec::from_raw_parts(arg11.cast(), len5, len5);
+
+                                    _rt::string_lift(bytes5)
+                                };
+                                Some(e)
+                            }
+                            _ => _rt::invalid_enum_discriminant(),
+                        },
+                        phone_number: match arg13 {
+                            0 => None,
+                            1 => {
+                                let e = {
+                                    let len6 = arg15;
+                                    let bytes6 = _rt::Vec::from_raw_parts(arg14.cast(), len6, len6);
 
                                     _rt::string_lift(bytes6)
                                 };
@@ -12786,82 +12308,29 @@ pub mod exports {
                             }
                             _ => _rt::invalid_enum_discriminant(),
                         },
-                        city: _rt::string_lift(bytes9),
-                        state_or_region: _rt::string_lift(bytes12),
-                        country: _rt::string_lift(bytes15),
-                        postal_code: _rt::string_lift(bytes18),
-                        name: match l19 {
-                            0 => None,
-                            1 => {
-                                let e = {
-                                    let l20 = *arg0.add(56).cast::<*mut u8>();
-                                    let l21 = *arg0.add(60).cast::<usize>();
-                                    let len22 = l21;
-                                    let bytes22 =
-                                        _rt::Vec::from_raw_parts(l20.cast(), len22, len22);
-
-                                    _rt::string_lift(bytes22)
-                                };
-                                Some(e)
-                            }
-                            _ => _rt::invalid_enum_discriminant(),
-                        },
-                        business_name: match l23 {
-                            0 => None,
-                            1 => {
-                                let e = {
-                                    let l24 = *arg0.add(68).cast::<*mut u8>();
-                                    let l25 = *arg0.add(72).cast::<usize>();
-                                    let len26 = l25;
-                                    let bytes26 =
-                                        _rt::Vec::from_raw_parts(l24.cast(), len26, len26);
-
-                                    _rt::string_lift(bytes26)
-                                };
-                                Some(e)
-                            }
-                            _ => _rt::invalid_enum_discriminant(),
-                        },
-                        phone_number: match l27 {
-                            0 => None,
-                            1 => {
-                                let e = {
-                                    let l28 = *arg0.add(80).cast::<*mut u8>();
-                                    let l29 = *arg0.add(84).cast::<usize>();
-                                    let len30 = l29;
-                                    let bytes30 =
-                                        _rt::Vec::from_raw_parts(l28.cast(), len30, len30);
-
-                                    _rt::string_lift(bytes30)
-                                };
-                                Some(e)
-                            }
-                            _ => _rt::invalid_enum_discriminant(),
-                        },
                     });
-                    _rt::cabi_dealloc(arg0, 88, 4);
-                    let ptr32 = _RET_AREA.0.as_mut_ptr().cast::<u8>();
-                    match result31 {
+                    let ptr8 = _RET_AREA.0.as_mut_ptr().cast::<u8>();
+                    match result7 {
                         Ok(_) => {
-                            *ptr32.add(0).cast::<u8>() = (0i32) as u8;
+                            *ptr8.add(0).cast::<u8>() = (0i32) as u8;
                         }
                         Err(e) => {
-                            *ptr32.add(0).cast::<u8>() = (1i32) as u8;
+                            *ptr8.add(0).cast::<u8>() = (1i32) as u8;
                             match e {
                                 UpdateAddressError::AddressNotValid(e) => {
-                                    *ptr32.add(4).cast::<u8>() = (0i32) as u8;
-                                    let AddressNotValidError { message: message33 } = e;
-                                    let vec34 = (message33.into_bytes()).into_boxed_slice();
-                                    let ptr34 = vec34.as_ptr().cast::<u8>();
-                                    let len34 = vec34.len();
-                                    ::core::mem::forget(vec34);
-                                    *ptr32.add(12).cast::<usize>() = len34;
-                                    *ptr32.add(8).cast::<*mut u8>() = ptr34.cast_mut();
+                                    *ptr8.add(4).cast::<u8>() = (0i32) as u8;
+                                    let AddressNotValidError { message: message9 } = e;
+                                    let vec10 = (message9.into_bytes()).into_boxed_slice();
+                                    let ptr10 = vec10.as_ptr().cast::<u8>();
+                                    let len10 = vec10.len();
+                                    ::core::mem::forget(vec10);
+                                    *ptr8.add(12).cast::<usize>() = len10;
+                                    *ptr8.add(8).cast::<*mut u8>() = ptr10.cast_mut();
                                 }
                             }
                         }
                     };
-                    ptr32
+                    ptr8
                 }
                 #[doc(hidden)]
                 #[allow(non_snake_case)]
@@ -12885,43 +12354,59 @@ pub mod exports {
                 #[allow(non_snake_case)]
                 pub unsafe fn _export_update_billing_address_cabi<T: Guest>(
                     arg0: *mut u8,
+                    arg1: usize,
+                    arg2: *mut u8,
+                    arg3: usize,
+                    arg4: *mut u8,
+                    arg5: usize,
+                    arg6: *mut u8,
+                    arg7: usize,
+                    arg8: *mut u8,
+                    arg9: usize,
+                    arg10: i32,
+                    arg11: *mut u8,
+                    arg12: usize,
+                    arg13: i32,
+                    arg14: *mut u8,
+                    arg15: usize,
                 ) -> *mut u8 {
                     #[cfg(target_arch = "wasm32")]
                     _rt::run_ctors_once();
-                    let l0 = *arg0.add(0).cast::<*mut u8>();
-                    let l1 = *arg0.add(4).cast::<usize>();
-                    let len2 = l1;
-                    let bytes2 = _rt::Vec::from_raw_parts(l0.cast(), len2, len2);
-                    let l3 = i32::from(*arg0.add(8).cast::<u8>());
-                    let l7 = *arg0.add(20).cast::<*mut u8>();
-                    let l8 = *arg0.add(24).cast::<usize>();
-                    let len9 = l8;
-                    let bytes9 = _rt::Vec::from_raw_parts(l7.cast(), len9, len9);
-                    let l10 = *arg0.add(28).cast::<*mut u8>();
-                    let l11 = *arg0.add(32).cast::<usize>();
-                    let len12 = l11;
-                    let bytes12 = _rt::Vec::from_raw_parts(l10.cast(), len12, len12);
-                    let l13 = *arg0.add(36).cast::<*mut u8>();
-                    let l14 = *arg0.add(40).cast::<usize>();
-                    let len15 = l14;
-                    let bytes15 = _rt::Vec::from_raw_parts(l13.cast(), len15, len15);
-                    let l16 = *arg0.add(44).cast::<*mut u8>();
-                    let l17 = *arg0.add(48).cast::<usize>();
-                    let len18 = l17;
-                    let bytes18 = _rt::Vec::from_raw_parts(l16.cast(), len18, len18);
-                    let l19 = i32::from(*arg0.add(52).cast::<u8>());
-                    let l23 = i32::from(*arg0.add(64).cast::<u8>());
-                    let l27 = i32::from(*arg0.add(76).cast::<u8>());
-                    let result31 = T::update_billing_address(Address {
-                        street1: _rt::string_lift(bytes2),
-                        street2: match l3 {
+                    let len0 = arg1;
+                    let bytes0 = _rt::Vec::from_raw_parts(arg0.cast(), len0, len0);
+                    let len1 = arg3;
+                    let bytes1 = _rt::Vec::from_raw_parts(arg2.cast(), len1, len1);
+                    let len2 = arg5;
+                    let bytes2 = _rt::Vec::from_raw_parts(arg4.cast(), len2, len2);
+                    let len3 = arg7;
+                    let bytes3 = _rt::Vec::from_raw_parts(arg6.cast(), len3, len3);
+                    let len4 = arg9;
+                    let bytes4 = _rt::Vec::from_raw_parts(arg8.cast(), len4, len4);
+                    let result7 = T::update_billing_address(Address {
+                        street: _rt::string_lift(bytes0),
+                        city: _rt::string_lift(bytes1),
+                        state_or_region: _rt::string_lift(bytes2),
+                        country: _rt::string_lift(bytes3),
+                        postal_code: _rt::string_lift(bytes4),
+                        name: match arg10 {
                             0 => None,
                             1 => {
                                 let e = {
-                                    let l4 = *arg0.add(12).cast::<*mut u8>();
-                                    let l5 = *arg0.add(16).cast::<usize>();
-                                    let len6 = l5;
-                                    let bytes6 = _rt::Vec::from_raw_parts(l4.cast(), len6, len6);
+                                    let len5 = arg12;
+                                    let bytes5 = _rt::Vec::from_raw_parts(arg11.cast(), len5, len5);
+
+                                    _rt::string_lift(bytes5)
+                                };
+                                Some(e)
+                            }
+                            _ => _rt::invalid_enum_discriminant(),
+                        },
+                        phone_number: match arg13 {
+                            0 => None,
+                            1 => {
+                                let e = {
+                                    let len6 = arg15;
+                                    let bytes6 = _rt::Vec::from_raw_parts(arg14.cast(), len6, len6);
 
                                     _rt::string_lift(bytes6)
                                 };
@@ -12929,82 +12414,29 @@ pub mod exports {
                             }
                             _ => _rt::invalid_enum_discriminant(),
                         },
-                        city: _rt::string_lift(bytes9),
-                        state_or_region: _rt::string_lift(bytes12),
-                        country: _rt::string_lift(bytes15),
-                        postal_code: _rt::string_lift(bytes18),
-                        name: match l19 {
-                            0 => None,
-                            1 => {
-                                let e = {
-                                    let l20 = *arg0.add(56).cast::<*mut u8>();
-                                    let l21 = *arg0.add(60).cast::<usize>();
-                                    let len22 = l21;
-                                    let bytes22 =
-                                        _rt::Vec::from_raw_parts(l20.cast(), len22, len22);
-
-                                    _rt::string_lift(bytes22)
-                                };
-                                Some(e)
-                            }
-                            _ => _rt::invalid_enum_discriminant(),
-                        },
-                        business_name: match l23 {
-                            0 => None,
-                            1 => {
-                                let e = {
-                                    let l24 = *arg0.add(68).cast::<*mut u8>();
-                                    let l25 = *arg0.add(72).cast::<usize>();
-                                    let len26 = l25;
-                                    let bytes26 =
-                                        _rt::Vec::from_raw_parts(l24.cast(), len26, len26);
-
-                                    _rt::string_lift(bytes26)
-                                };
-                                Some(e)
-                            }
-                            _ => _rt::invalid_enum_discriminant(),
-                        },
-                        phone_number: match l27 {
-                            0 => None,
-                            1 => {
-                                let e = {
-                                    let l28 = *arg0.add(80).cast::<*mut u8>();
-                                    let l29 = *arg0.add(84).cast::<usize>();
-                                    let len30 = l29;
-                                    let bytes30 =
-                                        _rt::Vec::from_raw_parts(l28.cast(), len30, len30);
-
-                                    _rt::string_lift(bytes30)
-                                };
-                                Some(e)
-                            }
-                            _ => _rt::invalid_enum_discriminant(),
-                        },
                     });
-                    _rt::cabi_dealloc(arg0, 88, 4);
-                    let ptr32 = _RET_AREA.0.as_mut_ptr().cast::<u8>();
-                    match result31 {
+                    let ptr8 = _RET_AREA.0.as_mut_ptr().cast::<u8>();
+                    match result7 {
                         Ok(_) => {
-                            *ptr32.add(0).cast::<u8>() = (0i32) as u8;
+                            *ptr8.add(0).cast::<u8>() = (0i32) as u8;
                         }
                         Err(e) => {
-                            *ptr32.add(0).cast::<u8>() = (1i32) as u8;
+                            *ptr8.add(0).cast::<u8>() = (1i32) as u8;
                             match e {
                                 UpdateAddressError::AddressNotValid(e) => {
-                                    *ptr32.add(4).cast::<u8>() = (0i32) as u8;
-                                    let AddressNotValidError { message: message33 } = e;
-                                    let vec34 = (message33.into_bytes()).into_boxed_slice();
-                                    let ptr34 = vec34.as_ptr().cast::<u8>();
-                                    let len34 = vec34.len();
-                                    ::core::mem::forget(vec34);
-                                    *ptr32.add(12).cast::<usize>() = len34;
-                                    *ptr32.add(8).cast::<*mut u8>() = ptr34.cast_mut();
+                                    *ptr8.add(4).cast::<u8>() = (0i32) as u8;
+                                    let AddressNotValidError { message: message9 } = e;
+                                    let vec10 = (message9.into_bytes()).into_boxed_slice();
+                                    let ptr10 = vec10.as_ptr().cast::<u8>();
+                                    let len10 = vec10.len();
+                                    ::core::mem::forget(vec10);
+                                    *ptr8.add(12).cast::<usize>() = len10;
+                                    *ptr8.add(8).cast::<*mut u8>() = ptr10.cast_mut();
                                 }
                             }
                         }
                     };
-                    ptr32
+                    ptr8
                 }
                 #[doc(hidden)]
                 #[allow(non_snake_case)]
@@ -13268,61 +12700,59 @@ pub mod exports {
                                 Some(e) => {
                                     *ptr1.add(36).cast::<u8>() = (1i32) as u8;
                                     let Address {
-                                        street1: street19,
-                                        street2: street29,
+                                        street: street9,
                                         city: city9,
                                         state_or_region: state_or_region9,
                                         country: country9,
                                         postal_code: postal_code9,
                                         name: name9,
-                                        business_name: business_name9,
                                         phone_number: phone_number9,
                                     } = e;
-                                    let vec10 = (street19.into_bytes()).into_boxed_slice();
+                                    let vec10 = (street9.into_bytes()).into_boxed_slice();
                                     let ptr10 = vec10.as_ptr().cast::<u8>();
                                     let len10 = vec10.len();
                                     ::core::mem::forget(vec10);
                                     *ptr1.add(44).cast::<usize>() = len10;
                                     *ptr1.add(40).cast::<*mut u8>() = ptr10.cast_mut();
-                                    match street29 {
-                                        Some(e) => {
-                                            *ptr1.add(48).cast::<u8>() = (1i32) as u8;
-                                            let vec11 = (e.into_bytes()).into_boxed_slice();
-                                            let ptr11 = vec11.as_ptr().cast::<u8>();
-                                            let len11 = vec11.len();
-                                            ::core::mem::forget(vec11);
-                                            *ptr1.add(56).cast::<usize>() = len11;
-                                            *ptr1.add(52).cast::<*mut u8>() = ptr11.cast_mut();
-                                        }
-                                        None => {
-                                            *ptr1.add(48).cast::<u8>() = (0i32) as u8;
-                                        }
-                                    };
-                                    let vec12 = (city9.into_bytes()).into_boxed_slice();
+                                    let vec11 = (city9.into_bytes()).into_boxed_slice();
+                                    let ptr11 = vec11.as_ptr().cast::<u8>();
+                                    let len11 = vec11.len();
+                                    ::core::mem::forget(vec11);
+                                    *ptr1.add(52).cast::<usize>() = len11;
+                                    *ptr1.add(48).cast::<*mut u8>() = ptr11.cast_mut();
+                                    let vec12 = (state_or_region9.into_bytes()).into_boxed_slice();
                                     let ptr12 = vec12.as_ptr().cast::<u8>();
                                     let len12 = vec12.len();
                                     ::core::mem::forget(vec12);
-                                    *ptr1.add(64).cast::<usize>() = len12;
-                                    *ptr1.add(60).cast::<*mut u8>() = ptr12.cast_mut();
-                                    let vec13 = (state_or_region9.into_bytes()).into_boxed_slice();
+                                    *ptr1.add(60).cast::<usize>() = len12;
+                                    *ptr1.add(56).cast::<*mut u8>() = ptr12.cast_mut();
+                                    let vec13 = (country9.into_bytes()).into_boxed_slice();
                                     let ptr13 = vec13.as_ptr().cast::<u8>();
                                     let len13 = vec13.len();
                                     ::core::mem::forget(vec13);
-                                    *ptr1.add(72).cast::<usize>() = len13;
-                                    *ptr1.add(68).cast::<*mut u8>() = ptr13.cast_mut();
-                                    let vec14 = (country9.into_bytes()).into_boxed_slice();
+                                    *ptr1.add(68).cast::<usize>() = len13;
+                                    *ptr1.add(64).cast::<*mut u8>() = ptr13.cast_mut();
+                                    let vec14 = (postal_code9.into_bytes()).into_boxed_slice();
                                     let ptr14 = vec14.as_ptr().cast::<u8>();
                                     let len14 = vec14.len();
                                     ::core::mem::forget(vec14);
-                                    *ptr1.add(80).cast::<usize>() = len14;
-                                    *ptr1.add(76).cast::<*mut u8>() = ptr14.cast_mut();
-                                    let vec15 = (postal_code9.into_bytes()).into_boxed_slice();
-                                    let ptr15 = vec15.as_ptr().cast::<u8>();
-                                    let len15 = vec15.len();
-                                    ::core::mem::forget(vec15);
-                                    *ptr1.add(88).cast::<usize>() = len15;
-                                    *ptr1.add(84).cast::<*mut u8>() = ptr15.cast_mut();
+                                    *ptr1.add(76).cast::<usize>() = len14;
+                                    *ptr1.add(72).cast::<*mut u8>() = ptr14.cast_mut();
                                     match name9 {
+                                        Some(e) => {
+                                            *ptr1.add(80).cast::<u8>() = (1i32) as u8;
+                                            let vec15 = (e.into_bytes()).into_boxed_slice();
+                                            let ptr15 = vec15.as_ptr().cast::<u8>();
+                                            let len15 = vec15.len();
+                                            ::core::mem::forget(vec15);
+                                            *ptr1.add(88).cast::<usize>() = len15;
+                                            *ptr1.add(84).cast::<*mut u8>() = ptr15.cast_mut();
+                                        }
+                                        None => {
+                                            *ptr1.add(80).cast::<u8>() = (0i32) as u8;
+                                        }
+                                    };
+                                    match phone_number9 {
                                         Some(e) => {
                                             *ptr1.add(92).cast::<u8>() = (1i32) as u8;
                                             let vec16 = (e.into_bytes()).into_boxed_slice();
@@ -13336,34 +12766,6 @@ pub mod exports {
                                             *ptr1.add(92).cast::<u8>() = (0i32) as u8;
                                         }
                                     };
-                                    match business_name9 {
-                                        Some(e) => {
-                                            *ptr1.add(104).cast::<u8>() = (1i32) as u8;
-                                            let vec17 = (e.into_bytes()).into_boxed_slice();
-                                            let ptr17 = vec17.as_ptr().cast::<u8>();
-                                            let len17 = vec17.len();
-                                            ::core::mem::forget(vec17);
-                                            *ptr1.add(112).cast::<usize>() = len17;
-                                            *ptr1.add(108).cast::<*mut u8>() = ptr17.cast_mut();
-                                        }
-                                        None => {
-                                            *ptr1.add(104).cast::<u8>() = (0i32) as u8;
-                                        }
-                                    };
-                                    match phone_number9 {
-                                        Some(e) => {
-                                            *ptr1.add(116).cast::<u8>() = (1i32) as u8;
-                                            let vec18 = (e.into_bytes()).into_boxed_slice();
-                                            let ptr18 = vec18.as_ptr().cast::<u8>();
-                                            let len18 = vec18.len();
-                                            ::core::mem::forget(vec18);
-                                            *ptr1.add(124).cast::<usize>() = len18;
-                                            *ptr1.add(120).cast::<*mut u8>() = ptr18.cast_mut();
-                                        }
-                                        None => {
-                                            *ptr1.add(116).cast::<u8>() = (0i32) as u8;
-                                        }
-                                    };
                                 }
                                 None => {
                                     *ptr1.add(36).cast::<u8>() = (0i32) as u8;
@@ -13371,125 +12773,95 @@ pub mod exports {
                             };
                             match shipping_address2 {
                                 Some(e) => {
-                                    *ptr1.add(128).cast::<u8>() = (1i32) as u8;
+                                    *ptr1.add(104).cast::<u8>() = (1i32) as u8;
                                     let Address {
-                                        street1: street119,
-                                        street2: street219,
-                                        city: city19,
-                                        state_or_region: state_or_region19,
-                                        country: country19,
-                                        postal_code: postal_code19,
-                                        name: name19,
-                                        business_name: business_name19,
-                                        phone_number: phone_number19,
+                                        street: street17,
+                                        city: city17,
+                                        state_or_region: state_or_region17,
+                                        country: country17,
+                                        postal_code: postal_code17,
+                                        name: name17,
+                                        phone_number: phone_number17,
                                     } = e;
-                                    let vec20 = (street119.into_bytes()).into_boxed_slice();
+                                    let vec18 = (street17.into_bytes()).into_boxed_slice();
+                                    let ptr18 = vec18.as_ptr().cast::<u8>();
+                                    let len18 = vec18.len();
+                                    ::core::mem::forget(vec18);
+                                    *ptr1.add(112).cast::<usize>() = len18;
+                                    *ptr1.add(108).cast::<*mut u8>() = ptr18.cast_mut();
+                                    let vec19 = (city17.into_bytes()).into_boxed_slice();
+                                    let ptr19 = vec19.as_ptr().cast::<u8>();
+                                    let len19 = vec19.len();
+                                    ::core::mem::forget(vec19);
+                                    *ptr1.add(120).cast::<usize>() = len19;
+                                    *ptr1.add(116).cast::<*mut u8>() = ptr19.cast_mut();
+                                    let vec20 = (state_or_region17.into_bytes()).into_boxed_slice();
                                     let ptr20 = vec20.as_ptr().cast::<u8>();
                                     let len20 = vec20.len();
                                     ::core::mem::forget(vec20);
-                                    *ptr1.add(136).cast::<usize>() = len20;
-                                    *ptr1.add(132).cast::<*mut u8>() = ptr20.cast_mut();
-                                    match street219 {
-                                        Some(e) => {
-                                            *ptr1.add(140).cast::<u8>() = (1i32) as u8;
-                                            let vec21 = (e.into_bytes()).into_boxed_slice();
-                                            let ptr21 = vec21.as_ptr().cast::<u8>();
-                                            let len21 = vec21.len();
-                                            ::core::mem::forget(vec21);
-                                            *ptr1.add(148).cast::<usize>() = len21;
-                                            *ptr1.add(144).cast::<*mut u8>() = ptr21.cast_mut();
-                                        }
-                                        None => {
-                                            *ptr1.add(140).cast::<u8>() = (0i32) as u8;
-                                        }
-                                    };
-                                    let vec22 = (city19.into_bytes()).into_boxed_slice();
+                                    *ptr1.add(128).cast::<usize>() = len20;
+                                    *ptr1.add(124).cast::<*mut u8>() = ptr20.cast_mut();
+                                    let vec21 = (country17.into_bytes()).into_boxed_slice();
+                                    let ptr21 = vec21.as_ptr().cast::<u8>();
+                                    let len21 = vec21.len();
+                                    ::core::mem::forget(vec21);
+                                    *ptr1.add(136).cast::<usize>() = len21;
+                                    *ptr1.add(132).cast::<*mut u8>() = ptr21.cast_mut();
+                                    let vec22 = (postal_code17.into_bytes()).into_boxed_slice();
                                     let ptr22 = vec22.as_ptr().cast::<u8>();
                                     let len22 = vec22.len();
                                     ::core::mem::forget(vec22);
-                                    *ptr1.add(156).cast::<usize>() = len22;
-                                    *ptr1.add(152).cast::<*mut u8>() = ptr22.cast_mut();
-                                    let vec23 = (state_or_region19.into_bytes()).into_boxed_slice();
-                                    let ptr23 = vec23.as_ptr().cast::<u8>();
-                                    let len23 = vec23.len();
-                                    ::core::mem::forget(vec23);
-                                    *ptr1.add(164).cast::<usize>() = len23;
-                                    *ptr1.add(160).cast::<*mut u8>() = ptr23.cast_mut();
-                                    let vec24 = (country19.into_bytes()).into_boxed_slice();
-                                    let ptr24 = vec24.as_ptr().cast::<u8>();
-                                    let len24 = vec24.len();
-                                    ::core::mem::forget(vec24);
-                                    *ptr1.add(172).cast::<usize>() = len24;
-                                    *ptr1.add(168).cast::<*mut u8>() = ptr24.cast_mut();
-                                    let vec25 = (postal_code19.into_bytes()).into_boxed_slice();
-                                    let ptr25 = vec25.as_ptr().cast::<u8>();
-                                    let len25 = vec25.len();
-                                    ::core::mem::forget(vec25);
-                                    *ptr1.add(180).cast::<usize>() = len25;
-                                    *ptr1.add(176).cast::<*mut u8>() = ptr25.cast_mut();
-                                    match name19 {
+                                    *ptr1.add(144).cast::<usize>() = len22;
+                                    *ptr1.add(140).cast::<*mut u8>() = ptr22.cast_mut();
+                                    match name17 {
                                         Some(e) => {
-                                            *ptr1.add(184).cast::<u8>() = (1i32) as u8;
-                                            let vec26 = (e.into_bytes()).into_boxed_slice();
-                                            let ptr26 = vec26.as_ptr().cast::<u8>();
-                                            let len26 = vec26.len();
-                                            ::core::mem::forget(vec26);
-                                            *ptr1.add(192).cast::<usize>() = len26;
-                                            *ptr1.add(188).cast::<*mut u8>() = ptr26.cast_mut();
+                                            *ptr1.add(148).cast::<u8>() = (1i32) as u8;
+                                            let vec23 = (e.into_bytes()).into_boxed_slice();
+                                            let ptr23 = vec23.as_ptr().cast::<u8>();
+                                            let len23 = vec23.len();
+                                            ::core::mem::forget(vec23);
+                                            *ptr1.add(156).cast::<usize>() = len23;
+                                            *ptr1.add(152).cast::<*mut u8>() = ptr23.cast_mut();
                                         }
                                         None => {
-                                            *ptr1.add(184).cast::<u8>() = (0i32) as u8;
+                                            *ptr1.add(148).cast::<u8>() = (0i32) as u8;
                                         }
                                     };
-                                    match business_name19 {
+                                    match phone_number17 {
                                         Some(e) => {
-                                            *ptr1.add(196).cast::<u8>() = (1i32) as u8;
-                                            let vec27 = (e.into_bytes()).into_boxed_slice();
-                                            let ptr27 = vec27.as_ptr().cast::<u8>();
-                                            let len27 = vec27.len();
-                                            ::core::mem::forget(vec27);
-                                            *ptr1.add(204).cast::<usize>() = len27;
-                                            *ptr1.add(200).cast::<*mut u8>() = ptr27.cast_mut();
+                                            *ptr1.add(160).cast::<u8>() = (1i32) as u8;
+                                            let vec24 = (e.into_bytes()).into_boxed_slice();
+                                            let ptr24 = vec24.as_ptr().cast::<u8>();
+                                            let len24 = vec24.len();
+                                            ::core::mem::forget(vec24);
+                                            *ptr1.add(168).cast::<usize>() = len24;
+                                            *ptr1.add(164).cast::<*mut u8>() = ptr24.cast_mut();
                                         }
                                         None => {
-                                            *ptr1.add(196).cast::<u8>() = (0i32) as u8;
-                                        }
-                                    };
-                                    match phone_number19 {
-                                        Some(e) => {
-                                            *ptr1.add(208).cast::<u8>() = (1i32) as u8;
-                                            let vec28 = (e.into_bytes()).into_boxed_slice();
-                                            let ptr28 = vec28.as_ptr().cast::<u8>();
-                                            let len28 = vec28.len();
-                                            ::core::mem::forget(vec28);
-                                            *ptr1.add(216).cast::<usize>() = len28;
-                                            *ptr1.add(212).cast::<*mut u8>() = ptr28.cast_mut();
-                                        }
-                                        None => {
-                                            *ptr1.add(208).cast::<u8>() = (0i32) as u8;
+                                            *ptr1.add(160).cast::<u8>() = (0i32) as u8;
                                         }
                                     };
                                 }
                                 None => {
-                                    *ptr1.add(128).cast::<u8>() = (0i32) as u8;
+                                    *ptr1.add(104).cast::<u8>() = (0i32) as u8;
                                 }
                             };
-                            *ptr1.add(220).cast::<f32>() = _rt::as_f32(total2);
-                            let vec29 = (currency2.into_bytes()).into_boxed_slice();
-                            let ptr29 = vec29.as_ptr().cast::<u8>();
-                            let len29 = vec29.len();
-                            ::core::mem::forget(vec29);
-                            *ptr1.add(228).cast::<usize>() = len29;
-                            *ptr1.add(224).cast::<*mut u8>() = ptr29.cast_mut();
-                            *ptr1.add(232).cast::<i64>() = _rt::as_i64(timestamp2);
-                            let vec31 = previous_order_ids2;
-                            let len31 = vec31.len();
-                            let layout31 =
-                                _rt::alloc::Layout::from_size_align_unchecked(vec31.len() * 8, 4);
-                            let result31 = if layout31.size() != 0 {
-                                let ptr = _rt::alloc::alloc(layout31).cast::<u8>();
+                            *ptr1.add(172).cast::<f32>() = _rt::as_f32(total2);
+                            let vec25 = (currency2.into_bytes()).into_boxed_slice();
+                            let ptr25 = vec25.as_ptr().cast::<u8>();
+                            let len25 = vec25.len();
+                            ::core::mem::forget(vec25);
+                            *ptr1.add(180).cast::<usize>() = len25;
+                            *ptr1.add(176).cast::<*mut u8>() = ptr25.cast_mut();
+                            *ptr1.add(184).cast::<i64>() = _rt::as_i64(timestamp2);
+                            let vec27 = previous_order_ids2;
+                            let len27 = vec27.len();
+                            let layout27 =
+                                _rt::alloc::Layout::from_size_align_unchecked(vec27.len() * 8, 4);
+                            let result27 = if layout27.size() != 0 {
+                                let ptr = _rt::alloc::alloc(layout27).cast::<u8>();
                                 if ptr.is_null() {
-                                    _rt::alloc::handle_alloc_error(layout31);
+                                    _rt::alloc::handle_alloc_error(layout27);
                                 }
                                 ptr
                             } else {
@@ -13497,19 +12869,19 @@ pub mod exports {
                                     ::core::ptr::null_mut()
                                 }
                             };
-                            for (i, e) in vec31.into_iter().enumerate() {
-                                let base = result31.add(i * 8);
+                            for (i, e) in vec27.into_iter().enumerate() {
+                                let base = result27.add(i * 8);
                                 {
-                                    let vec30 = (e.into_bytes()).into_boxed_slice();
-                                    let ptr30 = vec30.as_ptr().cast::<u8>();
-                                    let len30 = vec30.len();
-                                    ::core::mem::forget(vec30);
-                                    *base.add(4).cast::<usize>() = len30;
-                                    *base.add(0).cast::<*mut u8>() = ptr30.cast_mut();
+                                    let vec26 = (e.into_bytes()).into_boxed_slice();
+                                    let ptr26 = vec26.as_ptr().cast::<u8>();
+                                    let len26 = vec26.len();
+                                    ::core::mem::forget(vec26);
+                                    *base.add(4).cast::<usize>() = len26;
+                                    *base.add(0).cast::<*mut u8>() = ptr26.cast_mut();
                                 }
                             }
-                            *ptr1.add(244).cast::<usize>() = len31;
-                            *ptr1.add(240).cast::<*mut u8>() = result31;
+                            *ptr1.add(196).cast::<usize>() = len27;
+                            *ptr1.add(192).cast::<*mut u8>() = result27;
                         }
                         None => {
                             *ptr1.add(0).cast::<u8>() = (0i32) as u8;
@@ -13559,27 +12931,27 @@ pub mod exports {
                                     let l14 = *arg0.add(40).cast::<*mut u8>();
                                     let l15 = *arg0.add(44).cast::<usize>();
                                     _rt::cabi_dealloc(l14, l15, 1);
-                                    let l16 = i32::from(*arg0.add(48).cast::<u8>());
-                                    match l16 {
+                                    let l16 = *arg0.add(48).cast::<*mut u8>();
+                                    let l17 = *arg0.add(52).cast::<usize>();
+                                    _rt::cabi_dealloc(l16, l17, 1);
+                                    let l18 = *arg0.add(56).cast::<*mut u8>();
+                                    let l19 = *arg0.add(60).cast::<usize>();
+                                    _rt::cabi_dealloc(l18, l19, 1);
+                                    let l20 = *arg0.add(64).cast::<*mut u8>();
+                                    let l21 = *arg0.add(68).cast::<usize>();
+                                    _rt::cabi_dealloc(l20, l21, 1);
+                                    let l22 = *arg0.add(72).cast::<*mut u8>();
+                                    let l23 = *arg0.add(76).cast::<usize>();
+                                    _rt::cabi_dealloc(l22, l23, 1);
+                                    let l24 = i32::from(*arg0.add(80).cast::<u8>());
+                                    match l24 {
                                         0 => (),
                                         _ => {
-                                            let l17 = *arg0.add(52).cast::<*mut u8>();
-                                            let l18 = *arg0.add(56).cast::<usize>();
-                                            _rt::cabi_dealloc(l17, l18, 1);
+                                            let l25 = *arg0.add(84).cast::<*mut u8>();
+                                            let l26 = *arg0.add(88).cast::<usize>();
+                                            _rt::cabi_dealloc(l25, l26, 1);
                                         }
                                     }
-                                    let l19 = *arg0.add(60).cast::<*mut u8>();
-                                    let l20 = *arg0.add(64).cast::<usize>();
-                                    _rt::cabi_dealloc(l19, l20, 1);
-                                    let l21 = *arg0.add(68).cast::<*mut u8>();
-                                    let l22 = *arg0.add(72).cast::<usize>();
-                                    _rt::cabi_dealloc(l21, l22, 1);
-                                    let l23 = *arg0.add(76).cast::<*mut u8>();
-                                    let l24 = *arg0.add(80).cast::<usize>();
-                                    _rt::cabi_dealloc(l23, l24, 1);
-                                    let l25 = *arg0.add(84).cast::<*mut u8>();
-                                    let l26 = *arg0.add(88).cast::<usize>();
-                                    _rt::cabi_dealloc(l25, l26, 1);
                                     let l27 = i32::from(*arg0.add(92).cast::<u8>());
                                     match l27 {
                                         0 => (),
@@ -13589,99 +12961,63 @@ pub mod exports {
                                             _rt::cabi_dealloc(l28, l29, 1);
                                         }
                                     }
-                                    let l30 = i32::from(*arg0.add(104).cast::<u8>());
-                                    match l30 {
-                                        0 => (),
-                                        _ => {
-                                            let l31 = *arg0.add(108).cast::<*mut u8>();
-                                            let l32 = *arg0.add(112).cast::<usize>();
-                                            _rt::cabi_dealloc(l31, l32, 1);
-                                        }
-                                    }
-                                    let l33 = i32::from(*arg0.add(116).cast::<u8>());
-                                    match l33 {
-                                        0 => (),
-                                        _ => {
-                                            let l34 = *arg0.add(120).cast::<*mut u8>();
-                                            let l35 = *arg0.add(124).cast::<usize>();
-                                            _rt::cabi_dealloc(l34, l35, 1);
-                                        }
-                                    }
                                 }
                             }
-                            let l36 = i32::from(*arg0.add(128).cast::<u8>());
-                            match l36 {
+                            let l30 = i32::from(*arg0.add(104).cast::<u8>());
+                            match l30 {
                                 0 => (),
                                 _ => {
+                                    let l31 = *arg0.add(108).cast::<*mut u8>();
+                                    let l32 = *arg0.add(112).cast::<usize>();
+                                    _rt::cabi_dealloc(l31, l32, 1);
+                                    let l33 = *arg0.add(116).cast::<*mut u8>();
+                                    let l34 = *arg0.add(120).cast::<usize>();
+                                    _rt::cabi_dealloc(l33, l34, 1);
+                                    let l35 = *arg0.add(124).cast::<*mut u8>();
+                                    let l36 = *arg0.add(128).cast::<usize>();
+                                    _rt::cabi_dealloc(l35, l36, 1);
                                     let l37 = *arg0.add(132).cast::<*mut u8>();
                                     let l38 = *arg0.add(136).cast::<usize>();
                                     _rt::cabi_dealloc(l37, l38, 1);
-                                    let l39 = i32::from(*arg0.add(140).cast::<u8>());
-                                    match l39 {
+                                    let l39 = *arg0.add(140).cast::<*mut u8>();
+                                    let l40 = *arg0.add(144).cast::<usize>();
+                                    _rt::cabi_dealloc(l39, l40, 1);
+                                    let l41 = i32::from(*arg0.add(148).cast::<u8>());
+                                    match l41 {
                                         0 => (),
                                         _ => {
-                                            let l40 = *arg0.add(144).cast::<*mut u8>();
-                                            let l41 = *arg0.add(148).cast::<usize>();
-                                            _rt::cabi_dealloc(l40, l41, 1);
+                                            let l42 = *arg0.add(152).cast::<*mut u8>();
+                                            let l43 = *arg0.add(156).cast::<usize>();
+                                            _rt::cabi_dealloc(l42, l43, 1);
                                         }
                                     }
-                                    let l42 = *arg0.add(152).cast::<*mut u8>();
-                                    let l43 = *arg0.add(156).cast::<usize>();
-                                    _rt::cabi_dealloc(l42, l43, 1);
-                                    let l44 = *arg0.add(160).cast::<*mut u8>();
-                                    let l45 = *arg0.add(164).cast::<usize>();
-                                    _rt::cabi_dealloc(l44, l45, 1);
-                                    let l46 = *arg0.add(168).cast::<*mut u8>();
-                                    let l47 = *arg0.add(172).cast::<usize>();
-                                    _rt::cabi_dealloc(l46, l47, 1);
-                                    let l48 = *arg0.add(176).cast::<*mut u8>();
-                                    let l49 = *arg0.add(180).cast::<usize>();
-                                    _rt::cabi_dealloc(l48, l49, 1);
-                                    let l50 = i32::from(*arg0.add(184).cast::<u8>());
-                                    match l50 {
+                                    let l44 = i32::from(*arg0.add(160).cast::<u8>());
+                                    match l44 {
                                         0 => (),
                                         _ => {
-                                            let l51 = *arg0.add(188).cast::<*mut u8>();
-                                            let l52 = *arg0.add(192).cast::<usize>();
-                                            _rt::cabi_dealloc(l51, l52, 1);
-                                        }
-                                    }
-                                    let l53 = i32::from(*arg0.add(196).cast::<u8>());
-                                    match l53 {
-                                        0 => (),
-                                        _ => {
-                                            let l54 = *arg0.add(200).cast::<*mut u8>();
-                                            let l55 = *arg0.add(204).cast::<usize>();
-                                            _rt::cabi_dealloc(l54, l55, 1);
-                                        }
-                                    }
-                                    let l56 = i32::from(*arg0.add(208).cast::<u8>());
-                                    match l56 {
-                                        0 => (),
-                                        _ => {
-                                            let l57 = *arg0.add(212).cast::<*mut u8>();
-                                            let l58 = *arg0.add(216).cast::<usize>();
-                                            _rt::cabi_dealloc(l57, l58, 1);
+                                            let l45 = *arg0.add(164).cast::<*mut u8>();
+                                            let l46 = *arg0.add(168).cast::<usize>();
+                                            _rt::cabi_dealloc(l45, l46, 1);
                                         }
                                     }
                                 }
                             }
-                            let l59 = *arg0.add(224).cast::<*mut u8>();
-                            let l60 = *arg0.add(228).cast::<usize>();
-                            _rt::cabi_dealloc(l59, l60, 1);
-                            let l63 = *arg0.add(240).cast::<*mut u8>();
-                            let l64 = *arg0.add(244).cast::<usize>();
-                            let base65 = l63;
-                            let len65 = l64;
-                            for i in 0..len65 {
-                                let base = base65.add(i * 8);
+                            let l47 = *arg0.add(176).cast::<*mut u8>();
+                            let l48 = *arg0.add(180).cast::<usize>();
+                            _rt::cabi_dealloc(l47, l48, 1);
+                            let l51 = *arg0.add(192).cast::<*mut u8>();
+                            let l52 = *arg0.add(196).cast::<usize>();
+                            let base53 = l51;
+                            let len53 = l52;
+                            for i in 0..len53 {
+                                let base = base53.add(i * 8);
                                 {
-                                    let l61 = *base.add(0).cast::<*mut u8>();
-                                    let l62 = *base.add(4).cast::<usize>();
-                                    _rt::cabi_dealloc(l61, l62, 1);
+                                    let l49 = *base.add(0).cast::<*mut u8>();
+                                    let l50 = *base.add(4).cast::<usize>();
+                                    _rt::cabi_dealloc(l49, l50, 1);
                                 }
                             }
-                            _rt::cabi_dealloc(base65, len65 * 8, 4);
+                            _rt::cabi_dealloc(base53, len53 * 8, 4);
                         }
                     }
                 }
@@ -13737,16 +13073,16 @@ pub mod exports {
                                         $($path_to_types)*::__post_return_update_email::<$ty>(arg0)
                                       }
                                       #[export_name = "golem:cart/api#update-shipping-address"]
-                                      unsafe extern "C" fn export_update_shipping_address(arg0: *mut u8,) -> *mut u8 {
-                                        $($path_to_types)*::_export_update_shipping_address_cabi::<$ty>(arg0)
+                                      unsafe extern "C" fn export_update_shipping_address(arg0: *mut u8,arg1: usize,arg2: *mut u8,arg3: usize,arg4: *mut u8,arg5: usize,arg6: *mut u8,arg7: usize,arg8: *mut u8,arg9: usize,arg10: i32,arg11: *mut u8,arg12: usize,arg13: i32,arg14: *mut u8,arg15: usize,) -> *mut u8 {
+                                        $($path_to_types)*::_export_update_shipping_address_cabi::<$ty>(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15)
                                       }
                                       #[export_name = "cabi_post_golem:cart/api#update-shipping-address"]
                                       unsafe extern "C" fn _post_return_update_shipping_address(arg0: *mut u8,) {
                                         $($path_to_types)*::__post_return_update_shipping_address::<$ty>(arg0)
                                       }
                                       #[export_name = "golem:cart/api#update-billing-address"]
-                                      unsafe extern "C" fn export_update_billing_address(arg0: *mut u8,) -> *mut u8 {
-                                        $($path_to_types)*::_export_update_billing_address_cabi::<$ty>(arg0)
+                                      unsafe extern "C" fn export_update_billing_address(arg0: *mut u8,arg1: usize,arg2: *mut u8,arg3: usize,arg4: *mut u8,arg5: usize,arg6: *mut u8,arg7: usize,arg8: *mut u8,arg9: usize,arg10: i32,arg11: *mut u8,arg12: usize,arg13: i32,arg14: *mut u8,arg15: usize,) -> *mut u8 {
+                                        $($path_to_types)*::_export_update_billing_address_cabi::<$ty>(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15)
                                       }
                                       #[export_name = "cabi_post_golem:cart/api#update-billing-address"]
                                       unsafe extern "C" fn _post_return_update_billing_address(arg0: *mut u8,) {
@@ -13773,9 +13109,9 @@ pub mod exports {
                 #[doc(hidden)]
                 pub(crate) use __export_golem_cart_api_cabi;
                 #[repr(align(8))]
-                struct _RetArea([::core::mem::MaybeUninit<u8>; 248]);
+                struct _RetArea([::core::mem::MaybeUninit<u8>; 200]);
                 static mut _RET_AREA: _RetArea =
-                    _RetArea([::core::mem::MaybeUninit::uninit(); 248]);
+                    _RetArea([::core::mem::MaybeUninit::uninit(); 200]);
             }
         }
     }
@@ -14094,8 +13430,8 @@ pub(crate) use __export_cart_impl as export;
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.25.0:cart:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 12346] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xbf_\x01A\x02\x01A1\x01\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 12296] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\x8d_\x01A\x02\x01A1\x01\
 B\x0a\x04\0\x08pollable\x03\x01\x01h\0\x01@\x01\x04self\x01\0\x7f\x04\0\x16[meth\
 od]pollable.ready\x01\x02\x01@\x01\x04self\x01\x01\0\x04\0\x16[method]pollable.b\
 lock\x01\x03\x01p\x01\x01py\x01@\x01\x02in\x04\0\x05\x04\0\x04poll\x01\x06\x03\x01\
@@ -14183,170 +13519,169 @@ tialize-product\x01,\x04\0\x1e[method]api.initialize-product\x01,\x01@\x01\x04se
 lf*\0\x19\x04\0\x18[method]api.blocking-get\x01-\x01i\x08\x01@\x01\x04self*\0.\x04\
 \0\x0f[method]api.get\x01/\x03\x01\x1fgolem:product-stub/stub-product\x05\x0a\x01\
 BK\x01m\x03\x03new\x07shipped\x09cancelled\x04\0\x0corder-status\x03\0\0\x01ks\x01\
-r\x09\x07street1s\x07street2\x02\x04citys\x0fstate-or-regions\x07countrys\x0bpos\
-tal-codes\x04name\x02\x0dbusiness-name\x02\x0cphone-number\x02\x04\0\x07address\x03\
-\0\x03\x01r\x04\x0aproduct-ids\x04names\x05pricev\x08quantityy\x04\0\x0aorder-it\
-em\x03\0\x05\x01p\x06\x01k\x04\x01r\x0a\x08order-ids\x07user-ids\x0corder-status\
-\x01\x05email\x02\x05items\x07\x0fbilling-address\x08\x10shipping-address\x08\x05\
-totalv\x08currencys\x09timestampw\x04\0\x05order\x03\0\x09\x01r\x08\x07user-ids\x05\
-emails\x05items\x07\x0fbilling-address\x08\x10shipping-address\x08\x05totalv\x08\
-currencys\x09timestampw\x04\0\x0ccreate-order\x03\0\x0b\x01r\x02\x07messages\x0a\
-product-ids\x04\0\x17product-not-found-error\x03\0\x0d\x01r\x02\x07messages\x0ap\
-roduct-ids\x04\0\x17pricing-not-found-error\x03\0\x0f\x01r\x01\x07messages\x04\0\
-\x17address-not-valid-error\x03\0\x11\x01r\x01\x07messages\x04\0\x15email-not-va\
-lid-error\x03\0\x13\x01r\x02\x07messages\x0aproduct-ids\x04\0\x14item-not-found-\
-error\x03\0\x15\x01r\x01\x07messages\x04\0\x11empty-items-error\x03\0\x17\x01r\x01\
-\x07messages\x04\0\x11empty-email-error\x03\0\x19\x01r\x01\x07messages\x04\0\x1d\
-billing-address-not-set-error\x03\0\x1b\x01r\x02\x07messages\x06status\x01\x04\0\
-\x18action-not-allowed-error\x03\0\x1d\x01q\x02\x0femail-not-valid\x01\x14\0\x12\
-action-not-allowed\x01\x1e\0\x04\0\x12update-email-error\x03\0\x1f\x01q\x03\x11p\
-roduct-not-found\x01\x0e\0\x11pricing-not-found\x01\x10\0\x12action-not-allowed\x01\
-\x1e\0\x04\0\x0eadd-item-error\x03\0!\x01q\x02\x0eitem-not-found\x01\x16\0\x12ac\
-tion-not-allowed\x01\x1e\0\x04\0\x11remove-item-error\x03\0#\x01q\x02\x0eitem-no\
-t-found\x01\x16\0\x12action-not-allowed\x01\x1e\0\x04\0\x1aupdate-item-quantity-\
-error\x03\0%\x01q\x02\x11address-not-valid\x01\x12\0\x12action-not-allowed\x01\x1e\
-\0\x04\0\x14update-address-error\x03\0'\x01q\x04\x0bempty-items\x01\x18\0\x0bemp\
-ty-email\x01\x1a\0\x17billing-address-not-set\x01\x1c\0\x12action-not-allowed\x01\
-\x1e\0\x04\0\x10ship-order-error\x03\0)\x01q\x01\x12action-not-allowed\x01\x1e\0\
-\x04\0\x12cancel-order-error\x03\0+\x01q\x01\x12action-not-allowed\x01\x1e\0\x04\
-\0\x10init-order-error\x03\0-\x01j\0\x01.\x01@\x01\x04data\x0c\0/\x04\0\x10initi\
-alize-order\x010\x01j\0\x01\x20\x01@\x01\x05emails\01\x04\0\x0cupdate-email\x012\
-\x01j\0\x01\"\x01@\x02\x0aproduct-ids\x08quantityy\03\x04\0\x08add-item\x014\x01\
-j\0\x01$\x01@\x01\x0aproduct-ids\05\x04\0\x0bremove-item\x016\x01j\0\x01&\x01@\x02\
-\x0aproduct-ids\x08quantityy\07\x04\0\x14update-item-quantity\x018\x01j\0\x01(\x01\
-@\x01\x07address\x04\09\x04\0\x17update-shipping-address\x01:\x04\0\x16update-bi\
-lling-address\x01:\x01j\0\x01*\x01@\0\0;\x04\0\x0aship-order\x01<\x01j\0\x01,\x01\
-@\0\0=\x04\0\x0ccancel-order\x01>\x01k\x0a\x01@\0\0?\x04\0\x03get\x01@\x03\x01\x0f\
-golem:order/api\x05\x0b\x02\x03\0\x06\x0corder-status\x02\x03\0\x06\x07address\x02\
-\x03\0\x06\x0aorder-item\x02\x03\0\x06\x05order\x02\x03\0\x06\x0ccreate-order\x02\
-\x03\0\x06\x17product-not-found-error\x02\x03\0\x06\x17pricing-not-found-error\x02\
-\x03\0\x06\x17address-not-valid-error\x02\x03\0\x06\x15email-not-valid-error\x02\
-\x03\0\x06\x14item-not-found-error\x02\x03\0\x06\x11empty-items-error\x02\x03\0\x06\
-\x11empty-email-error\x02\x03\0\x06\x1dbilling-address-not-set-error\x02\x03\0\x06\
-\x18action-not-allowed-error\x02\x03\0\x06\x12update-email-error\x02\x03\0\x06\x0e\
-add-item-error\x02\x03\0\x06\x11remove-item-error\x02\x03\0\x06\x1aupdate-item-q\
-uantity-error\x02\x03\0\x06\x14update-address-error\x02\x03\0\x06\x10ship-order-\
-error\x02\x03\0\x06\x12cancel-order-error\x02\x03\0\x06\x10init-order-error\x01B\
-\xd9\x01\x02\x03\x02\x01\x04\x04\0\x0dgolem-rpc-uri\x03\0\0\x02\x03\x02\x01\x01\x04\
-\0\x10wasi-io-pollable\x03\0\x02\x02\x03\x02\x01\x0c\x04\0\x0corder-status\x03\0\
-\x04\x02\x03\x02\x01\x0d\x04\0\x07address\x03\0\x06\x02\x03\x02\x01\x0e\x04\0\x0a\
-order-item\x03\0\x08\x02\x03\x02\x01\x0f\x04\0\x05order\x03\0\x0a\x02\x03\x02\x01\
-\x10\x04\0\x0ccreate-order\x03\0\x0c\x02\x03\x02\x01\x11\x04\0\x17product-not-fo\
-und-error\x03\0\x0e\x02\x03\x02\x01\x12\x04\0\x17pricing-not-found-error\x03\0\x10\
-\x02\x03\x02\x01\x13\x04\0\x17address-not-valid-error\x03\0\x12\x02\x03\x02\x01\x14\
-\x04\0\x15email-not-valid-error\x03\0\x14\x02\x03\x02\x01\x15\x04\0\x14item-not-\
-found-error\x03\0\x16\x02\x03\x02\x01\x16\x04\0\x11empty-items-error\x03\0\x18\x02\
-\x03\x02\x01\x17\x04\0\x11empty-email-error\x03\0\x1a\x02\x03\x02\x01\x18\x04\0\x1d\
-billing-address-not-set-error\x03\0\x1c\x02\x03\x02\x01\x19\x04\0\x18action-not-\
-allowed-error\x03\0\x1e\x02\x03\x02\x01\x1a\x04\0\x12update-email-error\x03\0\x20\
-\x02\x03\x02\x01\x1b\x04\0\x0eadd-item-error\x03\0\"\x02\x03\x02\x01\x1c\x04\0\x11\
-remove-item-error\x03\0$\x02\x03\x02\x01\x1d\x04\0\x1aupdate-item-quantity-error\
-\x03\0&\x02\x03\x02\x01\x1e\x04\0\x14update-address-error\x03\0(\x02\x03\x02\x01\
-\x1f\x04\0\x10ship-order-error\x03\0*\x02\x03\x02\x01\x20\x04\0\x12cancel-order-\
-error\x03\0,\x02\x03\x02\x01!\x04\0\x10init-order-error\x03\0.\x04\0\x12future-s\
-ave-result\x03\x01\x04\0\x12future-load-result\x03\x01\x04\0\x1efuture-initializ\
-e-order-result\x03\x01\x04\0\x1afuture-update-email-result\x03\x01\x04\0\x16futu\
-re-add-item-result\x03\x01\x04\0\x19future-remove-item-result\x03\x01\x04\0\"fut\
-ure-update-item-quantity-result\x03\x01\x04\0%future-update-shipping-address-res\
-ult\x03\x01\x04\0$future-update-billing-address-result\x03\x01\x04\0\x18future-s\
-hip-order-result\x03\x01\x04\0\x1afuture-cancel-order-result\x03\x01\x04\0\x11fu\
-ture-get-result\x03\x01\x04\0\x0dsave-snapshot\x03\x01\x04\0\x0dload-snapshot\x03\
-\x01\x04\0\x03api\x03\x01\x01h0\x01i\x03\x01@\x01\x04self?\0\xc0\0\x04\0$[method\
-]future-save-result.subscribe\x01A\x01p}\x01k\xc2\0\x01@\x01\x04self?\0\xc3\0\x04\
-\0\x1e[method]future-save-result.get\x01D\x01h1\x01@\x01\x04self\xc5\0\0\xc0\0\x04\
-\0$[method]future-load-result.subscribe\x01F\x01j\0\x01s\x01k\xc7\0\x01@\x01\x04\
-self\xc5\0\0\xc8\0\x04\0\x1e[method]future-load-result.get\x01I\x01h2\x01@\x01\x04\
-self\xca\0\0\xc0\0\x04\00[method]future-initialize-order-result.subscribe\x01K\x01\
-j\0\x01/\x01k\xcc\0\x01@\x01\x04self\xca\0\0\xcd\0\x04\0*[method]future-initiali\
-ze-order-result.get\x01N\x01h3\x01@\x01\x04self\xcf\0\0\xc0\0\x04\0,[method]futu\
-re-update-email-result.subscribe\x01P\x01j\0\x01!\x01k\xd1\0\x01@\x01\x04self\xcf\
-\0\0\xd2\0\x04\0&[method]future-update-email-result.get\x01S\x01h4\x01@\x01\x04s\
-elf\xd4\0\0\xc0\0\x04\0([method]future-add-item-result.subscribe\x01U\x01j\0\x01\
-#\x01k\xd6\0\x01@\x01\x04self\xd4\0\0\xd7\0\x04\0\"[method]future-add-item-resul\
-t.get\x01X\x01h5\x01@\x01\x04self\xd9\0\0\xc0\0\x04\0+[method]future-remove-item\
--result.subscribe\x01Z\x01j\0\x01%\x01k\xdb\0\x01@\x01\x04self\xd9\0\0\xdc\0\x04\
-\0%[method]future-remove-item-result.get\x01]\x01h6\x01@\x01\x04self\xde\0\0\xc0\
-\0\x04\04[method]future-update-item-quantity-result.subscribe\x01_\x01j\0\x01'\x01\
-k\xe0\0\x01@\x01\x04self\xde\0\0\xe1\0\x04\0.[method]future-update-item-quantity\
--result.get\x01b\x01h7\x01@\x01\x04self\xe3\0\0\xc0\0\x04\07[method]future-updat\
-e-shipping-address-result.subscribe\x01d\x01j\0\x01)\x01k\xe5\0\x01@\x01\x04self\
-\xe3\0\0\xe6\0\x04\01[method]future-update-shipping-address-result.get\x01g\x01h\
-8\x01@\x01\x04self\xe8\0\0\xc0\0\x04\06[method]future-update-billing-address-res\
-ult.subscribe\x01i\x01@\x01\x04self\xe8\0\0\xe6\0\x04\00[method]future-update-bi\
-lling-address-result.get\x01j\x01h9\x01@\x01\x04self\xeb\0\0\xc0\0\x04\0*[method\
-]future-ship-order-result.subscribe\x01l\x01j\0\x01+\x01k\xed\0\x01@\x01\x04self\
-\xeb\0\0\xee\0\x04\0$[method]future-ship-order-result.get\x01o\x01h:\x01@\x01\x04\
-self\xf0\0\0\xc0\0\x04\0,[method]future-cancel-order-result.subscribe\x01q\x01j\0\
-\x01-\x01k\xf2\0\x01@\x01\x04self\xf0\0\0\xf3\0\x04\0&[method]future-cancel-orde\
-r-result.get\x01t\x01h;\x01@\x01\x04self\xf5\0\0\xc0\0\x04\0#[method]future-get-\
-result.subscribe\x01v\x01k\x0b\x01k\xf7\0\x01@\x01\x04self\xf5\0\0\xf8\0\x04\0\x1d\
-[method]future-get-result.get\x01y\x01i<\x01@\x01\x08location\x01\0\xfa\0\x04\0\x1a\
-[constructor]save-snapshot\x01{\x01h<\x01@\x01\x04self\xfc\0\0\xc2\0\x04\0#[meth\
-od]save-snapshot.blocking-save\x01}\x01i0\x01@\x01\x04self\xfc\0\0\xfe\0\x04\0\x1a\
-[method]save-snapshot.save\x01\x7f\x01i=\x01@\x01\x08location\x01\0\x80\x01\x04\0\
-\x1a[constructor]load-snapshot\x01\x81\x01\x01h=\x01@\x02\x04self\x82\x01\x05byt\
-es\xc2\0\0\xc7\0\x04\0#[method]load-snapshot.blocking-load\x01\x83\x01\x01i1\x01\
-@\x02\x04self\x82\x01\x05bytes\xc2\0\0\x84\x01\x04\0\x1a[method]load-snapshot.lo\
-ad\x01\x85\x01\x01i>\x01@\x01\x08location\x01\0\x86\x01\x04\0\x10[constructor]ap\
-i\x01\x87\x01\x01h>\x01@\x02\x04self\x88\x01\x04data\x0d\0\xcc\0\x04\0%[method]a\
-pi.blocking-initialize-order\x01\x89\x01\x01i2\x01@\x02\x04self\x88\x01\x04data\x0d\
-\0\x8a\x01\x04\0\x1c[method]api.initialize-order\x01\x8b\x01\x01@\x02\x04self\x88\
-\x01\x05emails\0\xd1\0\x04\0![method]api.blocking-update-email\x01\x8c\x01\x01i3\
-\x01@\x02\x04self\x88\x01\x05emails\0\x8d\x01\x04\0\x18[method]api.update-email\x01\
-\x8e\x01\x01@\x03\x04self\x88\x01\x0aproduct-ids\x08quantityy\0\xd6\0\x04\0\x1d[\
-method]api.blocking-add-item\x01\x8f\x01\x01i4\x01@\x03\x04self\x88\x01\x0aprodu\
-ct-ids\x08quantityy\0\x90\x01\x04\0\x14[method]api.add-item\x01\x91\x01\x01@\x02\
-\x04self\x88\x01\x0aproduct-ids\0\xdb\0\x04\0\x20[method]api.blocking-remove-ite\
-m\x01\x92\x01\x01i5\x01@\x02\x04self\x88\x01\x0aproduct-ids\0\x93\x01\x04\0\x17[\
-method]api.remove-item\x01\x94\x01\x01@\x03\x04self\x88\x01\x0aproduct-ids\x08qu\
-antityy\0\xe0\0\x04\0)[method]api.blocking-update-item-quantity\x01\x95\x01\x01i\
-6\x01@\x03\x04self\x88\x01\x0aproduct-ids\x08quantityy\0\x96\x01\x04\0\x20[metho\
-d]api.update-item-quantity\x01\x97\x01\x01@\x02\x04self\x88\x01\x07address\x07\0\
-\xe5\0\x04\0,[method]api.blocking-update-shipping-address\x01\x98\x01\x01i7\x01@\
-\x02\x04self\x88\x01\x07address\x07\0\x99\x01\x04\0#[method]api.update-shipping-\
-address\x01\x9a\x01\x04\0+[method]api.blocking-update-billing-address\x01\x98\x01\
-\x01i8\x01@\x02\x04self\x88\x01\x07address\x07\0\x9b\x01\x04\0\"[method]api.upda\
-te-billing-address\x01\x9c\x01\x01@\x01\x04self\x88\x01\0\xed\0\x04\0\x1f[method\
-]api.blocking-ship-order\x01\x9d\x01\x01i9\x01@\x01\x04self\x88\x01\0\x9e\x01\x04\
-\0\x16[method]api.ship-order\x01\x9f\x01\x01@\x01\x04self\x88\x01\0\xf2\0\x04\0!\
-[method]api.blocking-cancel-order\x01\xa0\x01\x01i:\x01@\x01\x04self\x88\x01\0\xa1\
-\x01\x04\0\x18[method]api.cancel-order\x01\xa2\x01\x01@\x01\x04self\x88\x01\0\xf7\
-\0\x04\0\x18[method]api.blocking-get\x01\xa3\x01\x01i;\x01@\x01\x04self\x88\x01\0\
-\xa4\x01\x04\0\x0f[method]api.get\x01\xa5\x01\x03\x01\x1bgolem:order-stub/stub-o\
-rder\x05\"\x01B\x03\x01p}\x01@\0\0\0\x04\0\x04save\x01\x01\x04\x01\x1dgolem:api/\
-save-snapshot@0.2.0\x05#\x01B\x04\x01p}\x01j\0\x01s\x01@\x01\x05bytes\0\0\x01\x04\
-\0\x04load\x01\x02\x04\x01\x1dgolem:api/load-snapshot@0.2.0\x05$\x01B@\x01ks\x01\
-r\x09\x07street1s\x07street2\0\x04citys\x0fstate-or-regions\x07countrys\x0bposta\
-l-codes\x04name\0\x0dbusiness-name\0\x0cphone-number\0\x04\0\x07address\x03\0\x01\
-\x01r\x04\x0aproduct-ids\x04names\x05pricev\x08quantityy\x04\0\x09cart-item\x03\0\
-\x03\x01p\x04\x01k\x02\x01ps\x01r\x09\x07user-ids\x05email\0\x05items\x05\x0fbil\
-ling-address\x06\x10shipping-address\x06\x05totalv\x08currencys\x09timestampw\x12\
-previous-order-ids\x07\x04\0\x04cart\x03\0\x08\x01r\x01\x08order-ids\x04\0\x12or\
-der-confirmation\x03\0\x0a\x01r\x02\x07messages\x0aproduct-ids\x04\0\x17product-\
-not-found-error\x03\0\x0c\x01r\x02\x07messages\x0aproduct-ids\x04\0\x17pricing-n\
-ot-found-error\x03\0\x0e\x01r\x01\x07messages\x04\0\x17address-not-valid-error\x03\
-\0\x10\x01r\x01\x07messages\x04\0\x15email-not-valid-error\x03\0\x12\x01r\x02\x07\
-messages\x0aproduct-ids\x04\0\x14item-not-found-error\x03\0\x14\x01r\x01\x07mess\
-ages\x04\0\x11empty-items-error\x03\0\x16\x01r\x01\x07messages\x04\0\x1dbilling-\
-address-not-set-error\x03\0\x18\x01r\x01\x07messages\x04\0\x11empty-email-error\x03\
-\0\x1a\x01r\x01\x07messages\x04\0\x12order-create-error\x03\0\x1c\x01q\x02\x11pr\
-oduct-not-found\x01\x0d\0\x11pricing-not-found\x01\x0f\0\x04\0\x0eadd-item-error\
-\x03\0\x1e\x01q\x01\x0eitem-not-found\x01\x15\0\x04\0\x11remove-item-error\x03\0\
-\x20\x01q\x01\x0eitem-not-found\x01\x15\0\x04\0\x1aupdate-item-quantity-error\x03\
-\0\"\x01q\x01\x11address-not-valid\x01\x11\0\x04\0\x14update-address-error\x03\0\
-$\x01q\x01\x0femail-not-valid\x01\x13\0\x04\0\x12update-email-error\x03\0&\x01q\x06\
-\x11product-not-found\x01\x0d\0\x11pricing-not-found\x01\x0f\0\x0bempty-items\x01\
-\x17\0\x0bempty-email\x01\x1b\0\x17billing-address-not-set\x01\x19\0\x0corder-cr\
-eate\x01\x1d\0\x04\0\x0echeckout-error\x03\0(\x01j\0\x01\x1f\x01@\x02\x0aproduct\
--ids\x08quantityy\0*\x04\0\x08add-item\x01+\x01j\0\x01!\x01@\x01\x0aproduct-ids\0\
-,\x04\0\x0bremove-item\x01-\x01j\0\x01#\x01@\x02\x0aproduct-ids\x08quantityy\0.\x04\
-\0\x14update-item-quantity\x01/\x01j\0\x01'\x01@\x01\x05emails\00\x04\0\x0cupdat\
-e-email\x011\x01j\0\x01%\x01@\x01\x07address\x02\02\x04\0\x17update-shipping-add\
-ress\x013\x04\0\x16update-billing-address\x013\x01j\x01\x0b\x01)\x01@\0\04\x04\0\
-\x08checkout\x015\x01k\x09\x01@\0\06\x04\0\x03get\x017\x04\x01\x0egolem:cart/api\
-\x05%\x04\x01\x0fgolem:cart/cart\x04\0\x0b\x0a\x01\0\x04cart\x03\0\0\0G\x09produ\
-cers\x01\x0cprocessed-by\x02\x0dwit-component\x070.208.1\x10wit-bindgen-rust\x06\
-0.25.0";
+r\x07\x06streets\x04citys\x0fstate-or-regions\x07countrys\x0bpostal-codes\x04nam\
+e\x02\x0cphone-number\x02\x04\0\x07address\x03\0\x03\x01r\x04\x0aproduct-ids\x04\
+names\x05pricev\x08quantityy\x04\0\x0aorder-item\x03\0\x05\x01p\x06\x01k\x04\x01\
+r\x0a\x08order-ids\x07user-ids\x0corder-status\x01\x05email\x02\x05items\x07\x0f\
+billing-address\x08\x10shipping-address\x08\x05totalv\x08currencys\x09timestampw\
+\x04\0\x05order\x03\0\x09\x01r\x08\x07user-ids\x05emails\x05items\x07\x0fbilling\
+-address\x08\x10shipping-address\x08\x05totalv\x08currencys\x09timestampw\x04\0\x0c\
+create-order\x03\0\x0b\x01r\x02\x07messages\x0aproduct-ids\x04\0\x17product-not-\
+found-error\x03\0\x0d\x01r\x02\x07messages\x0aproduct-ids\x04\0\x17pricing-not-f\
+ound-error\x03\0\x0f\x01r\x01\x07messages\x04\0\x17address-not-valid-error\x03\0\
+\x11\x01r\x01\x07messages\x04\0\x15email-not-valid-error\x03\0\x13\x01r\x02\x07m\
+essages\x0aproduct-ids\x04\0\x14item-not-found-error\x03\0\x15\x01r\x01\x07messa\
+ges\x04\0\x11empty-items-error\x03\0\x17\x01r\x01\x07messages\x04\0\x11empty-ema\
+il-error\x03\0\x19\x01r\x01\x07messages\x04\0\x1dbilling-address-not-set-error\x03\
+\0\x1b\x01r\x02\x07messages\x06status\x01\x04\0\x18action-not-allowed-error\x03\0\
+\x1d\x01q\x02\x0femail-not-valid\x01\x14\0\x12action-not-allowed\x01\x1e\0\x04\0\
+\x12update-email-error\x03\0\x1f\x01q\x03\x11product-not-found\x01\x0e\0\x11pric\
+ing-not-found\x01\x10\0\x12action-not-allowed\x01\x1e\0\x04\0\x0eadd-item-error\x03\
+\0!\x01q\x02\x0eitem-not-found\x01\x16\0\x12action-not-allowed\x01\x1e\0\x04\0\x11\
+remove-item-error\x03\0#\x01q\x02\x0eitem-not-found\x01\x16\0\x12action-not-allo\
+wed\x01\x1e\0\x04\0\x1aupdate-item-quantity-error\x03\0%\x01q\x02\x11address-not\
+-valid\x01\x12\0\x12action-not-allowed\x01\x1e\0\x04\0\x14update-address-error\x03\
+\0'\x01q\x04\x0bempty-items\x01\x18\0\x0bempty-email\x01\x1a\0\x17billing-addres\
+s-not-set\x01\x1c\0\x12action-not-allowed\x01\x1e\0\x04\0\x10ship-order-error\x03\
+\0)\x01q\x01\x12action-not-allowed\x01\x1e\0\x04\0\x12cancel-order-error\x03\0+\x01\
+q\x01\x12action-not-allowed\x01\x1e\0\x04\0\x10init-order-error\x03\0-\x01j\0\x01\
+.\x01@\x01\x04data\x0c\0/\x04\0\x10initialize-order\x010\x01j\0\x01\x20\x01@\x01\
+\x05emails\01\x04\0\x0cupdate-email\x012\x01j\0\x01\"\x01@\x02\x0aproduct-ids\x08\
+quantityy\03\x04\0\x08add-item\x014\x01j\0\x01$\x01@\x01\x0aproduct-ids\05\x04\0\
+\x0bremove-item\x016\x01j\0\x01&\x01@\x02\x0aproduct-ids\x08quantityy\07\x04\0\x14\
+update-item-quantity\x018\x01j\0\x01(\x01@\x01\x07address\x04\09\x04\0\x17update\
+-shipping-address\x01:\x04\0\x16update-billing-address\x01:\x01j\0\x01*\x01@\0\0\
+;\x04\0\x0aship-order\x01<\x01j\0\x01,\x01@\0\0=\x04\0\x0ccancel-order\x01>\x01k\
+\x0a\x01@\0\0?\x04\0\x03get\x01@\x03\x01\x0fgolem:order/api\x05\x0b\x02\x03\0\x06\
+\x0corder-status\x02\x03\0\x06\x07address\x02\x03\0\x06\x0aorder-item\x02\x03\0\x06\
+\x05order\x02\x03\0\x06\x0ccreate-order\x02\x03\0\x06\x17product-not-found-error\
+\x02\x03\0\x06\x17pricing-not-found-error\x02\x03\0\x06\x17address-not-valid-err\
+or\x02\x03\0\x06\x15email-not-valid-error\x02\x03\0\x06\x14item-not-found-error\x02\
+\x03\0\x06\x11empty-items-error\x02\x03\0\x06\x11empty-email-error\x02\x03\0\x06\
+\x1dbilling-address-not-set-error\x02\x03\0\x06\x18action-not-allowed-error\x02\x03\
+\0\x06\x12update-email-error\x02\x03\0\x06\x0eadd-item-error\x02\x03\0\x06\x11re\
+move-item-error\x02\x03\0\x06\x1aupdate-item-quantity-error\x02\x03\0\x06\x14upd\
+ate-address-error\x02\x03\0\x06\x10ship-order-error\x02\x03\0\x06\x12cancel-orde\
+r-error\x02\x03\0\x06\x10init-order-error\x01B\xd9\x01\x02\x03\x02\x01\x04\x04\0\
+\x0dgolem-rpc-uri\x03\0\0\x02\x03\x02\x01\x01\x04\0\x10wasi-io-pollable\x03\0\x02\
+\x02\x03\x02\x01\x0c\x04\0\x0corder-status\x03\0\x04\x02\x03\x02\x01\x0d\x04\0\x07\
+address\x03\0\x06\x02\x03\x02\x01\x0e\x04\0\x0aorder-item\x03\0\x08\x02\x03\x02\x01\
+\x0f\x04\0\x05order\x03\0\x0a\x02\x03\x02\x01\x10\x04\0\x0ccreate-order\x03\0\x0c\
+\x02\x03\x02\x01\x11\x04\0\x17product-not-found-error\x03\0\x0e\x02\x03\x02\x01\x12\
+\x04\0\x17pricing-not-found-error\x03\0\x10\x02\x03\x02\x01\x13\x04\0\x17address\
+-not-valid-error\x03\0\x12\x02\x03\x02\x01\x14\x04\0\x15email-not-valid-error\x03\
+\0\x14\x02\x03\x02\x01\x15\x04\0\x14item-not-found-error\x03\0\x16\x02\x03\x02\x01\
+\x16\x04\0\x11empty-items-error\x03\0\x18\x02\x03\x02\x01\x17\x04\0\x11empty-ema\
+il-error\x03\0\x1a\x02\x03\x02\x01\x18\x04\0\x1dbilling-address-not-set-error\x03\
+\0\x1c\x02\x03\x02\x01\x19\x04\0\x18action-not-allowed-error\x03\0\x1e\x02\x03\x02\
+\x01\x1a\x04\0\x12update-email-error\x03\0\x20\x02\x03\x02\x01\x1b\x04\0\x0eadd-\
+item-error\x03\0\"\x02\x03\x02\x01\x1c\x04\0\x11remove-item-error\x03\0$\x02\x03\
+\x02\x01\x1d\x04\0\x1aupdate-item-quantity-error\x03\0&\x02\x03\x02\x01\x1e\x04\0\
+\x14update-address-error\x03\0(\x02\x03\x02\x01\x1f\x04\0\x10ship-order-error\x03\
+\0*\x02\x03\x02\x01\x20\x04\0\x12cancel-order-error\x03\0,\x02\x03\x02\x01!\x04\0\
+\x10init-order-error\x03\0.\x04\0\x12future-save-result\x03\x01\x04\0\x12future-\
+load-result\x03\x01\x04\0\x1efuture-initialize-order-result\x03\x01\x04\0\x1afut\
+ure-update-email-result\x03\x01\x04\0\x16future-add-item-result\x03\x01\x04\0\x19\
+future-remove-item-result\x03\x01\x04\0\"future-update-item-quantity-result\x03\x01\
+\x04\0%future-update-shipping-address-result\x03\x01\x04\0$future-update-billing\
+-address-result\x03\x01\x04\0\x18future-ship-order-result\x03\x01\x04\0\x1afutur\
+e-cancel-order-result\x03\x01\x04\0\x11future-get-result\x03\x01\x04\0\x0dsave-s\
+napshot\x03\x01\x04\0\x0dload-snapshot\x03\x01\x04\0\x03api\x03\x01\x01h0\x01i\x03\
+\x01@\x01\x04self?\0\xc0\0\x04\0$[method]future-save-result.subscribe\x01A\x01p}\
+\x01k\xc2\0\x01@\x01\x04self?\0\xc3\0\x04\0\x1e[method]future-save-result.get\x01\
+D\x01h1\x01@\x01\x04self\xc5\0\0\xc0\0\x04\0$[method]future-load-result.subscrib\
+e\x01F\x01j\0\x01s\x01k\xc7\0\x01@\x01\x04self\xc5\0\0\xc8\0\x04\0\x1e[method]fu\
+ture-load-result.get\x01I\x01h2\x01@\x01\x04self\xca\0\0\xc0\0\x04\00[method]fut\
+ure-initialize-order-result.subscribe\x01K\x01j\0\x01/\x01k\xcc\0\x01@\x01\x04se\
+lf\xca\0\0\xcd\0\x04\0*[method]future-initialize-order-result.get\x01N\x01h3\x01\
+@\x01\x04self\xcf\0\0\xc0\0\x04\0,[method]future-update-email-result.subscribe\x01\
+P\x01j\0\x01!\x01k\xd1\0\x01@\x01\x04self\xcf\0\0\xd2\0\x04\0&[method]future-upd\
+ate-email-result.get\x01S\x01h4\x01@\x01\x04self\xd4\0\0\xc0\0\x04\0([method]fut\
+ure-add-item-result.subscribe\x01U\x01j\0\x01#\x01k\xd6\0\x01@\x01\x04self\xd4\0\
+\0\xd7\0\x04\0\"[method]future-add-item-result.get\x01X\x01h5\x01@\x01\x04self\xd9\
+\0\0\xc0\0\x04\0+[method]future-remove-item-result.subscribe\x01Z\x01j\0\x01%\x01\
+k\xdb\0\x01@\x01\x04self\xd9\0\0\xdc\0\x04\0%[method]future-remove-item-result.g\
+et\x01]\x01h6\x01@\x01\x04self\xde\0\0\xc0\0\x04\04[method]future-update-item-qu\
+antity-result.subscribe\x01_\x01j\0\x01'\x01k\xe0\0\x01@\x01\x04self\xde\0\0\xe1\
+\0\x04\0.[method]future-update-item-quantity-result.get\x01b\x01h7\x01@\x01\x04s\
+elf\xe3\0\0\xc0\0\x04\07[method]future-update-shipping-address-result.subscribe\x01\
+d\x01j\0\x01)\x01k\xe5\0\x01@\x01\x04self\xe3\0\0\xe6\0\x04\01[method]future-upd\
+ate-shipping-address-result.get\x01g\x01h8\x01@\x01\x04self\xe8\0\0\xc0\0\x04\06\
+[method]future-update-billing-address-result.subscribe\x01i\x01@\x01\x04self\xe8\
+\0\0\xe6\0\x04\00[method]future-update-billing-address-result.get\x01j\x01h9\x01\
+@\x01\x04self\xeb\0\0\xc0\0\x04\0*[method]future-ship-order-result.subscribe\x01\
+l\x01j\0\x01+\x01k\xed\0\x01@\x01\x04self\xeb\0\0\xee\0\x04\0$[method]future-shi\
+p-order-result.get\x01o\x01h:\x01@\x01\x04self\xf0\0\0\xc0\0\x04\0,[method]futur\
+e-cancel-order-result.subscribe\x01q\x01j\0\x01-\x01k\xf2\0\x01@\x01\x04self\xf0\
+\0\0\xf3\0\x04\0&[method]future-cancel-order-result.get\x01t\x01h;\x01@\x01\x04s\
+elf\xf5\0\0\xc0\0\x04\0#[method]future-get-result.subscribe\x01v\x01k\x0b\x01k\xf7\
+\0\x01@\x01\x04self\xf5\0\0\xf8\0\x04\0\x1d[method]future-get-result.get\x01y\x01\
+i<\x01@\x01\x08location\x01\0\xfa\0\x04\0\x1a[constructor]save-snapshot\x01{\x01\
+h<\x01@\x01\x04self\xfc\0\0\xc2\0\x04\0#[method]save-snapshot.blocking-save\x01}\
+\x01i0\x01@\x01\x04self\xfc\0\0\xfe\0\x04\0\x1a[method]save-snapshot.save\x01\x7f\
+\x01i=\x01@\x01\x08location\x01\0\x80\x01\x04\0\x1a[constructor]load-snapshot\x01\
+\x81\x01\x01h=\x01@\x02\x04self\x82\x01\x05bytes\xc2\0\0\xc7\0\x04\0#[method]loa\
+d-snapshot.blocking-load\x01\x83\x01\x01i1\x01@\x02\x04self\x82\x01\x05bytes\xc2\
+\0\0\x84\x01\x04\0\x1a[method]load-snapshot.load\x01\x85\x01\x01i>\x01@\x01\x08l\
+ocation\x01\0\x86\x01\x04\0\x10[constructor]api\x01\x87\x01\x01h>\x01@\x02\x04se\
+lf\x88\x01\x04data\x0d\0\xcc\0\x04\0%[method]api.blocking-initialize-order\x01\x89\
+\x01\x01i2\x01@\x02\x04self\x88\x01\x04data\x0d\0\x8a\x01\x04\0\x1c[method]api.i\
+nitialize-order\x01\x8b\x01\x01@\x02\x04self\x88\x01\x05emails\0\xd1\0\x04\0![me\
+thod]api.blocking-update-email\x01\x8c\x01\x01i3\x01@\x02\x04self\x88\x01\x05ema\
+ils\0\x8d\x01\x04\0\x18[method]api.update-email\x01\x8e\x01\x01@\x03\x04self\x88\
+\x01\x0aproduct-ids\x08quantityy\0\xd6\0\x04\0\x1d[method]api.blocking-add-item\x01\
+\x8f\x01\x01i4\x01@\x03\x04self\x88\x01\x0aproduct-ids\x08quantityy\0\x90\x01\x04\
+\0\x14[method]api.add-item\x01\x91\x01\x01@\x02\x04self\x88\x01\x0aproduct-ids\0\
+\xdb\0\x04\0\x20[method]api.blocking-remove-item\x01\x92\x01\x01i5\x01@\x02\x04s\
+elf\x88\x01\x0aproduct-ids\0\x93\x01\x04\0\x17[method]api.remove-item\x01\x94\x01\
+\x01@\x03\x04self\x88\x01\x0aproduct-ids\x08quantityy\0\xe0\0\x04\0)[method]api.\
+blocking-update-item-quantity\x01\x95\x01\x01i6\x01@\x03\x04self\x88\x01\x0aprod\
+uct-ids\x08quantityy\0\x96\x01\x04\0\x20[method]api.update-item-quantity\x01\x97\
+\x01\x01@\x02\x04self\x88\x01\x07address\x07\0\xe5\0\x04\0,[method]api.blocking-\
+update-shipping-address\x01\x98\x01\x01i7\x01@\x02\x04self\x88\x01\x07address\x07\
+\0\x99\x01\x04\0#[method]api.update-shipping-address\x01\x9a\x01\x04\0+[method]a\
+pi.blocking-update-billing-address\x01\x98\x01\x01i8\x01@\x02\x04self\x88\x01\x07\
+address\x07\0\x9b\x01\x04\0\"[method]api.update-billing-address\x01\x9c\x01\x01@\
+\x01\x04self\x88\x01\0\xed\0\x04\0\x1f[method]api.blocking-ship-order\x01\x9d\x01\
+\x01i9\x01@\x01\x04self\x88\x01\0\x9e\x01\x04\0\x16[method]api.ship-order\x01\x9f\
+\x01\x01@\x01\x04self\x88\x01\0\xf2\0\x04\0![method]api.blocking-cancel-order\x01\
+\xa0\x01\x01i:\x01@\x01\x04self\x88\x01\0\xa1\x01\x04\0\x18[method]api.cancel-or\
+der\x01\xa2\x01\x01@\x01\x04self\x88\x01\0\xf7\0\x04\0\x18[method]api.blocking-g\
+et\x01\xa3\x01\x01i;\x01@\x01\x04self\x88\x01\0\xa4\x01\x04\0\x0f[method]api.get\
+\x01\xa5\x01\x03\x01\x1bgolem:order-stub/stub-order\x05\"\x01B\x03\x01p}\x01@\0\0\
+\0\x04\0\x04save\x01\x01\x04\x01\x1dgolem:api/save-snapshot@0.2.0\x05#\x01B\x04\x01\
+p}\x01j\0\x01s\x01@\x01\x05bytes\0\0\x01\x04\0\x04load\x01\x02\x04\x01\x1dgolem:\
+api/load-snapshot@0.2.0\x05$\x01B@\x01ks\x01r\x07\x06streets\x04citys\x0fstate-o\
+r-regions\x07countrys\x0bpostal-codes\x04name\0\x0cphone-number\0\x04\0\x07addre\
+ss\x03\0\x01\x01r\x04\x0aproduct-ids\x04names\x05pricev\x08quantityy\x04\0\x09ca\
+rt-item\x03\0\x03\x01p\x04\x01k\x02\x01ps\x01r\x09\x07user-ids\x05email\0\x05ite\
+ms\x05\x0fbilling-address\x06\x10shipping-address\x06\x05totalv\x08currencys\x09\
+timestampw\x12previous-order-ids\x07\x04\0\x04cart\x03\0\x08\x01r\x01\x08order-i\
+ds\x04\0\x12order-confirmation\x03\0\x0a\x01r\x02\x07messages\x0aproduct-ids\x04\
+\0\x17product-not-found-error\x03\0\x0c\x01r\x02\x07messages\x0aproduct-ids\x04\0\
+\x17pricing-not-found-error\x03\0\x0e\x01r\x01\x07messages\x04\0\x17address-not-\
+valid-error\x03\0\x10\x01r\x01\x07messages\x04\0\x15email-not-valid-error\x03\0\x12\
+\x01r\x02\x07messages\x0aproduct-ids\x04\0\x14item-not-found-error\x03\0\x14\x01\
+r\x01\x07messages\x04\0\x11empty-items-error\x03\0\x16\x01r\x01\x07messages\x04\0\
+\x1dbilling-address-not-set-error\x03\0\x18\x01r\x01\x07messages\x04\0\x11empty-\
+email-error\x03\0\x1a\x01r\x01\x07messages\x04\0\x12order-create-error\x03\0\x1c\
+\x01q\x02\x11product-not-found\x01\x0d\0\x11pricing-not-found\x01\x0f\0\x04\0\x0e\
+add-item-error\x03\0\x1e\x01q\x01\x0eitem-not-found\x01\x15\0\x04\0\x11remove-it\
+em-error\x03\0\x20\x01q\x01\x0eitem-not-found\x01\x15\0\x04\0\x1aupdate-item-qua\
+ntity-error\x03\0\"\x01q\x01\x11address-not-valid\x01\x11\0\x04\0\x14update-addr\
+ess-error\x03\0$\x01q\x01\x0femail-not-valid\x01\x13\0\x04\0\x12update-email-err\
+or\x03\0&\x01q\x06\x11product-not-found\x01\x0d\0\x11pricing-not-found\x01\x0f\0\
+\x0bempty-items\x01\x17\0\x0bempty-email\x01\x1b\0\x17billing-address-not-set\x01\
+\x19\0\x0corder-create\x01\x1d\0\x04\0\x0echeckout-error\x03\0(\x01j\0\x01\x1f\x01\
+@\x02\x0aproduct-ids\x08quantityy\0*\x04\0\x08add-item\x01+\x01j\0\x01!\x01@\x01\
+\x0aproduct-ids\0,\x04\0\x0bremove-item\x01-\x01j\0\x01#\x01@\x02\x0aproduct-ids\
+\x08quantityy\0.\x04\0\x14update-item-quantity\x01/\x01j\0\x01'\x01@\x01\x05emai\
+ls\00\x04\0\x0cupdate-email\x011\x01j\0\x01%\x01@\x01\x07address\x02\02\x04\0\x17\
+update-shipping-address\x013\x04\0\x16update-billing-address\x013\x01j\x01\x0b\x01\
+)\x01@\0\04\x04\0\x08checkout\x015\x01k\x09\x01@\0\06\x04\0\x03get\x017\x04\x01\x0e\
+golem:cart/api\x05%\x04\x01\x0fgolem:cart/cart\x04\0\x0b\x0a\x01\0\x04cart\x03\0\
+\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit-component\x070.208.1\x10wit-bi\
+ndgen-rust\x060.25.0";
 
 #[inline(never)]
 #[doc(hidden)]

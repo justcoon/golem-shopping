@@ -4,14 +4,12 @@ pub mod common {
     #[derive(Clone, Debug, Serialize, Deserialize)]
     #[serde(rename_all = "kebab-case")]
     pub struct Address {
-        pub street1: String,
-        pub street2: Option<String>,
+        pub street: String,
         pub city: String,
         pub state_or_region: String,
         pub country: String,
         pub postal_code: String,
         pub name: Option<String>,
-        pub business_name: Option<String>,
         pub phone_number: Option<String>,
     }
 

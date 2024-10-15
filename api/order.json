@@ -7,8 +7,8 @@
       "path": "/v1/order/{order-id}",
       "binding": {
         "componentId": {
-          "componentId": "2982f02f-97bc-4539-801c-a5483a9c2d03",
-          "version": 1
+          "componentId": "c85a589d-867a-4fbc-a894-7c488611a298",
+          "version": 0
         },
         "workerName": "${let id: str = request.path.order-id;\nid}",
         "idempotencyKey": null,
@@ -20,8 +20,8 @@
       "path": "/v1/order/{order-id}/email",
       "binding": {
         "componentId": {
-          "componentId": "2982f02f-97bc-4539-801c-a5483a9c2d03",
-          "version": 1
+          "componentId": "c85a589d-867a-4fbc-a894-7c488611a298",
+          "version": 0
         },
         "workerName": "${let id: str = request.path.order-id;\nid}",
         "idempotencyKey": null,
@@ -34,8 +34,8 @@
       "path": "/v1/order/{order-id}/items/{product-id}",
       "binding": {
         "componentId": {
-          "componentId": "2982f02f-97bc-4539-801c-a5483a9c2d03",
-          "version": 1
+          "componentId": "c85a589d-867a-4fbc-a894-7c488611a298",
+          "version": 0
         },
         "workerName": "${let id: str = request.path.order-id;\nid}",
         "idempotencyKey": null,
@@ -49,8 +49,8 @@
       "path": "/v1/order/{order-id}/ship-order",
       "binding": {
         "componentId": {
-          "componentId": "2982f02f-97bc-4539-801c-a5483a9c2d03",
-          "version": 1
+          "componentId": "c85a589d-867a-4fbc-a894-7c488611a298",
+          "version": 0
         },
         "workerName": "${let id: str = request.path.order-id;\nid}",
         "idempotencyKey": null,
@@ -63,8 +63,8 @@
       "path": "/v1/order/{order-id}/cancel-order",
       "binding": {
         "componentId": {
-          "componentId": "2982f02f-97bc-4539-801c-a5483a9c2d03",
-          "version": 1
+          "componentId": "c85a589d-867a-4fbc-a894-7c488611a298",
+          "version": 0
         },
         "workerName": "${let id: str = request.path.order-id;\nid}",
         "idempotencyKey": null,
@@ -77,8 +77,8 @@
       "path": "/v1/order/{order-id}/billing-address",
       "binding": {
         "componentId": {
-          "componentId": "2982f02f-97bc-4539-801c-a5483a9c2d03",
-          "version": 1
+          "componentId": "c85a589d-867a-4fbc-a894-7c488611a298",
+          "version": 0
         },
         "workerName": "${let id: str = request.path.order-id;\nid}",
         "idempotencyKey": null,
@@ -91,8 +91,8 @@
       "path": "/v1/order/{order-id}/shipping-address",
       "binding": {
         "componentId": {
-          "componentId": "2982f02f-97bc-4539-801c-a5483a9c2d03",
-          "version": 1
+          "componentId": "c85a589d-867a-4fbc-a894-7c488611a298",
+          "version": 0
         },
         "workerName": "${let id: str = request.path.order-id;\nid}",
         "idempotencyKey": null,
@@ -105,8 +105,8 @@
       "path": "/v1/order/{order-id}/items/{product-id}",
       "binding": {
         "componentId": {
-          "componentId": "2982f02f-97bc-4539-801c-a5483a9c2d03",
-          "version": 1
+          "componentId": "c85a589d-867a-4fbc-a894-7c488611a298",
+          "version": 0
         },
         "workerName": "${let id: str = request.path.order-id;\nid}",
         "idempotencyKey": null,

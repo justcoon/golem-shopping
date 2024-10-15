@@ -7,8 +7,8 @@
       "path": "/v1/cart/{user-id}",
       "binding": {
         "componentId": {
-          "componentId": "df93bd28-e341-453f-9dd7-3fc6bec20b23",
-          "version": 1
+          "componentId": "d2599fa8-d083-4c96-85bf-f392483fdeba",
+          "version": 0
         },
         "workerName": "${let id: str = request.path.user-id;\nid}",
         "idempotencyKey": null,
@@ -21,8 +21,8 @@
       "path": "/v1/cart/{user-id}/items/{product-id}",
       "binding": {
         "componentId": {
-          "componentId": "df93bd28-e341-453f-9dd7-3fc6bec20b23",
-          "version": 1
+          "componentId": "d2599fa8-d083-4c96-85bf-f392483fdeba",
+          "version": 0
         },
         "workerName": "${let id: str = request.path.user-id;\nid}",
         "idempotencyKey": null,
@@ -36,8 +36,8 @@
       "path": "/v1/cart/{user-id}/checkout",
       "binding": {
         "componentId": {
-          "componentId": "df93bd28-e341-453f-9dd7-3fc6bec20b23",
-          "version": 1
+          "componentId": "d2599fa8-d083-4c96-85bf-f392483fdeba",
+          "version": 0
         },
         "workerName": "${let id: str = request.path.user-id;\nid}",
         "idempotencyKey": null,
@@ -50,8 +50,8 @@
       "path": "/v1/cart/{user-id}/email",
       "binding": {
         "componentId": {
-          "componentId": "df93bd28-e341-453f-9dd7-3fc6bec20b23",
-          "version": 1
+          "componentId": "d2599fa8-d083-4c96-85bf-f392483fdeba",
+          "version": 0
         },
         "workerName": "${let id: str = request.path.user-id;\nid}",
         "idempotencyKey": null,
@@ -64,8 +64,8 @@
       "path": "/v1/cart/{user-id}/billing-address",
       "binding": {
         "componentId": {
-          "componentId": "df93bd28-e341-453f-9dd7-3fc6bec20b23",
-          "version": 1
+          "componentId": "d2599fa8-d083-4c96-85bf-f392483fdeba",
+          "version": 0
         },
         "workerName": "${let id: str = request.path.user-id;\nid}",
         "idempotencyKey": null,
@@ -78,8 +78,8 @@
       "path": "/v1/cart/{user-id}/shipping-address",
       "binding": {
         "componentId": {
-          "componentId": "df93bd28-e341-453f-9dd7-3fc6bec20b23",
-          "version": 1
+          "componentId": "d2599fa8-d083-4c96-85bf-f392483fdeba",
+          "version": 0
         },
         "workerName": "${let id: str = request.path.user-id;\nid}",
         "idempotencyKey": null,
@@ -92,8 +92,8 @@
       "path": "/v1/cart/{user-id}/items/{product-id}",
       "binding": {
         "componentId": {
-          "componentId": "df93bd28-e341-453f-9dd7-3fc6bec20b23",
-          "version": 1
+          "componentId": "d2599fa8-d083-4c96-85bf-f392483fdeba",
+          "version": 0
         },
         "workerName": "${let id: str = request.path.user-id;\nid}",
         "idempotencyKey": null,
