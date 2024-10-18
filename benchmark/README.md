@@ -19,7 +19,7 @@ HOST=http://localhost:9006 API_HOST=golem-shopping.test.local drill --benchmark 
 
 * product with ids: p001 - p050
 * pricing for products with ids: p001 - p050 (p050 related request may produce errors)
-* cart for user with ids: user011 - user014
+* cart for user with ids: user011 - user014 (NOTE: workers needs to be created manually)
 
 add cart workers (env variables are representing related component id-s)
 

@@ -1,0 +1,518 @@
+{
+  "openapi": "3.0.0",
+  "x-golem-api-definition-version": "0.0.1",
+  "x-golem-api-definition-id": "shopping",
+  "info": {
+    "title": "Sample API",
+    "version": "0.0.1"
+  },
+  "paths": {
+    "/v1/cart/{user-id}": {
+      "get": {
+        "x-golem-worker-bridge": {
+          "worker-name": "${let id: str = request.path.user-id;\nid}",
+          "component-id": "2696abdc-df3a-4771-8215-d6af7aa4c408",
+          "component-version": 0,
+          "response": "${let result = golem:cart/api.{get}();\nmatch result {  some(x) => {status: 200u64, body: x}, none => {status: 404u64, body: {message: \"not found\"}} } }"
+        },
+        "summary": "Get Cart Contents",
+        "description": "Get the contents of a user's cart",
+        "parameters": [
+          {
+            "name": "user-id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Cart"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Contents not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/cart/{user-id}/items/{product-id}": {
+      "put": {
+        "x-golem-worker-bridge": {
+          "worker-name": "${let id: str = request.path.user-id;\nid}",
+          "component-id": "2696abdc-df3a-4771-8215-d6af7aa4c408",
+          "component-version": 0,
+          "response": "${let result = golem:cart/api.{add-item}(request.path.product-id, request.body.quantity);\nmatch result {  ok(_) => {status: 200u64, body: {message: \"item added\"}}, err(x) => {status: 400u64, body: {error: x}} } }"
+        },
+        "summary": "Add Item to Cart",
+        "description": "Add an item to a user's cart",
+        "parameters": [
+          {
+            "name": "user-id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "product-id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateQuantityRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "x-golem-worker-bridge": {
+          "worker-name": "${let id: str = request.path.user-id;\nid}",
+          "component-id": "2696abdc-df3a-4771-8215-d6af7aa4c408",
+          "component-version": 0,
+          "response": "${let result = golem:cart/api.{remove-item}(request.path.product-id);\nmatch result {  ok(_) => {status: 200u64, body: {message: \"item removed\"}}, err(x) => {status: 400u64, body: {error: x}} } }"
+        },
+        "summary": "Delete Item from Cart",
+        "description": "Delete an item from a user's cart",
+        "parameters": [
+          {
+            "name": "user-id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "product-id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/cart/{user-id}/email": {
+      "put": {
+        "x-golem-worker-bridge": {
+          "worker-name": "${let id: str = request.path.user-id;\nid}",
+          "component-id": "2696abdc-df3a-4771-8215-d6af7aa4c408",
+          "component-version": 0,
+          "response": "${let email: str = request.body.email;\nlet result = golem:cart/api.{update-email}(email);\nmatch result {  ok(_) => {status: 200u64, body: {message: \"email set\"}}, err(x) => {status: 400u64, body: {error: x}} } }"
+        },
+        "summary": "Set Email",
+        "description": "Set a user's email",
+        "parameters": [
+          {
+            "name": "user-id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEmailRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/cart/{user-id}/billing-address": {
+      "put": {
+        "x-golem-worker-bridge": {
+          "worker-name": "${let id: str = request.path.user-id;\nid}",
+          "component-id": "2696abdc-df3a-4771-8215-d6af7aa4c408",
+          "component-version": 0,
+          "response": "${let result = golem:cart/api.{update-billing-address}(request.body);\nmatch result {  ok(_) => {status: 200u64, body: {message: \"address set\"}}, err(x) => {status: 400u64, body: {error: x}} } }"
+        },
+        "summary": "Set Billing Address",
+        "description": "Set a user's billing address",
+        "parameters": [
+          {
+            "name": "user-id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Address"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/cart/{user-id}/shipping-address": {
+      "put": {
+        "x-golem-worker-bridge": {
+          "worker-name": "${let id: str = request.path.user-id;\nid}",
+          "component-id": "2696abdc-df3a-4771-8215-d6af7aa4c408",
+          "component-version": 0,
+          "response": "${let result = golem:cart/api.{update-billing-address}(request.body);\nmatch result {  ok(_) => {status: 200u64, body: {message: \"address set\"}}, err(x) => {status: 400u64, body: {error: x}} } }"
+        },
+        "summary": "Set Billing Address",
+        "description": "Set a user's billing address",
+        "parameters": [
+          {
+            "name": "user-id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Address"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/cart/{user-id}/checkout": {
+      "post": {
+        "x-golem-worker-bridge": {
+          "worker-name": "${let id: str = request.path.user-id;\nid}",
+          "component-id": "2696abdc-df3a-4771-8215-d6af7aa4c408",
+          "component-version": 0,
+          "response": "${let result = golem:cart/api.{checkout}();\nmatch result {  ok(x) => {status: 200u64, body: x}, err(x) => {status: 400u64, body: {error: x}} } }"
+        },
+        "summary": "Set Email",
+        "description": "Set a user's email",
+        "parameters": [
+          {
+            "name": "user-id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckoutResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Address": {
+        "type": "object",
+        "properties": {
+          "street": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state-or-region": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "postal-code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "phone-number": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "street",
+          "city",
+          "state-or-region",
+          "country",
+          "postal-code"
+        ]
+      },
+      "Cart": {
+        "type": "object",
+        "properties": {
+          "user-id": {
+            "type": "string"
+          },
+          "shipping-address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "billing-address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "total": {
+            "type": "number",
+            "format": "double"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CartItem"
+            }
+          },
+          "previous-order-ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "user-id",
+          "items",
+          "total",
+          "currency"
+        ]
+      },
+      "CartItem": {
+        "type": "object",
+        "properties": {
+          "product-id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number"
+          },
+          "quantity": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "required": [
+          "product-id",
+          "name",
+          "price",
+          "quantity"
+        ]
+      },
+      "UpdateQuantityRequest": {
+        "type": "object",
+        "properties": {
+          "quantity": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "required": [
+          "quantity"
+        ]
+      },
+      "UpdateEmailRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "UpdateResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ]
+      },
+      "CheckoutResponse": {
+        "type": "object",
+        "properties": {
+          "order-id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "order-id"
+        ]
+      }
+    }
+  }
+}

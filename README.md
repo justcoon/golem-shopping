@@ -39,7 +39,6 @@ Components have implementation for [snapshots based updates of golem workers](ht
 [REST APIs](./api/README.md) are provided by [golem workers api gateway](https://learn.golem.cloud/docs/invoke/making-custom-apis)
 
 
-
 ## Commands
 
 golem wasm-rpc stub generator (see: [golem wasm-rpc](https://learn.golem.cloud/docs/rust-language-guide/rpc))
