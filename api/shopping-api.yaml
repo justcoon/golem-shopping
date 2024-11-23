@@ -7,11 +7,11 @@ info:
 paths:
   "/v1/cart/{user-id}":
     get:
-      x-golem-worker-bridge:
+      x-golem-api-gateway-binding:
         worker-name: |-
           ${let id: str = request.path.user-id;
           id}
-        component-id: 2696abdc-df3a-4771-8215-d6af7aa4c408
+        component-id: 41b8b6a6-5d39-4476-966b-5a316301eb22
         component-version: 0
         response: |-
           ${let result = golem:cart/api.{get}();
@@ -39,11 +39,11 @@ paths:
                 type: object
   "/v1/cart/{user-id}/items/{product-id}":
     put:
-      x-golem-worker-bridge:
+      x-golem-api-gateway-binding:
         worker-name: |-
           ${let id: str = request.path.user-id;
           id}
-        component-id: 2696abdc-df3a-4771-8215-d6af7aa4c408
+        component-id: 41b8b6a6-5d39-4476-966b-5a316301eb22
         component-version: 0
         response: |-
           ${let result = golem:cart/api.{add-item}(request.path.product-id, request.body.quantity);
@@ -81,11 +81,11 @@ paths:
               schema:
                 type: object
     delete:
-      x-golem-worker-bridge:
+      x-golem-api-gateway-binding:
         worker-name: |-
           ${let id: str = request.path.user-id;
           id}
-        component-id: 2696abdc-df3a-4771-8215-d6af7aa4c408
+        component-id: 41b8b6a6-5d39-4476-966b-5a316301eb22
         component-version: 0
         response: |-
           ${let result = golem:cart/api.{remove-item}(request.path.product-id);
@@ -118,11 +118,11 @@ paths:
                 type: object
   "/v1/cart/{user-id}/email":
     put:
-      x-golem-worker-bridge:
+      x-golem-api-gateway-binding:
         worker-name: |-
           ${let id: str = request.path.user-id;
           id}
-        component-id: 2696abdc-df3a-4771-8215-d6af7aa4c408
+        component-id: 41b8b6a6-5d39-4476-966b-5a316301eb22
         component-version: 0
         response: |-
           ${let email: str = request.body.email;
@@ -157,11 +157,11 @@ paths:
                 type: object
   "/v1/cart/{user-id}/billing-address":
     put:
-      x-golem-worker-bridge:
+      x-golem-api-gateway-binding:
         worker-name: |-
           ${let id: str = request.path.user-id;
           id}
-        component-id: 2696abdc-df3a-4771-8215-d6af7aa4c408
+        component-id: 41b8b6a6-5d39-4476-966b-5a316301eb22
         component-version: 0
         response: |-
           ${let result = golem:cart/api.{update-billing-address}(request.body);
@@ -195,11 +195,11 @@ paths:
                 type: object
   "/v1/cart/{user-id}/shipping-address":
     put:
-      x-golem-worker-bridge:
+      x-golem-api-gateway-binding:
         worker-name: |-
           ${let id: str = request.path.user-id;
           id}
-        component-id: 2696abdc-df3a-4771-8215-d6af7aa4c408
+        component-id: 41b8b6a6-5d39-4476-966b-5a316301eb22
         component-version: 0
         response: |-
           ${let result = golem:cart/api.{update-billing-address}(request.body);
@@ -233,11 +233,11 @@ paths:
                 type: object
   "/v1/cart/{user-id}/checkout":
     post:
-      x-golem-worker-bridge:
+      x-golem-api-gateway-binding:
         worker-name: |-
           ${let id: str = request.path.user-id;
           id}
-        component-id: 2696abdc-df3a-4771-8215-d6af7aa4c408
+        component-id: 41b8b6a6-5d39-4476-966b-5a316301eb22
         component-version: 0
         response: |-
           ${let result = golem:cart/api.{checkout}();

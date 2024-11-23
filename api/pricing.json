@@ -7,7 +7,7 @@
       "path": "/v1/pricing/{product-id}",
       "binding": {
         "componentId": {
-          "componentId": "92c36119-d127-40c0-b8b7-201f4c649197",
+          "componentId": "6f3c27c3-6531-4f3b-9fcc-00a97cee5419",
           "version": 0
         },
         "workerName": "${let id: str = request.path.product-id;\nid}",
@@ -21,7 +21,7 @@
       "path": "/v1/pricing/{product-id}",
       "binding": {
         "componentId": {
-          "componentId": "92c36119-d127-40c0-b8b7-201f4c649197",
+          "componentId": "6f3c27c3-6531-4f3b-9fcc-00a97cee5419",
           "version": 0
         },
         "workerName": "${let id: str = request.path.product-id;\nid}",
@@ -35,7 +35,7 @@
       "path": "/v1/pricing/{product-id}",
       "binding": {
         "componentId": {
-          "componentId": "92c36119-d127-40c0-b8b7-201f4c649197",
+          "componentId": "6f3c27c3-6531-4f3b-9fcc-00a97cee5419",
           "version": 0
         },
         "workerName": "${let id: str = request.path.product-id;\nid}",

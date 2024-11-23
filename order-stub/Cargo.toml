@@ -61,11 +61,14 @@ path = "wit/deps/logging"
 [package.metadata.component.target.dependencies."wasi:random"]
 path = "wit/deps/random"
 
+[package.metadata.component.target.dependencies."wasi:rdbms"]
+path = "wit/deps/rdbms"
+
 [package.metadata.component.target.dependencies."wasi:sockets"]
 path = "wit/deps/sockets"
 
 [dependencies.golem-wasm-rpc]
-version = "1.0.5"
+version = "1.0.7"
 features = ["stub"]
 default-features = false
 

@@ -7,7 +7,7 @@
       "path": "/v1/cart/{user-id}",
       "binding": {
         "componentId": {
-          "componentId": "d2599fa8-d083-4c96-85bf-f392483fdeba",
+          "componentId": "41b8b6a6-5d39-4476-966b-5a316301eb22",
           "version": 0
         },
         "workerName": "${let id: str = request.path.user-id;\nid}",
@@ -21,7 +21,7 @@
       "path": "/v1/cart/{user-id}/items/{product-id}",
       "binding": {
         "componentId": {
-          "componentId": "d2599fa8-d083-4c96-85bf-f392483fdeba",
+          "componentId": "41b8b6a6-5d39-4476-966b-5a316301eb22",
           "version": 0
         },
         "workerName": "${let id: str = request.path.user-id;\nid}",
@@ -36,7 +36,7 @@
       "path": "/v1/cart/{user-id}/checkout",
       "binding": {
         "componentId": {
-          "componentId": "d2599fa8-d083-4c96-85bf-f392483fdeba",
+          "componentId": "41b8b6a6-5d39-4476-966b-5a316301eb22",
           "version": 0
         },
         "workerName": "${let id: str = request.path.user-id;\nid}",
@@ -50,7 +50,7 @@
       "path": "/v1/cart/{user-id}/email",
       "binding": {
         "componentId": {
-          "componentId": "d2599fa8-d083-4c96-85bf-f392483fdeba",
+          "componentId": "41b8b6a6-5d39-4476-966b-5a316301eb22",
           "version": 0
         },
         "workerName": "${let id: str = request.path.user-id;\nid}",
@@ -64,7 +64,7 @@
       "path": "/v1/cart/{user-id}/billing-address",
       "binding": {
         "componentId": {
-          "componentId": "d2599fa8-d083-4c96-85bf-f392483fdeba",
+          "componentId": "41b8b6a6-5d39-4476-966b-5a316301eb22",
           "version": 0
         },
         "workerName": "${let id: str = request.path.user-id;\nid}",
@@ -78,7 +78,7 @@
       "path": "/v1/cart/{user-id}/shipping-address",
       "binding": {
         "componentId": {
-          "componentId": "d2599fa8-d083-4c96-85bf-f392483fdeba",
+          "componentId": "41b8b6a6-5d39-4476-966b-5a316301eb22",
           "version": 0
         },
         "workerName": "${let id: str = request.path.user-id;\nid}",
@@ -92,7 +92,7 @@
       "path": "/v1/cart/{user-id}/items/{product-id}",
       "binding": {
         "componentId": {
-          "componentId": "d2599fa8-d083-4c96-85bf-f392483fdeba",
+          "componentId": "41b8b6a6-5d39-4476-966b-5a316301eb22",
           "version": 0
         },
         "workerName": "${let id: str = request.path.user-id;\nid}",

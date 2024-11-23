@@ -53,7 +53,7 @@ path = "wit/deps/random"
 path = "wit/deps/sockets"
 
 [dependencies.golem-wasm-rpc]
-version = "1.0.5"
+version = "1.0.7"
 features = ["stub"]
 default-features = false
 

@@ -7,7 +7,7 @@
       "path": "/v1/product/{product-id}",
       "binding": {
         "componentId": {
-          "componentId": "4cb4b24a-ee7d-4a36-a03b-1d135d40d371",
+          "componentId": "4fc6b417-25c2-4702-b483-98a419e8a534",
           "version": 0
         },
         "workerName": "${let id: str = request.path.product-id;\nid}",
@@ -21,7 +21,7 @@
       "path": "/v1/product/{product-id}",
       "binding": {
         "componentId": {
-          "componentId": "4cb4b24a-ee7d-4a36-a03b-1d135d40d371",
+          "componentId": "4fc6b417-25c2-4702-b483-98a419e8a534",
           "version": 0
         },
         "workerName": "${let id: str = request.path.product-id;\nid}",
