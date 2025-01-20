@@ -1,0 +1,40 @@
+package golem:product-client;
+
+interface product-client {
+  use golem:rpc/types@0.1.1.{ uri as golem-rpc-uri };
+  use wasi:io/poll@0.2.0.{ pollable as wasi-io-pollable };
+  use golem:product-exports/api.{ product };
+  resource future-get-result {
+    subscribe: func() -> wasi-io-pollable;
+    get: func() -> option<option<product>>;
+  }
+  resource future-load-result {
+    subscribe: func() -> wasi-io-pollable;
+    get: func() -> option<result<_, string>>;
+  }
+  resource future-save-result {
+    subscribe: func() -> wasi-io-pollable;
+    get: func() -> option<list<u8>>;
+  }
+  resource api {
+    constructor(location: golem-rpc-uri);
+    blocking-get: func() -> option<product>;
+    get: func() -> future-get-result;
+    blocking-initialize-product: func(name: string, description: string, tags: list<string>);
+    initialize-product: func(name: string, description: string, tags: list<string>);
+  }
+  resource load-snapshot {
+    constructor(location: golem-rpc-uri);
+    blocking-load: func(bytes: list<u8>) -> result<_, string>;
+    load: func(bytes: list<u8>) -> future-load-result;
+  }
+  resource save-snapshot {
+    constructor(location: golem-rpc-uri);
+    blocking-save: func() -> list<u8>;
+    save: func() -> future-save-result;
+  }
+}
+
+world wasm-rpc-client-product {
+  export product-client;
+}

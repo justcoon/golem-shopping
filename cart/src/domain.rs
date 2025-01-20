@@ -17,8 +17,8 @@ pub mod cart {
         pub phone_number: Option<String>,
     }
 
-    impl From<bindings::exports::golem::cart::api::Address> for Address {
-        fn from(value: bindings::exports::golem::cart::api::Address) -> Self {
+    impl From<bindings::exports::golem::cart_exports::api::Address> for Address {
+        fn from(value: bindings::exports::golem::cart_exports::api::Address) -> Self {
             Self {
                 street: value.street,
                 state_or_region: value.state_or_region,
@@ -31,7 +31,7 @@ pub mod cart {
         }
     }
 
-    impl From<Address> for bindings::exports::golem::cart::api::Address {
+    impl From<Address> for bindings::exports::golem::cart_exports::api::Address {
         fn from(value: Address) -> Self {
             Self {
                 street: value.street,
@@ -45,7 +45,7 @@ pub mod cart {
         }
     }
 
-    impl From<Address> for bindings::golem::order::api::Address {
+    impl From<Address> for bindings::golem::order_exports::api::Address {
         fn from(value: Address) -> Self {
             Self {
                 street: value.street,
@@ -144,7 +144,7 @@ pub mod cart {
         pub quantity: u32,
     }
 
-    impl From<CartItem> for bindings::golem::order::api::OrderItem {
+    impl From<CartItem> for bindings::golem::order_exports::api::OrderItem {
         fn from(value: CartItem) -> Self {
             Self {
                 product_id: value.product_id,
@@ -154,7 +154,7 @@ pub mod cart {
             }
         }
     }
-    impl From<CartItem> for bindings::exports::golem::cart::api::CartItem {
+    impl From<CartItem> for bindings::exports::golem::cart_exports::api::CartItem {
         fn from(value: CartItem) -> Self {
             Self {
                 product_id: value.product_id,
@@ -165,7 +165,7 @@ pub mod cart {
         }
     }
 
-    impl TryFrom<Cart> for bindings::golem::order::api::CreateOrder {
+    impl TryFrom<Cart> for bindings::golem::order_exports::api::CreateOrder {
         type Error = String;
 
         fn try_from(value: Cart) -> Result<Self, Self::Error> {
@@ -183,7 +183,7 @@ pub mod cart {
         }
     }
 
-    impl From<Cart> for bindings::exports::golem::cart::api::Cart {
+    impl From<Cart> for bindings::exports::golem::cart_exports::api::Cart {
         fn from(value: Cart) -> Self {
             Self {
                 user_id: value.user_id,

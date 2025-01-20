@@ -24,7 +24,7 @@ fi
 
 function update_component() {
   echo "Updating component: '${1?}' with wasm file '${2?}.wasm'"
-  ${GOLEM_COMMAND} component update --non-interactive --component-name=${1?} target/wasm32-wasip1/release/${2?}.wasm
+  ${GOLEM_COMMAND} component update --non-interactive --component-name=${1?} target/golem-temp/linked-wasm/${2?}.wasm
 }
 
 function update_workers() {
@@ -40,7 +40,7 @@ function get_component_version() {
 }
 
 function get_component_wasm_file() {
-  echo "target/wasm32-wasi/release/${1?}.wasm"
+  echo "target/golem-temp/linked-wasm/${1?}.wasm"
 }
 
 function add_component() {
@@ -70,14 +70,14 @@ function add_or_update_component() {
 }
 
 function add_or_update_components() {
-  add_or_update_component ${CART_COMPONENT_NAME} "${CART_COMPONENT_NAME}_composed"
-  add_or_update_component ${ORDER_COMPONENT_NAME} "${ORDER_COMPONENT_NAME}_composed"
+  add_or_update_component ${CART_COMPONENT_NAME} "${CART_COMPONENT_NAME}"
+  add_or_update_component ${ORDER_COMPONENT_NAME} "${ORDER_COMPONENT_NAME}"
   add_or_update_component ${PRICING_COMPONENT_NAME} ${PRICING_COMPONENT_NAME}
   add_or_update_component ${PRODUCT_COMPONENT_NAME} ${PRODUCT_COMPONENT_NAME}
 }
 
 function build_components() {
-  cargo make release-build-flow
+  ${GOLEM_COMMAND} app build
 }
 
 function init_api_definitions_files() {

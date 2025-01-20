@@ -2,7 +2,7 @@ mod bindings;
 mod domain;
 
 use crate::bindings::exports::golem::api::{load_snapshot, save_snapshot};
-use crate::bindings::exports::golem::product::api::*;
+use crate::bindings::exports::golem::product_exports::api::*;
 use std::cell::RefCell;
 use std::env;
 

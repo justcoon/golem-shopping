@@ -1,0 +1,14 @@
+package golem:product-exports;
+
+interface api {
+  record product {
+    product-id: string,
+    name: string,
+    description: string,
+    tags: list<string>,
+  }
+  get: func() -> option<product>;
+  initialize-product: func(name: string, description: string, tags: list<string>);
+}
+
+interface product-inline-functions {}

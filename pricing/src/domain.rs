@@ -30,8 +30,8 @@ pub mod pricing {
         }
     }
 
-    impl From<bindings::exports::golem::pricing::api::Pricing> for Pricing {
-        fn from(value: bindings::exports::golem::pricing::api::Pricing) -> Self {
+    impl From<bindings::exports::golem::pricing_exports::api::Pricing> for Pricing {
+        fn from(value: bindings::exports::golem::pricing_exports::api::Pricing) -> Self {
             Self {
                 product_id: value.product_id,
                 msrp_prices: value.msrp_prices.into_iter().map(|item| item.into()).collect(),
@@ -40,7 +40,7 @@ pub mod pricing {
         }
     }
 
-    impl From<Pricing> for bindings::exports::golem::pricing::api::Pricing {
+    impl From<Pricing> for bindings::exports::golem::pricing_exports::api::Pricing {
         fn from(value: Pricing) -> Self {
             Self {
                 product_id: value.product_id,
@@ -58,13 +58,13 @@ pub mod pricing {
         pub zone: String,
     }
 
-    impl From<bindings::exports::golem::pricing::api::PricingItem> for PricingItem {
-        fn from(value: bindings::exports::golem::pricing::api::PricingItem) -> Self {
+    impl From<bindings::exports::golem::pricing_exports::api::PricingItem> for PricingItem {
+        fn from(value: bindings::exports::golem::pricing_exports::api::PricingItem) -> Self {
             Self { price: value.price, currency: value.currency, zone: value.zone }
         }
     }
 
-    impl From<PricingItem> for bindings::exports::golem::pricing::api::PricingItem {
+    impl From<PricingItem> for bindings::exports::golem::pricing_exports::api::PricingItem {
         fn from(value: PricingItem) -> Self {
             Self { price: value.price, currency: value.currency, zone: value.zone }
         }

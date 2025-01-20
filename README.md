@@ -42,25 +42,20 @@ Components have implementation for [snapshots based updates of golem workers](ht
 
 ## Commands
 
-golem wasm-rpc stub generator (see: [golem wasm-rpc](https://learn.golem.cloud/docs/rust-language-guide/rpc))
-
-```
-golem-cli stubgen initialize-workspace --targets order --targets product --targets pricing --callers cart --callers order
-```
 
 release build of all components
 
 ```
-cargo make release-build-flow
+golem-cli app build
 ```
 
 add components with golem-cli
 
 ```
-golem-cli component add --component-name pricing target/wasm32-wasi/release/pricing.wasm
-golem-cli component add --component-name product target/wasm32-wasi/release/product.wasm
-golem-cli component add --component-name cart target/wasm32-wasi/release/cart_composed.wasm
-golem-cli component add --component-name order target/wasm32-wasi/release/order_composed.wasm
+golem-cli component add --component-name pricing target/golem-temp/linked-wasm/pricing.wasm
+golem-cli component add --component-name product target/golem-temp/linked-wasm/product.wasm
+golem-cli component add --component-name cart target/golem-temp/linked-wasm/cart.wasm
+golem-cli component add --component-name order target/golem-temp/linked-wasm/order.wasm
 ```
 
 get component data with golem-cli

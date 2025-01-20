@@ -1,5 +1,5 @@
 [workspace]
-members = ["cart", "pricing", "product", "order", "product-stub", "pricing-stub", "order-stub"]
+members = ["cart", "pricing", "product", "order"]
 exclude = ["benchmark"]
 resolver = "2"
 
