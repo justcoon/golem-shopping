@@ -52,10 +52,7 @@ golem-cli app build
 add components with golem-cli
 
 ```
-golem-cli component add --component-name pricing target/golem-temp/linked-wasm/pricing.wasm
-golem-cli component add --component-name product target/golem-temp/linked-wasm/product.wasm
-golem-cli component add --component-name cart target/golem-temp/linked-wasm/cart.wasm
-golem-cli component add --component-name order target/golem-temp/linked-wasm/order.wasm
+golem-cli component add
 ```
 
 get component data with golem-cli
@@ -78,9 +75,9 @@ golem-cli component try-update-workers --component-name cart --update-mode manua
 
 invocation of worker functions with golem-cli
 ```
-golem-cli worker invoke-and-await  --component-name cart  --worker-name user014 --function golem:cart/api.{get} --parameters '[]'
-golem-cli worker invoke-and-await  --component-name product  --worker-name p001 --function golem:product/api.{get} --parameters '[]'
-golem-cli worker invoke-and-await  --component-name pricing  --worker-name p001 --function golem:pricing/api.{get} --parameters '[]'
+golem-cli worker invoke-and-await  --component-name cart  --worker-name user014 --function golem:cart-exports/api.{get} --parameters '[]'
+golem-cli worker invoke-and-await  --component-name product  --worker-name p001 --function golem:product-exports/api.{get} --parameters '[]'
+golem-cli worker invoke-and-await  --component-name pricing  --worker-name p001 --function golem:pricing-exports/api.{get} --parameters '[]'
 ```
 
 ## References

@@ -10,9 +10,9 @@
           "componentId": "$ORDER_COMPONENT_ID",
           "version": $ORDER_COMPONENT_VERSION
         },
-        "workerName": "${let id: str = request.path.order-id;\nid}",
+        "workerName": "let id: string = request.path.order-id;\nid",
         "idempotencyKey": null,
-        "response": "${let result = golem:order/api.{get}();\nmatch result {  some(x) => {status: 200u64, body: x}, none => {status: 404u64, body: {message: \"not found\"}} } }"
+        "response": "let result = golem:order-exports/api.{get}();\nmatch result {  some(x) => {status: 200u64, body: x}, none => {status: 404u64, body: {message: \"not found\"}} } "
       }
     },
     {
@@ -23,9 +23,9 @@
           "componentId": "$ORDER_COMPONENT_ID",
           "version": $ORDER_COMPONENT_VERSION
         },
-        "workerName": "${let id: str = request.path.order-id;\nid}",
+        "workerName": "let id: string = request.path.order-id;\nid",
         "idempotencyKey": null,
-        "response": "${let email: str = request.body.email;\nlet result = golem:order/api.{update-email}(email);\nmatch result {  ok(_) => {status: 200u64, body: {message: \"email set\"}}, err(x) => {status: 400u64, body: {error: x}} } }",
+        "response": "let email: string = request.body.email;\nlet result = golem:order-exports/api.{update-email}(email);\nmatch result {  ok(_) => {status: 200u64, body: {message: \"email set\"}}, err(x) => {status: 400u64, body: {error: x}} } ",
         "idempotencyKeyInput": null
       }
     },
@@ -37,10 +37,9 @@
           "componentId": "$ORDER_COMPONENT_ID",
           "version": $ORDER_COMPONENT_VERSION
         },
-        "workerName": "${let id: str = request.path.order-id;\nid}",
+        "workerName": "let id: string = request.path.order-id;\nid",
         "idempotencyKey": null,
-        "response": "${let result = golem:order/api.{add-item}(request.path.product-id, request.body.quantity);\nmatch result {  ok(_) => {status: 200u64, body: {message: \"item added\"}}, err(x) => {status: 400u64, body: {error: x}} } }",
-
+        "response": "let result = golem:order-exports/api.{add-item}(request.path.product-id, request.body.quantity);\nmatch result {  ok(_) => {status: 200u64, body: {message: \"item added\"}}, err(x) => {status: 400u64, body: {error: x}} } ",
         "idempotencyKeyInput": null
       }
     },
@@ -52,9 +51,9 @@
           "componentId": "$ORDER_COMPONENT_ID",
           "version": $ORDER_COMPONENT_VERSION
         },
-        "workerName": "${let id: str = request.path.order-id;\nid}",
+        "workerName": "let id: string = request.path.order-id;\nid",
         "idempotencyKey": null,
-        "response": "${let result = golem:order/api.{ship-order}();\nmatch result {  ok(_) => {status: 200u64, body: {message: \"order shipped\"}}, err(x) => {status: 400u64, body: {error: x}} } }",
+        "response": "let result = golem:order-exports/api.{ship-order}();\nmatch result {  ok(_) => {status: 200u64, body: {message: \"order shipped\"}}, err(x) => {status: 400u64, body: {error: x}} } ",
         "idempotencyKeyInput": null
       }
     },
@@ -66,9 +65,9 @@
           "componentId": "$ORDER_COMPONENT_ID",
           "version": $ORDER_COMPONENT_VERSION
         },
-        "workerName": "${let id: str = request.path.order-id;\nid}",
+        "workerName": "let id: string = request.path.order-id;\nid",
         "idempotencyKey": null,
-        "response": "${let result = golem:order/api.{cancel-order}();\nmatch result {  ok(_) => {status: 200u64, body: {message: \"order cancelled\"}}, err(x) => {status: 400u64, body: {error: x}} } }",
+        "response": "let result = golem:order-exports/api.{cancel-order}();\nmatch result {  ok(_) => {status: 200u64, body: {message: \"order cancelled\"}}, err(x) => {status: 400u64, body: {error: x}} } ",
         "idempotencyKeyInput": null
       }
     },
@@ -80,9 +79,9 @@
           "componentId": "$ORDER_COMPONENT_ID",
           "version": $ORDER_COMPONENT_VERSION
         },
-        "workerName": "${let id: str = request.path.order-id;\nid}",
+        "workerName": "let id: string = request.path.order-id;\nid",
         "idempotencyKey": null,
-        "response": "${let result = golem:order/api.{update-billing-address}(request.body);\nmatch result {  ok(_) => {status: 200u64, body: {message: \"address set\"}}, err(x) => {status: 400u64, body: {error: x}} } }",
+        "response": "let result = golem:order-exports/api.{update-billing-address}(request.body);\nmatch result {  ok(_) => {status: 200u64, body: {message: \"address set\"}}, err(x) => {status: 400u64, body: {error: x}} } ",
         "idempotencyKeyInput": null
       }
     },
@@ -94,9 +93,9 @@
           "componentId": "$ORDER_COMPONENT_ID",
           "version": $ORDER_COMPONENT_VERSION
         },
-        "workerName": "${let id: str = request.path.order-id;\nid}",
+        "workerName": "let id: string = request.path.order-id;\nid",
         "idempotencyKey": null,
-        "response": "${let result = golem:order/api.{update-shipping-address}(request.body);\nmatch result {  ok(_) => {status: 200u64, body: {message: \"address set\"}}, err(x) => {status: 400u64, body: {error: x}} } }",
+        "response": "let result = golem:order-exports/api.{update-shipping-address}(request.body);\nmatch result {  ok(_) => {status: 200u64, body: {message: \"address set\"}}, err(x) => {status: 400u64, body: {error: x}} } ",
         "idempotencyKeyInput": null
       }
     },
@@ -108,10 +107,9 @@
           "componentId": "$ORDER_COMPONENT_ID",
           "version": $ORDER_COMPONENT_VERSION
         },
-        "workerName": "${let id: str = request.path.order-id;\nid}",
+        "workerName": "let id: string = request.path.order-id;\nid",
         "idempotencyKey": null,
-        "response": "${let result = golem:order/api.{remove-item}(request.path.product-id);\nmatch result {  ok(_) => {status: 200u64, body: {message: \"item removed\"}}, err(x) => {status: 400u64, body: {error: x}} } }",
-
+        "response": "let result = golem:order-exports/api.{remove-item}(request.path.product-id);\nmatch result {  ok(_) => {status: 200u64, body: {message: \"item removed\"}}, err(x) => {status: 400u64, body: {error: x}} } ",
         "idempotencyKeyInput": null
       }
     }

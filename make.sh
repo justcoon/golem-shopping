@@ -70,10 +70,11 @@ function add_or_update_component() {
 }
 
 function add_or_update_components() {
-  add_or_update_component ${CART_COMPONENT_NAME} "${CART_COMPONENT_NAME}"
-  add_or_update_component ${ORDER_COMPONENT_NAME} "${ORDER_COMPONENT_NAME}"
-  add_or_update_component ${PRICING_COMPONENT_NAME} ${PRICING_COMPONENT_NAME}
-  add_or_update_component ${PRODUCT_COMPONENT_NAME} ${PRODUCT_COMPONENT_NAME}
+#  add_or_update_component ${CART_COMPONENT_NAME} "${CART_COMPONENT_NAME}"
+#  add_or_update_component ${ORDER_COMPONENT_NAME} "${ORDER_COMPONENT_NAME}"
+#  add_or_update_component ${PRICING_COMPONENT_NAME} ${PRICING_COMPONENT_NAME}
+#  add_or_update_component ${PRODUCT_COMPONENT_NAME} ${PRODUCT_COMPONENT_NAME}
+  ${GOLEM_COMMAND} component add
 }
 
 function build_components() {
@@ -218,7 +219,7 @@ for arg in "$@"; do
         add_or_update_components
         ;;
       create-cart-workers)
-        create_cart_workers "user011" "user012" "user013" "user014"
+        create_cart_workers "user011" "user012" "user013" "user014" "user015" "user016"
         ;;
       deploy-api)
         deploy_api

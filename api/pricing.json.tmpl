@@ -10,9 +10,9 @@
           "componentId": "$PRICING_COMPONENT_ID",
           "version": $PRICING_COMPONENT_VERSION
         },
-        "workerName": "${let id: str = request.path.product-id;\nid}",
+        "workerName": "let id: string = request.path.product-id;\nid",
         "idempotencyKey": null,
-        "response": "${let result = golem:pricing/api.{get}();\nmatch result {  some(x) => {status: 200u64, body: x}, none => {status: 404u64, body: {message: \"not found\"}} } }",
+        "response": "let result = golem:pricing-exports/api.{get}();\nmatch result {  some(x) => {status: 200u64, body: x}, none => {status: 404u64, body: {message: \"not found\"}} } ",
         "idempotencyKeyInput": null
       }
     },
@@ -24,9 +24,9 @@
           "componentId": "$PRICING_COMPONENT_ID",
           "version": $PRICING_COMPONENT_VERSION
         },
-        "workerName": "${let id: str = request.path.product-id;\nid}",
+        "workerName": "let id: string = request.path.product-id;\nid",
         "idempotencyKey": null,
-        "response": "${golem:pricing/api.{initialize-pricing}(request.body.msrp-prices, request.body.list-prices);\n{status: 200u64, body: {message: \"created\"}}}",
+        "response": "golem:pricing-exports/api.{initialize-pricing}(request.body.msrp-prices, request.body.list-prices);\n{status: 200u64, body: {message: \"created\"}}",
         "idempotencyKeyInput": null
       }
     },
@@ -38,9 +38,9 @@
           "componentId": "$PRICING_COMPONENT_ID",
           "version": $PRICING_COMPONENT_VERSION
         },
-        "workerName": "${let id: str = request.path.product-id;\nid}",
+        "workerName": "let id: string = request.path.product-id;\nid",
         "idempotencyKey": null,
-        "response": "${golem:pricing/api.{update-pricing}(request.body.msrp-prices, request.body.list-prices);\n{status: 200u64, body: {message: \"updated\"}}}",
+        "response": "golem:pricing-exports/api.{update-pricing}(request.body.msrp-prices, request.body.list-prices);\n{status: 200u64, body: {message: \"updated\"}}",
         "idempotencyKeyInput": null
       }
     }

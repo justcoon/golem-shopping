@@ -7,12 +7,12 @@
       "path": "/v1/pricing/{product-id}",
       "binding": {
         "componentId": {
-          "componentId": "92c36119-d127-40c0-b8b7-201f4c649197",
+          "componentId": "9f913491-ba80-4f20-828e-1baf69eafd2a",
           "version": 0
         },
-        "workerName": "${let id: str = request.path.product-id;\nid}",
+        "workerName": "let id: string = request.path.product-id;\nid",
         "idempotencyKey": null,
-        "response": "${let result = golem:pricing/api.{get}();\nmatch result {  some(x) => {status: 200u64, body: x}, none => {status: 404u64, body: {message: \"not found\"}} } }",
+        "response": "let result = golem:pricing-exports/api.{get}();\nmatch result {  some(x) => {status: 200u64, body: x}, none => {status: 404u64, body: {message: \"not found\"}} } ",
         "idempotencyKeyInput": null
       }
     },
@@ -21,12 +21,12 @@
       "path": "/v1/pricing/{product-id}",
       "binding": {
         "componentId": {
-          "componentId": "92c36119-d127-40c0-b8b7-201f4c649197",
+          "componentId": "9f913491-ba80-4f20-828e-1baf69eafd2a",
           "version": 0
         },
-        "workerName": "${let id: str = request.path.product-id;\nid}",
+        "workerName": "let id: string = request.path.product-id;\nid",
         "idempotencyKey": null,
-        "response": "${golem:pricing/api.{initialize-pricing}(request.body.msrp-prices, request.body.list-prices);\n{status: 200u64, body: {message: \"created\"}}}",
+        "response": "golem:pricing-exports/api.{initialize-pricing}(request.body.msrp-prices, request.body.list-prices);\n{status: 200u64, body: {message: \"created\"}}",
         "idempotencyKeyInput": null
       }
     },
@@ -35,12 +35,12 @@
       "path": "/v1/pricing/{product-id}",
       "binding": {
         "componentId": {
-          "componentId": "92c36119-d127-40c0-b8b7-201f4c649197",
+          "componentId": "9f913491-ba80-4f20-828e-1baf69eafd2a",
           "version": 0
         },
-        "workerName": "${let id: str = request.path.product-id;\nid}",
+        "workerName": "let id: string = request.path.product-id;\nid",
         "idempotencyKey": null,
-        "response": "${golem:pricing/api.{update-pricing}(request.body.msrp-prices, request.body.list-prices);\n{status: 200u64, body: {message: \"updated\"}}}",
+        "response": "golem:pricing-exports/api.{update-pricing}(request.body.msrp-prices, request.body.list-prices);\n{status: 200u64, body: {message: \"updated\"}}",
         "idempotencyKeyInput": null
       }
     }
