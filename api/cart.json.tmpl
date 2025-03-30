@@ -6,8 +6,8 @@
       "method": "Get",
       "path": "/v1/cart/{user-id}",
       "binding": {
-        "componentId": {
-          "componentId": "$CART_COMPONENT_ID",
+        "component": {
+          "name": "$CART_COMPONENT_NAME",
           "version": $CART_COMPONENT_VERSION
         },
         "workerName": "let id: string = request.path.user-id;\nid",
@@ -20,13 +20,13 @@
       "method": "Put",
       "path": "/v1/cart/{user-id}/items/{product-id}",
       "binding": {
-        "componentId": {
-          "componentId": "$CART_COMPONENT_ID",
+        "component": {
+          "name": "$CART_COMPONENT_NAME",
           "version": $CART_COMPONENT_VERSION
         },
         "workerName": "let id: string = request.path.user-id;\nid",
         "idempotencyKey": null,
-        "response": "let result = golem:cart-exports/api.{add-item}(request.path.product-id, request.body.quantity);\nmatch result {  ok(_) => {status: 200u64, body: {message: \"item added\"}}, err(x) => {status: 400u64, body: {error: x}} } ",
+        "response": "let quantity: u32 = request.body.quantity;\nlet result = golem:cart-exports/api.{add-item}(request.path.product-id, quantity);\nmatch result {  ok(_) => {status: 200u64, body: {message: \"item added\"}}, err(x) => {status: 400u64, body: {error: x}} } ",
         "idempotencyKeyInput": null
       }
     },
@@ -34,8 +34,8 @@
       "method": "Post",
       "path": "/v1/cart/{user-id}/checkout",
       "binding": {
-        "componentId": {
-          "componentId": "$CART_COMPONENT_ID",
+        "component": {
+          "name": "$CART_COMPONENT_NAME",
           "version": $CART_COMPONENT_VERSION
         },
         "workerName": "let id: string = request.path.user-id;\nid",
@@ -48,8 +48,8 @@
       "method": "Put",
       "path": "/v1/cart/{user-id}/email",
       "binding": {
-        "componentId": {
-          "componentId": "$CART_COMPONENT_ID",
+        "component": {
+          "name": "$CART_COMPONENT_NAME",
           "version": $CART_COMPONENT_VERSION
         },
         "workerName": "let id: string = request.path.user-id;\nid",
@@ -62,8 +62,8 @@
       "method": "Put",
       "path": "/v1/cart/{user-id}/billing-address",
       "binding": {
-        "componentId": {
-          "componentId": "$CART_COMPONENT_ID",
+        "component": {
+          "name": "$CART_COMPONENT_NAME",
           "version": $CART_COMPONENT_VERSION
         },
         "workerName": "let id: string = request.path.user-id;\nid",
@@ -76,8 +76,8 @@
       "method": "Put",
       "path": "/v1/cart/{user-id}/shipping-address",
       "binding": {
-        "componentId": {
-          "componentId": "$CART_COMPONENT_ID",
+        "component": {
+          "name": "$CART_COMPONENT_NAME",
           "version": $CART_COMPONENT_VERSION
         },
         "workerName": "let id: string = request.path.user-id;\nid",
@@ -90,8 +90,8 @@
       "method": "Delete",
       "path": "/v1/cart/{user-id}/items/{product-id}",
       "binding": {
-        "componentId": {
-          "componentId": "$CART_COMPONENT_ID",
+        "component": {
+          "name": "$CART_COMPONENT_NAME",
           "version": $CART_COMPONENT_VERSION
         },
         "workerName": "let id: string = request.path.user-id;\nid",

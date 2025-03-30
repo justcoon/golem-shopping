@@ -1,8 +1,9 @@
 package golem:pricing-client;
 
 interface pricing-client {
-  use golem:rpc/types@0.1.1.{ uri as golem-rpc-uri };
   use wasi:io/poll@0.2.0.{ pollable as wasi-io-pollable };
+  use wasi:clocks/wall-clock@0.2.0.{ datetime as wasi-clocks-datetime };
+  use golem:rpc/types@0.2.0.{ component-id as golem-rpc-component-id, worker-id as golem-rpc-worker-id, cancellation-token as golem-rpc-cancellation-token };
   use golem:pricing-exports/api.{ pricing, pricing-item };
   resource future-get-result {
     subscribe: func() -> wasi-io-pollable;
@@ -21,25 +22,34 @@ interface pricing-client {
     get: func() -> option<list<u8>>;
   }
   resource api {
-    constructor(location: golem-rpc-uri);
+    constructor(worker-name: string);
+    custom: static func(worker-id: golem-rpc-worker-id) -> api;
     blocking-get: func() -> option<pricing>;
     get: func() -> future-get-result;
+    schedule-get: func(scheduled-for: wasi-clocks-datetime) -> golem-rpc-cancellation-token;
     blocking-get-price: func(currency: string, zone: string) -> option<pricing-item>;
     get-price: func(currency: string, zone: string) -> future-get-price-result;
+    schedule-get-price: func(currency: string, zone: string, scheduled-for: wasi-clocks-datetime) -> golem-rpc-cancellation-token;
     blocking-initialize-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>);
     initialize-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>);
+    schedule-initialize-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>, scheduled-for: wasi-clocks-datetime) -> golem-rpc-cancellation-token;
     blocking-update-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>);
     update-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>);
+    schedule-update-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>, scheduled-for: wasi-clocks-datetime) -> golem-rpc-cancellation-token;
   }
   resource load-snapshot {
-    constructor(location: golem-rpc-uri);
+    constructor(worker-name: string);
+    custom: static func(worker-id: golem-rpc-worker-id) -> load-snapshot;
     blocking-load: func(bytes: list<u8>) -> result<_, string>;
     load: func(bytes: list<u8>) -> future-load-result;
+    schedule-load: func(bytes: list<u8>, scheduled-for: wasi-clocks-datetime) -> golem-rpc-cancellation-token;
   }
   resource save-snapshot {
-    constructor(location: golem-rpc-uri);
+    constructor(worker-name: string);
+    custom: static func(worker-id: golem-rpc-worker-id) -> save-snapshot;
     blocking-save: func() -> list<u8>;
     save: func() -> future-save-result;
+    schedule-save: func(scheduled-for: wasi-clocks-datetime) -> golem-rpc-cancellation-token;
   }
 }
 

@@ -41,7 +41,7 @@ fn get_product(product_id: String) -> Option<Product> {
     use bindings::golem::product_client::product_client::*;
     use bindings::golem::rpc::types::Uri;
 
-    let api = Api::new(&Uri { value: get_product_worker_urn(product_id) });
+    let api = Api::new(product_id.as_str());
 
     api.blocking_get()
 }
@@ -52,7 +52,7 @@ fn get_pricing(product_id: String, currency: String, zone: String) -> Option<Pri
     use bindings::golem::pricing_client::pricing_client::*;
     use bindings::golem::rpc::types::Uri;
 
-    let api = Api::new(&Uri { value: get_pricing_worker_urn(product_id) });
+    let api = Api::new(product_id.as_str());
 
     api.blocking_get_price(&currency, &zone)
 }
@@ -79,7 +79,7 @@ fn create_order(order_id: String, cart: domain::cart::Cart) -> Result<String, Ch
     use bindings::golem::order_client::order_client::*;
     use bindings::golem::rpc::types::Uri;
 
-    let api = Api::new(&Uri { value: get_order_worker_urn(order_id.clone()) });
+    let api = Api::new(order_id.as_str());
 
     let order =
         cart.try_into().map_err(|e| CheckoutError::OrderCreate(OrderCreateError { message: e }))?;

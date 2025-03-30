@@ -6,8 +6,8 @@
       "method": "Get",
       "path": "/v1/order/{order-id}",
       "binding": {
-        "componentId": {
-          "componentId": "7e5a098d-bc06-4b3d-9213-35199c9008fa",
+        "component": {
+          "name": "order",
           "version": 0
         },
         "workerName": "let id: string = request.path.order-id;\nid",
@@ -19,8 +19,8 @@
       "method": "Put",
       "path": "/v1/order/{order-id}/email",
       "binding": {
-        "componentId": {
-          "componentId": "7e5a098d-bc06-4b3d-9213-35199c9008fa",
+        "component": {
+          "name": "order",
           "version": 0
         },
         "workerName": "let id: string = request.path.order-id;\nid",
@@ -33,13 +33,13 @@
       "method": "Put",
       "path": "/v1/order/{order-id}/items/{product-id}",
       "binding": {
-        "componentId": {
-          "componentId": "7e5a098d-bc06-4b3d-9213-35199c9008fa",
+        "component": {
+          "name": "order",
           "version": 0
         },
         "workerName": "let id: string = request.path.order-id;\nid",
         "idempotencyKey": null,
-        "response": "let result = golem:order-exports/api.{add-item}(request.path.product-id, request.body.quantity);\nmatch result {  ok(_) => {status: 200u64, body: {message: \"item added\"}}, err(x) => {status: 400u64, body: {error: x}} } ",
+        "response": "let quantity: u32 = request.body.quantity;\nlet result = golem:order-exports/api.{add-item}(request.path.product-id, quantity);\nmatch result {  ok(_) => {status: 200u64, body: {message: \"item added\"}}, err(x) => {status: 400u64, body: {error: x}} } ",
         "idempotencyKeyInput": null
       }
     },
@@ -47,8 +47,8 @@
       "method": "Post",
       "path": "/v1/order/{order-id}/ship-order",
       "binding": {
-        "componentId": {
-          "componentId": "7e5a098d-bc06-4b3d-9213-35199c9008fa",
+        "component": {
+          "name": "order",
           "version": 0
         },
         "workerName": "let id: string = request.path.order-id;\nid",
@@ -61,8 +61,8 @@
       "method": "Post",
       "path": "/v1/order/{order-id}/cancel-order",
       "binding": {
-        "componentId": {
-          "componentId": "7e5a098d-bc06-4b3d-9213-35199c9008fa",
+        "component": {
+          "name": "order",
           "version": 0
         },
         "workerName": "let id: string = request.path.order-id;\nid",
@@ -75,8 +75,8 @@
       "method": "Put",
       "path": "/v1/order/{order-id}/billing-address",
       "binding": {
-        "componentId": {
-          "componentId": "7e5a098d-bc06-4b3d-9213-35199c9008fa",
+        "component": {
+          "name": "order",
           "version": 0
         },
         "workerName": "let id: string = request.path.order-id;\nid",
@@ -89,8 +89,8 @@
       "method": "Put",
       "path": "/v1/order/{order-id}/shipping-address",
       "binding": {
-        "componentId": {
-          "componentId": "7e5a098d-bc06-4b3d-9213-35199c9008fa",
+        "component": {
+          "name": "order",
           "version": 0
         },
         "workerName": "let id: string = request.path.order-id;\nid",
@@ -103,8 +103,8 @@
       "method": "Delete",
       "path": "/v1/order/{order-id}/items/{product-id}",
       "binding": {
-        "componentId": {
-          "componentId": "7e5a098d-bc06-4b3d-9213-35199c9008fa",
+        "component": {
+          "name": "order",
           "version": 0
         },
         "workerName": "let id: string = request.path.order-id;\nid",

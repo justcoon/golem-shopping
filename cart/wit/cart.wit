@@ -5,10 +5,11 @@ world cart {
   import golem:order-exports/api;
   import golem:pricing-client/pricing-client;
   import golem:pricing-exports/api;
-  import golem:rpc/types@0.1.1;
+  import golem:rpc/types@0.2.0;
+  import wasi:clocks/wall-clock@0.2.0;
   import wasi:io/poll@0.2.0;
-  export golem:api/load-snapshot@0.2.0;
-  export golem:api/save-snapshot@0.2.0;
+  export golem:api/load-snapshot@1.1.6;
+  export golem:api/save-snapshot@1.1.6;
   export golem:cart-exports/api;
   import golem:product-client/product-client;
 }

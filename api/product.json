@@ -6,8 +6,8 @@
       "method": "Get",
       "path": "/v1/product/{product-id}",
       "binding": {
-        "componentId": {
-          "componentId": "713b3bb6-4d37-43ba-b05f-087ef18e2591",
+        "component": {
+          "name": "product",
           "version": 0
         },
         "workerName": "let id: string = request.path.product-id;\nid",
@@ -20,8 +20,8 @@
       "method": "Post",
       "path": "/v1/product/{product-id}",
       "binding": {
-        "componentId": {
-          "componentId": "713b3bb6-4d37-43ba-b05f-087ef18e2591",
+        "component": {
+          "name": "product",
           "version": 0
         },
         "workerName": "let id: string = request.path.product-id;\nid",

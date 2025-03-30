@@ -61,19 +61,19 @@ pub mod exports {
                     fn load(bytes: _rt::Vec<u8>) -> Result<(), _rt::String>;
                 }
                 #[doc(hidden)]
-                macro_rules! __export_golem_api_load_snapshot_0_2_0_cabi {
+                macro_rules! __export_golem_api_load_snapshot_1_1_6_cabi {
                     ($ty:ident with_types_in $($path_to_types:tt)*) => {
                         const _ : () = { #[export_name =
-                        "golem:api/load-snapshot@0.2.0#load"] unsafe extern "C" fn
+                        "golem:api/load-snapshot@1.1.6#load"] unsafe extern "C" fn
                         export_load(arg0 : * mut u8, arg1 : usize,) -> * mut u8 {
                         $($path_to_types)*:: _export_load_cabi::<$ty > (arg0, arg1) }
-                        #[export_name = "cabi_post_golem:api/load-snapshot@0.2.0#load"]
+                        #[export_name = "cabi_post_golem:api/load-snapshot@1.1.6#load"]
                         unsafe extern "C" fn _post_return_load(arg0 : * mut u8,) {
                         $($path_to_types)*:: __post_return_load::<$ty > (arg0) } };
                     };
                 }
                 #[doc(hidden)]
-                pub(crate) use __export_golem_api_load_snapshot_0_2_0_cabi;
+                pub(crate) use __export_golem_api_load_snapshot_1_1_6_cabi;
                 #[repr(align(4))]
                 struct _RetArea([::core::mem::MaybeUninit<u8>; 12]);
                 static mut _RET_AREA: _RetArea = _RetArea(
@@ -116,19 +116,19 @@ pub mod exports {
                     fn save() -> _rt::Vec<u8>;
                 }
                 #[doc(hidden)]
-                macro_rules! __export_golem_api_save_snapshot_0_2_0_cabi {
+                macro_rules! __export_golem_api_save_snapshot_1_1_6_cabi {
                     ($ty:ident with_types_in $($path_to_types:tt)*) => {
                         const _ : () = { #[export_name =
-                        "golem:api/save-snapshot@0.2.0#save"] unsafe extern "C" fn
+                        "golem:api/save-snapshot@1.1.6#save"] unsafe extern "C" fn
                         export_save() -> * mut u8 { $($path_to_types)*::
                         _export_save_cabi::<$ty > () } #[export_name =
-                        "cabi_post_golem:api/save-snapshot@0.2.0#save"] unsafe extern "C"
+                        "cabi_post_golem:api/save-snapshot@1.1.6#save"] unsafe extern "C"
                         fn _post_return_save(arg0 : * mut u8,) { $($path_to_types)*::
                         __post_return_save::<$ty > (arg0) } };
                     };
                 }
                 #[doc(hidden)]
-                pub(crate) use __export_golem_api_save_snapshot_0_2_0_cabi;
+                pub(crate) use __export_golem_api_save_snapshot_1_1_6_cabi;
                 #[repr(align(4))]
                 struct _RetArea([::core::mem::MaybeUninit<u8>; 8]);
                 static mut _RET_AREA: _RetArea = _RetArea(
@@ -649,10 +649,10 @@ macro_rules! __export_pricing_impl {
         exports::golem::pricing_exports::api::__export_golem_pricing_exports_api_cabi!($ty
         with_types_in $($path_to_types_root)*:: exports::golem::pricing_exports::api);
         $($path_to_types_root)*::
-        exports::golem::api::load_snapshot::__export_golem_api_load_snapshot_0_2_0_cabi!($ty
+        exports::golem::api::load_snapshot::__export_golem_api_load_snapshot_1_1_6_cabi!($ty
         with_types_in $($path_to_types_root)*:: exports::golem::api::load_snapshot);
         $($path_to_types_root)*::
-        exports::golem::api::save_snapshot::__export_golem_api_save_snapshot_0_2_0_cabi!($ty
+        exports::golem::api::save_snapshot::__export_golem_api_save_snapshot_1_1_6_cabi!($ty
         with_types_in $($path_to_types_root)*:: exports::golem::api::save_snapshot);
     };
 }
@@ -670,8 +670,8 @@ A\x06\x01B\x0e\x01r\x03\x05pricev\x08currencys\x04zones\x04\0\x0cpricing-item\x0
 \x0blist-prices\x02\x01\0\x04\0\x12initialize-pricing\x01\x09\x04\0\x0eupdate-pr\
 icing\x01\x09\x04\0\x19golem:pricing-exports/api\x05\0\x01B\x04\x01p}\x01j\0\x01\
 s\x01@\x01\x05bytes\0\0\x01\x04\0\x04load\x01\x02\x04\0\x1dgolem:api/load-snapsh\
-ot@0.2.0\x05\x01\x01B\x03\x01p}\x01@\0\0\0\x04\0\x04save\x01\x01\x04\0\x1dgolem:\
-api/save-snapshot@0.2.0\x05\x02\x04\0\x15golem:pricing/pricing\x04\0\x0b\x0d\x01\
+ot@1.1.6\x05\x01\x01B\x03\x01p}\x01@\0\0\0\x04\0\x04save\x01\x01\x04\0\x1dgolem:\
+api/save-snapshot@1.1.6\x05\x02\x04\0\x15golem:pricing/pricing\x04\0\x0b\x0d\x01\
 \0\x07pricing\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit-component\x07\
 0.220.0\x10wit-bindgen-rust\x060.36.0";
 #[inline(never)]

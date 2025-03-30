@@ -6,8 +6,8 @@
       "method": "Get",
       "path": "/v1/pricing/{product-id}",
       "binding": {
-        "componentId": {
-          "componentId": "9f913491-ba80-4f20-828e-1baf69eafd2a",
+        "component": {
+          "name": "pricing",
           "version": 0
         },
         "workerName": "let id: string = request.path.product-id;\nid",
@@ -20,8 +20,8 @@
       "method": "Post",
       "path": "/v1/pricing/{product-id}",
       "binding": {
-        "componentId": {
-          "componentId": "9f913491-ba80-4f20-828e-1baf69eafd2a",
+        "component": {
+          "name": "pricing",
           "version": 0
         },
         "workerName": "let id: string = request.path.product-id;\nid",
@@ -34,8 +34,8 @@
       "method": "Patch",
       "path": "/v1/pricing/{product-id}",
       "binding": {
-        "componentId": {
-          "componentId": "9f913491-ba80-4f20-828e-1baf69eafd2a",
+        "component": {
+          "name": "pricing",
           "version": 0
         },
         "workerName": "let id: string = request.path.product-id;\nid",

@@ -16,8 +16,8 @@ interface api {
 
 world product {
 
-  export golem:api/save-snapshot@0.2.0;
-  export golem:api/load-snapshot@0.2.0;
+  export golem:api/save-snapshot@1.1.6;
+  export golem:api/load-snapshot@1.1.6;
 
   export api;
 }

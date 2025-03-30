@@ -6,8 +6,8 @@
       "method": "Get",
       "path": "/v1/pricing/{product-id}",
       "binding": {
-        "componentId": {
-          "componentId": "$PRICING_COMPONENT_ID",
+        "component": {
+          "name": "$PRICING_COMPONENT_NAME",
           "version": $PRICING_COMPONENT_VERSION
         },
         "workerName": "let id: string = request.path.product-id;\nid",
@@ -20,8 +20,8 @@
       "method": "Post",
       "path": "/v1/pricing/{product-id}",
       "binding": {
-        "componentId": {
-          "componentId": "$PRICING_COMPONENT_ID",
+        "component": {
+          "name": "$PRICING_COMPONENT_NAME",
           "version": $PRICING_COMPONENT_VERSION
         },
         "workerName": "let id: string = request.path.product-id;\nid",
@@ -34,8 +34,8 @@
       "method": "Patch",
       "path": "/v1/pricing/{product-id}",
       "binding": {
-        "componentId": {
-          "componentId": "$PRICING_COMPONENT_ID",
+        "component": {
+          "name": "$PRICING_COMPONENT_NAME",
           "version": $PRICING_COMPONENT_VERSION
         },
         "workerName": "let id: string = request.path.product-id;\nid",

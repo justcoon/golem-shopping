@@ -11,8 +11,10 @@ pub mod golem {
             #[doc(hidden)]
             static __FORCE_SECTION_REF: fn() = super::super::super::__link_custom_section_describing_imports;
             use super::super::super::_rt;
-            pub type GolemRpcUri = super::super::super::golem::rpc::types::Uri;
             pub type WasiIoPollable = super::super::super::wasi::io::poll::Pollable;
+            pub type WasiClocksDatetime = super::super::super::wasi::clocks::wall_clock::Datetime;
+            pub type GolemRpcWorkerId = super::super::super::golem::rpc::types::WorkerId;
+            pub type GolemRpcCancellationToken = super::super::super::golem::rpc::types::CancellationToken;
             pub type Pricing = super::super::super::golem::pricing_exports::api::Pricing;
             pub type PricingItem = super::super::super::golem::pricing_exports::api::PricingItem;
             #[derive(Debug)]
@@ -675,14 +677,11 @@ pub mod golem {
             }
             impl Api {
                 #[allow(unused_unsafe, clippy::all)]
-                pub fn new(location: &GolemRpcUri) -> Self {
+                pub fn new(worker_name: &str) -> Self {
                     unsafe {
-                        let super::super::super::golem::rpc::types::Uri {
-                            value: value0,
-                        } = location;
-                        let vec1 = value0;
-                        let ptr1 = vec1.as_ptr().cast::<u8>();
-                        let len1 = vec1.len();
+                        let vec0 = worker_name;
+                        let ptr0 = vec0.as_ptr().cast::<u8>();
+                        let len0 = vec0.len();
                         #[cfg(target_arch = "wasm32")]
                         #[link(
                             wasm_import_module = "golem:pricing-client/pricing-client"
@@ -695,7 +694,47 @@ pub mod golem {
                         fn wit_import(_: *mut u8, _: usize) -> i32 {
                             unreachable!()
                         }
-                        let ret = wit_import(ptr1.cast_mut(), len1);
+                        let ret = wit_import(ptr0.cast_mut(), len0);
+                        Api::from_handle(ret as u32)
+                    }
+                }
+            }
+            impl Api {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn custom(worker_id: &GolemRpcWorkerId) -> Api {
+                    unsafe {
+                        let super::super::super::golem::rpc::types::WorkerId {
+                            component_id: component_id0,
+                            worker_name: worker_name0,
+                        } = worker_id;
+                        let super::super::super::golem::rpc::types::ComponentId {
+                            uuid: uuid1,
+                        } = component_id0;
+                        let super::super::super::golem::rpc::types::Uuid {
+                            high_bits: high_bits2,
+                            low_bits: low_bits2,
+                        } = uuid1;
+                        let vec3 = worker_name0;
+                        let ptr3 = vec3.as_ptr().cast::<u8>();
+                        let len3 = vec3.len();
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(
+                            wasm_import_module = "golem:pricing-client/pricing-client"
+                        )]
+                        extern "C" {
+                            #[link_name = "[static]api.custom"]
+                            fn wit_import(_: i64, _: i64, _: *mut u8, _: usize) -> i32;
+                        }
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i64, _: i64, _: *mut u8, _: usize) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import(
+                            _rt::as_i64(high_bits2),
+                            _rt::as_i64(low_bits2),
+                            ptr3.cast_mut(),
+                            len3,
+                        );
                         Api::from_handle(ret as u32)
                     }
                 }
@@ -840,6 +879,40 @@ pub mod golem {
             }
             impl Api {
                 #[allow(unused_unsafe, clippy::all)]
+                pub fn schedule_get(
+                    &self,
+                    scheduled_for: WasiClocksDatetime,
+                ) -> GolemRpcCancellationToken {
+                    unsafe {
+                        let super::super::super::wasi::clocks::wall_clock::Datetime {
+                            seconds: seconds0,
+                            nanoseconds: nanoseconds0,
+                        } = scheduled_for;
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(
+                            wasm_import_module = "golem:pricing-client/pricing-client"
+                        )]
+                        extern "C" {
+                            #[link_name = "[method]api.schedule-get"]
+                            fn wit_import(_: i32, _: i64, _: i32) -> i32;
+                        }
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32, _: i64, _: i32) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import(
+                            (self).handle() as i32,
+                            _rt::as_i64(seconds0),
+                            _rt::as_i32(nanoseconds0),
+                        );
+                        super::super::super::golem::rpc::types::CancellationToken::from_handle(
+                            ret as u32,
+                        )
+                    }
+                }
+            }
+            impl Api {
+                #[allow(unused_unsafe, clippy::all)]
                 pub fn blocking_get_price(
                     &self,
                     currency: &str,
@@ -973,6 +1046,68 @@ pub mod golem {
                             len1,
                         );
                         FutureGetPriceResult::from_handle(ret as u32)
+                    }
+                }
+            }
+            impl Api {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn schedule_get_price(
+                    &self,
+                    currency: &str,
+                    zone: &str,
+                    scheduled_for: WasiClocksDatetime,
+                ) -> GolemRpcCancellationToken {
+                    unsafe {
+                        let vec0 = currency;
+                        let ptr0 = vec0.as_ptr().cast::<u8>();
+                        let len0 = vec0.len();
+                        let vec1 = zone;
+                        let ptr1 = vec1.as_ptr().cast::<u8>();
+                        let len1 = vec1.len();
+                        let super::super::super::wasi::clocks::wall_clock::Datetime {
+                            seconds: seconds2,
+                            nanoseconds: nanoseconds2,
+                        } = scheduled_for;
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(
+                            wasm_import_module = "golem:pricing-client/pricing-client"
+                        )]
+                        extern "C" {
+                            #[link_name = "[method]api.schedule-get-price"]
+                            fn wit_import(
+                                _: i32,
+                                _: *mut u8,
+                                _: usize,
+                                _: *mut u8,
+                                _: usize,
+                                _: i64,
+                                _: i32,
+                            ) -> i32;
+                        }
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(
+                            _: i32,
+                            _: *mut u8,
+                            _: usize,
+                            _: *mut u8,
+                            _: usize,
+                            _: i64,
+                            _: i32,
+                        ) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import(
+                            (self).handle() as i32,
+                            ptr0.cast_mut(),
+                            len0,
+                            ptr1.cast_mut(),
+                            len1,
+                            _rt::as_i64(seconds2),
+                            _rt::as_i32(nanoseconds2),
+                        );
+                        super::super::super::golem::rpc::types::CancellationToken::from_handle(
+                            ret as u32,
+                        )
                     }
                 }
             }
@@ -1206,6 +1341,140 @@ pub mod golem {
             }
             impl Api {
                 #[allow(unused_unsafe, clippy::all)]
+                pub fn schedule_initialize_pricing(
+                    &self,
+                    msrp_prices: &[PricingItem],
+                    list_prices: &[PricingItem],
+                    scheduled_for: WasiClocksDatetime,
+                ) -> GolemRpcCancellationToken {
+                    unsafe {
+                        let vec3 = msrp_prices;
+                        let len3 = vec3.len();
+                        let layout3 = _rt::alloc::Layout::from_size_align_unchecked(
+                            vec3.len() * 20,
+                            4,
+                        );
+                        let result3 = if layout3.size() != 0 {
+                            let ptr = _rt::alloc::alloc(layout3).cast::<u8>();
+                            if ptr.is_null() {
+                                _rt::alloc::handle_alloc_error(layout3);
+                            }
+                            ptr
+                        } else {
+                            ::core::ptr::null_mut()
+                        };
+                        for (i, e) in vec3.into_iter().enumerate() {
+                            let base = result3.add(i * 20);
+                            {
+                                let super::super::super::golem::pricing_exports::api::PricingItem {
+                                    price: price0,
+                                    currency: currency0,
+                                    zone: zone0,
+                                } = e;
+                                *base.add(0).cast::<f32>() = _rt::as_f32(price0);
+                                let vec1 = currency0;
+                                let ptr1 = vec1.as_ptr().cast::<u8>();
+                                let len1 = vec1.len();
+                                *base.add(8).cast::<usize>() = len1;
+                                *base.add(4).cast::<*mut u8>() = ptr1.cast_mut();
+                                let vec2 = zone0;
+                                let ptr2 = vec2.as_ptr().cast::<u8>();
+                                let len2 = vec2.len();
+                                *base.add(16).cast::<usize>() = len2;
+                                *base.add(12).cast::<*mut u8>() = ptr2.cast_mut();
+                            }
+                        }
+                        let vec7 = list_prices;
+                        let len7 = vec7.len();
+                        let layout7 = _rt::alloc::Layout::from_size_align_unchecked(
+                            vec7.len() * 20,
+                            4,
+                        );
+                        let result7 = if layout7.size() != 0 {
+                            let ptr = _rt::alloc::alloc(layout7).cast::<u8>();
+                            if ptr.is_null() {
+                                _rt::alloc::handle_alloc_error(layout7);
+                            }
+                            ptr
+                        } else {
+                            ::core::ptr::null_mut()
+                        };
+                        for (i, e) in vec7.into_iter().enumerate() {
+                            let base = result7.add(i * 20);
+                            {
+                                let super::super::super::golem::pricing_exports::api::PricingItem {
+                                    price: price4,
+                                    currency: currency4,
+                                    zone: zone4,
+                                } = e;
+                                *base.add(0).cast::<f32>() = _rt::as_f32(price4);
+                                let vec5 = currency4;
+                                let ptr5 = vec5.as_ptr().cast::<u8>();
+                                let len5 = vec5.len();
+                                *base.add(8).cast::<usize>() = len5;
+                                *base.add(4).cast::<*mut u8>() = ptr5.cast_mut();
+                                let vec6 = zone4;
+                                let ptr6 = vec6.as_ptr().cast::<u8>();
+                                let len6 = vec6.len();
+                                *base.add(16).cast::<usize>() = len6;
+                                *base.add(12).cast::<*mut u8>() = ptr6.cast_mut();
+                            }
+                        }
+                        let super::super::super::wasi::clocks::wall_clock::Datetime {
+                            seconds: seconds8,
+                            nanoseconds: nanoseconds8,
+                        } = scheduled_for;
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(
+                            wasm_import_module = "golem:pricing-client/pricing-client"
+                        )]
+                        extern "C" {
+                            #[link_name = "[method]api.schedule-initialize-pricing"]
+                            fn wit_import(
+                                _: i32,
+                                _: *mut u8,
+                                _: usize,
+                                _: *mut u8,
+                                _: usize,
+                                _: i64,
+                                _: i32,
+                            ) -> i32;
+                        }
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(
+                            _: i32,
+                            _: *mut u8,
+                            _: usize,
+                            _: *mut u8,
+                            _: usize,
+                            _: i64,
+                            _: i32,
+                        ) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import(
+                            (self).handle() as i32,
+                            result3,
+                            len3,
+                            result7,
+                            len7,
+                            _rt::as_i64(seconds8),
+                            _rt::as_i32(nanoseconds8),
+                        );
+                        if layout3.size() != 0 {
+                            _rt::alloc::dealloc(result3.cast(), layout3);
+                        }
+                        if layout7.size() != 0 {
+                            _rt::alloc::dealloc(result7.cast(), layout7);
+                        }
+                        super::super::super::golem::rpc::types::CancellationToken::from_handle(
+                            ret as u32,
+                        )
+                    }
+                }
+            }
+            impl Api {
+                #[allow(unused_unsafe, clippy::all)]
                 pub fn blocking_update_pricing(
                     &self,
                     msrp_prices: &[PricingItem],
@@ -1432,16 +1701,147 @@ pub mod golem {
                     }
                 }
             }
+            impl Api {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn schedule_update_pricing(
+                    &self,
+                    msrp_prices: &[PricingItem],
+                    list_prices: &[PricingItem],
+                    scheduled_for: WasiClocksDatetime,
+                ) -> GolemRpcCancellationToken {
+                    unsafe {
+                        let vec3 = msrp_prices;
+                        let len3 = vec3.len();
+                        let layout3 = _rt::alloc::Layout::from_size_align_unchecked(
+                            vec3.len() * 20,
+                            4,
+                        );
+                        let result3 = if layout3.size() != 0 {
+                            let ptr = _rt::alloc::alloc(layout3).cast::<u8>();
+                            if ptr.is_null() {
+                                _rt::alloc::handle_alloc_error(layout3);
+                            }
+                            ptr
+                        } else {
+                            ::core::ptr::null_mut()
+                        };
+                        for (i, e) in vec3.into_iter().enumerate() {
+                            let base = result3.add(i * 20);
+                            {
+                                let super::super::super::golem::pricing_exports::api::PricingItem {
+                                    price: price0,
+                                    currency: currency0,
+                                    zone: zone0,
+                                } = e;
+                                *base.add(0).cast::<f32>() = _rt::as_f32(price0);
+                                let vec1 = currency0;
+                                let ptr1 = vec1.as_ptr().cast::<u8>();
+                                let len1 = vec1.len();
+                                *base.add(8).cast::<usize>() = len1;
+                                *base.add(4).cast::<*mut u8>() = ptr1.cast_mut();
+                                let vec2 = zone0;
+                                let ptr2 = vec2.as_ptr().cast::<u8>();
+                                let len2 = vec2.len();
+                                *base.add(16).cast::<usize>() = len2;
+                                *base.add(12).cast::<*mut u8>() = ptr2.cast_mut();
+                            }
+                        }
+                        let vec7 = list_prices;
+                        let len7 = vec7.len();
+                        let layout7 = _rt::alloc::Layout::from_size_align_unchecked(
+                            vec7.len() * 20,
+                            4,
+                        );
+                        let result7 = if layout7.size() != 0 {
+                            let ptr = _rt::alloc::alloc(layout7).cast::<u8>();
+                            if ptr.is_null() {
+                                _rt::alloc::handle_alloc_error(layout7);
+                            }
+                            ptr
+                        } else {
+                            ::core::ptr::null_mut()
+                        };
+                        for (i, e) in vec7.into_iter().enumerate() {
+                            let base = result7.add(i * 20);
+                            {
+                                let super::super::super::golem::pricing_exports::api::PricingItem {
+                                    price: price4,
+                                    currency: currency4,
+                                    zone: zone4,
+                                } = e;
+                                *base.add(0).cast::<f32>() = _rt::as_f32(price4);
+                                let vec5 = currency4;
+                                let ptr5 = vec5.as_ptr().cast::<u8>();
+                                let len5 = vec5.len();
+                                *base.add(8).cast::<usize>() = len5;
+                                *base.add(4).cast::<*mut u8>() = ptr5.cast_mut();
+                                let vec6 = zone4;
+                                let ptr6 = vec6.as_ptr().cast::<u8>();
+                                let len6 = vec6.len();
+                                *base.add(16).cast::<usize>() = len6;
+                                *base.add(12).cast::<*mut u8>() = ptr6.cast_mut();
+                            }
+                        }
+                        let super::super::super::wasi::clocks::wall_clock::Datetime {
+                            seconds: seconds8,
+                            nanoseconds: nanoseconds8,
+                        } = scheduled_for;
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(
+                            wasm_import_module = "golem:pricing-client/pricing-client"
+                        )]
+                        extern "C" {
+                            #[link_name = "[method]api.schedule-update-pricing"]
+                            fn wit_import(
+                                _: i32,
+                                _: *mut u8,
+                                _: usize,
+                                _: *mut u8,
+                                _: usize,
+                                _: i64,
+                                _: i32,
+                            ) -> i32;
+                        }
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(
+                            _: i32,
+                            _: *mut u8,
+                            _: usize,
+                            _: *mut u8,
+                            _: usize,
+                            _: i64,
+                            _: i32,
+                        ) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import(
+                            (self).handle() as i32,
+                            result3,
+                            len3,
+                            result7,
+                            len7,
+                            _rt::as_i64(seconds8),
+                            _rt::as_i32(nanoseconds8),
+                        );
+                        if layout3.size() != 0 {
+                            _rt::alloc::dealloc(result3.cast(), layout3);
+                        }
+                        if layout7.size() != 0 {
+                            _rt::alloc::dealloc(result7.cast(), layout7);
+                        }
+                        super::super::super::golem::rpc::types::CancellationToken::from_handle(
+                            ret as u32,
+                        )
+                    }
+                }
+            }
             impl LoadSnapshot {
                 #[allow(unused_unsafe, clippy::all)]
-                pub fn new(location: &GolemRpcUri) -> Self {
+                pub fn new(worker_name: &str) -> Self {
                     unsafe {
-                        let super::super::super::golem::rpc::types::Uri {
-                            value: value0,
-                        } = location;
-                        let vec1 = value0;
-                        let ptr1 = vec1.as_ptr().cast::<u8>();
-                        let len1 = vec1.len();
+                        let vec0 = worker_name;
+                        let ptr0 = vec0.as_ptr().cast::<u8>();
+                        let len0 = vec0.len();
                         #[cfg(target_arch = "wasm32")]
                         #[link(
                             wasm_import_module = "golem:pricing-client/pricing-client"
@@ -1454,7 +1854,47 @@ pub mod golem {
                         fn wit_import(_: *mut u8, _: usize) -> i32 {
                             unreachable!()
                         }
-                        let ret = wit_import(ptr1.cast_mut(), len1);
+                        let ret = wit_import(ptr0.cast_mut(), len0);
+                        LoadSnapshot::from_handle(ret as u32)
+                    }
+                }
+            }
+            impl LoadSnapshot {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn custom(worker_id: &GolemRpcWorkerId) -> LoadSnapshot {
+                    unsafe {
+                        let super::super::super::golem::rpc::types::WorkerId {
+                            component_id: component_id0,
+                            worker_name: worker_name0,
+                        } = worker_id;
+                        let super::super::super::golem::rpc::types::ComponentId {
+                            uuid: uuid1,
+                        } = component_id0;
+                        let super::super::super::golem::rpc::types::Uuid {
+                            high_bits: high_bits2,
+                            low_bits: low_bits2,
+                        } = uuid1;
+                        let vec3 = worker_name0;
+                        let ptr3 = vec3.as_ptr().cast::<u8>();
+                        let len3 = vec3.len();
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(
+                            wasm_import_module = "golem:pricing-client/pricing-client"
+                        )]
+                        extern "C" {
+                            #[link_name = "[static]load-snapshot.custom"]
+                            fn wit_import(_: i64, _: i64, _: *mut u8, _: usize) -> i32;
+                        }
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i64, _: i64, _: *mut u8, _: usize) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import(
+                            _rt::as_i64(high_bits2),
+                            _rt::as_i64(low_bits2),
+                            ptr3.cast_mut(),
+                            len3,
+                        );
                         LoadSnapshot::from_handle(ret as u32)
                     }
                 }
@@ -1538,16 +1978,65 @@ pub mod golem {
                     }
                 }
             }
+            impl LoadSnapshot {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn schedule_load(
+                    &self,
+                    bytes: &[u8],
+                    scheduled_for: WasiClocksDatetime,
+                ) -> GolemRpcCancellationToken {
+                    unsafe {
+                        let vec0 = bytes;
+                        let ptr0 = vec0.as_ptr().cast::<u8>();
+                        let len0 = vec0.len();
+                        let super::super::super::wasi::clocks::wall_clock::Datetime {
+                            seconds: seconds1,
+                            nanoseconds: nanoseconds1,
+                        } = scheduled_for;
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(
+                            wasm_import_module = "golem:pricing-client/pricing-client"
+                        )]
+                        extern "C" {
+                            #[link_name = "[method]load-snapshot.schedule-load"]
+                            fn wit_import(
+                                _: i32,
+                                _: *mut u8,
+                                _: usize,
+                                _: i64,
+                                _: i32,
+                            ) -> i32;
+                        }
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(
+                            _: i32,
+                            _: *mut u8,
+                            _: usize,
+                            _: i64,
+                            _: i32,
+                        ) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import(
+                            (self).handle() as i32,
+                            ptr0.cast_mut(),
+                            len0,
+                            _rt::as_i64(seconds1),
+                            _rt::as_i32(nanoseconds1),
+                        );
+                        super::super::super::golem::rpc::types::CancellationToken::from_handle(
+                            ret as u32,
+                        )
+                    }
+                }
+            }
             impl SaveSnapshot {
                 #[allow(unused_unsafe, clippy::all)]
-                pub fn new(location: &GolemRpcUri) -> Self {
+                pub fn new(worker_name: &str) -> Self {
                     unsafe {
-                        let super::super::super::golem::rpc::types::Uri {
-                            value: value0,
-                        } = location;
-                        let vec1 = value0;
-                        let ptr1 = vec1.as_ptr().cast::<u8>();
-                        let len1 = vec1.len();
+                        let vec0 = worker_name;
+                        let ptr0 = vec0.as_ptr().cast::<u8>();
+                        let len0 = vec0.len();
                         #[cfg(target_arch = "wasm32")]
                         #[link(
                             wasm_import_module = "golem:pricing-client/pricing-client"
@@ -1560,7 +2049,47 @@ pub mod golem {
                         fn wit_import(_: *mut u8, _: usize) -> i32 {
                             unreachable!()
                         }
-                        let ret = wit_import(ptr1.cast_mut(), len1);
+                        let ret = wit_import(ptr0.cast_mut(), len0);
+                        SaveSnapshot::from_handle(ret as u32)
+                    }
+                }
+            }
+            impl SaveSnapshot {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn custom(worker_id: &GolemRpcWorkerId) -> SaveSnapshot {
+                    unsafe {
+                        let super::super::super::golem::rpc::types::WorkerId {
+                            component_id: component_id0,
+                            worker_name: worker_name0,
+                        } = worker_id;
+                        let super::super::super::golem::rpc::types::ComponentId {
+                            uuid: uuid1,
+                        } = component_id0;
+                        let super::super::super::golem::rpc::types::Uuid {
+                            high_bits: high_bits2,
+                            low_bits: low_bits2,
+                        } = uuid1;
+                        let vec3 = worker_name0;
+                        let ptr3 = vec3.as_ptr().cast::<u8>();
+                        let len3 = vec3.len();
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(
+                            wasm_import_module = "golem:pricing-client/pricing-client"
+                        )]
+                        extern "C" {
+                            #[link_name = "[static]save-snapshot.custom"]
+                            fn wit_import(_: i64, _: i64, _: *mut u8, _: usize) -> i32;
+                        }
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i64, _: i64, _: *mut u8, _: usize) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import(
+                            _rt::as_i64(high_bits2),
+                            _rt::as_i64(low_bits2),
+                            ptr3.cast_mut(),
+                            len3,
+                        );
                         SaveSnapshot::from_handle(ret as u32)
                     }
                 }
@@ -1613,6 +2142,40 @@ pub mod golem {
                         }
                         let ret = wit_import((self).handle() as i32);
                         FutureSaveResult::from_handle(ret as u32)
+                    }
+                }
+            }
+            impl SaveSnapshot {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn schedule_save(
+                    &self,
+                    scheduled_for: WasiClocksDatetime,
+                ) -> GolemRpcCancellationToken {
+                    unsafe {
+                        let super::super::super::wasi::clocks::wall_clock::Datetime {
+                            seconds: seconds0,
+                            nanoseconds: nanoseconds0,
+                        } = scheduled_for;
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(
+                            wasm_import_module = "golem:pricing-client/pricing-client"
+                        )]
+                        extern "C" {
+                            #[link_name = "[method]save-snapshot.schedule-save"]
+                            fn wit_import(_: i32, _: i64, _: i32) -> i32;
+                        }
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32, _: i64, _: i32) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import(
+                            (self).handle() as i32,
+                            _rt::as_i64(seconds0),
+                            _rt::as_i32(nanoseconds0),
+                        );
+                        super::super::super::golem::rpc::types::CancellationToken::from_handle(
+                            ret as u32,
+                        )
                     }
                 }
             }
@@ -2045,8 +2608,10 @@ pub mod golem {
             #[doc(hidden)]
             static __FORCE_SECTION_REF: fn() = super::super::super::__link_custom_section_describing_imports;
             use super::super::super::_rt;
-            pub type GolemRpcUri = super::super::super::golem::rpc::types::Uri;
             pub type WasiIoPollable = super::super::super::wasi::io::poll::Pollable;
+            pub type WasiClocksDatetime = super::super::super::wasi::clocks::wall_clock::Datetime;
+            pub type GolemRpcWorkerId = super::super::super::golem::rpc::types::WorkerId;
+            pub type GolemRpcCancellationToken = super::super::super::golem::rpc::types::CancellationToken;
             pub type Product = super::super::super::golem::product_exports::api::Product;
             #[derive(Debug)]
             #[repr(transparent)]
@@ -2548,14 +3113,11 @@ pub mod golem {
             }
             impl Api {
                 #[allow(unused_unsafe, clippy::all)]
-                pub fn new(location: &GolemRpcUri) -> Self {
+                pub fn new(worker_name: &str) -> Self {
                     unsafe {
-                        let super::super::super::golem::rpc::types::Uri {
-                            value: value0,
-                        } = location;
-                        let vec1 = value0;
-                        let ptr1 = vec1.as_ptr().cast::<u8>();
-                        let len1 = vec1.len();
+                        let vec0 = worker_name;
+                        let ptr0 = vec0.as_ptr().cast::<u8>();
+                        let len0 = vec0.len();
                         #[cfg(target_arch = "wasm32")]
                         #[link(
                             wasm_import_module = "golem:product-client/product-client"
@@ -2568,7 +3130,47 @@ pub mod golem {
                         fn wit_import(_: *mut u8, _: usize) -> i32 {
                             unreachable!()
                         }
-                        let ret = wit_import(ptr1.cast_mut(), len1);
+                        let ret = wit_import(ptr0.cast_mut(), len0);
+                        Api::from_handle(ret as u32)
+                    }
+                }
+            }
+            impl Api {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn custom(worker_id: &GolemRpcWorkerId) -> Api {
+                    unsafe {
+                        let super::super::super::golem::rpc::types::WorkerId {
+                            component_id: component_id0,
+                            worker_name: worker_name0,
+                        } = worker_id;
+                        let super::super::super::golem::rpc::types::ComponentId {
+                            uuid: uuid1,
+                        } = component_id0;
+                        let super::super::super::golem::rpc::types::Uuid {
+                            high_bits: high_bits2,
+                            low_bits: low_bits2,
+                        } = uuid1;
+                        let vec3 = worker_name0;
+                        let ptr3 = vec3.as_ptr().cast::<u8>();
+                        let len3 = vec3.len();
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(
+                            wasm_import_module = "golem:product-client/product-client"
+                        )]
+                        extern "C" {
+                            #[link_name = "[static]api.custom"]
+                            fn wit_import(_: i64, _: i64, _: *mut u8, _: usize) -> i32;
+                        }
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i64, _: i64, _: *mut u8, _: usize) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import(
+                            _rt::as_i64(high_bits2),
+                            _rt::as_i64(low_bits2),
+                            ptr3.cast_mut(),
+                            len3,
+                        );
                         Api::from_handle(ret as u32)
                     }
                 }
@@ -2678,6 +3280,40 @@ pub mod golem {
                         }
                         let ret = wit_import((self).handle() as i32);
                         FutureGetResult::from_handle(ret as u32)
+                    }
+                }
+            }
+            impl Api {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn schedule_get(
+                    &self,
+                    scheduled_for: WasiClocksDatetime,
+                ) -> GolemRpcCancellationToken {
+                    unsafe {
+                        let super::super::super::wasi::clocks::wall_clock::Datetime {
+                            seconds: seconds0,
+                            nanoseconds: nanoseconds0,
+                        } = scheduled_for;
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(
+                            wasm_import_module = "golem:product-client/product-client"
+                        )]
+                        extern "C" {
+                            #[link_name = "[method]api.schedule-get"]
+                            fn wit_import(_: i32, _: i64, _: i32) -> i32;
+                        }
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32, _: i64, _: i32) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import(
+                            (self).handle() as i32,
+                            _rt::as_i64(seconds0),
+                            _rt::as_i32(nanoseconds0),
+                        );
+                        super::super::super::golem::rpc::types::CancellationToken::from_handle(
+                            ret as u32,
+                        )
                     }
                 }
             }
@@ -2847,16 +3483,110 @@ pub mod golem {
                     }
                 }
             }
-            impl LoadSnapshot {
+            impl Api {
                 #[allow(unused_unsafe, clippy::all)]
-                pub fn new(location: &GolemRpcUri) -> Self {
+                pub fn schedule_initialize_product(
+                    &self,
+                    name: &str,
+                    description: &str,
+                    tags: &[_rt::String],
+                    scheduled_for: WasiClocksDatetime,
+                ) -> GolemRpcCancellationToken {
                     unsafe {
-                        let super::super::super::golem::rpc::types::Uri {
-                            value: value0,
-                        } = location;
-                        let vec1 = value0;
+                        let vec0 = name;
+                        let ptr0 = vec0.as_ptr().cast::<u8>();
+                        let len0 = vec0.len();
+                        let vec1 = description;
                         let ptr1 = vec1.as_ptr().cast::<u8>();
                         let len1 = vec1.len();
+                        let vec3 = tags;
+                        let len3 = vec3.len();
+                        let layout3 = _rt::alloc::Layout::from_size_align_unchecked(
+                            vec3.len() * 8,
+                            4,
+                        );
+                        let result3 = if layout3.size() != 0 {
+                            let ptr = _rt::alloc::alloc(layout3).cast::<u8>();
+                            if ptr.is_null() {
+                                _rt::alloc::handle_alloc_error(layout3);
+                            }
+                            ptr
+                        } else {
+                            ::core::ptr::null_mut()
+                        };
+                        for (i, e) in vec3.into_iter().enumerate() {
+                            let base = result3.add(i * 8);
+                            {
+                                let vec2 = e;
+                                let ptr2 = vec2.as_ptr().cast::<u8>();
+                                let len2 = vec2.len();
+                                *base.add(4).cast::<usize>() = len2;
+                                *base.add(0).cast::<*mut u8>() = ptr2.cast_mut();
+                            }
+                        }
+                        let super::super::super::wasi::clocks::wall_clock::Datetime {
+                            seconds: seconds4,
+                            nanoseconds: nanoseconds4,
+                        } = scheduled_for;
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(
+                            wasm_import_module = "golem:product-client/product-client"
+                        )]
+                        extern "C" {
+                            #[link_name = "[method]api.schedule-initialize-product"]
+                            fn wit_import(
+                                _: i32,
+                                _: *mut u8,
+                                _: usize,
+                                _: *mut u8,
+                                _: usize,
+                                _: *mut u8,
+                                _: usize,
+                                _: i64,
+                                _: i32,
+                            ) -> i32;
+                        }
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(
+                            _: i32,
+                            _: *mut u8,
+                            _: usize,
+                            _: *mut u8,
+                            _: usize,
+                            _: *mut u8,
+                            _: usize,
+                            _: i64,
+                            _: i32,
+                        ) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import(
+                            (self).handle() as i32,
+                            ptr0.cast_mut(),
+                            len0,
+                            ptr1.cast_mut(),
+                            len1,
+                            result3,
+                            len3,
+                            _rt::as_i64(seconds4),
+                            _rt::as_i32(nanoseconds4),
+                        );
+                        if layout3.size() != 0 {
+                            _rt::alloc::dealloc(result3.cast(), layout3);
+                        }
+                        super::super::super::golem::rpc::types::CancellationToken::from_handle(
+                            ret as u32,
+                        )
+                    }
+                }
+            }
+            impl LoadSnapshot {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn new(worker_name: &str) -> Self {
+                    unsafe {
+                        let vec0 = worker_name;
+                        let ptr0 = vec0.as_ptr().cast::<u8>();
+                        let len0 = vec0.len();
                         #[cfg(target_arch = "wasm32")]
                         #[link(
                             wasm_import_module = "golem:product-client/product-client"
@@ -2869,7 +3599,47 @@ pub mod golem {
                         fn wit_import(_: *mut u8, _: usize) -> i32 {
                             unreachable!()
                         }
-                        let ret = wit_import(ptr1.cast_mut(), len1);
+                        let ret = wit_import(ptr0.cast_mut(), len0);
+                        LoadSnapshot::from_handle(ret as u32)
+                    }
+                }
+            }
+            impl LoadSnapshot {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn custom(worker_id: &GolemRpcWorkerId) -> LoadSnapshot {
+                    unsafe {
+                        let super::super::super::golem::rpc::types::WorkerId {
+                            component_id: component_id0,
+                            worker_name: worker_name0,
+                        } = worker_id;
+                        let super::super::super::golem::rpc::types::ComponentId {
+                            uuid: uuid1,
+                        } = component_id0;
+                        let super::super::super::golem::rpc::types::Uuid {
+                            high_bits: high_bits2,
+                            low_bits: low_bits2,
+                        } = uuid1;
+                        let vec3 = worker_name0;
+                        let ptr3 = vec3.as_ptr().cast::<u8>();
+                        let len3 = vec3.len();
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(
+                            wasm_import_module = "golem:product-client/product-client"
+                        )]
+                        extern "C" {
+                            #[link_name = "[static]load-snapshot.custom"]
+                            fn wit_import(_: i64, _: i64, _: *mut u8, _: usize) -> i32;
+                        }
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i64, _: i64, _: *mut u8, _: usize) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import(
+                            _rt::as_i64(high_bits2),
+                            _rt::as_i64(low_bits2),
+                            ptr3.cast_mut(),
+                            len3,
+                        );
                         LoadSnapshot::from_handle(ret as u32)
                     }
                 }
@@ -2953,16 +3723,65 @@ pub mod golem {
                     }
                 }
             }
+            impl LoadSnapshot {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn schedule_load(
+                    &self,
+                    bytes: &[u8],
+                    scheduled_for: WasiClocksDatetime,
+                ) -> GolemRpcCancellationToken {
+                    unsafe {
+                        let vec0 = bytes;
+                        let ptr0 = vec0.as_ptr().cast::<u8>();
+                        let len0 = vec0.len();
+                        let super::super::super::wasi::clocks::wall_clock::Datetime {
+                            seconds: seconds1,
+                            nanoseconds: nanoseconds1,
+                        } = scheduled_for;
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(
+                            wasm_import_module = "golem:product-client/product-client"
+                        )]
+                        extern "C" {
+                            #[link_name = "[method]load-snapshot.schedule-load"]
+                            fn wit_import(
+                                _: i32,
+                                _: *mut u8,
+                                _: usize,
+                                _: i64,
+                                _: i32,
+                            ) -> i32;
+                        }
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(
+                            _: i32,
+                            _: *mut u8,
+                            _: usize,
+                            _: i64,
+                            _: i32,
+                        ) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import(
+                            (self).handle() as i32,
+                            ptr0.cast_mut(),
+                            len0,
+                            _rt::as_i64(seconds1),
+                            _rt::as_i32(nanoseconds1),
+                        );
+                        super::super::super::golem::rpc::types::CancellationToken::from_handle(
+                            ret as u32,
+                        )
+                    }
+                }
+            }
             impl SaveSnapshot {
                 #[allow(unused_unsafe, clippy::all)]
-                pub fn new(location: &GolemRpcUri) -> Self {
+                pub fn new(worker_name: &str) -> Self {
                     unsafe {
-                        let super::super::super::golem::rpc::types::Uri {
-                            value: value0,
-                        } = location;
-                        let vec1 = value0;
-                        let ptr1 = vec1.as_ptr().cast::<u8>();
-                        let len1 = vec1.len();
+                        let vec0 = worker_name;
+                        let ptr0 = vec0.as_ptr().cast::<u8>();
+                        let len0 = vec0.len();
                         #[cfg(target_arch = "wasm32")]
                         #[link(
                             wasm_import_module = "golem:product-client/product-client"
@@ -2975,7 +3794,47 @@ pub mod golem {
                         fn wit_import(_: *mut u8, _: usize) -> i32 {
                             unreachable!()
                         }
-                        let ret = wit_import(ptr1.cast_mut(), len1);
+                        let ret = wit_import(ptr0.cast_mut(), len0);
+                        SaveSnapshot::from_handle(ret as u32)
+                    }
+                }
+            }
+            impl SaveSnapshot {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn custom(worker_id: &GolemRpcWorkerId) -> SaveSnapshot {
+                    unsafe {
+                        let super::super::super::golem::rpc::types::WorkerId {
+                            component_id: component_id0,
+                            worker_name: worker_name0,
+                        } = worker_id;
+                        let super::super::super::golem::rpc::types::ComponentId {
+                            uuid: uuid1,
+                        } = component_id0;
+                        let super::super::super::golem::rpc::types::Uuid {
+                            high_bits: high_bits2,
+                            low_bits: low_bits2,
+                        } = uuid1;
+                        let vec3 = worker_name0;
+                        let ptr3 = vec3.as_ptr().cast::<u8>();
+                        let len3 = vec3.len();
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(
+                            wasm_import_module = "golem:product-client/product-client"
+                        )]
+                        extern "C" {
+                            #[link_name = "[static]save-snapshot.custom"]
+                            fn wit_import(_: i64, _: i64, _: *mut u8, _: usize) -> i32;
+                        }
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i64, _: i64, _: *mut u8, _: usize) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import(
+                            _rt::as_i64(high_bits2),
+                            _rt::as_i64(low_bits2),
+                            ptr3.cast_mut(),
+                            len3,
+                        );
                         SaveSnapshot::from_handle(ret as u32)
                     }
                 }
@@ -3028,6 +3887,40 @@ pub mod golem {
                         }
                         let ret = wit_import((self).handle() as i32);
                         FutureSaveResult::from_handle(ret as u32)
+                    }
+                }
+            }
+            impl SaveSnapshot {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn schedule_save(
+                    &self,
+                    scheduled_for: WasiClocksDatetime,
+                ) -> GolemRpcCancellationToken {
+                    unsafe {
+                        let super::super::super::wasi::clocks::wall_clock::Datetime {
+                            seconds: seconds0,
+                            nanoseconds: nanoseconds0,
+                        } = scheduled_for;
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(
+                            wasm_import_module = "golem:product-client/product-client"
+                        )]
+                        extern "C" {
+                            #[link_name = "[method]save-snapshot.schedule-save"]
+                            fn wit_import(_: i32, _: i64, _: i32) -> i32;
+                        }
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32, _: i64, _: i32) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import(
+                            (self).handle() as i32,
+                            _rt::as_i64(seconds0),
+                            _rt::as_i32(nanoseconds0),
+                        );
+                        super::super::super::golem::rpc::types::CancellationToken::from_handle(
+                            ret as u32,
+                        )
                     }
                 }
             }
@@ -3225,7 +4118,57 @@ pub mod golem {
             #[doc(hidden)]
             static __FORCE_SECTION_REF: fn() = super::super::super::__link_custom_section_describing_imports;
             use super::super::super::_rt;
+            pub type Datetime = super::super::super::wasi::clocks::wall_clock::Datetime;
             pub type Pollable = super::super::super::wasi::io::poll::Pollable;
+            /// UUID
+            #[repr(C)]
+            #[derive(Clone, Copy)]
+            pub struct Uuid {
+                pub high_bits: u64,
+                pub low_bits: u64,
+            }
+            impl ::core::fmt::Debug for Uuid {
+                fn fmt(
+                    &self,
+                    f: &mut ::core::fmt::Formatter<'_>,
+                ) -> ::core::fmt::Result {
+                    f.debug_struct("Uuid")
+                        .field("high-bits", &self.high_bits)
+                        .field("low-bits", &self.low_bits)
+                        .finish()
+                }
+            }
+            /// Represents a Golem component
+            #[repr(C)]
+            #[derive(Clone, Copy)]
+            pub struct ComponentId {
+                pub uuid: Uuid,
+            }
+            impl ::core::fmt::Debug for ComponentId {
+                fn fmt(
+                    &self,
+                    f: &mut ::core::fmt::Formatter<'_>,
+                ) -> ::core::fmt::Result {
+                    f.debug_struct("ComponentId").field("uuid", &self.uuid).finish()
+                }
+            }
+            /// Represents a Golem worker
+            #[derive(Clone)]
+            pub struct WorkerId {
+                pub component_id: ComponentId,
+                pub worker_name: _rt::String,
+            }
+            impl ::core::fmt::Debug for WorkerId {
+                fn fmt(
+                    &self,
+                    f: &mut ::core::fmt::Formatter<'_>,
+                ) -> ::core::fmt::Result {
+                    f.debug_struct("WorkerId")
+                        .field("component-id", &self.component_id)
+                        .field("worker-name", &self.worker_name)
+                        .finish()
+                }
+            }
             pub type NodeIndex = i32;
             pub type ResourceId = u64;
             #[repr(u8)]
@@ -3581,7 +4524,7 @@ pub mod golem {
                     unreachable!();
                     #[cfg(target_arch = "wasm32")]
                     {
-                        #[link(wasm_import_module = "golem:rpc/types@0.1.1")]
+                        #[link(wasm_import_module = "golem:rpc/types@0.2.0")]
                         extern "C" {
                             #[link_name = "[resource-drop]wasm-rpc"]
                             fn drop(_: u32);
@@ -3618,7 +4561,7 @@ pub mod golem {
                     unreachable!();
                     #[cfg(target_arch = "wasm32")]
                     {
-                        #[link(wasm_import_module = "golem:rpc/types@0.1.1")]
+                        #[link(wasm_import_module = "golem:rpc/types@0.2.0")]
                         extern "C" {
                             #[link_name = "[resource-drop]future-invoke-result"]
                             fn drop(_: u32);
@@ -3627,25 +4570,176 @@ pub mod golem {
                     }
                 }
             }
+            #[derive(Debug)]
+            #[repr(transparent)]
+            pub struct CancellationToken {
+                handle: _rt::Resource<CancellationToken>,
+            }
+            impl CancellationToken {
+                #[doc(hidden)]
+                pub unsafe fn from_handle(handle: u32) -> Self {
+                    Self {
+                        handle: _rt::Resource::from_handle(handle),
+                    }
+                }
+                #[doc(hidden)]
+                pub fn take_handle(&self) -> u32 {
+                    _rt::Resource::take_handle(&self.handle)
+                }
+                #[doc(hidden)]
+                pub fn handle(&self) -> u32 {
+                    _rt::Resource::handle(&self.handle)
+                }
+            }
+            unsafe impl _rt::WasmResource for CancellationToken {
+                #[inline]
+                unsafe fn drop(_handle: u32) {
+                    #[cfg(not(target_arch = "wasm32"))]
+                    unreachable!();
+                    #[cfg(target_arch = "wasm32")]
+                    {
+                        #[link(wasm_import_module = "golem:rpc/types@0.2.0")]
+                        extern "C" {
+                            #[link_name = "[resource-drop]cancellation-token"]
+                            fn drop(_: u32);
+                        }
+                        drop(_handle);
+                    }
+                }
+            }
+            #[allow(unused_unsafe, clippy::all)]
+            /// Parses a UUID from a string
+            pub fn parse_uuid(uuid: &str) -> Result<Uuid, _rt::String> {
+                unsafe {
+                    #[repr(align(8))]
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 24]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 24]);
+                    let vec0 = uuid;
+                    let ptr0 = vec0.as_ptr().cast::<u8>();
+                    let len0 = vec0.len();
+                    let ptr1 = ret_area.0.as_mut_ptr().cast::<u8>();
+                    #[cfg(target_arch = "wasm32")]
+                    #[link(wasm_import_module = "golem:rpc/types@0.2.0")]
+                    extern "C" {
+                        #[link_name = "parse-uuid"]
+                        fn wit_import(_: *mut u8, _: usize, _: *mut u8);
+                    }
+                    #[cfg(not(target_arch = "wasm32"))]
+                    fn wit_import(_: *mut u8, _: usize, _: *mut u8) {
+                        unreachable!()
+                    }
+                    wit_import(ptr0.cast_mut(), len0, ptr1);
+                    let l2 = i32::from(*ptr1.add(0).cast::<u8>());
+                    match l2 {
+                        0 => {
+                            let e = {
+                                let l3 = *ptr1.add(8).cast::<i64>();
+                                let l4 = *ptr1.add(16).cast::<i64>();
+                                Uuid {
+                                    high_bits: l3 as u64,
+                                    low_bits: l4 as u64,
+                                }
+                            };
+                            Ok(e)
+                        }
+                        1 => {
+                            let e = {
+                                let l5 = *ptr1.add(8).cast::<*mut u8>();
+                                let l6 = *ptr1.add(12).cast::<usize>();
+                                let len7 = l6;
+                                let bytes7 = _rt::Vec::from_raw_parts(
+                                    l5.cast(),
+                                    len7,
+                                    len7,
+                                );
+                                _rt::string_lift(bytes7)
+                            };
+                            Err(e)
+                        }
+                        _ => _rt::invalid_enum_discriminant(),
+                    }
+                }
+            }
+            #[allow(unused_unsafe, clippy::all)]
+            /// Converts a UUID to a string
+            pub fn uuid_to_string(uuid: Uuid) -> _rt::String {
+                unsafe {
+                    #[repr(align(4))]
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 8]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+                    let Uuid { high_bits: high_bits0, low_bits: low_bits0 } = uuid;
+                    let ptr1 = ret_area.0.as_mut_ptr().cast::<u8>();
+                    #[cfg(target_arch = "wasm32")]
+                    #[link(wasm_import_module = "golem:rpc/types@0.2.0")]
+                    extern "C" {
+                        #[link_name = "uuid-to-string"]
+                        fn wit_import(_: i64, _: i64, _: *mut u8);
+                    }
+                    #[cfg(not(target_arch = "wasm32"))]
+                    fn wit_import(_: i64, _: i64, _: *mut u8) {
+                        unreachable!()
+                    }
+                    wit_import(_rt::as_i64(high_bits0), _rt::as_i64(low_bits0), ptr1);
+                    let l2 = *ptr1.add(0).cast::<*mut u8>();
+                    let l3 = *ptr1.add(4).cast::<usize>();
+                    let len4 = l3;
+                    let bytes4 = _rt::Vec::from_raw_parts(l2.cast(), len4, len4);
+                    _rt::string_lift(bytes4)
+                }
+            }
             impl WasmRpc {
                 #[allow(unused_unsafe, clippy::all)]
-                pub fn new(location: &Uri) -> Self {
+                pub fn new(worker_id: &WorkerId) -> Self {
                     unsafe {
-                        let Uri { value: value0 } = location;
-                        let vec1 = value0;
-                        let ptr1 = vec1.as_ptr().cast::<u8>();
-                        let len1 = vec1.len();
+                        let WorkerId {
+                            component_id: component_id0,
+                            worker_name: worker_name0,
+                        } = worker_id;
+                        let ComponentId { uuid: uuid1 } = component_id0;
+                        let Uuid { high_bits: high_bits2, low_bits: low_bits2 } = uuid1;
+                        let vec3 = worker_name0;
+                        let ptr3 = vec3.as_ptr().cast::<u8>();
+                        let len3 = vec3.len();
                         #[cfg(target_arch = "wasm32")]
-                        #[link(wasm_import_module = "golem:rpc/types@0.1.1")]
+                        #[link(wasm_import_module = "golem:rpc/types@0.2.0")]
                         extern "C" {
                             #[link_name = "[constructor]wasm-rpc"]
-                            fn wit_import(_: *mut u8, _: usize) -> i32;
+                            fn wit_import(_: i64, _: i64, _: *mut u8, _: usize) -> i32;
                         }
                         #[cfg(not(target_arch = "wasm32"))]
-                        fn wit_import(_: *mut u8, _: usize) -> i32 {
+                        fn wit_import(_: i64, _: i64, _: *mut u8, _: usize) -> i32 {
                             unreachable!()
                         }
-                        let ret = wit_import(ptr1.cast_mut(), len1);
+                        let ret = wit_import(
+                            _rt::as_i64(high_bits2),
+                            _rt::as_i64(low_bits2),
+                            ptr3.cast_mut(),
+                            len3,
+                        );
+                        WasmRpc::from_handle(ret as u32)
+                    }
+                }
+            }
+            impl WasmRpc {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn ephemeral(component_id: ComponentId) -> WasmRpc {
+                    unsafe {
+                        let ComponentId { uuid: uuid0 } = component_id;
+                        let Uuid { high_bits: high_bits1, low_bits: low_bits1 } = uuid0;
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:rpc/types@0.2.0")]
+                        extern "C" {
+                            #[link_name = "[static]wasm-rpc.ephemeral"]
+                            fn wit_import(_: i64, _: i64) -> i32;
+                        }
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i64, _: i64) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import(
+                            _rt::as_i64(high_bits1),
+                            _rt::as_i64(low_bits1),
+                        );
                         WasmRpc::from_handle(ret as u32)
                     }
                 }
@@ -3898,7 +4992,7 @@ pub mod golem {
                         }
                         let ptr13 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
-                        #[link(wasm_import_module = "golem:rpc/types@0.1.1")]
+                        #[link(wasm_import_module = "golem:rpc/types@0.2.0")]
                         extern "C" {
                             #[link_name = "[method]wasm-rpc.invoke-and-await"]
                             fn wit_import(
@@ -4534,7 +5628,7 @@ pub mod golem {
                         }
                         let ptr13 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
-                        #[link(wasm_import_module = "golem:rpc/types@0.1.1")]
+                        #[link(wasm_import_module = "golem:rpc/types@0.2.0")]
                         extern "C" {
                             #[link_name = "[method]wasm-rpc.invoke"]
                             fn wit_import(
@@ -4892,7 +5986,7 @@ pub mod golem {
                             }
                         }
                         #[cfg(target_arch = "wasm32")]
-                        #[link(wasm_import_module = "golem:rpc/types@0.1.1")]
+                        #[link(wasm_import_module = "golem:rpc/types@0.2.0")]
                         extern "C" {
                             #[link_name = "[method]wasm-rpc.async-invoke-and-await"]
                             fn wit_import(
@@ -4932,12 +6026,599 @@ pub mod golem {
                     }
                 }
             }
+            impl WasmRpc {
+                #[allow(unused_unsafe, clippy::all)]
+                /// Schedule invocation for later
+                pub fn schedule_invocation(
+                    &self,
+                    scheduled_time: Datetime,
+                    function_name: &str,
+                    function_params: &[WitValue],
+                ) {
+                    unsafe {
+                        let mut cleanup_list = _rt::Vec::new();
+                        let super::super::super::wasi::clocks::wall_clock::Datetime {
+                            seconds: seconds0,
+                            nanoseconds: nanoseconds0,
+                        } = scheduled_time;
+                        let vec1 = function_name;
+                        let ptr1 = vec1.as_ptr().cast::<u8>();
+                        let len1 = vec1.len();
+                        let vec13 = function_params;
+                        let len13 = vec13.len();
+                        let layout13 = _rt::alloc::Layout::from_size_align_unchecked(
+                            vec13.len() * 8,
+                            4,
+                        );
+                        let result13 = if layout13.size() != 0 {
+                            let ptr = _rt::alloc::alloc(layout13).cast::<u8>();
+                            if ptr.is_null() {
+                                _rt::alloc::handle_alloc_error(layout13);
+                            }
+                            ptr
+                        } else {
+                            ::core::ptr::null_mut()
+                        };
+                        for (i, e) in vec13.into_iter().enumerate() {
+                            let base = result13.add(i * 8);
+                            {
+                                let WitValue { nodes: nodes2 } = e;
+                                let vec12 = nodes2;
+                                let len12 = vec12.len();
+                                let layout12 = _rt::alloc::Layout::from_size_align_unchecked(
+                                    vec12.len() * 24,
+                                    8,
+                                );
+                                let result12 = if layout12.size() != 0 {
+                                    let ptr = _rt::alloc::alloc(layout12).cast::<u8>();
+                                    if ptr.is_null() {
+                                        _rt::alloc::handle_alloc_error(layout12);
+                                    }
+                                    ptr
+                                } else {
+                                    ::core::ptr::null_mut()
+                                };
+                                for (i, e) in vec12.into_iter().enumerate() {
+                                    let base = result12.add(i * 24);
+                                    {
+                                        match e {
+                                            WitNode::RecordValue(e) => {
+                                                *base.add(0).cast::<u8>() = (0i32) as u8;
+                                                let vec3 = e;
+                                                let ptr3 = vec3.as_ptr().cast::<u8>();
+                                                let len3 = vec3.len();
+                                                *base.add(12).cast::<usize>() = len3;
+                                                *base.add(8).cast::<*mut u8>() = ptr3.cast_mut();
+                                            }
+                                            WitNode::VariantValue(e) => {
+                                                *base.add(0).cast::<u8>() = (1i32) as u8;
+                                                let (t4_0, t4_1) = e;
+                                                *base.add(8).cast::<i32>() = _rt::as_i32(t4_0);
+                                                match t4_1 {
+                                                    Some(e) => {
+                                                        *base.add(12).cast::<u8>() = (1i32) as u8;
+                                                        *base.add(16).cast::<i32>() = _rt::as_i32(e);
+                                                    }
+                                                    None => {
+                                                        *base.add(12).cast::<u8>() = (0i32) as u8;
+                                                    }
+                                                };
+                                            }
+                                            WitNode::EnumValue(e) => {
+                                                *base.add(0).cast::<u8>() = (2i32) as u8;
+                                                *base.add(8).cast::<i32>() = _rt::as_i32(e);
+                                            }
+                                            WitNode::FlagsValue(e) => {
+                                                *base.add(0).cast::<u8>() = (3i32) as u8;
+                                                let vec5 = e;
+                                                let len5 = vec5.len();
+                                                let layout5 = _rt::alloc::Layout::from_size_align_unchecked(
+                                                    vec5.len() * 1,
+                                                    1,
+                                                );
+                                                let result5 = if layout5.size() != 0 {
+                                                    let ptr = _rt::alloc::alloc(layout5).cast::<u8>();
+                                                    if ptr.is_null() {
+                                                        _rt::alloc::handle_alloc_error(layout5);
+                                                    }
+                                                    ptr
+                                                } else {
+                                                    ::core::ptr::null_mut()
+                                                };
+                                                for (i, e) in vec5.into_iter().enumerate() {
+                                                    let base = result5.add(i * 1);
+                                                    {
+                                                        *base.add(0).cast::<u8>() = (match e {
+                                                            true => 1,
+                                                            false => 0,
+                                                        }) as u8;
+                                                    }
+                                                }
+                                                *base.add(12).cast::<usize>() = len5;
+                                                *base.add(8).cast::<*mut u8>() = result5;
+                                                cleanup_list.extend_from_slice(&[(result5, layout5)]);
+                                            }
+                                            WitNode::TupleValue(e) => {
+                                                *base.add(0).cast::<u8>() = (4i32) as u8;
+                                                let vec6 = e;
+                                                let ptr6 = vec6.as_ptr().cast::<u8>();
+                                                let len6 = vec6.len();
+                                                *base.add(12).cast::<usize>() = len6;
+                                                *base.add(8).cast::<*mut u8>() = ptr6.cast_mut();
+                                            }
+                                            WitNode::ListValue(e) => {
+                                                *base.add(0).cast::<u8>() = (5i32) as u8;
+                                                let vec7 = e;
+                                                let ptr7 = vec7.as_ptr().cast::<u8>();
+                                                let len7 = vec7.len();
+                                                *base.add(12).cast::<usize>() = len7;
+                                                *base.add(8).cast::<*mut u8>() = ptr7.cast_mut();
+                                            }
+                                            WitNode::OptionValue(e) => {
+                                                *base.add(0).cast::<u8>() = (6i32) as u8;
+                                                match e {
+                                                    Some(e) => {
+                                                        *base.add(8).cast::<u8>() = (1i32) as u8;
+                                                        *base.add(12).cast::<i32>() = _rt::as_i32(e);
+                                                    }
+                                                    None => {
+                                                        *base.add(8).cast::<u8>() = (0i32) as u8;
+                                                    }
+                                                };
+                                            }
+                                            WitNode::ResultValue(e) => {
+                                                *base.add(0).cast::<u8>() = (7i32) as u8;
+                                                match e {
+                                                    Ok(e) => {
+                                                        *base.add(8).cast::<u8>() = (0i32) as u8;
+                                                        match e {
+                                                            Some(e) => {
+                                                                *base.add(12).cast::<u8>() = (1i32) as u8;
+                                                                *base.add(16).cast::<i32>() = _rt::as_i32(e);
+                                                            }
+                                                            None => {
+                                                                *base.add(12).cast::<u8>() = (0i32) as u8;
+                                                            }
+                                                        };
+                                                    }
+                                                    Err(e) => {
+                                                        *base.add(8).cast::<u8>() = (1i32) as u8;
+                                                        match e {
+                                                            Some(e) => {
+                                                                *base.add(12).cast::<u8>() = (1i32) as u8;
+                                                                *base.add(16).cast::<i32>() = _rt::as_i32(e);
+                                                            }
+                                                            None => {
+                                                                *base.add(12).cast::<u8>() = (0i32) as u8;
+                                                            }
+                                                        };
+                                                    }
+                                                };
+                                            }
+                                            WitNode::PrimU8(e) => {
+                                                *base.add(0).cast::<u8>() = (8i32) as u8;
+                                                *base.add(8).cast::<u8>() = (_rt::as_i32(e)) as u8;
+                                            }
+                                            WitNode::PrimU16(e) => {
+                                                *base.add(0).cast::<u8>() = (9i32) as u8;
+                                                *base.add(8).cast::<u16>() = (_rt::as_i32(e)) as u16;
+                                            }
+                                            WitNode::PrimU32(e) => {
+                                                *base.add(0).cast::<u8>() = (10i32) as u8;
+                                                *base.add(8).cast::<i32>() = _rt::as_i32(e);
+                                            }
+                                            WitNode::PrimU64(e) => {
+                                                *base.add(0).cast::<u8>() = (11i32) as u8;
+                                                *base.add(8).cast::<i64>() = _rt::as_i64(e);
+                                            }
+                                            WitNode::PrimS8(e) => {
+                                                *base.add(0).cast::<u8>() = (12i32) as u8;
+                                                *base.add(8).cast::<u8>() = (_rt::as_i32(e)) as u8;
+                                            }
+                                            WitNode::PrimS16(e) => {
+                                                *base.add(0).cast::<u8>() = (13i32) as u8;
+                                                *base.add(8).cast::<u16>() = (_rt::as_i32(e)) as u16;
+                                            }
+                                            WitNode::PrimS32(e) => {
+                                                *base.add(0).cast::<u8>() = (14i32) as u8;
+                                                *base.add(8).cast::<i32>() = _rt::as_i32(e);
+                                            }
+                                            WitNode::PrimS64(e) => {
+                                                *base.add(0).cast::<u8>() = (15i32) as u8;
+                                                *base.add(8).cast::<i64>() = _rt::as_i64(e);
+                                            }
+                                            WitNode::PrimFloat32(e) => {
+                                                *base.add(0).cast::<u8>() = (16i32) as u8;
+                                                *base.add(8).cast::<f32>() = _rt::as_f32(e);
+                                            }
+                                            WitNode::PrimFloat64(e) => {
+                                                *base.add(0).cast::<u8>() = (17i32) as u8;
+                                                *base.add(8).cast::<f64>() = _rt::as_f64(e);
+                                            }
+                                            WitNode::PrimChar(e) => {
+                                                *base.add(0).cast::<u8>() = (18i32) as u8;
+                                                *base.add(8).cast::<i32>() = _rt::as_i32(e);
+                                            }
+                                            WitNode::PrimBool(e) => {
+                                                *base.add(0).cast::<u8>() = (19i32) as u8;
+                                                *base.add(8).cast::<u8>() = (match e {
+                                                    true => 1,
+                                                    false => 0,
+                                                }) as u8;
+                                            }
+                                            WitNode::PrimString(e) => {
+                                                *base.add(0).cast::<u8>() = (20i32) as u8;
+                                                let vec8 = e;
+                                                let ptr8 = vec8.as_ptr().cast::<u8>();
+                                                let len8 = vec8.len();
+                                                *base.add(12).cast::<usize>() = len8;
+                                                *base.add(8).cast::<*mut u8>() = ptr8.cast_mut();
+                                            }
+                                            WitNode::Handle(e) => {
+                                                *base.add(0).cast::<u8>() = (21i32) as u8;
+                                                let (t9_0, t9_1) = e;
+                                                let Uri { value: value10 } = t9_0;
+                                                let vec11 = value10;
+                                                let ptr11 = vec11.as_ptr().cast::<u8>();
+                                                let len11 = vec11.len();
+                                                *base.add(12).cast::<usize>() = len11;
+                                                *base.add(8).cast::<*mut u8>() = ptr11.cast_mut();
+                                                *base.add(16).cast::<i64>() = _rt::as_i64(t9_1);
+                                            }
+                                        }
+                                    }
+                                }
+                                *base.add(4).cast::<usize>() = len12;
+                                *base.add(0).cast::<*mut u8>() = result12;
+                                cleanup_list.extend_from_slice(&[(result12, layout12)]);
+                            }
+                        }
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:rpc/types@0.2.0")]
+                        extern "C" {
+                            #[link_name = "[method]wasm-rpc.schedule-invocation"]
+                            fn wit_import(
+                                _: i32,
+                                _: i64,
+                                _: i32,
+                                _: *mut u8,
+                                _: usize,
+                                _: *mut u8,
+                                _: usize,
+                            );
+                        }
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(
+                            _: i32,
+                            _: i64,
+                            _: i32,
+                            _: *mut u8,
+                            _: usize,
+                            _: *mut u8,
+                            _: usize,
+                        ) {
+                            unreachable!()
+                        }
+                        wit_import(
+                            (self).handle() as i32,
+                            _rt::as_i64(seconds0),
+                            _rt::as_i32(nanoseconds0),
+                            ptr1.cast_mut(),
+                            len1,
+                            result13,
+                            len13,
+                        );
+                        if layout13.size() != 0 {
+                            _rt::alloc::dealloc(result13.cast(), layout13);
+                        }
+                        for (ptr, layout) in cleanup_list {
+                            if layout.size() != 0 {
+                                _rt::alloc::dealloc(ptr.cast(), layout);
+                            }
+                        }
+                    }
+                }
+            }
+            impl WasmRpc {
+                #[allow(unused_unsafe, clippy::all)]
+                /// Schedule invocation for later. Call cancel on the returned resource to cancel the invocation before the scheduled time.
+                pub fn schedule_cancelable_invocation(
+                    &self,
+                    scheduled_time: Datetime,
+                    function_name: &str,
+                    function_params: &[WitValue],
+                ) -> CancellationToken {
+                    unsafe {
+                        let mut cleanup_list = _rt::Vec::new();
+                        let super::super::super::wasi::clocks::wall_clock::Datetime {
+                            seconds: seconds0,
+                            nanoseconds: nanoseconds0,
+                        } = scheduled_time;
+                        let vec1 = function_name;
+                        let ptr1 = vec1.as_ptr().cast::<u8>();
+                        let len1 = vec1.len();
+                        let vec13 = function_params;
+                        let len13 = vec13.len();
+                        let layout13 = _rt::alloc::Layout::from_size_align_unchecked(
+                            vec13.len() * 8,
+                            4,
+                        );
+                        let result13 = if layout13.size() != 0 {
+                            let ptr = _rt::alloc::alloc(layout13).cast::<u8>();
+                            if ptr.is_null() {
+                                _rt::alloc::handle_alloc_error(layout13);
+                            }
+                            ptr
+                        } else {
+                            ::core::ptr::null_mut()
+                        };
+                        for (i, e) in vec13.into_iter().enumerate() {
+                            let base = result13.add(i * 8);
+                            {
+                                let WitValue { nodes: nodes2 } = e;
+                                let vec12 = nodes2;
+                                let len12 = vec12.len();
+                                let layout12 = _rt::alloc::Layout::from_size_align_unchecked(
+                                    vec12.len() * 24,
+                                    8,
+                                );
+                                let result12 = if layout12.size() != 0 {
+                                    let ptr = _rt::alloc::alloc(layout12).cast::<u8>();
+                                    if ptr.is_null() {
+                                        _rt::alloc::handle_alloc_error(layout12);
+                                    }
+                                    ptr
+                                } else {
+                                    ::core::ptr::null_mut()
+                                };
+                                for (i, e) in vec12.into_iter().enumerate() {
+                                    let base = result12.add(i * 24);
+                                    {
+                                        match e {
+                                            WitNode::RecordValue(e) => {
+                                                *base.add(0).cast::<u8>() = (0i32) as u8;
+                                                let vec3 = e;
+                                                let ptr3 = vec3.as_ptr().cast::<u8>();
+                                                let len3 = vec3.len();
+                                                *base.add(12).cast::<usize>() = len3;
+                                                *base.add(8).cast::<*mut u8>() = ptr3.cast_mut();
+                                            }
+                                            WitNode::VariantValue(e) => {
+                                                *base.add(0).cast::<u8>() = (1i32) as u8;
+                                                let (t4_0, t4_1) = e;
+                                                *base.add(8).cast::<i32>() = _rt::as_i32(t4_0);
+                                                match t4_1 {
+                                                    Some(e) => {
+                                                        *base.add(12).cast::<u8>() = (1i32) as u8;
+                                                        *base.add(16).cast::<i32>() = _rt::as_i32(e);
+                                                    }
+                                                    None => {
+                                                        *base.add(12).cast::<u8>() = (0i32) as u8;
+                                                    }
+                                                };
+                                            }
+                                            WitNode::EnumValue(e) => {
+                                                *base.add(0).cast::<u8>() = (2i32) as u8;
+                                                *base.add(8).cast::<i32>() = _rt::as_i32(e);
+                                            }
+                                            WitNode::FlagsValue(e) => {
+                                                *base.add(0).cast::<u8>() = (3i32) as u8;
+                                                let vec5 = e;
+                                                let len5 = vec5.len();
+                                                let layout5 = _rt::alloc::Layout::from_size_align_unchecked(
+                                                    vec5.len() * 1,
+                                                    1,
+                                                );
+                                                let result5 = if layout5.size() != 0 {
+                                                    let ptr = _rt::alloc::alloc(layout5).cast::<u8>();
+                                                    if ptr.is_null() {
+                                                        _rt::alloc::handle_alloc_error(layout5);
+                                                    }
+                                                    ptr
+                                                } else {
+                                                    ::core::ptr::null_mut()
+                                                };
+                                                for (i, e) in vec5.into_iter().enumerate() {
+                                                    let base = result5.add(i * 1);
+                                                    {
+                                                        *base.add(0).cast::<u8>() = (match e {
+                                                            true => 1,
+                                                            false => 0,
+                                                        }) as u8;
+                                                    }
+                                                }
+                                                *base.add(12).cast::<usize>() = len5;
+                                                *base.add(8).cast::<*mut u8>() = result5;
+                                                cleanup_list.extend_from_slice(&[(result5, layout5)]);
+                                            }
+                                            WitNode::TupleValue(e) => {
+                                                *base.add(0).cast::<u8>() = (4i32) as u8;
+                                                let vec6 = e;
+                                                let ptr6 = vec6.as_ptr().cast::<u8>();
+                                                let len6 = vec6.len();
+                                                *base.add(12).cast::<usize>() = len6;
+                                                *base.add(8).cast::<*mut u8>() = ptr6.cast_mut();
+                                            }
+                                            WitNode::ListValue(e) => {
+                                                *base.add(0).cast::<u8>() = (5i32) as u8;
+                                                let vec7 = e;
+                                                let ptr7 = vec7.as_ptr().cast::<u8>();
+                                                let len7 = vec7.len();
+                                                *base.add(12).cast::<usize>() = len7;
+                                                *base.add(8).cast::<*mut u8>() = ptr7.cast_mut();
+                                            }
+                                            WitNode::OptionValue(e) => {
+                                                *base.add(0).cast::<u8>() = (6i32) as u8;
+                                                match e {
+                                                    Some(e) => {
+                                                        *base.add(8).cast::<u8>() = (1i32) as u8;
+                                                        *base.add(12).cast::<i32>() = _rt::as_i32(e);
+                                                    }
+                                                    None => {
+                                                        *base.add(8).cast::<u8>() = (0i32) as u8;
+                                                    }
+                                                };
+                                            }
+                                            WitNode::ResultValue(e) => {
+                                                *base.add(0).cast::<u8>() = (7i32) as u8;
+                                                match e {
+                                                    Ok(e) => {
+                                                        *base.add(8).cast::<u8>() = (0i32) as u8;
+                                                        match e {
+                                                            Some(e) => {
+                                                                *base.add(12).cast::<u8>() = (1i32) as u8;
+                                                                *base.add(16).cast::<i32>() = _rt::as_i32(e);
+                                                            }
+                                                            None => {
+                                                                *base.add(12).cast::<u8>() = (0i32) as u8;
+                                                            }
+                                                        };
+                                                    }
+                                                    Err(e) => {
+                                                        *base.add(8).cast::<u8>() = (1i32) as u8;
+                                                        match e {
+                                                            Some(e) => {
+                                                                *base.add(12).cast::<u8>() = (1i32) as u8;
+                                                                *base.add(16).cast::<i32>() = _rt::as_i32(e);
+                                                            }
+                                                            None => {
+                                                                *base.add(12).cast::<u8>() = (0i32) as u8;
+                                                            }
+                                                        };
+                                                    }
+                                                };
+                                            }
+                                            WitNode::PrimU8(e) => {
+                                                *base.add(0).cast::<u8>() = (8i32) as u8;
+                                                *base.add(8).cast::<u8>() = (_rt::as_i32(e)) as u8;
+                                            }
+                                            WitNode::PrimU16(e) => {
+                                                *base.add(0).cast::<u8>() = (9i32) as u8;
+                                                *base.add(8).cast::<u16>() = (_rt::as_i32(e)) as u16;
+                                            }
+                                            WitNode::PrimU32(e) => {
+                                                *base.add(0).cast::<u8>() = (10i32) as u8;
+                                                *base.add(8).cast::<i32>() = _rt::as_i32(e);
+                                            }
+                                            WitNode::PrimU64(e) => {
+                                                *base.add(0).cast::<u8>() = (11i32) as u8;
+                                                *base.add(8).cast::<i64>() = _rt::as_i64(e);
+                                            }
+                                            WitNode::PrimS8(e) => {
+                                                *base.add(0).cast::<u8>() = (12i32) as u8;
+                                                *base.add(8).cast::<u8>() = (_rt::as_i32(e)) as u8;
+                                            }
+                                            WitNode::PrimS16(e) => {
+                                                *base.add(0).cast::<u8>() = (13i32) as u8;
+                                                *base.add(8).cast::<u16>() = (_rt::as_i32(e)) as u16;
+                                            }
+                                            WitNode::PrimS32(e) => {
+                                                *base.add(0).cast::<u8>() = (14i32) as u8;
+                                                *base.add(8).cast::<i32>() = _rt::as_i32(e);
+                                            }
+                                            WitNode::PrimS64(e) => {
+                                                *base.add(0).cast::<u8>() = (15i32) as u8;
+                                                *base.add(8).cast::<i64>() = _rt::as_i64(e);
+                                            }
+                                            WitNode::PrimFloat32(e) => {
+                                                *base.add(0).cast::<u8>() = (16i32) as u8;
+                                                *base.add(8).cast::<f32>() = _rt::as_f32(e);
+                                            }
+                                            WitNode::PrimFloat64(e) => {
+                                                *base.add(0).cast::<u8>() = (17i32) as u8;
+                                                *base.add(8).cast::<f64>() = _rt::as_f64(e);
+                                            }
+                                            WitNode::PrimChar(e) => {
+                                                *base.add(0).cast::<u8>() = (18i32) as u8;
+                                                *base.add(8).cast::<i32>() = _rt::as_i32(e);
+                                            }
+                                            WitNode::PrimBool(e) => {
+                                                *base.add(0).cast::<u8>() = (19i32) as u8;
+                                                *base.add(8).cast::<u8>() = (match e {
+                                                    true => 1,
+                                                    false => 0,
+                                                }) as u8;
+                                            }
+                                            WitNode::PrimString(e) => {
+                                                *base.add(0).cast::<u8>() = (20i32) as u8;
+                                                let vec8 = e;
+                                                let ptr8 = vec8.as_ptr().cast::<u8>();
+                                                let len8 = vec8.len();
+                                                *base.add(12).cast::<usize>() = len8;
+                                                *base.add(8).cast::<*mut u8>() = ptr8.cast_mut();
+                                            }
+                                            WitNode::Handle(e) => {
+                                                *base.add(0).cast::<u8>() = (21i32) as u8;
+                                                let (t9_0, t9_1) = e;
+                                                let Uri { value: value10 } = t9_0;
+                                                let vec11 = value10;
+                                                let ptr11 = vec11.as_ptr().cast::<u8>();
+                                                let len11 = vec11.len();
+                                                *base.add(12).cast::<usize>() = len11;
+                                                *base.add(8).cast::<*mut u8>() = ptr11.cast_mut();
+                                                *base.add(16).cast::<i64>() = _rt::as_i64(t9_1);
+                                            }
+                                        }
+                                    }
+                                }
+                                *base.add(4).cast::<usize>() = len12;
+                                *base.add(0).cast::<*mut u8>() = result12;
+                                cleanup_list.extend_from_slice(&[(result12, layout12)]);
+                            }
+                        }
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:rpc/types@0.2.0")]
+                        extern "C" {
+                            #[link_name = "[method]wasm-rpc.schedule-cancelable-invocation"]
+                            fn wit_import(
+                                _: i32,
+                                _: i64,
+                                _: i32,
+                                _: *mut u8,
+                                _: usize,
+                                _: *mut u8,
+                                _: usize,
+                            ) -> i32;
+                        }
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(
+                            _: i32,
+                            _: i64,
+                            _: i32,
+                            _: *mut u8,
+                            _: usize,
+                            _: *mut u8,
+                            _: usize,
+                        ) -> i32 {
+                            unreachable!()
+                        }
+                        let ret = wit_import(
+                            (self).handle() as i32,
+                            _rt::as_i64(seconds0),
+                            _rt::as_i32(nanoseconds0),
+                            ptr1.cast_mut(),
+                            len1,
+                            result13,
+                            len13,
+                        );
+                        if layout13.size() != 0 {
+                            _rt::alloc::dealloc(result13.cast(), layout13);
+                        }
+                        for (ptr, layout) in cleanup_list {
+                            if layout.size() != 0 {
+                                _rt::alloc::dealloc(ptr.cast(), layout);
+                            }
+                        }
+                        CancellationToken::from_handle(ret as u32)
+                    }
+                }
+            }
             impl FutureInvokeResult {
                 #[allow(unused_unsafe, clippy::all)]
                 pub fn subscribe(&self) -> Pollable {
                     unsafe {
                         #[cfg(target_arch = "wasm32")]
-                        #[link(wasm_import_module = "golem:rpc/types@0.1.1")]
+                        #[link(wasm_import_module = "golem:rpc/types@0.2.0")]
                         extern "C" {
                             #[link_name = "[method]future-invoke-result.subscribe"]
                             fn wit_import(_: i32) -> i32;
@@ -4964,7 +6645,7 @@ pub mod golem {
                         );
                         let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
-                        #[link(wasm_import_module = "golem:rpc/types@0.1.1")]
+                        #[link(wasm_import_module = "golem:rpc/types@0.2.0")]
                         extern "C" {
                             #[link_name = "[method]future-invoke-result.get"]
                             fn wit_import(_: i32, _: *mut u8);
@@ -5330,6 +7011,24 @@ pub mod golem {
                             }
                             _ => _rt::invalid_enum_discriminant(),
                         }
+                    }
+                }
+            }
+            impl CancellationToken {
+                #[allow(unused_unsafe, clippy::all)]
+                pub fn cancel(&self) {
+                    unsafe {
+                        #[cfg(target_arch = "wasm32")]
+                        #[link(wasm_import_module = "golem:rpc/types@0.2.0")]
+                        extern "C" {
+                            #[link_name = "[method]cancellation-token.cancel"]
+                            fn wit_import(_: i32);
+                        }
+                        #[cfg(not(target_arch = "wasm32"))]
+                        fn wit_import(_: i32) {
+                            unreachable!()
+                        }
+                        wit_import((self).handle() as i32);
                     }
                 }
             }
@@ -5791,7 +7490,7 @@ pub mod golem {
                     }
                     let ptr27 = ret_area.0.as_mut_ptr().cast::<u8>();
                     #[cfg(target_arch = "wasm32")]
-                    #[link(wasm_import_module = "golem:rpc/types@0.1.1")]
+                    #[link(wasm_import_module = "golem:rpc/types@0.2.0")]
                     extern "C" {
                         #[link_name = "extract-value"]
                         fn wit_import(
@@ -6555,7 +8254,7 @@ pub mod golem {
                     }
                     let ptr27 = ret_area.0.as_mut_ptr().cast::<u8>();
                     #[cfg(target_arch = "wasm32")]
-                    #[link(wasm_import_module = "golem:rpc/types@0.1.1")]
+                    #[link(wasm_import_module = "golem:rpc/types@0.2.0")]
                     extern "C" {
                         #[link_name = "extract-type"]
                         fn wit_import(
@@ -6812,6 +8511,114 @@ pub mod golem {
 #[rustfmt::skip]
 #[allow(dead_code, clippy::all)]
 pub mod wasi {
+    pub mod clocks {
+        /// WASI Wall Clock is a clock API intended to let users query the current
+        /// time. The name "wall" makes an analogy to a "clock on the wall", which
+        /// is not necessarily monotonic as it may be reset.
+        ///
+        /// It is intended to be portable at least between Unix-family platforms and
+        /// Windows.
+        ///
+        /// A wall clock is a clock which measures the date and time according to
+        /// some external reference.
+        ///
+        /// External references may be reset, so this clock is not necessarily
+        /// monotonic, making it unsuitable for measuring elapsed time.
+        ///
+        /// It is intended for reporting the current date and time for humans.
+        #[allow(dead_code, clippy::all)]
+        pub mod wall_clock {
+            #[used]
+            #[doc(hidden)]
+            static __FORCE_SECTION_REF: fn() = super::super::super::__link_custom_section_describing_imports;
+            /// A time and date in seconds plus nanoseconds.
+            #[repr(C)]
+            #[derive(Clone, Copy)]
+            pub struct Datetime {
+                pub seconds: u64,
+                pub nanoseconds: u32,
+            }
+            impl ::core::fmt::Debug for Datetime {
+                fn fmt(
+                    &self,
+                    f: &mut ::core::fmt::Formatter<'_>,
+                ) -> ::core::fmt::Result {
+                    f.debug_struct("Datetime")
+                        .field("seconds", &self.seconds)
+                        .field("nanoseconds", &self.nanoseconds)
+                        .finish()
+                }
+            }
+            #[allow(unused_unsafe, clippy::all)]
+            /// Read the current value of the clock.
+            ///
+            /// This clock is not monotonic, therefore calling this function repeatedly
+            /// will not necessarily produce a sequence of non-decreasing values.
+            ///
+            /// The returned timestamps represent the number of seconds since
+            /// 1970-01-01T00:00:00Z, also known as [POSIX's Seconds Since the Epoch],
+            /// also known as [Unix Time].
+            ///
+            /// The nanoseconds field of the output is always less than 1000000000.
+            ///
+            /// [POSIX's Seconds Since the Epoch]: https://pubs.opengroup.org/onlinepubs/9699919799/xrat/V4_xbd_chap04.html#tag_21_04_16
+            /// [Unix Time]: https://en.wikipedia.org/wiki/Unix_time
+            pub fn now() -> Datetime {
+                unsafe {
+                    #[repr(align(8))]
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 16]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 16]);
+                    let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
+                    #[cfg(target_arch = "wasm32")]
+                    #[link(wasm_import_module = "wasi:clocks/wall-clock@0.2.0")]
+                    extern "C" {
+                        #[link_name = "now"]
+                        fn wit_import(_: *mut u8);
+                    }
+                    #[cfg(not(target_arch = "wasm32"))]
+                    fn wit_import(_: *mut u8) {
+                        unreachable!()
+                    }
+                    wit_import(ptr0);
+                    let l1 = *ptr0.add(0).cast::<i64>();
+                    let l2 = *ptr0.add(8).cast::<i32>();
+                    Datetime {
+                        seconds: l1 as u64,
+                        nanoseconds: l2 as u32,
+                    }
+                }
+            }
+            #[allow(unused_unsafe, clippy::all)]
+            /// Query the resolution of the clock.
+            ///
+            /// The nanoseconds field of the output is always less than 1000000000.
+            pub fn resolution() -> Datetime {
+                unsafe {
+                    #[repr(align(8))]
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 16]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 16]);
+                    let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
+                    #[cfg(target_arch = "wasm32")]
+                    #[link(wasm_import_module = "wasi:clocks/wall-clock@0.2.0")]
+                    extern "C" {
+                        #[link_name = "resolution"]
+                        fn wit_import(_: *mut u8);
+                    }
+                    #[cfg(not(target_arch = "wasm32"))]
+                    fn wit_import(_: *mut u8) {
+                        unreachable!()
+                    }
+                    wit_import(ptr0);
+                    let l1 = *ptr0.add(0).cast::<i64>();
+                    let l2 = *ptr0.add(8).cast::<i32>();
+                    Datetime {
+                        seconds: l1 as u64,
+                        nanoseconds: l2 as u32,
+                    }
+                }
+            }
+        }
+    }
     pub mod io {
         /// A poll API intended to let users wait for I/O events on multiple handles
         /// at once.
@@ -7033,19 +8840,19 @@ pub mod exports {
                     fn load(bytes: _rt::Vec<u8>) -> Result<(), _rt::String>;
                 }
                 #[doc(hidden)]
-                macro_rules! __export_golem_api_load_snapshot_0_2_0_cabi {
+                macro_rules! __export_golem_api_load_snapshot_1_1_6_cabi {
                     ($ty:ident with_types_in $($path_to_types:tt)*) => {
                         const _ : () = { #[export_name =
-                        "golem:api/load-snapshot@0.2.0#load"] unsafe extern "C" fn
+                        "golem:api/load-snapshot@1.1.6#load"] unsafe extern "C" fn
                         export_load(arg0 : * mut u8, arg1 : usize,) -> * mut u8 {
                         $($path_to_types)*:: _export_load_cabi::<$ty > (arg0, arg1) }
-                        #[export_name = "cabi_post_golem:api/load-snapshot@0.2.0#load"]
+                        #[export_name = "cabi_post_golem:api/load-snapshot@1.1.6#load"]
                         unsafe extern "C" fn _post_return_load(arg0 : * mut u8,) {
                         $($path_to_types)*:: __post_return_load::<$ty > (arg0) } };
                     };
                 }
                 #[doc(hidden)]
-                pub(crate) use __export_golem_api_load_snapshot_0_2_0_cabi;
+                pub(crate) use __export_golem_api_load_snapshot_1_1_6_cabi;
                 #[repr(align(4))]
                 struct _RetArea([::core::mem::MaybeUninit<u8>; 12]);
                 static mut _RET_AREA: _RetArea = _RetArea(
@@ -7088,19 +8895,19 @@ pub mod exports {
                     fn save() -> _rt::Vec<u8>;
                 }
                 #[doc(hidden)]
-                macro_rules! __export_golem_api_save_snapshot_0_2_0_cabi {
+                macro_rules! __export_golem_api_save_snapshot_1_1_6_cabi {
                     ($ty:ident with_types_in $($path_to_types:tt)*) => {
                         const _ : () = { #[export_name =
-                        "golem:api/save-snapshot@0.2.0#save"] unsafe extern "C" fn
+                        "golem:api/save-snapshot@1.1.6#save"] unsafe extern "C" fn
                         export_save() -> * mut u8 { $($path_to_types)*::
                         _export_save_cabi::<$ty > () } #[export_name =
-                        "cabi_post_golem:api/save-snapshot@0.2.0#save"] unsafe extern "C"
+                        "cabi_post_golem:api/save-snapshot@1.1.6#save"] unsafe extern "C"
                         fn _post_return_save(arg0 : * mut u8,) { $($path_to_types)*::
                         __post_return_save::<$ty > (arg0) } };
                     };
                 }
                 #[doc(hidden)]
-                pub(crate) use __export_golem_api_save_snapshot_0_2_0_cabi;
+                pub(crate) use __export_golem_api_save_snapshot_1_1_6_cabi;
                 #[repr(align(4))]
                 struct _RetArea([::core::mem::MaybeUninit<u8>; 8]);
                 static mut _RET_AREA: _RetArea = _RetArea(
@@ -9318,6 +11125,43 @@ mod _rt {
     pub use alloc_crate::vec::Vec;
     pub use alloc_crate::alloc;
     pub use alloc_crate::string::String;
+    pub unsafe fn string_lift(bytes: Vec<u8>) -> String {
+        if cfg!(debug_assertions) {
+            String::from_utf8(bytes).unwrap()
+        } else {
+            String::from_utf8_unchecked(bytes)
+        }
+    }
+    pub unsafe fn invalid_enum_discriminant<T>() -> T {
+        if cfg!(debug_assertions) {
+            panic!("invalid enum discriminant")
+        } else {
+            core::hint::unreachable_unchecked()
+        }
+    }
+    pub fn as_i64<T: AsI64>(t: T) -> i64 {
+        t.as_i64()
+    }
+    pub trait AsI64 {
+        fn as_i64(self) -> i64;
+    }
+    impl<'a, T: Copy + AsI64> AsI64 for &'a T {
+        fn as_i64(self) -> i64 {
+            (*self).as_i64()
+        }
+    }
+    impl AsI64 for i64 {
+        #[inline]
+        fn as_i64(self) -> i64 {
+            self as i64
+        }
+    }
+    impl AsI64 for u64 {
+        #[inline]
+        fn as_i64(self) -> i64 {
+            self as i64
+        }
+    }
     pub fn as_i32<T: AsI32>(t: T) -> i32 {
         t.as_i32()
     }
@@ -9377,29 +11221,6 @@ mod _rt {
             self as i32
         }
     }
-    pub fn as_i64<T: AsI64>(t: T) -> i64 {
-        t.as_i64()
-    }
-    pub trait AsI64 {
-        fn as_i64(self) -> i64;
-    }
-    impl<'a, T: Copy + AsI64> AsI64 for &'a T {
-        fn as_i64(self) -> i64 {
-            (*self).as_i64()
-        }
-    }
-    impl AsI64 for i64 {
-        #[inline]
-        fn as_i64(self) -> i64 {
-            self as i64
-        }
-    }
-    impl AsI64 for u64 {
-        #[inline]
-        fn as_i64(self) -> i64 {
-            self as i64
-        }
-    }
     pub fn as_f32<T: AsF32>(t: T) -> f32 {
         t.as_f32()
     }
@@ -9434,13 +11255,6 @@ mod _rt {
             self as f64
         }
     }
-    pub unsafe fn invalid_enum_discriminant<T>() -> T {
-        if cfg!(debug_assertions) {
-            panic!("invalid enum discriminant")
-        } else {
-            core::hint::unreachable_unchecked()
-        }
-    }
     pub unsafe fn cabi_dealloc(ptr: *mut u8, size: usize, align: usize) {
         if size == 0 {
             return;
@@ -9453,13 +11267,6 @@ mod _rt {
             core::char::from_u32(val).unwrap()
         } else {
             core::char::from_u32_unchecked(val)
-        }
-    }
-    pub unsafe fn string_lift(bytes: Vec<u8>) -> String {
-        if cfg!(debug_assertions) {
-            String::from_utf8(bytes).unwrap()
-        } else {
-            String::from_utf8_unchecked(bytes)
         }
     }
     #[cfg(target_arch = "wasm32")]
@@ -9492,10 +11299,10 @@ macro_rules! __export_order_impl {
     };
     ($ty:ident with_types_in $($path_to_types_root:tt)*) => {
         $($path_to_types_root)*::
-        exports::golem::api::load_snapshot::__export_golem_api_load_snapshot_0_2_0_cabi!($ty
+        exports::golem::api::load_snapshot::__export_golem_api_load_snapshot_1_1_6_cabi!($ty
         with_types_in $($path_to_types_root)*:: exports::golem::api::load_snapshot);
         $($path_to_types_root)*::
-        exports::golem::api::save_snapshot::__export_golem_api_save_snapshot_0_2_0_cabi!($ty
+        exports::golem::api::save_snapshot::__export_golem_api_save_snapshot_1_1_6_cabi!($ty
         with_types_in $($path_to_types_root)*:: exports::golem::api::save_snapshot);
         $($path_to_types_root)*::
         exports::golem::order_exports::api::__export_golem_order_exports_api_cabi!($ty
@@ -9507,145 +11314,180 @@ pub(crate) use __export_order_impl as export;
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.36.0:golem:order:order:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 6774] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xfa3\x01A\x02\x01A\x17\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 8684] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xf0B\x01A\x02\x01A\x1c\
 \x01B\x0a\x04\0\x08pollable\x03\x01\x01h\0\x01@\x01\x04self\x01\0\x7f\x04\0\x16[\
 method]pollable.ready\x01\x02\x01@\x01\x04self\x01\x01\0\x04\0\x16[method]pollab\
 le.block\x01\x03\x01p\x01\x01py\x01@\x01\x02in\x04\0\x05\x04\0\x04poll\x01\x06\x03\
-\0\x12wasi:io/poll@0.2.0\x05\0\x02\x03\0\0\x08pollable\x01B@\x02\x03\x02\x01\x01\
-\x04\0\x08pollable\x03\0\0\x01z\x04\0\x0anode-index\x03\0\x02\x01w\x04\0\x0breso\
-urce-id\x03\0\x04\x01m\x02\x05owned\x08borrowed\x04\0\x0dresource-mode\x03\0\x06\
-\x01o\x02s\x03\x01p\x08\x01k\x03\x01o\x02s\x0a\x01p\x0b\x01ps\x01p\x03\x01o\x02\x0a\
-\x0a\x01o\x02\x05\x07\x01q\x16\x0brecord-type\x01\x09\0\x0cvariant-type\x01\x0c\0\
-\x09enum-type\x01\x0d\0\x0aflags-type\x01\x0d\0\x0atuple-type\x01\x0e\0\x09list-\
-type\x01\x03\0\x0boption-type\x01\x03\0\x0bresult-type\x01\x0f\0\x0cprim-u8-type\
-\0\0\x0dprim-u16-type\0\0\x0dprim-u32-type\0\0\x0dprim-u64-type\0\0\x0cprim-s8-t\
-ype\0\0\x0dprim-s16-type\0\0\x0dprim-s32-type\0\0\x0dprim-s64-type\0\0\x0dprim-f\
-32-type\0\0\x0dprim-f64-type\0\0\x0eprim-char-type\0\0\x0eprim-bool-type\0\0\x10\
-prim-string-type\0\0\x0bhandle-type\x01\x10\0\x04\0\x0dwit-type-node\x03\0\x11\x01\
-p\x12\x01r\x01\x05nodes\x13\x04\0\x08wit-type\x03\0\x14\x01r\x01\x05values\x04\0\
-\x03uri\x03\0\x16\x01o\x02y\x0a\x01p\x7f\x01j\x01\x0a\x01\x0a\x01o\x02\x17w\x01q\
-\x16\x0crecord-value\x01\x0e\0\x0dvariant-value\x01\x18\0\x0aenum-value\x01y\0\x0b\
-flags-value\x01\x19\0\x0btuple-value\x01\x0e\0\x0alist-value\x01\x0e\0\x0coption\
--value\x01\x0a\0\x0cresult-value\x01\x1a\0\x07prim-u8\x01}\0\x08prim-u16\x01{\0\x08\
-prim-u32\x01y\0\x08prim-u64\x01w\0\x07prim-s8\x01~\0\x08prim-s16\x01|\0\x08prim-\
-s32\x01z\0\x08prim-s64\x01x\0\x0cprim-float32\x01v\0\x0cprim-float64\x01u\0\x09p\
-rim-char\x01t\0\x09prim-bool\x01\x7f\0\x0bprim-string\x01s\0\x06handle\x01\x1b\0\
-\x04\0\x08wit-node\x03\0\x1c\x01p\x1d\x01r\x01\x05nodes\x1e\x04\0\x09wit-value\x03\
-\0\x1f\x01r\x02\x05value\x20\x03typ\x15\x04\0\x0evalue-and-type\x03\0!\x01q\x04\x0e\
-protocol-error\x01s\0\x06denied\x01s\0\x09not-found\x01s\0\x15remote-internal-er\
-ror\x01s\0\x04\0\x09rpc-error\x03\0#\x04\0\x08wasm-rpc\x03\x01\x04\0\x14future-i\
-nvoke-result\x03\x01\x01i%\x01@\x01\x08location\x17\0'\x04\0\x15[constructor]was\
-m-rpc\x01(\x01h%\x01p\x20\x01j\x01\x20\x01$\x01@\x03\x04self)\x0dfunction-names\x0f\
-function-params*\0+\x04\0![method]wasm-rpc.invoke-and-await\x01,\x01j\0\x01$\x01\
-@\x03\x04self)\x0dfunction-names\x0ffunction-params*\0-\x04\0\x17[method]wasm-rp\
-c.invoke\x01.\x01i&\x01@\x03\x04self)\x0dfunction-names\x0ffunction-params*\0/\x04\
-\0'[method]wasm-rpc.async-invoke-and-await\x010\x01h&\x01i\x01\x01@\x01\x04self1\
-\02\x04\0&[method]future-invoke-result.subscribe\x013\x01k+\x01@\x01\x04self1\04\
-\x04\0\x20[method]future-invoke-result.get\x015\x01@\x01\x03vnt\"\0\x20\x04\0\x0d\
-extract-value\x016\x01@\x01\x03vnt\"\0\x15\x04\0\x0cextract-type\x017\x03\0\x15g\
-olem:rpc/types@0.1.1\x05\x02\x01B\x0e\x01r\x03\x05pricev\x08currencys\x04zones\x04\
-\0\x0cpricing-item\x03\0\0\x01p\x01\x01r\x03\x0aproduct-ids\x0bmsrp-prices\x02\x0b\
-list-prices\x02\x04\0\x07pricing\x03\0\x03\x01k\x04\x01@\0\0\x05\x04\0\x03get\x01\
-\x06\x01k\x01\x01@\x02\x08currencys\x04zones\0\x07\x04\0\x09get-price\x01\x08\x01\
-@\x02\x0bmsrp-prices\x02\x0blist-prices\x02\x01\0\x04\0\x12initialize-pricing\x01\
-\x09\x04\0\x0eupdate-pricing\x01\x09\x03\0\x19golem:pricing-exports/api\x05\x03\x02\
-\x03\0\x01\x03uri\x02\x03\0\x02\x07pricing\x02\x03\0\x02\x0cpricing-item\x01BR\x02\
-\x03\x02\x01\x04\x04\0\x0dgolem-rpc-uri\x03\0\0\x02\x03\x02\x01\x01\x04\0\x10was\
-i-io-pollable\x03\0\x02\x02\x03\x02\x01\x05\x04\0\x07pricing\x03\0\x04\x02\x03\x02\
-\x01\x06\x04\0\x0cpricing-item\x03\0\x06\x04\0\x11future-get-result\x03\x01\x04\0\
-\x17future-get-price-result\x03\x01\x04\0\x12future-load-result\x03\x01\x04\0\x12\
-future-save-result\x03\x01\x04\0\x03api\x03\x01\x04\0\x0dload-snapshot\x03\x01\x04\
-\0\x0dsave-snapshot\x03\x01\x01h\x08\x01i\x03\x01@\x01\x04self\x0f\0\x10\x04\0#[\
-method]future-get-result.subscribe\x01\x11\x01k\x05\x01k\x12\x01@\x01\x04self\x0f\
-\0\x13\x04\0\x1d[method]future-get-result.get\x01\x14\x01h\x09\x01@\x01\x04self\x15\
-\0\x10\x04\0)[method]future-get-price-result.subscribe\x01\x16\x01k\x07\x01k\x17\
-\x01@\x01\x04self\x15\0\x18\x04\0#[method]future-get-price-result.get\x01\x19\x01\
-h\x0a\x01@\x01\x04self\x1a\0\x10\x04\0$[method]future-load-result.subscribe\x01\x1b\
-\x01j\0\x01s\x01k\x1c\x01@\x01\x04self\x1a\0\x1d\x04\0\x1e[method]future-load-re\
-sult.get\x01\x1e\x01h\x0b\x01@\x01\x04self\x1f\0\x10\x04\0$[method]future-save-r\
-esult.subscribe\x01\x20\x01p}\x01k!\x01@\x01\x04self\x1f\0\"\x04\0\x1e[method]fu\
-ture-save-result.get\x01#\x01i\x0c\x01@\x01\x08location\x01\0$\x04\0\x10[constru\
-ctor]api\x01%\x01h\x0c\x01@\x01\x04self&\0\x12\x04\0\x18[method]api.blocking-get\
-\x01'\x01i\x08\x01@\x01\x04self&\0(\x04\0\x0f[method]api.get\x01)\x01@\x03\x04se\
-lf&\x08currencys\x04zones\0\x17\x04\0\x1e[method]api.blocking-get-price\x01*\x01\
-i\x09\x01@\x03\x04self&\x08currencys\x04zones\0+\x04\0\x15[method]api.get-price\x01\
-,\x01p\x07\x01@\x03\x04self&\x0bmsrp-prices-\x0blist-prices-\x01\0\x04\0'[method\
-]api.blocking-initialize-pricing\x01.\x04\0\x1e[method]api.initialize-pricing\x01\
-.\x04\0#[method]api.blocking-update-pricing\x01.\x04\0\x1a[method]api.update-pri\
-cing\x01.\x01i\x0d\x01@\x01\x08location\x01\0/\x04\0\x1a[constructor]load-snapsh\
-ot\x010\x01h\x0d\x01@\x02\x04self1\x05bytes!\0\x1c\x04\0#[method]load-snapshot.b\
-locking-load\x012\x01i\x0a\x01@\x02\x04self1\x05bytes!\03\x04\0\x1a[method]load-\
-snapshot.load\x014\x01i\x0e\x01@\x01\x08location\x01\05\x04\0\x1a[constructor]sa\
-ve-snapshot\x016\x01h\x0e\x01@\x01\x04self7\0!\x04\0#[method]save-snapshot.block\
-ing-save\x018\x01i\x0b\x01@\x01\x04self7\09\x04\0\x1a[method]save-snapshot.save\x01\
-:\x03\0#golem:pricing-client/pricing-client\x05\x07\x01B\x08\x01ps\x01r\x04\x0ap\
-roduct-ids\x04names\x0bdescriptions\x04tags\0\x04\0\x07product\x03\0\x01\x01k\x02\
-\x01@\0\0\x03\x04\0\x03get\x01\x04\x01@\x03\x04names\x0bdescriptions\x04tags\0\x01\
-\0\x04\0\x12initialize-product\x01\x05\x03\0\x19golem:product-exports/api\x05\x08\
-\x02\x03\0\x04\x07product\x01BA\x02\x03\x02\x01\x04\x04\0\x0dgolem-rpc-uri\x03\0\
-\0\x02\x03\x02\x01\x01\x04\0\x10wasi-io-pollable\x03\0\x02\x02\x03\x02\x01\x09\x04\
-\0\x07product\x03\0\x04\x04\0\x11future-get-result\x03\x01\x04\0\x12future-load-\
-result\x03\x01\x04\0\x12future-save-result\x03\x01\x04\0\x03api\x03\x01\x04\0\x0d\
-load-snapshot\x03\x01\x04\0\x0dsave-snapshot\x03\x01\x01h\x06\x01i\x03\x01@\x01\x04\
-self\x0c\0\x0d\x04\0#[method]future-get-result.subscribe\x01\x0e\x01k\x05\x01k\x0f\
-\x01@\x01\x04self\x0c\0\x10\x04\0\x1d[method]future-get-result.get\x01\x11\x01h\x07\
-\x01@\x01\x04self\x12\0\x0d\x04\0$[method]future-load-result.subscribe\x01\x13\x01\
-j\0\x01s\x01k\x14\x01@\x01\x04self\x12\0\x15\x04\0\x1e[method]future-load-result\
-.get\x01\x16\x01h\x08\x01@\x01\x04self\x17\0\x0d\x04\0$[method]future-save-resul\
-t.subscribe\x01\x18\x01p}\x01k\x19\x01@\x01\x04self\x17\0\x1a\x04\0\x1e[method]f\
-uture-save-result.get\x01\x1b\x01i\x09\x01@\x01\x08location\x01\0\x1c\x04\0\x10[\
-constructor]api\x01\x1d\x01h\x09\x01@\x01\x04self\x1e\0\x0f\x04\0\x18[method]api\
-.blocking-get\x01\x1f\x01i\x06\x01@\x01\x04self\x1e\0\x20\x04\0\x0f[method]api.g\
-et\x01!\x01ps\x01@\x04\x04self\x1e\x04names\x0bdescriptions\x04tags\"\x01\0\x04\0\
-'[method]api.blocking-initialize-product\x01#\x04\0\x1e[method]api.initialize-pr\
-oduct\x01#\x01i\x0a\x01@\x01\x08location\x01\0$\x04\0\x1a[constructor]load-snaps\
-hot\x01%\x01h\x0a\x01@\x02\x04self&\x05bytes\x19\0\x14\x04\0#[method]load-snapsh\
-ot.blocking-load\x01'\x01i\x07\x01@\x02\x04self&\x05bytes\x19\0(\x04\0\x1a[metho\
-d]load-snapshot.load\x01)\x01i\x0b\x01@\x01\x08location\x01\0*\x04\0\x1a[constru\
-ctor]save-snapshot\x01+\x01h\x0b\x01@\x01\x04self,\0\x19\x04\0#[method]save-snap\
-shot.blocking-save\x01-\x01i\x08\x01@\x01\x04self,\0.\x04\0\x1a[method]save-snap\
-shot.save\x01/\x03\0#golem:product-client/product-client\x05\x0a\x01B\x04\x01p}\x01\
-j\0\x01s\x01@\x01\x05bytes\0\0\x01\x04\0\x04load\x01\x02\x04\0\x1dgolem:api/load\
--snapshot@0.2.0\x05\x0b\x01B\x03\x01p}\x01@\0\0\0\x04\0\x04save\x01\x01\x04\0\x1d\
-golem:api/save-snapshot@0.2.0\x05\x0c\x01BK\x01ks\x01r\x07\x06streets\x04citys\x0f\
-state-or-regions\x07countrys\x0bpostal-codes\x04name\0\x0cphone-number\0\x04\0\x07\
-address\x03\0\x01\x01r\x01\x07messages\x04\0\x17address-not-valid-error\x03\0\x03\
-\x01r\x01\x07messages\x04\0\x1dbilling-address-not-set-error\x03\0\x05\x01r\x01\x07\
-messages\x04\0\x15email-not-valid-error\x03\0\x07\x01r\x01\x07messages\x04\0\x11\
-empty-email-error\x03\0\x09\x01r\x01\x07messages\x04\0\x11empty-items-error\x03\0\
-\x0b\x01r\x02\x07messages\x0aproduct-ids\x04\0\x14item-not-found-error\x03\0\x0d\
-\x01r\x04\x0aproduct-ids\x04names\x05pricev\x08quantityy\x04\0\x0aorder-item\x03\
-\0\x0f\x01p\x10\x01k\x02\x01r\x08\x07user-ids\x05emails\x05items\x11\x0fbilling-\
-address\x12\x10shipping-address\x12\x05totalv\x08currencys\x09timestampw\x04\0\x0c\
-create-order\x03\0\x13\x01m\x03\x03new\x07shipped\x09cancelled\x04\0\x0corder-st\
-atus\x03\0\x15\x01r\x02\x07messages\x06status\x16\x04\0\x18action-not-allowed-er\
-ror\x03\0\x17\x01q\x01\x12action-not-allowed\x01\x18\0\x04\0\x12cancel-order-err\
-or\x03\0\x19\x01q\x01\x12action-not-allowed\x01\x18\0\x04\0\x10init-order-error\x03\
-\0\x1b\x01r\x0a\x08order-ids\x07user-ids\x0corder-status\x16\x05email\0\x05items\
-\x11\x0fbilling-address\x12\x10shipping-address\x12\x05totalv\x08currencys\x09ti\
-mestampw\x04\0\x05order\x03\0\x1d\x01r\x02\x07messages\x0aproduct-ids\x04\0\x17p\
-ricing-not-found-error\x03\0\x1f\x01r\x02\x07messages\x0aproduct-ids\x04\0\x17pr\
-oduct-not-found-error\x03\0!\x01q\x03\x11product-not-found\x01\"\0\x11pricing-no\
-t-found\x01\x20\0\x12action-not-allowed\x01\x18\0\x04\0\x0eadd-item-error\x03\0#\
-\x01q\x02\x0eitem-not-found\x01\x0e\0\x12action-not-allowed\x01\x18\0\x04\0\x11r\
-emove-item-error\x03\0%\x01q\x04\x0bempty-items\x01\x0c\0\x0bempty-email\x01\x0a\
-\0\x17billing-address-not-set\x01\x06\0\x12action-not-allowed\x01\x18\0\x04\0\x10\
-ship-order-error\x03\0'\x01q\x02\x11address-not-valid\x01\x04\0\x12action-not-al\
-lowed\x01\x18\0\x04\0\x14update-address-error\x03\0)\x01q\x02\x0femail-not-valid\
-\x01\x08\0\x12action-not-allowed\x01\x18\0\x04\0\x12update-email-error\x03\0+\x01\
-q\x02\x0eitem-not-found\x01\x0e\0\x12action-not-allowed\x01\x18\0\x04\0\x1aupdat\
-e-item-quantity-error\x03\0-\x01j\0\x01$\x01@\x02\x0aproduct-ids\x08quantityy\0/\
-\x04\0\x08add-item\x010\x01j\0\x01\x1a\x01@\0\01\x04\0\x0ccancel-order\x012\x01k\
-\x1e\x01@\0\03\x04\0\x03get\x014\x01j\0\x01\x1c\x01@\x01\x04data\x14\05\x04\0\x10\
-initialize-order\x016\x01j\0\x01&\x01@\x01\x0aproduct-ids\07\x04\0\x0bremove-ite\
-m\x018\x01j\0\x01(\x01@\0\09\x04\0\x0aship-order\x01:\x01j\0\x01*\x01@\x01\x07ad\
-dress\x02\0;\x04\0\x16update-billing-address\x01<\x01j\0\x01,\x01@\x01\x05emails\
-\0=\x04\0\x0cupdate-email\x01>\x01j\0\x01.\x01@\x02\x0aproduct-ids\x08quantityy\0\
-?\x04\0\x14update-item-quantity\x01@\x04\0\x17update-shipping-address\x01<\x04\0\
-\x17golem:order-exports/api\x05\x0d\x04\0\x11golem:order/order\x04\0\x0b\x0b\x01\
-\0\x05order\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit-component\x07\
-0.220.0\x10wit-bindgen-rust\x060.36.0";
+\0\x12wasi:io/poll@0.2.0\x05\0\x01B\x05\x01r\x02\x07secondsw\x0bnanosecondsy\x04\
+\0\x08datetime\x03\0\0\x01@\0\0\x01\x04\0\x03now\x01\x02\x04\0\x0aresolution\x01\
+\x02\x03\0\x1cwasi:clocks/wall-clock@0.2.0\x05\x01\x02\x03\0\x01\x08datetime\x02\
+\x03\0\0\x08pollable\x01BX\x02\x03\x02\x01\x02\x04\0\x08datetime\x03\0\0\x02\x03\
+\x02\x01\x03\x04\0\x08pollable\x03\0\x02\x01r\x02\x09high-bitsw\x08low-bitsw\x04\
+\0\x04uuid\x03\0\x04\x01r\x01\x04uuid\x05\x04\0\x0ccomponent-id\x03\0\x06\x01r\x02\
+\x0ccomponent-id\x07\x0bworker-names\x04\0\x09worker-id\x03\0\x08\x01z\x04\0\x0a\
+node-index\x03\0\x0a\x01w\x04\0\x0bresource-id\x03\0\x0c\x01m\x02\x05owned\x08bo\
+rrowed\x04\0\x0dresource-mode\x03\0\x0e\x01o\x02s\x0b\x01p\x10\x01k\x0b\x01o\x02\
+s\x12\x01p\x13\x01ps\x01p\x0b\x01o\x02\x12\x12\x01o\x02\x0d\x0f\x01q\x16\x0breco\
+rd-type\x01\x11\0\x0cvariant-type\x01\x14\0\x09enum-type\x01\x15\0\x0aflags-type\
+\x01\x15\0\x0atuple-type\x01\x16\0\x09list-type\x01\x0b\0\x0boption-type\x01\x0b\
+\0\x0bresult-type\x01\x17\0\x0cprim-u8-type\0\0\x0dprim-u16-type\0\0\x0dprim-u32\
+-type\0\0\x0dprim-u64-type\0\0\x0cprim-s8-type\0\0\x0dprim-s16-type\0\0\x0dprim-\
+s32-type\0\0\x0dprim-s64-type\0\0\x0dprim-f32-type\0\0\x0dprim-f64-type\0\0\x0ep\
+rim-char-type\0\0\x0eprim-bool-type\0\0\x10prim-string-type\0\0\x0bhandle-type\x01\
+\x18\0\x04\0\x0dwit-type-node\x03\0\x19\x01p\x1a\x01r\x01\x05nodes\x1b\x04\0\x08\
+wit-type\x03\0\x1c\x01r\x01\x05values\x04\0\x03uri\x03\0\x1e\x01o\x02y\x12\x01p\x7f\
+\x01j\x01\x12\x01\x12\x01o\x02\x1fw\x01q\x16\x0crecord-value\x01\x16\0\x0dvarian\
+t-value\x01\x20\0\x0aenum-value\x01y\0\x0bflags-value\x01!\0\x0btuple-value\x01\x16\
+\0\x0alist-value\x01\x16\0\x0coption-value\x01\x12\0\x0cresult-value\x01\"\0\x07\
+prim-u8\x01}\0\x08prim-u16\x01{\0\x08prim-u32\x01y\0\x08prim-u64\x01w\0\x07prim-\
+s8\x01~\0\x08prim-s16\x01|\0\x08prim-s32\x01z\0\x08prim-s64\x01x\0\x0cprim-float\
+32\x01v\0\x0cprim-float64\x01u\0\x09prim-char\x01t\0\x09prim-bool\x01\x7f\0\x0bp\
+rim-string\x01s\0\x06handle\x01#\0\x04\0\x08wit-node\x03\0$\x01p%\x01r\x01\x05no\
+des&\x04\0\x09wit-value\x03\0'\x01r\x02\x05value(\x03typ\x1d\x04\0\x0evalue-and-\
+type\x03\0)\x01q\x04\x0eprotocol-error\x01s\0\x06denied\x01s\0\x09not-found\x01s\
+\0\x15remote-internal-error\x01s\0\x04\0\x09rpc-error\x03\0+\x04\0\x08wasm-rpc\x03\
+\x01\x04\0\x14future-invoke-result\x03\x01\x04\0\x12cancellation-token\x03\x01\x01\
+i-\x01@\x01\x09worker-id\x09\00\x04\0\x15[constructor]wasm-rpc\x011\x01@\x01\x0c\
+component-id\x07\00\x04\0\x1a[static]wasm-rpc.ephemeral\x012\x01h-\x01p(\x01j\x01\
+(\x01,\x01@\x03\x04self3\x0dfunction-names\x0ffunction-params4\05\x04\0![method]\
+wasm-rpc.invoke-and-await\x016\x01j\0\x01,\x01@\x03\x04self3\x0dfunction-names\x0f\
+function-params4\07\x04\0\x17[method]wasm-rpc.invoke\x018\x01i.\x01@\x03\x04self\
+3\x0dfunction-names\x0ffunction-params4\09\x04\0'[method]wasm-rpc.async-invoke-a\
+nd-await\x01:\x01@\x04\x04self3\x0escheduled-time\x01\x0dfunction-names\x0ffunct\
+ion-params4\x01\0\x04\0$[method]wasm-rpc.schedule-invocation\x01;\x01i/\x01@\x04\
+\x04self3\x0escheduled-time\x01\x0dfunction-names\x0ffunction-params4\0<\x04\0/[\
+method]wasm-rpc.schedule-cancelable-invocation\x01=\x01h.\x01i\x03\x01@\x01\x04s\
+elf>\0?\x04\0&[method]future-invoke-result.subscribe\x01@\x01k5\x01@\x01\x04self\
+>\0\xc1\0\x04\0\x20[method]future-invoke-result.get\x01B\x01h/\x01@\x01\x04self\xc3\
+\0\x01\0\x04\0![method]cancellation-token.cancel\x01D\x01j\x01\x05\x01s\x01@\x01\
+\x04uuids\0\xc5\0\x04\0\x0aparse-uuid\x01F\x01@\x01\x04uuid\x05\0s\x04\0\x0euuid\
+-to-string\x01G\x01@\x01\x03vnt*\0(\x04\0\x0dextract-value\x01H\x01@\x01\x03vnt*\
+\0\x1d\x04\0\x0cextract-type\x01I\x03\0\x15golem:rpc/types@0.2.0\x05\x04\x01B\x0e\
+\x01r\x03\x05pricev\x08currencys\x04zones\x04\0\x0cpricing-item\x03\0\0\x01p\x01\
+\x01r\x03\x0aproduct-ids\x0bmsrp-prices\x02\x0blist-prices\x02\x04\0\x07pricing\x03\
+\0\x03\x01k\x04\x01@\0\0\x05\x04\0\x03get\x01\x06\x01k\x01\x01@\x02\x08currencys\
+\x04zones\0\x07\x04\0\x09get-price\x01\x08\x01@\x02\x0bmsrp-prices\x02\x0blist-p\
+rices\x02\x01\0\x04\0\x12initialize-pricing\x01\x09\x04\0\x0eupdate-pricing\x01\x09\
+\x03\0\x19golem:pricing-exports/api\x05\x05\x02\x03\0\x02\x0ccomponent-id\x02\x03\
+\0\x02\x09worker-id\x02\x03\0\x02\x12cancellation-token\x02\x03\0\x03\x07pricing\
+\x02\x03\0\x03\x0cpricing-item\x01Bj\x02\x03\x02\x01\x03\x04\0\x10wasi-io-pollab\
+le\x03\0\0\x02\x03\x02\x01\x02\x04\0\x14wasi-clocks-datetime\x03\0\x02\x02\x03\x02\
+\x01\x06\x04\0\x16golem-rpc-component-id\x03\0\x04\x02\x03\x02\x01\x07\x04\0\x13\
+golem-rpc-worker-id\x03\0\x06\x02\x03\x02\x01\x08\x04\0\x1cgolem-rpc-cancellatio\
+n-token\x03\0\x08\x02\x03\x02\x01\x09\x04\0\x07pricing\x03\0\x0a\x02\x03\x02\x01\
+\x0a\x04\0\x0cpricing-item\x03\0\x0c\x04\0\x11future-get-result\x03\x01\x04\0\x17\
+future-get-price-result\x03\x01\x04\0\x12future-load-result\x03\x01\x04\0\x12fut\
+ure-save-result\x03\x01\x04\0\x03api\x03\x01\x04\0\x0dload-snapshot\x03\x01\x04\0\
+\x0dsave-snapshot\x03\x01\x01h\x0e\x01i\x01\x01@\x01\x04self\x15\0\x16\x04\0#[me\
+thod]future-get-result.subscribe\x01\x17\x01k\x0b\x01k\x18\x01@\x01\x04self\x15\0\
+\x19\x04\0\x1d[method]future-get-result.get\x01\x1a\x01h\x0f\x01@\x01\x04self\x1b\
+\0\x16\x04\0)[method]future-get-price-result.subscribe\x01\x1c\x01k\x0d\x01k\x1d\
+\x01@\x01\x04self\x1b\0\x1e\x04\0#[method]future-get-price-result.get\x01\x1f\x01\
+h\x10\x01@\x01\x04self\x20\0\x16\x04\0$[method]future-load-result.subscribe\x01!\
+\x01j\0\x01s\x01k\"\x01@\x01\x04self\x20\0#\x04\0\x1e[method]future-load-result.\
+get\x01$\x01h\x11\x01@\x01\x04self%\0\x16\x04\0$[method]future-save-result.subsc\
+ribe\x01&\x01p}\x01k'\x01@\x01\x04self%\0(\x04\0\x1e[method]future-save-result.g\
+et\x01)\x01i\x12\x01@\x01\x0bworker-names\0*\x04\0\x10[constructor]api\x01+\x01@\
+\x01\x09worker-id\x07\0*\x04\0\x12[static]api.custom\x01,\x01h\x12\x01@\x01\x04s\
+elf-\0\x18\x04\0\x18[method]api.blocking-get\x01.\x01i\x0e\x01@\x01\x04self-\0/\x04\
+\0\x0f[method]api.get\x010\x01i\x09\x01@\x02\x04self-\x0dscheduled-for\x03\01\x04\
+\0\x18[method]api.schedule-get\x012\x01@\x03\x04self-\x08currencys\x04zones\0\x1d\
+\x04\0\x1e[method]api.blocking-get-price\x013\x01i\x0f\x01@\x03\x04self-\x08curr\
+encys\x04zones\04\x04\0\x15[method]api.get-price\x015\x01@\x04\x04self-\x08curre\
+ncys\x04zones\x0dscheduled-for\x03\01\x04\0\x1e[method]api.schedule-get-price\x01\
+6\x01p\x0d\x01@\x03\x04self-\x0bmsrp-prices7\x0blist-prices7\x01\0\x04\0'[method\
+]api.blocking-initialize-pricing\x018\x04\0\x1e[method]api.initialize-pricing\x01\
+8\x01@\x04\x04self-\x0bmsrp-prices7\x0blist-prices7\x0dscheduled-for\x03\01\x04\0\
+'[method]api.schedule-initialize-pricing\x019\x04\0#[method]api.blocking-update-\
+pricing\x018\x04\0\x1a[method]api.update-pricing\x018\x04\0#[method]api.schedule\
+-update-pricing\x019\x01i\x13\x01@\x01\x0bworker-names\0:\x04\0\x1a[constructor]\
+load-snapshot\x01;\x01@\x01\x09worker-id\x07\0:\x04\0\x1c[static]load-snapshot.c\
+ustom\x01<\x01h\x13\x01@\x02\x04self=\x05bytes'\0\"\x04\0#[method]load-snapshot.\
+blocking-load\x01>\x01i\x10\x01@\x02\x04self=\x05bytes'\0?\x04\0\x1a[method]load\
+-snapshot.load\x01@\x01@\x03\x04self=\x05bytes'\x0dscheduled-for\x03\01\x04\0#[m\
+ethod]load-snapshot.schedule-load\x01A\x01i\x14\x01@\x01\x0bworker-names\0\xc2\0\
+\x04\0\x1a[constructor]save-snapshot\x01C\x01@\x01\x09worker-id\x07\0\xc2\0\x04\0\
+\x1c[static]save-snapshot.custom\x01D\x01h\x14\x01@\x01\x04self\xc5\0\0'\x04\0#[\
+method]save-snapshot.blocking-save\x01F\x01i\x11\x01@\x01\x04self\xc5\0\0\xc7\0\x04\
+\0\x1a[method]save-snapshot.save\x01H\x01@\x02\x04self\xc5\0\x0dscheduled-for\x03\
+\01\x04\0#[method]save-snapshot.schedule-save\x01I\x03\0#golem:pricing-client/pr\
+icing-client\x05\x0b\x01B\x08\x01ps\x01r\x04\x0aproduct-ids\x04names\x0bdescript\
+ions\x04tags\0\x04\0\x07product\x03\0\x01\x01k\x02\x01@\0\0\x03\x04\0\x03get\x01\
+\x04\x01@\x03\x04names\x0bdescriptions\x04tags\0\x01\0\x04\0\x12initialize-produ\
+ct\x01\x05\x03\0\x19golem:product-exports/api\x05\x0c\x02\x03\0\x05\x07product\x01\
+BV\x02\x03\x02\x01\x03\x04\0\x10wasi-io-pollable\x03\0\0\x02\x03\x02\x01\x02\x04\
+\0\x14wasi-clocks-datetime\x03\0\x02\x02\x03\x02\x01\x06\x04\0\x16golem-rpc-comp\
+onent-id\x03\0\x04\x02\x03\x02\x01\x07\x04\0\x13golem-rpc-worker-id\x03\0\x06\x02\
+\x03\x02\x01\x08\x04\0\x1cgolem-rpc-cancellation-token\x03\0\x08\x02\x03\x02\x01\
+\x0d\x04\0\x07product\x03\0\x0a\x04\0\x11future-get-result\x03\x01\x04\0\x12futu\
+re-load-result\x03\x01\x04\0\x12future-save-result\x03\x01\x04\0\x03api\x03\x01\x04\
+\0\x0dload-snapshot\x03\x01\x04\0\x0dsave-snapshot\x03\x01\x01h\x0c\x01i\x01\x01\
+@\x01\x04self\x12\0\x13\x04\0#[method]future-get-result.subscribe\x01\x14\x01k\x0b\
+\x01k\x15\x01@\x01\x04self\x12\0\x16\x04\0\x1d[method]future-get-result.get\x01\x17\
+\x01h\x0d\x01@\x01\x04self\x18\0\x13\x04\0$[method]future-load-result.subscribe\x01\
+\x19\x01j\0\x01s\x01k\x1a\x01@\x01\x04self\x18\0\x1b\x04\0\x1e[method]future-loa\
+d-result.get\x01\x1c\x01h\x0e\x01@\x01\x04self\x1d\0\x13\x04\0$[method]future-sa\
+ve-result.subscribe\x01\x1e\x01p}\x01k\x1f\x01@\x01\x04self\x1d\0\x20\x04\0\x1e[\
+method]future-save-result.get\x01!\x01i\x0f\x01@\x01\x0bworker-names\0\"\x04\0\x10\
+[constructor]api\x01#\x01@\x01\x09worker-id\x07\0\"\x04\0\x12[static]api.custom\x01\
+$\x01h\x0f\x01@\x01\x04self%\0\x15\x04\0\x18[method]api.blocking-get\x01&\x01i\x0c\
+\x01@\x01\x04self%\0'\x04\0\x0f[method]api.get\x01(\x01i\x09\x01@\x02\x04self%\x0d\
+scheduled-for\x03\0)\x04\0\x18[method]api.schedule-get\x01*\x01ps\x01@\x04\x04se\
+lf%\x04names\x0bdescriptions\x04tags+\x01\0\x04\0'[method]api.blocking-initializ\
+e-product\x01,\x04\0\x1e[method]api.initialize-product\x01,\x01@\x05\x04self%\x04\
+names\x0bdescriptions\x04tags+\x0dscheduled-for\x03\0)\x04\0'[method]api.schedul\
+e-initialize-product\x01-\x01i\x10\x01@\x01\x0bworker-names\0.\x04\0\x1a[constru\
+ctor]load-snapshot\x01/\x01@\x01\x09worker-id\x07\0.\x04\0\x1c[static]load-snaps\
+hot.custom\x010\x01h\x10\x01@\x02\x04self1\x05bytes\x1f\0\x1a\x04\0#[method]load\
+-snapshot.blocking-load\x012\x01i\x0d\x01@\x02\x04self1\x05bytes\x1f\03\x04\0\x1a\
+[method]load-snapshot.load\x014\x01@\x03\x04self1\x05bytes\x1f\x0dscheduled-for\x03\
+\0)\x04\0#[method]load-snapshot.schedule-load\x015\x01i\x11\x01@\x01\x0bworker-n\
+ames\06\x04\0\x1a[constructor]save-snapshot\x017\x01@\x01\x09worker-id\x07\06\x04\
+\0\x1c[static]save-snapshot.custom\x018\x01h\x11\x01@\x01\x04self9\0\x1f\x04\0#[\
+method]save-snapshot.blocking-save\x01:\x01i\x0e\x01@\x01\x04self9\0;\x04\0\x1a[\
+method]save-snapshot.save\x01<\x01@\x02\x04self9\x0dscheduled-for\x03\0)\x04\0#[\
+method]save-snapshot.schedule-save\x01=\x03\0#golem:product-client/product-clien\
+t\x05\x0e\x01B\x04\x01p}\x01j\0\x01s\x01@\x01\x05bytes\0\0\x01\x04\0\x04load\x01\
+\x02\x04\0\x1dgolem:api/load-snapshot@1.1.6\x05\x0f\x01B\x03\x01p}\x01@\0\0\0\x04\
+\0\x04save\x01\x01\x04\0\x1dgolem:api/save-snapshot@1.1.6\x05\x10\x01BK\x01ks\x01\
+r\x07\x06streets\x04citys\x0fstate-or-regions\x07countrys\x0bpostal-codes\x04nam\
+e\0\x0cphone-number\0\x04\0\x07address\x03\0\x01\x01r\x01\x07messages\x04\0\x17a\
+ddress-not-valid-error\x03\0\x03\x01r\x01\x07messages\x04\0\x1dbilling-address-n\
+ot-set-error\x03\0\x05\x01r\x01\x07messages\x04\0\x15email-not-valid-error\x03\0\
+\x07\x01r\x01\x07messages\x04\0\x11empty-email-error\x03\0\x09\x01r\x01\x07messa\
+ges\x04\0\x11empty-items-error\x03\0\x0b\x01r\x02\x07messages\x0aproduct-ids\x04\
+\0\x14item-not-found-error\x03\0\x0d\x01r\x04\x0aproduct-ids\x04names\x05pricev\x08\
+quantityy\x04\0\x0aorder-item\x03\0\x0f\x01p\x10\x01k\x02\x01r\x08\x07user-ids\x05\
+emails\x05items\x11\x0fbilling-address\x12\x10shipping-address\x12\x05totalv\x08\
+currencys\x09timestampw\x04\0\x0ccreate-order\x03\0\x13\x01m\x03\x03new\x07shipp\
+ed\x09cancelled\x04\0\x0corder-status\x03\0\x15\x01r\x02\x07messages\x06status\x16\
+\x04\0\x18action-not-allowed-error\x03\0\x17\x01q\x01\x12action-not-allowed\x01\x18\
+\0\x04\0\x12cancel-order-error\x03\0\x19\x01q\x01\x12action-not-allowed\x01\x18\0\
+\x04\0\x10init-order-error\x03\0\x1b\x01r\x0a\x08order-ids\x07user-ids\x0corder-\
+status\x16\x05email\0\x05items\x11\x0fbilling-address\x12\x10shipping-address\x12\
+\x05totalv\x08currencys\x09timestampw\x04\0\x05order\x03\0\x1d\x01r\x02\x07messa\
+ges\x0aproduct-ids\x04\0\x17pricing-not-found-error\x03\0\x1f\x01r\x02\x07messag\
+es\x0aproduct-ids\x04\0\x17product-not-found-error\x03\0!\x01q\x03\x11product-no\
+t-found\x01\"\0\x11pricing-not-found\x01\x20\0\x12action-not-allowed\x01\x18\0\x04\
+\0\x0eadd-item-error\x03\0#\x01q\x02\x0eitem-not-found\x01\x0e\0\x12action-not-a\
+llowed\x01\x18\0\x04\0\x11remove-item-error\x03\0%\x01q\x04\x0bempty-items\x01\x0c\
+\0\x0bempty-email\x01\x0a\0\x17billing-address-not-set\x01\x06\0\x12action-not-a\
+llowed\x01\x18\0\x04\0\x10ship-order-error\x03\0'\x01q\x02\x11address-not-valid\x01\
+\x04\0\x12action-not-allowed\x01\x18\0\x04\0\x14update-address-error\x03\0)\x01q\
+\x02\x0femail-not-valid\x01\x08\0\x12action-not-allowed\x01\x18\0\x04\0\x12updat\
+e-email-error\x03\0+\x01q\x02\x0eitem-not-found\x01\x0e\0\x12action-not-allowed\x01\
+\x18\0\x04\0\x1aupdate-item-quantity-error\x03\0-\x01j\0\x01$\x01@\x02\x0aproduc\
+t-ids\x08quantityy\0/\x04\0\x08add-item\x010\x01j\0\x01\x1a\x01@\0\01\x04\0\x0cc\
+ancel-order\x012\x01k\x1e\x01@\0\03\x04\0\x03get\x014\x01j\0\x01\x1c\x01@\x01\x04\
+data\x14\05\x04\0\x10initialize-order\x016\x01j\0\x01&\x01@\x01\x0aproduct-ids\0\
+7\x04\0\x0bremove-item\x018\x01j\0\x01(\x01@\0\09\x04\0\x0aship-order\x01:\x01j\0\
+\x01*\x01@\x01\x07address\x02\0;\x04\0\x16update-billing-address\x01<\x01j\0\x01\
+,\x01@\x01\x05emails\0=\x04\0\x0cupdate-email\x01>\x01j\0\x01.\x01@\x02\x0aprodu\
+ct-ids\x08quantityy\0?\x04\0\x14update-item-quantity\x01@\x04\0\x17update-shippi\
+ng-address\x01<\x04\0\x17golem:order-exports/api\x05\x11\x04\0\x11golem:order/or\
+der\x04\0\x0b\x0b\x01\0\x05order\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\
+\x0dwit-component\x070.220.0\x10wit-bindgen-rust\x060.36.0";
 #[inline(never)]
 #[doc(hidden)]
 pub fn __link_custom_section_describing_imports() {

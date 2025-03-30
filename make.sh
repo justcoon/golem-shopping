@@ -32,11 +32,11 @@ function update_workers() {
 }
 
 function get_component_id() {
-  ${GOLEM_COMMAND} component get --component-name=${1?} --format json | jq -r '.componentUrn' | sed 's/urn:component://'
+  ${GOLEM_COMMAND} component get ${1?} --format json | jq -r '.componentId'
 }
 
 function get_component_version() {
-  ${GOLEM_COMMAND} component get --component-name=${1?} --format json | jq -r '.componentVersion'
+  ${GOLEM_COMMAND} component get ${1?} --format json | jq -r '.componentVersion'
 }
 
 function get_component_wasm_file() {
@@ -70,11 +70,7 @@ function add_or_update_component() {
 }
 
 function add_or_update_components() {
-#  add_or_update_component ${CART_COMPONENT_NAME} "${CART_COMPONENT_NAME}"
-#  add_or_update_component ${ORDER_COMPONENT_NAME} "${ORDER_COMPONENT_NAME}"
-#  add_or_update_component ${PRICING_COMPONENT_NAME} ${PRICING_COMPONENT_NAME}
-#  add_or_update_component ${PRODUCT_COMPONENT_NAME} ${PRODUCT_COMPONENT_NAME}
-  ${GOLEM_COMMAND} component add
+  ${GOLEM_COMMAND} app deploy
 }
 
 function build_components() {
@@ -82,37 +78,33 @@ function build_components() {
 }
 
 function init_api_definitions_files() {
-  CART_COMPONENT_ID=$(get_component_id $CART_COMPONENT_NAME)
   CART_COMPONENT_VERSION=$(get_component_version $CART_COMPONENT_NAME)
-  ORDER_COMPONENT_ID=$(get_component_id $ORDER_COMPONENT_NAME)
   ORDER_COMPONENT_VERSION=$(get_component_version $ORDER_COMPONENT_NAME)
-  PRICING_COMPONENT_ID=$(get_component_id $PRICING_COMPONENT_NAME)
   PRICING_COMPONENT_VERSION=$(get_component_version $PRICING_COMPONENT_NAME)
-  PRODUCT_COMPONENT_ID=$(get_component_id $PRODUCT_COMPONENT_NAME)
   PRODUCT_COMPONENT_VERSION=$(get_component_version $PRODUCT_COMPONENT_NAME)
 
-  CART_COMPONENT_ID="${CART_COMPONENT_ID}"  CART_COMPONENT_VERSION="${CART_COMPONENT_VERSION}"  envsubst < ${API_TEMPLATE_DIR}/cart.json.tmpl > ${API_DIR}/cart.json
-  ORDER_COMPONENT_ID="${ORDER_COMPONENT_ID}"  ORDER_COMPONENT_VERSION="${ORDER_COMPONENT_VERSION}"  envsubst < ${API_TEMPLATE_DIR}/order.json.tmpl > ${API_DIR}/order.json
-  PRICING_COMPONENT_ID="${PRICING_COMPONENT_ID}"  PRICING_COMPONENT_VERSION="${PRICING_COMPONENT_VERSION}"  envsubst < ${API_TEMPLATE_DIR}/pricing.json.tmpl > ${API_DIR}/pricing.json
-  PRODUCT_COMPONENT_ID="${PRODUCT_COMPONENT_ID}"  PRODUCT_COMPONENT_VERSION="${PRODUCT_COMPONENT_VERSION}"  envsubst < ${API_TEMPLATE_DIR}/product.json.tmpl > ${API_DIR}/product.json
+  CART_COMPONENT_NAME="${CART_COMPONENT_NAME}"  CART_COMPONENT_VERSION="${CART_COMPONENT_VERSION}"  envsubst < ${API_TEMPLATE_DIR}/cart.json.tmpl > ${API_DIR}/cart.json
+  ORDER_COMPONENT_NAME="${ORDER_COMPONENT_NAME}"  ORDER_COMPONENT_VERSION="${ORDER_COMPONENT_VERSION}"  envsubst < ${API_TEMPLATE_DIR}/order.json.tmpl > ${API_DIR}/order.json
+  PRICING_COMPONENT_NAME="${PRICING_COMPONENT_NAME}"  PRICING_COMPONENT_VERSION="${PRICING_COMPONENT_VERSION}"  envsubst < ${API_TEMPLATE_DIR}/pricing.json.tmpl > ${API_DIR}/pricing.json
+  PRODUCT_COMPONENT_NAME="${PRODUCT_COMPONENT_NAME}"  PRODUCT_COMPONENT_VERSION="${PRODUCT_COMPONENT_VERSION}"  envsubst < ${API_TEMPLATE_DIR}/product.json.tmpl > ${API_DIR}/product.json
 }
 
 function add_api_definition() {
-  ${GOLEM_COMMAND} api-definition add ${API_DIR}/${1?}.json
+  ${GOLEM_COMMAND} api definition new ${API_DIR}/${1?}.json
 }
 
 function delete_api_definition() {
   VERSION=$(get_api_definition_version ${1?})
   if [[ -n "${VERSION}" ]]; then
     echo "Deleting API definition: ${1?} with version ${VERSION}"
-    ${GOLEM_COMMAND} api-definition delete --id ${1?} --version ${VERSION}
+    ${GOLEM_COMMAND} api definition delete --id ${1?} --version ${VERSION}
   else
     echo "API definition ${1?} does not exist"
   fi
 }
 
 function get_api_definition_version() {
-  ${GOLEM_COMMAND} api-definition list --id ${1?} --format json | jq -r '.[].version'
+  ${GOLEM_COMMAND} api definition list --id ${1?} --format json | jq -r '.[].version'
 }
 
 function add_api_definition_if_not_exists() {
@@ -141,11 +133,11 @@ function deploy_api_definitions() {
     if [[ -n "${CART_VERSION}" && -n "${ORDER_VERSION}" && -n "${PRICING_VERSION}" && -n "${PRODUCT_VERSION}" ]]; then
 
       echo "Getting API deployment for site: ${API_SITE}"
-      ${GOLEM_COMMAND} api-deployment get ${API_SITE}  > /dev/null 2>&1
+      ${GOLEM_COMMAND} api deployment get ${API_SITE}  > /dev/null 2>&1
 
       if [[ $? -ne 0 ]]; then
         echo "Deploying API definitions for site: ${API_SITE}"
-        ${GOLEM_COMMAND} api-deployment deploy --subdomain ${API_SUBDOMAIN} --host ${API_HOST} --definition order/${ORDER_VERSION} --definition cart/${CART_VERSION} --definition pricing/${PRICING_VERSION} --definition product/${PRODUCT_VERSION}
+        ${GOLEM_COMMAND} api deployment deploy --subdomain ${API_SUBDOMAIN} --host ${API_HOST} order/${ORDER_VERSION}  cart/${CART_VERSION} pricing/${PRICING_VERSION} product/${PRODUCT_VERSION}
       else
         echo "API deployment for site: ${API_SITE} already exists"
       fi
@@ -156,7 +148,7 @@ function deploy_api_definitions() {
 
 function delete_api_deployment() {
     echo "Deleting API deployment for site: ${API_SITE}"
-    ${GOLEM_COMMAND} api-deployment delete ${API_SITE}
+    ${GOLEM_COMMAND} api deployment delete ${API_SITE}
 }
 
 function deploy_api() {
@@ -182,7 +174,7 @@ function create_cart_workers() {
     PRODUCT_COMPONENT_ID=$(get_component_id $PRODUCT_COMPONENT_NAME)
 
     for i in "${arr[@]}"; do
-        ${GOLEM_COMMAND}  worker add --component-name ${CART_COMPONENT_NAME}  --worker-name ${i} --env PRODUCT_COMPONENT_ID="${PRODUCT_COMPONENT_ID}" --env PRICING_COMPONENT_ID="${PRICING_COMPONENT_ID}" --env ORDER_COMPONENT_ID="${ORDER_COMPONENT_ID}"
+        ${GOLEM_COMMAND}  worker new ${CART_COMPONENT_NAME}/${i} --env PRODUCT_COMPONENT_ID="${PRODUCT_COMPONENT_ID}" --env PRICING_COMPONENT_ID="${PRICING_COMPONENT_ID}" --env ORDER_COMPONENT_ID="${ORDER_COMPONENT_ID}"
     done
 }
 
