@@ -12,7 +12,7 @@
         },
         "workerName": "let id: string = request.path.product-id;\nid",
         "idempotencyKey": null,
-        "response": "let result = golem:pricing-exports/api.{get}();\nmatch result {  some(x) => {status: 200u64, body: x}, none => {status: 404u64, body: {message: \"not found\"}} } ",
+        "response": "let result = golem:pricing-exports/api.{get}();\nmatch result {  some(x) => {status: 200u64, body: ok(x) }, none => {status: 404u64, body: err({message: \"not found\"})} } ",
         "idempotencyKeyInput": null
       }
     },
