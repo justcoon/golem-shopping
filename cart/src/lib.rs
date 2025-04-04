@@ -2,9 +2,9 @@ mod bindings;
 mod domain;
 
 use crate::bindings::exports::golem::api::{load_snapshot, save_snapshot};
-use crate::bindings::exports::golem::cart::api::*;
-use crate::bindings::golem::pricing_stub::stub_pricing::PricingItem;
-use crate::bindings::golem::product_stub::stub_product::Product;
+use crate::bindings::exports::golem::cart_exports::api::*;
+use crate::bindings::golem::pricing_exports::api::PricingItem;
+use crate::bindings::golem::product_exports::api::Product;
 use email_address::EmailAddress;
 use std::cell::RefCell;
 use std::str::FromStr;
@@ -38,10 +38,10 @@ fn get_order_worker_urn(order_id: String) -> String {
 fn get_product(product_id: String) -> Option<Product> {
     println!("Getting product: {}", product_id);
 
-    use bindings::golem::product_stub::stub_product::*;
+    use bindings::golem::product_client::product_client::*;
     use bindings::golem::rpc::types::Uri;
 
-    let api = Api::new(&Uri { value: get_product_worker_urn(product_id) });
+    let api = Api::new(product_id.as_str());
 
     api.blocking_get()
 }
@@ -49,10 +49,10 @@ fn get_product(product_id: String) -> Option<Product> {
 fn get_pricing(product_id: String, currency: String, zone: String) -> Option<PricingItem> {
     println!("Getting pricing: {}, currency: {}, zone: {}", product_id, currency, zone);
 
-    use bindings::golem::pricing_stub::stub_pricing::*;
+    use bindings::golem::pricing_client::pricing_client::*;
     use bindings::golem::rpc::types::Uri;
 
-    let api = Api::new(&Uri { value: get_pricing_worker_urn(product_id) });
+    let api = Api::new(product_id.as_str());
 
     api.blocking_get_price(&currency, &zone)
 }
@@ -76,10 +76,10 @@ fn create_order(order_id: String, cart: domain::cart::Cart) -> Result<String, Ch
 
     validate_cart(cart.clone())?;
 
-    use bindings::golem::order_stub::stub_order::*;
+    use bindings::golem::order_client::order_client::*;
     use bindings::golem::rpc::types::Uri;
 
-    let api = Api::new(&Uri { value: get_order_worker_urn(order_id.clone()) });
+    let api = Api::new(order_id.as_str());
 
     let order =
         cart.try_into().map_err(|e| CheckoutError::OrderCreate(OrderCreateError { message: e }))?;

@@ -1,0 +1,97 @@
+package golem:cart-exports;
+
+interface api {
+  variant add-item-error {
+    product-not-found(product-not-found-error),
+    pricing-not-found(pricing-not-found-error),
+  }
+  record address {
+    street: string,
+    city: string,
+    state-or-region: string,
+    country: string,
+    postal-code: string,
+    name: option<string>,
+    phone-number: option<string>,
+  }
+  record address-not-valid-error {
+    message: string,
+  }
+  record billing-address-not-set-error {
+    message: string,
+  }
+  record cart {
+    user-id: string,
+    email: option<string>,
+    items: list<cart-item>,
+    billing-address: option<address>,
+    shipping-address: option<address>,
+    total: f32,
+    currency: string,
+    timestamp: u64,
+    previous-order-ids: list<string>,
+  }
+  record cart-item {
+    product-id: string,
+    name: string,
+    price: f32,
+    quantity: u32,
+  }
+  variant checkout-error {
+    product-not-found(product-not-found-error),
+    pricing-not-found(pricing-not-found-error),
+    empty-items(empty-items-error),
+    empty-email(empty-email-error),
+    billing-address-not-set(billing-address-not-set-error),
+    order-create(order-create-error),
+  }
+  record email-not-valid-error {
+    message: string,
+  }
+  record empty-email-error {
+    message: string,
+  }
+  record empty-items-error {
+    message: string,
+  }
+  record item-not-found-error {
+    message: string,
+    product-id: string,
+  }
+  record order-confirmation {
+    order-id: string,
+  }
+  record order-create-error {
+    message: string,
+  }
+  record pricing-not-found-error {
+    message: string,
+    product-id: string,
+  }
+  record product-not-found-error {
+    message: string,
+    product-id: string,
+  }
+  variant remove-item-error {
+    item-not-found(item-not-found-error),
+  }
+  variant update-address-error {
+    address-not-valid(address-not-valid-error),
+  }
+  variant update-email-error {
+    email-not-valid(email-not-valid-error),
+  }
+  variant update-item-quantity-error {
+    item-not-found(item-not-found-error),
+  }
+  add-item: func(product-id: string, quantity: u32) -> result<_, add-item-error>;
+  checkout: func() -> result<order-confirmation, checkout-error>;
+  get: func() -> option<cart>;
+  remove-item: func(product-id: string) -> result<_, remove-item-error>;
+  update-billing-address: func(address: address) -> result<_, update-address-error>;
+  update-email: func(email: string) -> result<_, update-email-error>;
+  update-item-quantity: func(product-id: string, quantity: u32) -> result<_, update-item-quantity-error>;
+  update-shipping-address: func(address: address) -> result<_, update-address-error>;
+}
+
+interface cart-inline-functions {}

@@ -17,8 +17,8 @@ pub mod order {
         pub phone_number: Option<String>,
     }
 
-    impl From<bindings::exports::golem::order::api::Address> for Address {
-        fn from(value: bindings::exports::golem::order::api::Address) -> Self {
+    impl From<bindings::exports::golem::order_exports::api::Address> for Address {
+        fn from(value: bindings::exports::golem::order_exports::api::Address) -> Self {
             Self {
                 street: value.street,
                 state_or_region: value.state_or_region,
@@ -31,7 +31,7 @@ pub mod order {
         }
     }
 
-    impl From<Address> for bindings::exports::golem::order::api::Address {
+    impl From<Address> for bindings::exports::golem::order_exports::api::Address {
         fn from(value: Address) -> Self {
             Self {
                 street: value.street,
@@ -124,7 +124,7 @@ pub mod order {
         pub quantity: u32,
     }
 
-    impl From<OrderItem> for bindings::exports::golem::order::api::OrderItem {
+    impl From<OrderItem> for bindings::exports::golem::order_exports::api::OrderItem {
         fn from(value: OrderItem) -> Self {
             Self {
                 product_id: value.product_id,
@@ -135,8 +135,8 @@ pub mod order {
         }
     }
 
-    impl From<bindings::exports::golem::order::api::OrderItem> for OrderItem {
-        fn from(value: bindings::exports::golem::order::api::OrderItem) -> Self {
+    impl From<bindings::exports::golem::order_exports::api::OrderItem> for OrderItem {
+        fn from(value: bindings::exports::golem::order_exports::api::OrderItem) -> Self {
             Self {
                 product_id: value.product_id,
                 quantity: value.quantity,
@@ -146,7 +146,7 @@ pub mod order {
         }
     }
 
-    impl From<Order> for bindings::exports::golem::order::api::Order {
+    impl From<Order> for bindings::exports::golem::order_exports::api::Order {
         fn from(value: Order) -> Self {
             Self {
                 order_id: value.order_id,
@@ -163,8 +163,8 @@ pub mod order {
         }
     }
 
-    impl From<bindings::exports::golem::order::api::Order> for Order {
-        fn from(value: bindings::exports::golem::order::api::Order) -> Self {
+    impl From<bindings::exports::golem::order_exports::api::Order> for Order {
+        fn from(value: bindings::exports::golem::order_exports::api::Order) -> Self {
             Self {
                 order_id: value.order_id,
                 user_id: value.user_id,
@@ -188,7 +188,7 @@ pub mod order {
         Cancelled,
     }
 
-    impl From<OrderStatus> for bindings::exports::golem::order::api::OrderStatus {
+    impl From<OrderStatus> for bindings::exports::golem::order_exports::api::OrderStatus {
         fn from(value: OrderStatus) -> Self {
             match value {
                 OrderStatus::New => Self::New,
@@ -198,12 +198,12 @@ pub mod order {
         }
     }
 
-    impl From<bindings::exports::golem::order::api::OrderStatus> for OrderStatus {
-        fn from(value: bindings::exports::golem::order::api::OrderStatus) -> Self {
+    impl From<bindings::exports::golem::order_exports::api::OrderStatus> for OrderStatus {
+        fn from(value: bindings::exports::golem::order_exports::api::OrderStatus) -> Self {
             match value {
-                bindings::exports::golem::order::api::OrderStatus::New => Self::New,
-                bindings::exports::golem::order::api::OrderStatus::Shipped => Self::Shipped,
-                bindings::exports::golem::order::api::OrderStatus::Cancelled => Self::Cancelled,
+                bindings::exports::golem::order_exports::api::OrderStatus::New => Self::New,
+                bindings::exports::golem::order_exports::api::OrderStatus::Shipped => Self::Shipped,
+                bindings::exports::golem::order_exports::api::OrderStatus::Cancelled => Self::Cancelled,
             }
         }
     }

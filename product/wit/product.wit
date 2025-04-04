@@ -1,23 +1,7 @@
 package golem:product;
 
-interface api {
-
-  record product {
-    product-id: string,
-    name: string,
-    description: string,
-    tags: list<string>
-  }
-
-  initialize-product: func(name: string, description: string, tags: list<string>) -> ();
-
-  get: func() -> option<product>;
-}
-
 world product {
-
-  export golem:api/save-snapshot@0.2.0;
-  export golem:api/load-snapshot@0.2.0;
-
-  export api;
+  export golem:product-exports/api;
+  export golem:api/load-snapshot@1.1.6;
+  export golem:api/save-snapshot@1.1.6;
 }

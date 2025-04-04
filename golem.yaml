@@ -1,0 +1,79 @@
+tempDir: target/golem-temp
+components:
+  pricing:
+    profiles:
+      release:
+        build:
+          - command: cargo component build --release
+            sources:
+              - pricing/src
+              - pricing/wit
+            targets:
+              - target/wasm32-wasip1/release/pricing.wasm
+        sourceWit: pricing/src_wit
+        generatedWit: pricing/wit
+        componentWasm: target/wasm32-wasip1/release/pricing.wasm
+        clean:
+          - pricing/src/bindings.rs
+    defaultProfile: release
+  product:
+    profiles:
+      release:
+        build:
+          - command: cargo component build --release
+            sources:
+              - product/src
+              - product/wit
+            targets:
+              - target/wasm32-wasip1/release/product.wasm
+        sourceWit: product/src_wit
+        generatedWit: product/wit
+        componentWasm: target/wasm32-wasip1/release/product.wasm
+        clean:
+          - product/src/bindings.rs
+    defaultProfile: release
+  cart:
+    profiles:
+      release:
+        build:
+          - command: cargo component build --release
+            sources:
+              - cart/src
+              - cart/wit
+            targets:
+              - target/wasm32-wasip1/release/cart.wasm
+        sourceWit: cart/src_wit
+        generatedWit: cart/wit
+        componentWasm: target/wasm32-wasip1/release/cart.wasm
+        clean:
+          - cart/src/bindings.rs
+    defaultProfile: release
+  order:
+    profiles:
+      release:
+        build:
+          - command: cargo component build --release
+            sources:
+              - order/src
+              - order/wit
+            targets:
+              - target/wasm32-wasip1/release/order.wasm
+        sourceWit: order/src_wit
+        generatedWit: order/wit
+        componentWasm: target/wasm32-wasip1/release/order.wasm
+        clean:
+          - order/src/bindings.rs
+    defaultProfile: release
+dependencies:
+  order:
+    - type: wasm-rpc
+      target: pricing
+    - type: wasm-rpc
+      target: product
+  cart:
+    - type: wasm-rpc
+      target: pricing
+    - type: wasm-rpc
+      target: product
+    - type: wasm-rpc
+      target: order

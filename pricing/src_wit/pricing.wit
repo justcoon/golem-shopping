@@ -1,0 +1,32 @@
+package golem:pricing;
+
+interface api {
+
+  record pricing {
+    product-id: string,
+    msrp-prices: list<pricing-item>,
+    list-prices: list<pricing-item>,
+  }
+
+  record pricing-item {
+    price: float32,
+    currency: string,
+    zone: string,
+  }
+
+  initialize-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>) -> ();
+
+  get-price: func(currency: string, zone: string) -> option<pricing-item>;
+
+  update-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>) -> ();
+
+  get: func() -> option<pricing>;
+}
+
+world pricing {
+
+  export golem:api/save-snapshot@1.1.6;
+  export golem:api/load-snapshot@1.1.6;
+
+  export api;
+}

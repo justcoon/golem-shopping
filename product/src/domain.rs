@@ -17,8 +17,8 @@ pub mod product {
         }
     }
 
-    impl From<bindings::exports::golem::product::api::Product> for Product {
-        fn from(value: bindings::exports::golem::product::api::Product) -> Self {
+    impl From<bindings::exports::golem::product_exports::api::Product> for Product {
+        fn from(value: bindings::exports::golem::product_exports::api::Product) -> Self {
             Self {
                 product_id: value.product_id,
                 name: value.name,
@@ -28,7 +28,7 @@ pub mod product {
         }
     }
 
-    impl From<Product> for bindings::exports::golem::product::api::Product {
+    impl From<Product> for bindings::exports::golem::product_exports::api::Product {
         fn from(value: Product) -> Self {
             Self {
                 product_id: value.product_id,

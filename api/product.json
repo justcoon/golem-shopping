@@ -6,13 +6,13 @@
       "method": "Get",
       "path": "/v1/product/{product-id}",
       "binding": {
-        "componentId": {
-          "componentId": "4cb4b24a-ee7d-4a36-a03b-1d135d40d371",
+        "component": {
+          "name": "product",
           "version": 0
         },
-        "workerName": "${let id: str = request.path.product-id;\nid}",
+        "workerName": "let id: string = request.path.product-id;\nid",
         "idempotencyKey": null,
-        "response": "${let result = golem:product/api.{get}();\nmatch result {  some(x) => {status: 200u64, body: x}, none => {status: 404u64, body: {message: \"not found\"}} } }",
+        "response": "let result = golem:product-exports/api.{get}();\nmatch result {  some(x) => {status: 200u64, body: ok(x)}, none => {status: 404u64, body: err({message: \"not found\"})} } ",
         "idempotencyKeyInput": null
       }
     },
@@ -20,13 +20,13 @@
       "method": "Post",
       "path": "/v1/product/{product-id}",
       "binding": {
-        "componentId": {
-          "componentId": "4cb4b24a-ee7d-4a36-a03b-1d135d40d371",
+        "component": {
+          "name": "product",
           "version": 0
         },
-        "workerName": "${let id: str = request.path.product-id;\nid}",
+        "workerName": "let id: string = request.path.product-id;\nid",
         "idempotencyKey": null,
-        "response": "${let name: str = request.body.name;\nlet description: str = request.body.description;\nlet tags: list<str> = request.body.tags;\ngolem:product/api.{initialize-product}(name, description, tags);\n{status: 200u64, body: {message: \"created\"}}}",
+        "response": "let name: string = request.body.name;\nlet description: string = request.body.description;\nlet tags: list<string> = request.body.tags;\ngolem:product-exports/api.{initialize-product}(name, description, tags);\n{status: 200u64, body: {message: \"created\"}}",
         "idempotencyKeyInput": null
       }
     }

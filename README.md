@@ -42,38 +42,30 @@ Components have implementation for [snapshots based updates of golem workers](ht
 
 ## Commands
 
-golem wasm-rpc stub generator (see: [golem wasm-rpc](https://learn.golem.cloud/docs/rust-language-guide/rpc))
-
-```
-golem-cli stubgen initialize-workspace --targets order --targets product --targets pricing --callers cart --callers order
-```
 
 release build of all components
 
 ```
-cargo make release-build-flow
+golem-cli app build
 ```
 
 add components with golem-cli
 
 ```
-golem-cli component add --component-name pricing target/wasm32-wasi/release/pricing.wasm
-golem-cli component add --component-name product target/wasm32-wasi/release/product.wasm
-golem-cli component add --component-name cart target/wasm32-wasi/release/cart_composed.wasm
-golem-cli component add --component-name order target/wasm32-wasi/release/order_composed.wasm
+golem-cli component add
 ```
 
 get component data with golem-cli
 
 ```
-golem-cli component get --component-name product
-golem-cli component get --component-name pricing
-golem-cli component get --component-name order
+golem-cli component get product
+golem-cli component get pricing
+golem-cli component get order
 ```
 
 add cart worker with [golem-cli](https://learn.golem.cloud/docs/cli/workers#start-new-worker) (env variables are representing related component id-s)
 ```
-golem-cli worker add --component-name cart  --worker-name user001 --env PRODUCT_COMPONENT_ID=35ec4b88-00e2-4948-a2b0-d6d9527fa437 --env PRICING_COMPONENT_ID=83ab925a-32e4-4c9d-bbe9-2c3b874ebcf1 --env ORDER_COMPONENT_ID=98570ba9-0c35-4f80-ae7d-54a8ff957e64
+golem-cli worker new cart/user001 --env PRODUCT_COMPONENT_ID=35ec4b88-00e2-4948-a2b0-d6d9527fa437 --env PRICING_COMPONENT_ID=83ab925a-32e4-4c9d-bbe9-2c3b874ebcf1 --env ORDER_COMPONENT_ID=98570ba9-0c35-4f80-ae7d-54a8ff957e64
 ```
 
 upgrade cart workers of component with golem-cli
@@ -83,9 +75,9 @@ golem-cli component try-update-workers --component-name cart --update-mode manua
 
 invocation of worker functions with golem-cli
 ```
-golem-cli worker invoke-and-await  --component-name cart  --worker-name user014 --function golem:cart/api.{get} --parameters '[]'
-golem-cli worker invoke-and-await  --component-name product  --worker-name p001 --function golem:product/api.{get} --parameters '[]'
-golem-cli worker invoke-and-await  --component-name pricing  --worker-name p001 --function golem:pricing/api.{get} --parameters '[]'
+golem-cli worker invoke cart/user014 golem:cart-exports/api.{get}
+golem-cli worker invoke product/p001 golem:product-exports/api.{get} 
+golem-cli worker invoke pricing/p001 golem:pricing-exports/api.{get} 
 ```
 
 ## References

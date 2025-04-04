@@ -1,133 +1,15 @@
-package golem: cart;
-
-interface api {
-
-  record address {
-    street: string,
-    city: string,
-    state-or-region: string,
-    country: string,
-    postal-code: string,
-    name: option<string>,
-    phone-number: option<string>
-  }
-
-  record cart-item {
-    product-id: string,
-    name: string,
-    price: float32,
-    quantity: u32,
-  }
-
-  record cart {
-    user-id: string,
-    email: option<string>,
-    items: list<cart-item>,
-    billing-address: option<address>,
-    shipping-address: option<address>,
-    total: float32,
-    currency: string,
-    timestamp: u64,
-    previous-order-ids: list<string>,
-  }
-
-  record order-confirmation {
-    order-id: string,
-  }
-
-  record product-not-found-error {
-    message: string,
-    product-id: string,
-  }
-
-  record pricing-not-found-error {
-    message: string,
-    product-id: string,
-  }
-
-  record address-not-valid-error {
-    message: string,
-  }
-
-  record email-not-valid-error {
-    message: string,
-  }
-
-  record item-not-found-error {
-    message: string,
-    product-id: string,
-  }
-
-  record empty-items-error {
-    message: string,
-  }
-
-  record billing-address-not-set-error {
-    message: string,
-  }
-
-  record empty-email-error {
-    message: string,
-  }
-
-  record order-create-error {
-    message: string
-  }
-
-  variant add-item-error {
-    product-not-found(product-not-found-error),
-    pricing-not-found(pricing-not-found-error),
-  }
-
-  variant remove-item-error {
-    item-not-found(item-not-found-error),
-  }
-
-  variant update-item-quantity-error {
-    item-not-found(item-not-found-error),
-  }
-
-  variant update-address-error {
-    address-not-valid(address-not-valid-error),
-  }
-
-  variant update-email-error {
-   email-not-valid(email-not-valid-error),
-  }
-
-  variant checkout-error {
-    product-not-found(product-not-found-error),
-    pricing-not-found(pricing-not-found-error),
-    empty-items(empty-items-error),
-    empty-email(empty-email-error),
-    billing-address-not-set(billing-address-not-set-error),
-    order-create(order-create-error),
-  }
-
-  add-item: func(product-id: string, quantity: u32) -> result<_, add-item-error>;
-
-  remove-item: func(product-id: string) -> result<_, remove-item-error>;
-
-  update-item-quantity: func(product-id: string, quantity: u32) -> result<_, update-item-quantity-error>;
-
-  update-email: func(email: string) -> result<_, update-email-error>;
-
-  update-shipping-address: func(address: address) -> result<_, update-address-error>;
-
-  update-billing-address: func(address: address) -> result<_, update-address-error>;
-
-  checkout: func() -> result<order-confirmation, checkout-error>;
-
-  get: func() -> option<cart>;
-}
+package golem:cart;
 
 world cart {
-  import golem: pricing-stub/stub-pricing;
-  import golem: product-stub/stub-product;
-  import golem: order-stub/stub-order;
-
-  export golem:api/save-snapshot@0.2.0;
-  export golem:api/load-snapshot@0.2.0;
-
-  export api;
+  import golem:order-client/order-client;
+  import golem:order-exports/api;
+  import golem:pricing-client/pricing-client;
+  import golem:pricing-exports/api;
+  import golem:rpc/types@0.2.0;
+  import wasi:clocks/wall-clock@0.2.0;
+  import wasi:io/poll@0.2.0;
+  export golem:api/load-snapshot@1.1.6;
+  export golem:api/save-snapshot@1.1.6;
+  export golem:cart-exports/api;
+  import golem:product-client/product-client;
 }
