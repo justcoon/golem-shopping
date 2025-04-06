@@ -13,7 +13,7 @@ pub fn get_product_ids() -> Vec<String> {
 }
 
 pub fn get_user_ids() -> Vec<String> {
-    (11..=14).map(|v| format!("user{:03}", v)).collect()
+    (1..=10).map(|v| format!("user{:03}", v)).collect()
 }
 
 pub fn get_email(user: String) -> String {

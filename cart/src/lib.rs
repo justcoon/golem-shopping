@@ -16,30 +16,10 @@ fn generate_order_id() -> String {
     Uuid::new_v4().to_string()
 }
 
-fn get_worker_urn(component_id: String, worker_name: String) -> String {
-    format!("urn:worker:{component_id}/{worker_name}")
-}
-
-fn get_product_worker_urn(product_id: String) -> String {
-    let component_id = std::env::var("PRODUCT_COMPONENT_ID").expect("PRODUCT_COMPONENT_ID not set");
-    get_worker_urn(component_id, product_id)
-}
-
-fn get_pricing_worker_urn(product_id: String) -> String {
-    let component_id = std::env::var("PRICING_COMPONENT_ID").expect("PRICING_COMPONENT_ID not set");
-    get_worker_urn(component_id, product_id)
-}
-
-fn get_order_worker_urn(order_id: String) -> String {
-    let component_id = std::env::var("ORDER_COMPONENT_ID").expect("ORDER_COMPONENT_ID not set");
-    get_worker_urn(component_id, order_id)
-}
-
 fn get_product(product_id: String) -> Option<Product> {
     println!("Getting product: {}", product_id);
 
     use bindings::golem::product_client::product_client::*;
-    use bindings::golem::rpc::types::Uri;
 
     let api = Api::new(product_id.as_str());
 
@@ -50,7 +30,6 @@ fn get_pricing(product_id: String, currency: String, zone: String) -> Option<Pri
     println!("Getting pricing: {}, currency: {}, zone: {}", product_id, currency, zone);
 
     use bindings::golem::pricing_client::pricing_client::*;
-    use bindings::golem::rpc::types::Uri;
 
     let api = Api::new(product_id.as_str());
 
@@ -77,7 +56,6 @@ fn create_order(order_id: String, cart: domain::cart::Cart) -> Result<String, Ch
     validate_cart(cart.clone())?;
 
     use bindings::golem::order_client::order_client::*;
-    use bindings::golem::rpc::types::Uri;
 
     let api = Api::new(order_id.as_str());
 
