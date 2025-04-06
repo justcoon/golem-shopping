@@ -8,7 +8,7 @@
       "binding": {
         "component": {
           "name": "product",
-          "version": 0
+          "version": 1
         },
         "workerName": "let id: string = request.path.product-id;\nid",
         "idempotencyKey": null,
@@ -22,7 +22,7 @@
       "binding": {
         "component": {
           "name": "product",
-          "version": 0
+          "version": 1
         },
         "workerName": "let id: string = request.path.product-id;\nid",
         "idempotencyKey": null,

@@ -8,7 +8,7 @@
       "binding": {
         "component": {
           "name": "cart",
-          "version": 0
+          "version": 1
         },
         "workerName": "let id: string = request.path.user-id;\nid",
         "idempotencyKey": null,
@@ -22,7 +22,7 @@
       "binding": {
         "component": {
           "name": "cart",
-          "version": 0
+          "version": 1
         },
         "workerName": "let id: string = request.path.user-id;\nid",
         "idempotencyKey": null,
@@ -36,7 +36,7 @@
       "binding": {
         "component": {
           "name": "cart",
-          "version": 0
+          "version": 1
         },
         "workerName": "let id: string = request.path.user-id;\nid",
         "idempotencyKey": null,
@@ -50,7 +50,7 @@
       "binding": {
         "component": {
           "name": "cart",
-          "version": 0
+          "version": 1
         },
         "workerName": "let id: string = request.path.user-id;\nid",
         "idempotencyKey": null,
@@ -64,7 +64,7 @@
       "binding": {
         "component": {
           "name": "cart",
-          "version": 0
+          "version": 1
         },
         "workerName": "let id: string = request.path.user-id;\nid",
         "idempotencyKey": null,
@@ -78,7 +78,7 @@
       "binding": {
         "component": {
           "name": "cart",
-          "version": 0
+          "version": 1
         },
         "workerName": "let id: string = request.path.user-id;\nid",
         "idempotencyKey": null,
@@ -92,7 +92,7 @@
       "binding": {
         "component": {
           "name": "cart",
-          "version": 0
+          "version": 1
         },
         "workerName": "let id: string = request.path.user-id;\nid",
         "idempotencyKey": null,
