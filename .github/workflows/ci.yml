@@ -13,15 +13,15 @@ on:
         description: Golem version
         type: choice
         required: false
-        default: 1.2.1
+        default: 1.2.5
         options:
           - latest
           - master
-          - 1.2.1
+          - 1.2.5
 
 env:
   CARGO_TERM_COLOR: always
-  GOLEM_VERSION: ${{ github.event.inputs.golemversion != '' && github.event.inputs.golemversion || '1.2.1' }}
+  GOLEM_VERSION: ${{ github.event.inputs.golemversion != '' && github.event.inputs.golemversion || '1.2.5' }}
 
 jobs:
   setup-environment:
@@ -118,7 +118,7 @@ jobs:
       - name: Save components
         uses: actions/upload-artifact@v4
         with:
-          path: target/golem-temp/linked-wasm/*.wasm
+          path: target/wasm32-wasip1/release/*.wasm
           name: components
 
   auto-merge:

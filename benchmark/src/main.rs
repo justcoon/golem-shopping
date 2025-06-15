@@ -100,6 +100,8 @@ async fn create_and_checkout_cart(user: &mut GooseUser) -> TransactionResult {
         )
         .await?;
 
+    let _response = user.get_request("cart-get", format!("/v1/cart/{user_id}").as_str()).await?;
+    
     let response = user
         .post_request(
             "cart-checkout",

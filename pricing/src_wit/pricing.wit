@@ -14,11 +14,11 @@ interface api {
     zone: string,
   }
 
-  initialize-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>) -> ();
+  initialize-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>);
 
   get-price: func(currency: string, zone: string) -> option<pricing-item>;
 
-  update-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>) -> ();
+  update-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>);
 
   get: func() -> option<pricing>;
 }

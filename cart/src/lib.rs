@@ -225,10 +225,37 @@ impl Guest for Component {
     }
 
     fn get() -> Option<Cart> {
-        STATE.with_borrow(|state| {
+        STATE.with_borrow_mut(|state| {
             println!("Getting cart");
-
-            state.clone().map(|state| state.into())
+            if let Some(cart) = state {
+                let mut items = Vec::new();
+                for item in cart.items.clone() {
+                    let product_id = item.product_id;
+                    let quantity = item.quantity;
+                    let product = get_product(product_id.clone());
+                    let pricing = get_pricing(
+                        product_id.clone(),
+                        cart.currency.clone(),
+                        domain::cart::PRICING_ZONE_DEFAULT.to_string(),
+                    );
+                    match (product, pricing) {
+                        (Some(product), Some(pricing)) => {
+                            items.push(domain::cart::CartItem {
+                                product_id,
+                                name: product.name,
+                                price: pricing.price,
+                                quantity,
+                            });
+                        }
+                        _ => ()
+                    }
+                }
+                cart.items = items;
+                cart.recalculate_total();
+                Some(cart.clone().into())
+            } else { 
+                None
+            }
         })
     }
 }

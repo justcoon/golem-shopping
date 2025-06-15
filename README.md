@@ -48,31 +48,30 @@ golem-cli app deploy
 get component data with golem-cli
 
 ```
-golem-cli component get product
-golem-cli component get pricing
-golem-cli component get order
+golem-cli component get golem:product
+golem-cli component get golem:pricing
+golem-cli component get golem:order
 ```
 
 add cart worker with golem-cli
 ```
-golem-cli worker new cart/user001
+golem-cli worker new golem:cart/user001
 ```
 
 upgrade cart workers of component with golem-cli
 ```
-golem-cli component update-workers cart --update-mode manual
+golem-cli component update-workers golem:cart --update-mode manual
 ```
 
 invocation of worker functions with golem-cli
 ```
-golem-cli worker invoke cart/user001 golem:cart-exports/api.{get}
-golem-cli worker invoke product/p001 golem:product-exports/api.{get} 
-golem-cli worker invoke pricing/p001 golem:pricing-exports/api.{get} 
+golem-cli worker invoke golem:cart/user001 golem:cart-exports/api.{get}
+golem-cli worker invoke golem:product/p001 golem:product-exports/api.{get} 
+golem-cli worker invoke golem:pricing/p001 golem:pricing-exports/api.{get} 
 ```
 
 ## References
 
-* [APIs](./api/README.md)
 * [benchmark](./benchmark/README.md)
 
 golem documentation:
