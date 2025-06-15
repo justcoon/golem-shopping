@@ -9,7 +9,7 @@ interface api {
     tags: list<string>
   }
 
-  initialize-product: func(name: string, description: string, tags: list<string>) -> ();
+  initialize-product: func(name: string, description: string, tags: list<string>);
 
   get: func() -> option<product>;
 }
