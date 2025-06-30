@@ -22,7 +22,7 @@ dependencies = [
  "serde",
  "serde_json",
  "uuid",
- "wit-bindgen-rt 0.42.1",
+ "wit-bindgen-rt 0.43.0",
 ]
 
 [[package]]
@@ -99,7 +99,7 @@ dependencies = [
  "email_address",
  "serde",
  "serde_json",
- "wit-bindgen-rt 0.42.1",
+ "wit-bindgen-rt 0.43.0",
 ]
 
 [[package]]
@@ -108,7 +108,7 @@ version = "0.0.1"
 dependencies = [
  "serde",
  "serde_json",
- "wit-bindgen-rt 0.42.1",
+ "wit-bindgen-rt 0.43.0",
 ]
 
 [[package]]
@@ -126,7 +126,7 @@ version = "0.0.1"
 dependencies = [
  "serde",
  "serde_json",
- "wit-bindgen-rt 0.42.1",
+ "wit-bindgen-rt 0.43.0",
 ]
 
 [[package]]
@@ -294,9 +294,9 @@ dependencies = [
 
 [[package]]
 name = "wit-bindgen-rt"
-version = "0.42.1"
+version = "0.43.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "051105bab12bc78e161f8dfb3596e772dd6a01ebf9c4840988e00347e744966a"
+checksum = "9fd734226eac1fd7c450956964e3a9094c9cee65e9dafdf126feef8c0096db65"
 dependencies = [
  "bitflags",
 ]
