@@ -3,6 +3,118 @@
 //   * runtime_path: "wit_bindgen_rt"
 #[rustfmt::skip]
 #[allow(dead_code, clippy::all)]
+pub mod wasi {
+    pub mod clocks {
+        /// WASI Wall Clock is a clock API intended to let users query the current
+        /// time. The name "wall" makes an analogy to a "clock on the wall", which
+        /// is not necessarily monotonic as it may be reset.
+        ///
+        /// It is intended to be portable at least between Unix-family platforms and
+        /// Windows.
+        ///
+        /// A wall clock is a clock which measures the date and time according to
+        /// some external reference.
+        ///
+        /// External references may be reset, so this clock is not necessarily
+        /// monotonic, making it unsuitable for measuring elapsed time.
+        ///
+        /// It is intended for reporting the current date and time for humans.
+        #[allow(dead_code, clippy::all)]
+        pub mod wall_clock {
+            #[used]
+            #[doc(hidden)]
+            static __FORCE_SECTION_REF: fn() = super::super::super::__link_custom_section_describing_imports;
+            /// A time and date in seconds plus nanoseconds.
+            #[repr(C)]
+            #[derive(Clone, Copy)]
+            pub struct Datetime {
+                pub seconds: u64,
+                pub nanoseconds: u32,
+            }
+            impl ::core::fmt::Debug for Datetime {
+                fn fmt(
+                    &self,
+                    f: &mut ::core::fmt::Formatter<'_>,
+                ) -> ::core::fmt::Result {
+                    f.debug_struct("Datetime")
+                        .field("seconds", &self.seconds)
+                        .field("nanoseconds", &self.nanoseconds)
+                        .finish()
+                }
+            }
+            #[allow(unused_unsafe, clippy::all)]
+            /// Read the current value of the clock.
+            ///
+            /// This clock is not monotonic, therefore calling this function repeatedly
+            /// will not necessarily produce a sequence of non-decreasing values.
+            ///
+            /// The returned timestamps represent the number of seconds since
+            /// 1970-01-01T00:00:00Z, also known as [POSIX's Seconds Since the Epoch],
+            /// also known as [Unix Time].
+            ///
+            /// The nanoseconds field of the output is always less than 1000000000.
+            ///
+            /// [POSIX's Seconds Since the Epoch]: https://pubs.opengroup.org/onlinepubs/9699919799/xrat/V4_xbd_chap04.html#tag_21_04_16
+            /// [Unix Time]: https://en.wikipedia.org/wiki/Unix_time
+            pub fn now() -> Datetime {
+                unsafe {
+                    #[repr(align(8))]
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 16]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 16]);
+                    let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
+                    #[cfg(target_arch = "wasm32")]
+                    #[link(wasm_import_module = "wasi:clocks/wall-clock@0.2.0")]
+                    extern "C" {
+                        #[link_name = "now"]
+                        fn wit_import(_: *mut u8);
+                    }
+                    #[cfg(not(target_arch = "wasm32"))]
+                    fn wit_import(_: *mut u8) {
+                        unreachable!()
+                    }
+                    wit_import(ptr0);
+                    let l1 = *ptr0.add(0).cast::<i64>();
+                    let l2 = *ptr0.add(8).cast::<i32>();
+                    Datetime {
+                        seconds: l1 as u64,
+                        nanoseconds: l2 as u32,
+                    }
+                }
+            }
+            #[allow(unused_unsafe, clippy::all)]
+            /// Query the resolution of the clock.
+            ///
+            /// The nanoseconds field of the output is always less than 1000000000.
+            pub fn resolution() -> Datetime {
+                unsafe {
+                    #[repr(align(8))]
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 16]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 16]);
+                    let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
+                    #[cfg(target_arch = "wasm32")]
+                    #[link(wasm_import_module = "wasi:clocks/wall-clock@0.2.0")]
+                    extern "C" {
+                        #[link_name = "resolution"]
+                        fn wit_import(_: *mut u8);
+                    }
+                    #[cfg(not(target_arch = "wasm32"))]
+                    fn wit_import(_: *mut u8) {
+                        unreachable!()
+                    }
+                    wit_import(ptr0);
+                    let l1 = *ptr0.add(0).cast::<i64>();
+                    let l2 = *ptr0.add(8).cast::<i32>();
+                    Datetime {
+                        seconds: l1 as u64,
+                        nanoseconds: l2 as u32,
+                    }
+                }
+            }
+        }
+    }
+}
+#[rustfmt::skip]
+#[allow(dead_code, clippy::all)]
 pub mod exports {
     pub mod golem {
         pub mod api {
@@ -143,6 +255,7 @@ pub mod exports {
                 #[doc(hidden)]
                 static __FORCE_SECTION_REF: fn() = super::super::super::super::__link_custom_section_describing_imports;
                 use super::super::super::super::_rt;
+                pub type Datetime = super::super::super::super::wasi::clocks::wall_clock::Datetime;
                 #[derive(Clone)]
                 pub struct PricingItem {
                     pub price: f32,
@@ -162,10 +275,33 @@ pub mod exports {
                     }
                 }
                 #[derive(Clone)]
+                pub struct SalePricingItem {
+                    pub price: f32,
+                    pub currency: _rt::String,
+                    pub zone: _rt::String,
+                    pub start: Option<Datetime>,
+                    pub end: Option<Datetime>,
+                }
+                impl ::core::fmt::Debug for SalePricingItem {
+                    fn fmt(
+                        &self,
+                        f: &mut ::core::fmt::Formatter<'_>,
+                    ) -> ::core::fmt::Result {
+                        f.debug_struct("SalePricingItem")
+                            .field("price", &self.price)
+                            .field("currency", &self.currency)
+                            .field("zone", &self.zone)
+                            .field("start", &self.start)
+                            .field("end", &self.end)
+                            .finish()
+                    }
+                }
+                #[derive(Clone)]
                 pub struct Pricing {
                     pub product_id: _rt::String,
                     pub msrp_prices: _rt::Vec<PricingItem>,
                     pub list_prices: _rt::Vec<PricingItem>,
+                    pub sale_prices: _rt::Vec<SalePricingItem>,
                 }
                 impl ::core::fmt::Debug for Pricing {
                     fn fmt(
@@ -176,6 +312,7 @@ pub mod exports {
                             .field("product-id", &self.product_id)
                             .field("msrp-prices", &self.msrp_prices)
                             .field("list-prices", &self.list_prices)
+                            .field("sale-prices", &self.sale_prices)
                             .finish()
                     }
                 }
@@ -192,6 +329,7 @@ pub mod exports {
                                 product_id: product_id2,
                                 msrp_prices: msrp_prices2,
                                 list_prices: list_prices2,
+                                sale_prices: sale_prices2,
                             } = e;
                             let vec3 = (product_id2.into_bytes()).into_boxed_slice();
                             let ptr3 = vec3.as_ptr().cast::<u8>();
@@ -279,6 +417,76 @@ pub mod exports {
                             }
                             *ptr1.add(24).cast::<usize>() = len11;
                             *ptr1.add(20).cast::<*mut u8>() = result11;
+                            let vec17 = sale_prices2;
+                            let len17 = vec17.len();
+                            let layout17 = _rt::alloc::Layout::from_size_align_unchecked(
+                                vec17.len() * 72,
+                                8,
+                            );
+                            let result17 = if layout17.size() != 0 {
+                                let ptr = _rt::alloc::alloc(layout17).cast::<u8>();
+                                if ptr.is_null() {
+                                    _rt::alloc::handle_alloc_error(layout17);
+                                }
+                                ptr
+                            } else {
+                                ::core::ptr::null_mut()
+                            };
+                            for (i, e) in vec17.into_iter().enumerate() {
+                                let base = result17.add(i * 72);
+                                {
+                                    let SalePricingItem {
+                                        price: price12,
+                                        currency: currency12,
+                                        zone: zone12,
+                                        start: start12,
+                                        end: end12,
+                                    } = e;
+                                    *base.add(0).cast::<f32>() = _rt::as_f32(price12);
+                                    let vec13 = (currency12.into_bytes()).into_boxed_slice();
+                                    let ptr13 = vec13.as_ptr().cast::<u8>();
+                                    let len13 = vec13.len();
+                                    ::core::mem::forget(vec13);
+                                    *base.add(8).cast::<usize>() = len13;
+                                    *base.add(4).cast::<*mut u8>() = ptr13.cast_mut();
+                                    let vec14 = (zone12.into_bytes()).into_boxed_slice();
+                                    let ptr14 = vec14.as_ptr().cast::<u8>();
+                                    let len14 = vec14.len();
+                                    ::core::mem::forget(vec14);
+                                    *base.add(16).cast::<usize>() = len14;
+                                    *base.add(12).cast::<*mut u8>() = ptr14.cast_mut();
+                                    match start12 {
+                                        Some(e) => {
+                                            *base.add(24).cast::<u8>() = (1i32) as u8;
+                                            let super::super::super::super::wasi::clocks::wall_clock::Datetime {
+                                                seconds: seconds15,
+                                                nanoseconds: nanoseconds15,
+                                            } = e;
+                                            *base.add(32).cast::<i64>() = _rt::as_i64(seconds15);
+                                            *base.add(40).cast::<i32>() = _rt::as_i32(nanoseconds15);
+                                        }
+                                        None => {
+                                            *base.add(24).cast::<u8>() = (0i32) as u8;
+                                        }
+                                    };
+                                    match end12 {
+                                        Some(e) => {
+                                            *base.add(48).cast::<u8>() = (1i32) as u8;
+                                            let super::super::super::super::wasi::clocks::wall_clock::Datetime {
+                                                seconds: seconds16,
+                                                nanoseconds: nanoseconds16,
+                                            } = e;
+                                            *base.add(56).cast::<i64>() = _rt::as_i64(seconds16);
+                                            *base.add(64).cast::<i32>() = _rt::as_i32(nanoseconds16);
+                                        }
+                                        None => {
+                                            *base.add(48).cast::<u8>() = (0i32) as u8;
+                                        }
+                                    };
+                                }
+                            }
+                            *ptr1.add(32).cast::<usize>() = len17;
+                            *ptr1.add(28).cast::<*mut u8>() = result17;
                         }
                         None => {
                             *ptr1.add(0).cast::<u8>() = (0i32) as u8;
@@ -328,6 +536,22 @@ pub mod exports {
                                 }
                             }
                             _rt::cabi_dealloc(base16, len16 * 20, 4);
+                            let l17 = *arg0.add(28).cast::<*mut u8>();
+                            let l18 = *arg0.add(32).cast::<usize>();
+                            let base23 = l17;
+                            let len23 = l18;
+                            for i in 0..len23 {
+                                let base = base23.add(i * 72);
+                                {
+                                    let l19 = *base.add(4).cast::<*mut u8>();
+                                    let l20 = *base.add(8).cast::<usize>();
+                                    _rt::cabi_dealloc(l19, l20, 1);
+                                    let l21 = *base.add(12).cast::<*mut u8>();
+                                    let l22 = *base.add(16).cast::<usize>();
+                                    _rt::cabi_dealloc(l21, l22, 1);
+                                }
+                            }
+                            _rt::cabi_dealloc(base23, len23 * 72, 8);
                         }
                     }
                 }
@@ -400,6 +624,8 @@ pub mod exports {
                     arg1: usize,
                     arg2: *mut u8,
                     arg3: usize,
+                    arg4: *mut u8,
+                    arg5: usize,
                 ) {
                     #[cfg(target_arch = "wasm32")] _rt::run_ctors_once();
                     let base7 = arg0;
@@ -458,7 +684,71 @@ pub mod exports {
                         result15.push(e15);
                     }
                     _rt::cabi_dealloc(base15, len15 * 20, 4);
-                    T::initialize_pricing(result7, result15);
+                    let base29 = arg4;
+                    let len29 = arg5;
+                    let mut result29 = _rt::Vec::with_capacity(len29);
+                    for i in 0..len29 {
+                        let base = base29.add(i * 72);
+                        let e29 = {
+                            let l16 = *base.add(0).cast::<f32>();
+                            let l17 = *base.add(4).cast::<*mut u8>();
+                            let l18 = *base.add(8).cast::<usize>();
+                            let len19 = l18;
+                            let bytes19 = _rt::Vec::from_raw_parts(
+                                l17.cast(),
+                                len19,
+                                len19,
+                            );
+                            let l20 = *base.add(12).cast::<*mut u8>();
+                            let l21 = *base.add(16).cast::<usize>();
+                            let len22 = l21;
+                            let bytes22 = _rt::Vec::from_raw_parts(
+                                l20.cast(),
+                                len22,
+                                len22,
+                            );
+                            let l23 = i32::from(*base.add(24).cast::<u8>());
+                            let l26 = i32::from(*base.add(48).cast::<u8>());
+                            SalePricingItem {
+                                price: l16,
+                                currency: _rt::string_lift(bytes19),
+                                zone: _rt::string_lift(bytes22),
+                                start: match l23 {
+                                    0 => None,
+                                    1 => {
+                                        let e = {
+                                            let l24 = *base.add(32).cast::<i64>();
+                                            let l25 = *base.add(40).cast::<i32>();
+                                            super::super::super::super::wasi::clocks::wall_clock::Datetime {
+                                                seconds: l24 as u64,
+                                                nanoseconds: l25 as u32,
+                                            }
+                                        };
+                                        Some(e)
+                                    }
+                                    _ => _rt::invalid_enum_discriminant(),
+                                },
+                                end: match l26 {
+                                    0 => None,
+                                    1 => {
+                                        let e = {
+                                            let l27 = *base.add(56).cast::<i64>();
+                                            let l28 = *base.add(64).cast::<i32>();
+                                            super::super::super::super::wasi::clocks::wall_clock::Datetime {
+                                                seconds: l27 as u64,
+                                                nanoseconds: l28 as u32,
+                                            }
+                                        };
+                                        Some(e)
+                                    }
+                                    _ => _rt::invalid_enum_discriminant(),
+                                },
+                            }
+                        };
+                        result29.push(e29);
+                    }
+                    _rt::cabi_dealloc(base29, len29 * 72, 8);
+                    T::initialize_pricing(result7, result15, result29);
                 }
                 #[doc(hidden)]
                 #[allow(non_snake_case)]
@@ -467,6 +757,8 @@ pub mod exports {
                     arg1: usize,
                     arg2: *mut u8,
                     arg3: usize,
+                    arg4: *mut u8,
+                    arg5: usize,
                 ) {
                     #[cfg(target_arch = "wasm32")] _rt::run_ctors_once();
                     let base7 = arg0;
@@ -525,7 +817,71 @@ pub mod exports {
                         result15.push(e15);
                     }
                     _rt::cabi_dealloc(base15, len15 * 20, 4);
-                    T::update_pricing(result7, result15);
+                    let base29 = arg4;
+                    let len29 = arg5;
+                    let mut result29 = _rt::Vec::with_capacity(len29);
+                    for i in 0..len29 {
+                        let base = base29.add(i * 72);
+                        let e29 = {
+                            let l16 = *base.add(0).cast::<f32>();
+                            let l17 = *base.add(4).cast::<*mut u8>();
+                            let l18 = *base.add(8).cast::<usize>();
+                            let len19 = l18;
+                            let bytes19 = _rt::Vec::from_raw_parts(
+                                l17.cast(),
+                                len19,
+                                len19,
+                            );
+                            let l20 = *base.add(12).cast::<*mut u8>();
+                            let l21 = *base.add(16).cast::<usize>();
+                            let len22 = l21;
+                            let bytes22 = _rt::Vec::from_raw_parts(
+                                l20.cast(),
+                                len22,
+                                len22,
+                            );
+                            let l23 = i32::from(*base.add(24).cast::<u8>());
+                            let l26 = i32::from(*base.add(48).cast::<u8>());
+                            SalePricingItem {
+                                price: l16,
+                                currency: _rt::string_lift(bytes19),
+                                zone: _rt::string_lift(bytes22),
+                                start: match l23 {
+                                    0 => None,
+                                    1 => {
+                                        let e = {
+                                            let l24 = *base.add(32).cast::<i64>();
+                                            let l25 = *base.add(40).cast::<i32>();
+                                            super::super::super::super::wasi::clocks::wall_clock::Datetime {
+                                                seconds: l24 as u64,
+                                                nanoseconds: l25 as u32,
+                                            }
+                                        };
+                                        Some(e)
+                                    }
+                                    _ => _rt::invalid_enum_discriminant(),
+                                },
+                                end: match l26 {
+                                    0 => None,
+                                    1 => {
+                                        let e = {
+                                            let l27 = *base.add(56).cast::<i64>();
+                                            let l28 = *base.add(64).cast::<i32>();
+                                            super::super::super::super::wasi::clocks::wall_clock::Datetime {
+                                                seconds: l27 as u64,
+                                                nanoseconds: l28 as u32,
+                                            }
+                                        };
+                                        Some(e)
+                                    }
+                                    _ => _rt::invalid_enum_discriminant(),
+                                },
+                            }
+                        };
+                        result29.push(e29);
+                    }
+                    _rt::cabi_dealloc(base29, len29 * 72, 8);
+                    T::update_pricing(result7, result15, result29);
                 }
                 pub trait Guest {
                     fn get() -> Option<Pricing>;
@@ -536,10 +892,12 @@ pub mod exports {
                     fn initialize_pricing(
                         msrp_prices: _rt::Vec<PricingItem>,
                         list_prices: _rt::Vec<PricingItem>,
+                        sale_prices: _rt::Vec<SalePricingItem>,
                     );
                     fn update_pricing(
                         msrp_prices: _rt::Vec<PricingItem>,
                         list_prices: _rt::Vec<PricingItem>,
+                        sale_prices: _rt::Vec<SalePricingItem>,
                     );
                 }
                 #[doc(hidden)]
@@ -560,21 +918,23 @@ pub mod exports {
                         $($path_to_types)*:: __post_return_get_price::<$ty > (arg0) }
                         #[export_name = "golem:pricing-exports/api#initialize-pricing"]
                         unsafe extern "C" fn export_initialize_pricing(arg0 : * mut u8,
-                        arg1 : usize, arg2 : * mut u8, arg3 : usize,) {
-                        $($path_to_types)*:: _export_initialize_pricing_cabi::<$ty >
-                        (arg0, arg1, arg2, arg3) } #[export_name =
+                        arg1 : usize, arg2 : * mut u8, arg3 : usize, arg4 : * mut u8,
+                        arg5 : usize,) { $($path_to_types)*::
+                        _export_initialize_pricing_cabi::<$ty > (arg0, arg1, arg2, arg3,
+                        arg4, arg5) } #[export_name =
                         "golem:pricing-exports/api#update-pricing"] unsafe extern "C" fn
                         export_update_pricing(arg0 : * mut u8, arg1 : usize, arg2 : * mut
-                        u8, arg3 : usize,) { $($path_to_types)*::
-                        _export_update_pricing_cabi::<$ty > (arg0, arg1, arg2, arg3) } };
+                        u8, arg3 : usize, arg4 : * mut u8, arg5 : usize,) {
+                        $($path_to_types)*:: _export_update_pricing_cabi::<$ty > (arg0,
+                        arg1, arg2, arg3, arg4, arg5) } };
                     };
                 }
                 #[doc(hidden)]
                 pub(crate) use __export_golem_pricing_exports_api_cabi;
                 #[repr(align(4))]
-                struct _RetArea([::core::mem::MaybeUninit<u8>; 28]);
+                struct _RetArea([::core::mem::MaybeUninit<u8>; 36]);
                 static mut _RET_AREA: _RetArea = _RetArea(
-                    [::core::mem::MaybeUninit::uninit(); 28],
+                    [::core::mem::MaybeUninit::uninit(); 36],
                 );
             }
         }
@@ -606,6 +966,88 @@ mod _rt {
         }
     }
     pub use alloc_crate::alloc;
+    pub fn as_i64<T: AsI64>(t: T) -> i64 {
+        t.as_i64()
+    }
+    pub trait AsI64 {
+        fn as_i64(self) -> i64;
+    }
+    impl<'a, T: Copy + AsI64> AsI64 for &'a T {
+        fn as_i64(self) -> i64 {
+            (*self).as_i64()
+        }
+    }
+    impl AsI64 for i64 {
+        #[inline]
+        fn as_i64(self) -> i64 {
+            self as i64
+        }
+    }
+    impl AsI64 for u64 {
+        #[inline]
+        fn as_i64(self) -> i64 {
+            self as i64
+        }
+    }
+    pub fn as_i32<T: AsI32>(t: T) -> i32 {
+        t.as_i32()
+    }
+    pub trait AsI32 {
+        fn as_i32(self) -> i32;
+    }
+    impl<'a, T: Copy + AsI32> AsI32 for &'a T {
+        fn as_i32(self) -> i32 {
+            (*self).as_i32()
+        }
+    }
+    impl AsI32 for i32 {
+        #[inline]
+        fn as_i32(self) -> i32 {
+            self as i32
+        }
+    }
+    impl AsI32 for u32 {
+        #[inline]
+        fn as_i32(self) -> i32 {
+            self as i32
+        }
+    }
+    impl AsI32 for i16 {
+        #[inline]
+        fn as_i32(self) -> i32 {
+            self as i32
+        }
+    }
+    impl AsI32 for u16 {
+        #[inline]
+        fn as_i32(self) -> i32 {
+            self as i32
+        }
+    }
+    impl AsI32 for i8 {
+        #[inline]
+        fn as_i32(self) -> i32 {
+            self as i32
+        }
+    }
+    impl AsI32 for u8 {
+        #[inline]
+        fn as_i32(self) -> i32 {
+            self as i32
+        }
+    }
+    impl AsI32 for char {
+        #[inline]
+        fn as_i32(self) -> i32 {
+            self as i32
+        }
+    }
+    impl AsI32 for usize {
+        #[inline]
+        fn as_i32(self) -> i32 {
+            self as i32
+        }
+    }
     pub unsafe fn cabi_dealloc(ptr: *mut u8, size: usize, align: usize) {
         if size == 0 {
             return;
@@ -618,6 +1060,13 @@ mod _rt {
             String::from_utf8(bytes).unwrap()
         } else {
             String::from_utf8_unchecked(bytes)
+        }
+    }
+    pub unsafe fn invalid_enum_discriminant<T>() -> T {
+        if cfg!(debug_assertions) {
+            panic!("invalid enum discriminant")
+        } else {
+            core::hint::unreachable_unchecked()
         }
     }
     extern crate alloc as alloc_crate;
@@ -661,19 +1110,24 @@ pub(crate) use __export_pricing_impl as export;
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.36.0:golem:pricing:pricing:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 539] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\x9d\x03\x01A\x02\x01\
-A\x06\x01B\x0e\x01r\x03\x05pricev\x08currencys\x04zones\x04\0\x0cpricing-item\x03\
-\0\0\x01p\x01\x01r\x03\x0aproduct-ids\x0bmsrp-prices\x02\x0blist-prices\x02\x04\0\
-\x07pricing\x03\0\x03\x01k\x04\x01@\0\0\x05\x04\0\x03get\x01\x06\x01k\x01\x01@\x02\
-\x08currencys\x04zones\0\x07\x04\0\x09get-price\x01\x08\x01@\x02\x0bmsrp-prices\x02\
-\x0blist-prices\x02\x01\0\x04\0\x12initialize-pricing\x01\x09\x04\0\x0eupdate-pr\
-icing\x01\x09\x04\0\x19golem:pricing-exports/api\x05\0\x01B\x04\x01p}\x01j\0\x01\
-s\x01@\x01\x05bytes\0\0\x01\x04\0\x04load\x01\x02\x04\0\x1dgolem:api/load-snapsh\
-ot@1.1.6\x05\x01\x01B\x03\x01p}\x01@\0\0\0\x04\0\x04save\x01\x01\x04\0\x1dgolem:\
-api/save-snapshot@1.1.6\x05\x02\x04\0\x15golem:pricing/pricing\x04\0\x0b\x0d\x01\
-\0\x07pricing\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit-component\x07\
-0.220.0\x10wit-bindgen-rust\x060.36.0";
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 767] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\x81\x05\x01A\x02\x01\
+A\x09\x01B\x05\x01r\x02\x07secondsw\x0bnanosecondsy\x04\0\x08datetime\x03\0\0\x01\
+@\0\0\x01\x04\0\x03now\x01\x02\x04\0\x0aresolution\x01\x02\x03\0\x1cwasi:clocks/\
+wall-clock@0.2.0\x05\0\x02\x03\0\0\x08datetime\x01B\x14\x02\x03\x02\x01\x01\x04\0\
+\x08datetime\x03\0\0\x01r\x03\x05pricev\x08currencys\x04zones\x04\0\x0cpricing-i\
+tem\x03\0\x02\x01k\x01\x01r\x05\x05pricev\x08currencys\x04zones\x05start\x04\x03\
+end\x04\x04\0\x11sale-pricing-item\x03\0\x05\x01p\x03\x01p\x06\x01r\x04\x0aprodu\
+ct-ids\x0bmsrp-prices\x07\x0blist-prices\x07\x0bsale-prices\x08\x04\0\x07pricing\
+\x03\0\x09\x01k\x0a\x01@\0\0\x0b\x04\0\x03get\x01\x0c\x01k\x03\x01@\x02\x08curre\
+ncys\x04zones\0\x0d\x04\0\x09get-price\x01\x0e\x01@\x03\x0bmsrp-prices\x07\x0bli\
+st-prices\x07\x0bsale-prices\x08\x01\0\x04\0\x12initialize-pricing\x01\x0f\x04\0\
+\x0eupdate-pricing\x01\x0f\x04\0\x19golem:pricing-exports/api\x05\x02\x01B\x04\x01\
+p}\x01j\0\x01s\x01@\x01\x05bytes\0\0\x01\x04\0\x04load\x01\x02\x04\0\x1dgolem:ap\
+i/load-snapshot@1.1.6\x05\x03\x01B\x03\x01p}\x01@\0\0\0\x04\0\x04save\x01\x01\x04\
+\0\x1dgolem:api/save-snapshot@1.1.6\x05\x04\x04\0\x15golem:pricing/pricing\x04\0\
+\x0b\x0d\x01\0\x07pricing\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit\
+-component\x070.220.0\x10wit-bindgen-rust\x060.36.0";
 #[inline(never)]
 #[doc(hidden)]
 pub fn __link_custom_section_describing_imports() {

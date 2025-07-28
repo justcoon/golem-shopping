@@ -130,7 +130,8 @@ impl Guest for Component {
                         (Some(product), Some(pricing)) => {
                             state.add_item(domain::order::OrderItem {
                                 product_id,
-                                name: product.name,
+                                product_name: product.name,
+                                product_brand: product.brand,
                                 price: pricing.price,
                                 quantity,
                             });

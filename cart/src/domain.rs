@@ -139,7 +139,8 @@ pub mod cart {
     #[serde(rename_all = "kebab-case")]
     pub struct CartItem {
         pub product_id: String,
-        pub name: String,
+        pub product_name: String,
+        pub product_brand: String,
         pub price: f32,
         pub quantity: u32,
     }
@@ -150,7 +151,8 @@ pub mod cart {
                 product_id: value.product_id,
                 quantity: value.quantity,
                 price: value.price,
-                name: value.name,
+                product_name: value.product_name,
+                product_brand: value.product_brand,
             }
         }
     }
@@ -160,7 +162,8 @@ pub mod cart {
                 product_id: value.product_id,
                 quantity: value.quantity,
                 price: value.price,
-                name: value.name,
+                product_name: value.product_name,
+                product_brand: value.product_brand,
             }
         }
     }

@@ -121,7 +121,8 @@ impl Guest for Component {
                     (Some(product), Some(pricing)) => {
                         state.add_item(domain::cart::CartItem {
                             product_id,
-                            name: product.name,
+                            product_name: product.name,
+                            product_brand: product.brand,
                             price: pricing.price,
                             quantity,
                         });
@@ -242,7 +243,8 @@ impl Guest for Component {
                         (Some(product), Some(pricing)) => {
                             items.push(domain::cart::CartItem {
                                 product_id,
-                                name: product.name,
+                                product_name: product.name,
+                                product_brand: product.brand,
                                 price: pricing.price,
                                 quantity,
                             });

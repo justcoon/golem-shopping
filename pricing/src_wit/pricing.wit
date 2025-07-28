@@ -1,11 +1,13 @@
 package golem:pricing;
 
 interface api {
+  use wasi:clocks/wall-clock@0.2.0.{datetime};
 
   record pricing {
     product-id: string,
     msrp-prices: list<pricing-item>,
     list-prices: list<pricing-item>,
+    sale-prices: list<sale-pricing-item>,
   }
 
   record pricing-item {
@@ -14,11 +16,19 @@ interface api {
     zone: string,
   }
 
-  initialize-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>);
+  record sale-pricing-item {
+    price: float32,
+    currency: string,
+    zone: string,
+    start: option<datetime>,
+    end: option<datetime>,
+  }
+
+  initialize-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>, sale-prices: list<sale-pricing-item>);
 
   get-price: func(currency: string, zone: string) -> option<pricing-item>;
 
-  update-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>);
+  update-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>, sale-prices: list<sale-pricing-item>);
 
   get: func() -> option<pricing>;
 }

@@ -25,13 +25,14 @@ fn with_state<T>(f: impl FnOnce(&mut domain::product::Product) -> T) -> T {
 }
 
 impl Guest for Component {
-    fn initialize_product(name: String, description: String, tags: Vec<String>) -> () {
+    fn initialize_product(name: String, brand: String, description: String, tags: Vec<String>) -> () {
         with_state(|state| {
             println!("Initializing product {}", state.product_id);
 
             state.name = name;
             state.description = description;
             state.tags = tags;
+            state.brand = brand;
         });
     }
 

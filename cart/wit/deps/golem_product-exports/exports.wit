@@ -4,11 +4,12 @@ interface api {
   record product {
     product-id: string,
     name: string,
+    brand: string,
     description: string,
     tags: list<string>,
   }
   get: func() -> option<product>;
-  initialize-product: func(name: string, description: string, tags: list<string>);
+  initialize-product: func(name: string, brand: string, description: string, tags: list<string>);
 }
 
 interface product-inline-functions {}

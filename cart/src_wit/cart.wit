@@ -14,7 +14,8 @@ interface api {
 
   record cart-item {
     product-id: string,
-    name: string,
+    product-name: string,
+    product-brand: string,
     price: float32,
     quantity: u32,
   }

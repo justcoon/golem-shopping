@@ -7,13 +7,14 @@ pub mod product {
     pub struct Product {
         pub product_id: String,
         pub name: String,
+        pub brand: String,
         pub description: String,
         pub tags: Vec<String>,
     }
 
     impl Product {
         pub fn new(product_id: String) -> Self {
-            Self { product_id, name: "".to_string(), description: "".to_string(), tags: vec![] }
+            Self { product_id, name: "".to_string(), brand: "".to_string(), description: "".to_string(), tags: vec![] }
         }
     }
 
@@ -22,6 +23,7 @@ pub mod product {
             Self {
                 product_id: value.product_id,
                 name: value.name,
+                brand: value.brand,
                 description: value.description,
                 tags: value.tags,
             }
@@ -33,6 +35,7 @@ pub mod product {
             Self {
                 product_id: value.product_id,
                 name: value.name,
+                brand: value.brand,
                 description: value.description,
                 tags: value.tags,
             }

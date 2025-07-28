@@ -147,6 +147,7 @@ pub mod exports {
                 pub struct Product {
                     pub product_id: _rt::String,
                     pub name: _rt::String,
+                    pub brand: _rt::String,
                     pub description: _rt::String,
                     pub tags: _rt::Vec<_rt::String>,
                 }
@@ -158,6 +159,7 @@ pub mod exports {
                         f.debug_struct("Product")
                             .field("product-id", &self.product_id)
                             .field("name", &self.name)
+                            .field("brand", &self.brand)
                             .field("description", &self.description)
                             .field("tags", &self.tags)
                             .finish()
@@ -175,6 +177,7 @@ pub mod exports {
                             let Product {
                                 product_id: product_id2,
                                 name: name2,
+                                brand: brand2,
                                 description: description2,
                                 tags: tags2,
                             } = e;
@@ -190,40 +193,46 @@ pub mod exports {
                             ::core::mem::forget(vec4);
                             *ptr1.add(16).cast::<usize>() = len4;
                             *ptr1.add(12).cast::<*mut u8>() = ptr4.cast_mut();
-                            let vec5 = (description2.into_bytes()).into_boxed_slice();
+                            let vec5 = (brand2.into_bytes()).into_boxed_slice();
                             let ptr5 = vec5.as_ptr().cast::<u8>();
                             let len5 = vec5.len();
                             ::core::mem::forget(vec5);
                             *ptr1.add(24).cast::<usize>() = len5;
                             *ptr1.add(20).cast::<*mut u8>() = ptr5.cast_mut();
-                            let vec7 = tags2;
-                            let len7 = vec7.len();
-                            let layout7 = _rt::alloc::Layout::from_size_align_unchecked(
-                                vec7.len() * 8,
+                            let vec6 = (description2.into_bytes()).into_boxed_slice();
+                            let ptr6 = vec6.as_ptr().cast::<u8>();
+                            let len6 = vec6.len();
+                            ::core::mem::forget(vec6);
+                            *ptr1.add(32).cast::<usize>() = len6;
+                            *ptr1.add(28).cast::<*mut u8>() = ptr6.cast_mut();
+                            let vec8 = tags2;
+                            let len8 = vec8.len();
+                            let layout8 = _rt::alloc::Layout::from_size_align_unchecked(
+                                vec8.len() * 8,
                                 4,
                             );
-                            let result7 = if layout7.size() != 0 {
-                                let ptr = _rt::alloc::alloc(layout7).cast::<u8>();
+                            let result8 = if layout8.size() != 0 {
+                                let ptr = _rt::alloc::alloc(layout8).cast::<u8>();
                                 if ptr.is_null() {
-                                    _rt::alloc::handle_alloc_error(layout7);
+                                    _rt::alloc::handle_alloc_error(layout8);
                                 }
                                 ptr
                             } else {
                                 ::core::ptr::null_mut()
                             };
-                            for (i, e) in vec7.into_iter().enumerate() {
-                                let base = result7.add(i * 8);
+                            for (i, e) in vec8.into_iter().enumerate() {
+                                let base = result8.add(i * 8);
                                 {
-                                    let vec6 = (e.into_bytes()).into_boxed_slice();
-                                    let ptr6 = vec6.as_ptr().cast::<u8>();
-                                    let len6 = vec6.len();
-                                    ::core::mem::forget(vec6);
-                                    *base.add(4).cast::<usize>() = len6;
-                                    *base.add(0).cast::<*mut u8>() = ptr6.cast_mut();
+                                    let vec7 = (e.into_bytes()).into_boxed_slice();
+                                    let ptr7 = vec7.as_ptr().cast::<u8>();
+                                    let len7 = vec7.len();
+                                    ::core::mem::forget(vec7);
+                                    *base.add(4).cast::<usize>() = len7;
+                                    *base.add(0).cast::<*mut u8>() = ptr7.cast_mut();
                                 }
                             }
-                            *ptr1.add(32).cast::<usize>() = len7;
-                            *ptr1.add(28).cast::<*mut u8>() = result7;
+                            *ptr1.add(40).cast::<usize>() = len8;
+                            *ptr1.add(36).cast::<*mut u8>() = result8;
                         }
                         None => {
                             *ptr1.add(0).cast::<u8>() = (0i32) as u8;
@@ -249,17 +258,20 @@ pub mod exports {
                             _rt::cabi_dealloc(l5, l6, 1);
                             let l7 = *arg0.add(28).cast::<*mut u8>();
                             let l8 = *arg0.add(32).cast::<usize>();
-                            let base11 = l7;
-                            let len11 = l8;
-                            for i in 0..len11 {
-                                let base = base11.add(i * 8);
+                            _rt::cabi_dealloc(l7, l8, 1);
+                            let l9 = *arg0.add(36).cast::<*mut u8>();
+                            let l10 = *arg0.add(40).cast::<usize>();
+                            let base13 = l9;
+                            let len13 = l10;
+                            for i in 0..len13 {
+                                let base = base13.add(i * 8);
                                 {
-                                    let l9 = *base.add(0).cast::<*mut u8>();
-                                    let l10 = *base.add(4).cast::<usize>();
-                                    _rt::cabi_dealloc(l9, l10, 1);
+                                    let l11 = *base.add(0).cast::<*mut u8>();
+                                    let l12 = *base.add(4).cast::<usize>();
+                                    _rt::cabi_dealloc(l11, l12, 1);
                                 }
                             }
-                            _rt::cabi_dealloc(base11, len11 * 8, 4);
+                            _rt::cabi_dealloc(base13, len13 * 8, 4);
                         }
                     }
                 }
@@ -272,37 +284,43 @@ pub mod exports {
                     arg3: usize,
                     arg4: *mut u8,
                     arg5: usize,
+                    arg6: *mut u8,
+                    arg7: usize,
                 ) {
                     #[cfg(target_arch = "wasm32")] _rt::run_ctors_once();
                     let len0 = arg1;
                     let bytes0 = _rt::Vec::from_raw_parts(arg0.cast(), len0, len0);
                     let len1 = arg3;
                     let bytes1 = _rt::Vec::from_raw_parts(arg2.cast(), len1, len1);
-                    let base5 = arg4;
-                    let len5 = arg5;
-                    let mut result5 = _rt::Vec::with_capacity(len5);
-                    for i in 0..len5 {
-                        let base = base5.add(i * 8);
-                        let e5 = {
-                            let l2 = *base.add(0).cast::<*mut u8>();
-                            let l3 = *base.add(4).cast::<usize>();
-                            let len4 = l3;
-                            let bytes4 = _rt::Vec::from_raw_parts(l2.cast(), len4, len4);
-                            _rt::string_lift(bytes4)
+                    let len2 = arg5;
+                    let bytes2 = _rt::Vec::from_raw_parts(arg4.cast(), len2, len2);
+                    let base6 = arg6;
+                    let len6 = arg7;
+                    let mut result6 = _rt::Vec::with_capacity(len6);
+                    for i in 0..len6 {
+                        let base = base6.add(i * 8);
+                        let e6 = {
+                            let l3 = *base.add(0).cast::<*mut u8>();
+                            let l4 = *base.add(4).cast::<usize>();
+                            let len5 = l4;
+                            let bytes5 = _rt::Vec::from_raw_parts(l3.cast(), len5, len5);
+                            _rt::string_lift(bytes5)
                         };
-                        result5.push(e5);
+                        result6.push(e6);
                     }
-                    _rt::cabi_dealloc(base5, len5 * 8, 4);
+                    _rt::cabi_dealloc(base6, len6 * 8, 4);
                     T::initialize_product(
                         _rt::string_lift(bytes0),
                         _rt::string_lift(bytes1),
-                        result5,
+                        _rt::string_lift(bytes2),
+                        result6,
                     );
                 }
                 pub trait Guest {
                     fn get() -> Option<Product>;
                     fn initialize_product(
                         name: _rt::String,
+                        brand: _rt::String,
                         description: _rt::String,
                         tags: _rt::Vec<_rt::String>,
                     );
@@ -318,17 +336,18 @@ pub mod exports {
                         __post_return_get::<$ty > (arg0) } #[export_name =
                         "golem:product-exports/api#initialize-product"] unsafe extern "C"
                         fn export_initialize_product(arg0 : * mut u8, arg1 : usize, arg2
-                        : * mut u8, arg3 : usize, arg4 : * mut u8, arg5 : usize,) {
-                        $($path_to_types)*:: _export_initialize_product_cabi::<$ty >
-                        (arg0, arg1, arg2, arg3, arg4, arg5) } };
+                        : * mut u8, arg3 : usize, arg4 : * mut u8, arg5 : usize, arg6 : *
+                        mut u8, arg7 : usize,) { $($path_to_types)*::
+                        _export_initialize_product_cabi::<$ty > (arg0, arg1, arg2, arg3,
+                        arg4, arg5, arg6, arg7) } };
                     };
                 }
                 #[doc(hidden)]
                 pub(crate) use __export_golem_product_exports_api_cabi;
                 #[repr(align(4))]
-                struct _RetArea([::core::mem::MaybeUninit<u8>; 36]);
+                struct _RetArea([::core::mem::MaybeUninit<u8>; 44]);
                 static mut _RET_AREA: _RetArea = _RetArea(
-                    [::core::mem::MaybeUninit::uninit(); 36],
+                    [::core::mem::MaybeUninit::uninit(); 44],
                 );
             }
         }
@@ -398,17 +417,17 @@ pub(crate) use __export_product_impl as export;
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.36.0:golem:product:product:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 436] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xb6\x02\x01A\x02\x01\
-A\x06\x01B\x08\x01ps\x01r\x04\x0aproduct-ids\x04names\x0bdescriptions\x04tags\0\x04\
-\0\x07product\x03\0\x01\x01k\x02\x01@\0\0\x03\x04\0\x03get\x01\x04\x01@\x03\x04n\
-ames\x0bdescriptions\x04tags\0\x01\0\x04\0\x12initialize-product\x01\x05\x04\0\x19\
-golem:product-exports/api\x05\0\x01B\x04\x01p}\x01j\0\x01s\x01@\x01\x05bytes\0\0\
-\x01\x04\0\x04load\x01\x02\x04\0\x1dgolem:api/load-snapshot@1.1.6\x05\x01\x01B\x03\
-\x01p}\x01@\0\0\0\x04\0\x04save\x01\x01\x04\0\x1dgolem:api/save-snapshot@1.1.6\x05\
-\x02\x04\0\x15golem:product/product\x04\0\x0b\x0d\x01\0\x07product\x03\0\0\0G\x09\
-producers\x01\x0cprocessed-by\x02\x0dwit-component\x070.220.0\x10wit-bindgen-rus\
-t\x060.36.0";
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 450] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xc4\x02\x01A\x02\x01\
+A\x06\x01B\x08\x01ps\x01r\x05\x0aproduct-ids\x04names\x05brands\x0bdescriptions\x04\
+tags\0\x04\0\x07product\x03\0\x01\x01k\x02\x01@\0\0\x03\x04\0\x03get\x01\x04\x01\
+@\x04\x04names\x05brands\x0bdescriptions\x04tags\0\x01\0\x04\0\x12initialize-pro\
+duct\x01\x05\x04\0\x19golem:product-exports/api\x05\0\x01B\x04\x01p}\x01j\0\x01s\
+\x01@\x01\x05bytes\0\0\x01\x04\0\x04load\x01\x02\x04\0\x1dgolem:api/load-snapsho\
+t@1.1.6\x05\x01\x01B\x03\x01p}\x01@\0\0\0\x04\0\x04save\x01\x01\x04\0\x1dgolem:a\
+pi/save-snapshot@1.1.6\x05\x02\x04\0\x15golem:product/product\x04\0\x0b\x0d\x01\0\
+\x07product\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit-component\x07\
+0.220.0\x10wit-bindgen-rust\x060.36.0";
 #[inline(never)]
 #[doc(hidden)]
 pub fn __link_custom_section_describing_imports() {
