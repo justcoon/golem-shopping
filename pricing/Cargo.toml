@@ -20,13 +20,13 @@ serde_json = "1.0"
 version = "1.0"
 features = ["derive"]
 
-[dependencies.wit-bindgen-rt]
-version = "0.43.0"
-features = ["bitflags"]
-
 [dependencies.chrono]
 version = "0.4.41"
 features = ["serde"]
+
+[dependencies.wit-bindgen-rt]
+version = "0.43.0"
+features = ["bitflags"]
 
 [lib]
 path = "src/lib.rs"

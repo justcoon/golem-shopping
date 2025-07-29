@@ -30,9 +30,9 @@ interface pricing-client {
     blocking-get-price: func(currency: string, zone: string) -> option<pricing-item>;
     get-price: func(currency: string, zone: string) -> future-get-price-result;
     schedule-get-price: func(currency: string, zone: string, scheduled-for: wasi-clocks-datetime) -> golem-rpc-cancellation-token;
-    blocking-initialize-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>);
-    initialize-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>);
-    schedule-initialize-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>, scheduled-for: wasi-clocks-datetime) -> golem-rpc-cancellation-token;
+    blocking-initialize-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>, sale-prices: list<sale-pricing-item>);
+    initialize-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>, sale-prices: list<sale-pricing-item>);
+    schedule-initialize-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>, sale-prices: list<sale-pricing-item>, scheduled-for: wasi-clocks-datetime) -> golem-rpc-cancellation-token;
     blocking-update-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>, sale-prices: list<sale-pricing-item>);
     update-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>, sale-prices: list<sale-pricing-item>);
     schedule-update-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>, sale-prices: list<sale-pricing-item>, scheduled-for: wasi-clocks-datetime) -> golem-rpc-cancellation-token;

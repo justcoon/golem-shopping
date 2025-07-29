@@ -149,7 +149,7 @@ impl Guest for Component {
 
             match EmailAddress::from_str(email.as_str()) {
                 Ok(_) => {
-                    state.email = Some(email);
+                    state.set_email(email);
                     Ok(())
                 }
                 Err(e) => Err(UpdateEmailError::EmailNotValid(EmailNotValidError {
@@ -211,7 +211,7 @@ impl Guest for Component {
         with_state(|state| {
             println!("Updating billing address in the cart of user {}", state.user_id);
 
-            state.billing_address = Some(address.into());
+            state.set_billing_address(address.into());
             Ok(())
         })
     }
@@ -220,8 +220,15 @@ impl Guest for Component {
         with_state(|state| {
             println!("Updating shipping address in the cart of user {}", state.user_id);
 
-            state.shipping_address = Some(address.into());
+            state.set_shipping_address(address.into());
             Ok(())
+        })
+    }
+
+    fn clear() {
+        with_state(|state| {
+            println!("Clearing the cart of user {}", state.user_id);
+            state.clear();
         })
     }
 
@@ -252,8 +259,7 @@ impl Guest for Component {
                         _ => ()
                     }
                 }
-                cart.items = items;
-                cart.recalculate_total();
+                cart.set_items(items);
                 Some(cart.clone().into())
             } else { 
                 None

@@ -1,6 +1,7 @@
 package golem: cart;
 
 interface api {
+  use wasi:clocks/wall-clock@0.2.0.{datetime};
 
   record address {
     street: string,
@@ -28,8 +29,8 @@ interface api {
     shipping-address: option<address>,
     total: float32,
     currency: string,
-    timestamp: u64,
     previous-order-ids: list<string>,
+    updated-at: datetime
   }
 
   record order-confirmation {
@@ -118,6 +119,8 @@ interface api {
   update-billing-address: func(address: address) -> result<_, update-address-error>;
 
   checkout: func() -> result<order-confirmation, checkout-error>;
+
+  clear: func();
 
   get: func() -> option<cart>;
 }

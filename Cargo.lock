@@ -39,6 +39,7 @@ checksum = "1628fb46dfa0b37568d12e5edd512553eccf6a22a78e8bde00bb4aed84d5bdbf"
 name = "cart"
 version = "0.0.1"
 dependencies = [
+ "chrono",
  "email_address",
  "serde",
  "serde_json",
@@ -180,6 +181,7 @@ checksum = "42f5e15c9953c5e4ccceeb2e7382a716482c34515315f7b03532b8b4e8393d2d"
 name = "order"
 version = "0.0.1"
 dependencies = [
+ "chrono",
  "email_address",
  "serde",
  "serde_json",
@@ -209,6 +211,7 @@ dependencies = [
 name = "product"
 version = "0.0.1"
 dependencies = [
+ "chrono",
  "serde",
  "serde_json",
  "wit-bindgen-rt 0.43.0",

@@ -57,11 +57,13 @@ pub mod order {
         pub shipping_address: Option<Address>,
         pub total: f32,
         pub currency: String,
-        pub timestamp: u64,
+        pub created_at: chrono::DateTime<chrono::Utc>,
+        pub updated_at: chrono::DateTime<chrono::Utc>,
     }
 
     impl Order {
         pub fn new(order_id: String, user_id: String) -> Self {
+            let now = chrono::Utc::now();
             Self {
                 order_id,
                 user_id,
@@ -72,12 +74,34 @@ pub mod order {
                 billing_address: None,
                 total: 0f32,
                 currency: CURRENCY_DEFAULT.to_string(),
-                timestamp: 0,
+                created_at: now,
+                updated_at: now,
             }
         }
 
         pub fn recalculate_total(&mut self) {
             self.total = get_total_price(self.items.clone());
+            self.updated_at = chrono::Utc::now();
+        }
+
+        pub fn set_billing_address(&mut self, address: Address) {
+            self.billing_address = Some(address);
+            self.updated_at = chrono::Utc::now();
+        }
+
+        pub fn set_shipping_address(&mut self, address: Address) {
+            self.shipping_address = Some(address);
+            self.updated_at = chrono::Utc::now();
+        }
+
+        pub fn set_email(&mut self, email: String) {
+            self.email = Some(email);
+            self.updated_at = chrono::Utc::now();
+        }
+        
+        pub fn set_order_status(&mut self, status: OrderStatus) {
+            self.order_status = status;
+            self.updated_at = chrono::Utc::now();
         }
 
         pub fn add_item(&mut self, item: OrderItem) -> bool {
@@ -159,7 +183,8 @@ pub mod order {
                 total: value.total,
                 order_status: value.order_status.into(),
                 currency: value.currency,
-                timestamp: value.timestamp,
+                created_at: value.created_at.into(),
+                updated_at: value.updated_at.into(),
                 shipping_address: value.shipping_address.map(|a| a.into()),
                 billing_address: value.billing_address.map(|a| a.into()),
             }
@@ -176,9 +201,10 @@ pub mod order {
                 total: value.total,
                 order_status: value.order_status.into(),
                 currency: value.currency,
-                timestamp: value.timestamp,
                 shipping_address: value.shipping_address.map(|a| a.into()),
                 billing_address: value.billing_address.map(|a| a.into()),
+                created_at: value.created_at.into(),
+                updated_at: value.updated_at.into(),
             }
         }
     }
@@ -219,6 +245,22 @@ pub mod order {
         }
 
         total
+    }
+
+    impl From<bindings::wasi::clocks::wall_clock::Datetime> for chrono::DateTime<chrono::Utc> {
+        fn from(value: bindings::wasi::clocks::wall_clock::Datetime) -> chrono::DateTime<chrono::Utc> {
+            chrono::DateTime::from_timestamp(value.seconds as i64, value.nanoseconds)
+                .expect("Received invalid datetime from wasi")
+        }
+    }
+
+    impl From<chrono::DateTime<chrono::Utc>> for bindings::wasi::clocks::wall_clock::Datetime {
+        fn from(value: chrono::DateTime<chrono::Utc>) -> bindings::wasi::clocks::wall_clock::Datetime {
+            bindings::wasi::clocks::wall_clock::Datetime {
+                seconds: value.timestamp() as u64,
+                nanoseconds: value.timestamp_subsec_nanos(),
+            }
+        }
     }
 
     pub mod serdes {

@@ -318,10 +318,10 @@ pub mod golem {
                 #[allow(unused_unsafe, clippy::all)]
                 pub fn get(&self) -> Option<Option<Pricing>> {
                     unsafe {
-                        #[repr(align(4))]
-                        struct RetArea([::core::mem::MaybeUninit<u8>; 40]);
+                        #[repr(align(8))]
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 64]);
                         let mut ret_area = RetArea(
-                            [::core::mem::MaybeUninit::uninit(); 40],
+                            [::core::mem::MaybeUninit::uninit(); 64],
                         );
                         let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
@@ -342,21 +342,21 @@ pub mod golem {
                             0 => None,
                             1 => {
                                 let e = {
-                                    let l2 = i32::from(*ptr0.add(4).cast::<u8>());
+                                    let l2 = i32::from(*ptr0.add(8).cast::<u8>());
                                     match l2 {
                                         0 => None,
                                         1 => {
                                             let e = {
-                                                let l3 = *ptr0.add(8).cast::<*mut u8>();
-                                                let l4 = *ptr0.add(12).cast::<usize>();
+                                                let l3 = *ptr0.add(16).cast::<*mut u8>();
+                                                let l4 = *ptr0.add(20).cast::<usize>();
                                                 let len5 = l4;
                                                 let bytes5 = _rt::Vec::from_raw_parts(
                                                     l3.cast(),
                                                     len5,
                                                     len5,
                                                 );
-                                                let l6 = *ptr0.add(16).cast::<*mut u8>();
-                                                let l7 = *ptr0.add(20).cast::<usize>();
+                                                let l6 = *ptr0.add(24).cast::<*mut u8>();
+                                                let l7 = *ptr0.add(28).cast::<usize>();
                                                 let base15 = l6;
                                                 let len15 = l7;
                                                 let mut result15 = _rt::Vec::with_capacity(len15);
@@ -389,8 +389,8 @@ pub mod golem {
                                                     result15.push(e15);
                                                 }
                                                 _rt::cabi_dealloc(base15, len15 * 20, 4);
-                                                let l16 = *ptr0.add(24).cast::<*mut u8>();
-                                                let l17 = *ptr0.add(28).cast::<usize>();
+                                                let l16 = *ptr0.add(32).cast::<*mut u8>();
+                                                let l17 = *ptr0.add(36).cast::<usize>();
                                                 let base25 = l16;
                                                 let len25 = l17;
                                                 let mut result25 = _rt::Vec::with_capacity(len25);
@@ -423,8 +423,8 @@ pub mod golem {
                                                     result25.push(e25);
                                                 }
                                                 _rt::cabi_dealloc(base25, len25 * 20, 4);
-                                                let l26 = *ptr0.add(32).cast::<*mut u8>();
-                                                let l27 = *ptr0.add(36).cast::<usize>();
+                                                let l26 = *ptr0.add(40).cast::<*mut u8>();
+                                                let l27 = *ptr0.add(44).cast::<usize>();
                                                 let base41 = l26;
                                                 let len41 = l27;
                                                 let mut result41 = _rt::Vec::with_capacity(len41);
@@ -489,11 +489,17 @@ pub mod golem {
                                                     result41.push(e41);
                                                 }
                                                 _rt::cabi_dealloc(base41, len41 * 72, 8);
+                                                let l42 = *ptr0.add(48).cast::<i64>();
+                                                let l43 = *ptr0.add(56).cast::<i32>();
                                                 super::super::super::golem::pricing_exports::api::Pricing {
                                                     product_id: _rt::string_lift(bytes5),
                                                     msrp_prices: result15,
                                                     list_prices: result25,
                                                     sale_prices: result41,
+                                                    created_at: super::super::super::wasi::clocks::wall_clock::Datetime {
+                                                        seconds: l42 as u64,
+                                                        nanoseconds: l43 as u32,
+                                                    },
                                                 }
                                             };
                                             Some(e)
@@ -811,10 +817,10 @@ pub mod golem {
                 #[allow(unused_unsafe, clippy::all)]
                 pub fn blocking_get(&self) -> Option<Pricing> {
                     unsafe {
-                        #[repr(align(4))]
-                        struct RetArea([::core::mem::MaybeUninit<u8>; 36]);
+                        #[repr(align(8))]
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 56]);
                         let mut ret_area = RetArea(
-                            [::core::mem::MaybeUninit::uninit(); 36],
+                            [::core::mem::MaybeUninit::uninit(); 56],
                         );
                         let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
@@ -835,16 +841,16 @@ pub mod golem {
                             0 => None,
                             1 => {
                                 let e = {
-                                    let l2 = *ptr0.add(4).cast::<*mut u8>();
-                                    let l3 = *ptr0.add(8).cast::<usize>();
+                                    let l2 = *ptr0.add(8).cast::<*mut u8>();
+                                    let l3 = *ptr0.add(12).cast::<usize>();
                                     let len4 = l3;
                                     let bytes4 = _rt::Vec::from_raw_parts(
                                         l2.cast(),
                                         len4,
                                         len4,
                                     );
-                                    let l5 = *ptr0.add(12).cast::<*mut u8>();
-                                    let l6 = *ptr0.add(16).cast::<usize>();
+                                    let l5 = *ptr0.add(16).cast::<*mut u8>();
+                                    let l6 = *ptr0.add(20).cast::<usize>();
                                     let base14 = l5;
                                     let len14 = l6;
                                     let mut result14 = _rt::Vec::with_capacity(len14);
@@ -877,8 +883,8 @@ pub mod golem {
                                         result14.push(e14);
                                     }
                                     _rt::cabi_dealloc(base14, len14 * 20, 4);
-                                    let l15 = *ptr0.add(20).cast::<*mut u8>();
-                                    let l16 = *ptr0.add(24).cast::<usize>();
+                                    let l15 = *ptr0.add(24).cast::<*mut u8>();
+                                    let l16 = *ptr0.add(28).cast::<usize>();
                                     let base24 = l15;
                                     let len24 = l16;
                                     let mut result24 = _rt::Vec::with_capacity(len24);
@@ -911,8 +917,8 @@ pub mod golem {
                                         result24.push(e24);
                                     }
                                     _rt::cabi_dealloc(base24, len24 * 20, 4);
-                                    let l25 = *ptr0.add(28).cast::<*mut u8>();
-                                    let l26 = *ptr0.add(32).cast::<usize>();
+                                    let l25 = *ptr0.add(32).cast::<*mut u8>();
+                                    let l26 = *ptr0.add(36).cast::<usize>();
                                     let base40 = l25;
                                     let len40 = l26;
                                     let mut result40 = _rt::Vec::with_capacity(len40);
@@ -977,11 +983,17 @@ pub mod golem {
                                         result40.push(e40);
                                     }
                                     _rt::cabi_dealloc(base40, len40 * 72, 8);
+                                    let l41 = *ptr0.add(40).cast::<i64>();
+                                    let l42 = *ptr0.add(48).cast::<i32>();
                                     super::super::super::golem::pricing_exports::api::Pricing {
                                         product_id: _rt::string_lift(bytes4),
                                         msrp_prices: result14,
                                         list_prices: result24,
                                         sale_prices: result40,
+                                        created_at: super::super::super::wasi::clocks::wall_clock::Datetime {
+                                            seconds: l41 as u64,
+                                            nanoseconds: l42 as u32,
+                                        },
                                     }
                                 };
                                 Some(e)
@@ -1252,6 +1264,7 @@ pub mod golem {
                     &self,
                     msrp_prices: &[PricingItem],
                     list_prices: &[PricingItem],
+                    sale_prices: &[SalePricingItem],
                 ) {
                     unsafe {
                         let vec3 = msrp_prices;
@@ -1324,6 +1337,72 @@ pub mod golem {
                                 let len6 = vec6.len();
                                 *base.add(16).cast::<usize>() = len6;
                                 *base.add(12).cast::<*mut u8>() = ptr6.cast_mut();
+                            }
+                        }
+                        let vec13 = sale_prices;
+                        let len13 = vec13.len();
+                        let layout13 = _rt::alloc::Layout::from_size_align_unchecked(
+                            vec13.len() * 72,
+                            8,
+                        );
+                        let result13 = if layout13.size() != 0 {
+                            let ptr = _rt::alloc::alloc(layout13).cast::<u8>();
+                            if ptr.is_null() {
+                                _rt::alloc::handle_alloc_error(layout13);
+                            }
+                            ptr
+                        } else {
+                            ::core::ptr::null_mut()
+                        };
+                        for (i, e) in vec13.into_iter().enumerate() {
+                            let base = result13.add(i * 72);
+                            {
+                                let super::super::super::golem::pricing_exports::api::SalePricingItem {
+                                    price: price8,
+                                    currency: currency8,
+                                    zone: zone8,
+                                    start: start8,
+                                    end: end8,
+                                } = e;
+                                *base.add(0).cast::<f32>() = _rt::as_f32(price8);
+                                let vec9 = currency8;
+                                let ptr9 = vec9.as_ptr().cast::<u8>();
+                                let len9 = vec9.len();
+                                *base.add(8).cast::<usize>() = len9;
+                                *base.add(4).cast::<*mut u8>() = ptr9.cast_mut();
+                                let vec10 = zone8;
+                                let ptr10 = vec10.as_ptr().cast::<u8>();
+                                let len10 = vec10.len();
+                                *base.add(16).cast::<usize>() = len10;
+                                *base.add(12).cast::<*mut u8>() = ptr10.cast_mut();
+                                match start8 {
+                                    Some(e) => {
+                                        *base.add(24).cast::<u8>() = (1i32) as u8;
+                                        let super::super::super::wasi::clocks::wall_clock::Datetime {
+                                            seconds: seconds11,
+                                            nanoseconds: nanoseconds11,
+                                        } = e;
+                                        *base.add(32).cast::<i64>() = _rt::as_i64(seconds11);
+                                        *base.add(40).cast::<i32>() = _rt::as_i32(nanoseconds11);
+                                    }
+                                    None => {
+                                        *base.add(24).cast::<u8>() = (0i32) as u8;
+                                    }
+                                };
+                                match end8 {
+                                    Some(e) => {
+                                        *base.add(48).cast::<u8>() = (1i32) as u8;
+                                        let super::super::super::wasi::clocks::wall_clock::Datetime {
+                                            seconds: seconds12,
+                                            nanoseconds: nanoseconds12,
+                                        } = e;
+                                        *base.add(56).cast::<i64>() = _rt::as_i64(seconds12);
+                                        *base.add(64).cast::<i32>() = _rt::as_i32(nanoseconds12);
+                                    }
+                                    None => {
+                                        *base.add(48).cast::<u8>() = (0i32) as u8;
+                                    }
+                                };
                             }
                         }
                         #[cfg(target_arch = "wasm32")]
@@ -1338,6 +1417,8 @@ pub mod golem {
                                 _: usize,
                                 _: *mut u8,
                                 _: usize,
+                                _: *mut u8,
+                                _: usize,
                             );
                         }
                         #[cfg(not(target_arch = "wasm32"))]
@@ -1347,15 +1428,28 @@ pub mod golem {
                             _: usize,
                             _: *mut u8,
                             _: usize,
+                            _: *mut u8,
+                            _: usize,
                         ) {
                             unreachable!()
                         }
-                        wit_import((self).handle() as i32, result3, len3, result7, len7);
+                        wit_import(
+                            (self).handle() as i32,
+                            result3,
+                            len3,
+                            result7,
+                            len7,
+                            result13,
+                            len13,
+                        );
                         if layout3.size() != 0 {
                             _rt::alloc::dealloc(result3.cast(), layout3);
                         }
                         if layout7.size() != 0 {
                             _rt::alloc::dealloc(result7.cast(), layout7);
+                        }
+                        if layout13.size() != 0 {
+                            _rt::alloc::dealloc(result13.cast(), layout13);
                         }
                     }
                 }
@@ -1366,6 +1460,7 @@ pub mod golem {
                     &self,
                     msrp_prices: &[PricingItem],
                     list_prices: &[PricingItem],
+                    sale_prices: &[SalePricingItem],
                 ) {
                     unsafe {
                         let vec3 = msrp_prices;
@@ -1440,6 +1535,72 @@ pub mod golem {
                                 *base.add(12).cast::<*mut u8>() = ptr6.cast_mut();
                             }
                         }
+                        let vec13 = sale_prices;
+                        let len13 = vec13.len();
+                        let layout13 = _rt::alloc::Layout::from_size_align_unchecked(
+                            vec13.len() * 72,
+                            8,
+                        );
+                        let result13 = if layout13.size() != 0 {
+                            let ptr = _rt::alloc::alloc(layout13).cast::<u8>();
+                            if ptr.is_null() {
+                                _rt::alloc::handle_alloc_error(layout13);
+                            }
+                            ptr
+                        } else {
+                            ::core::ptr::null_mut()
+                        };
+                        for (i, e) in vec13.into_iter().enumerate() {
+                            let base = result13.add(i * 72);
+                            {
+                                let super::super::super::golem::pricing_exports::api::SalePricingItem {
+                                    price: price8,
+                                    currency: currency8,
+                                    zone: zone8,
+                                    start: start8,
+                                    end: end8,
+                                } = e;
+                                *base.add(0).cast::<f32>() = _rt::as_f32(price8);
+                                let vec9 = currency8;
+                                let ptr9 = vec9.as_ptr().cast::<u8>();
+                                let len9 = vec9.len();
+                                *base.add(8).cast::<usize>() = len9;
+                                *base.add(4).cast::<*mut u8>() = ptr9.cast_mut();
+                                let vec10 = zone8;
+                                let ptr10 = vec10.as_ptr().cast::<u8>();
+                                let len10 = vec10.len();
+                                *base.add(16).cast::<usize>() = len10;
+                                *base.add(12).cast::<*mut u8>() = ptr10.cast_mut();
+                                match start8 {
+                                    Some(e) => {
+                                        *base.add(24).cast::<u8>() = (1i32) as u8;
+                                        let super::super::super::wasi::clocks::wall_clock::Datetime {
+                                            seconds: seconds11,
+                                            nanoseconds: nanoseconds11,
+                                        } = e;
+                                        *base.add(32).cast::<i64>() = _rt::as_i64(seconds11);
+                                        *base.add(40).cast::<i32>() = _rt::as_i32(nanoseconds11);
+                                    }
+                                    None => {
+                                        *base.add(24).cast::<u8>() = (0i32) as u8;
+                                    }
+                                };
+                                match end8 {
+                                    Some(e) => {
+                                        *base.add(48).cast::<u8>() = (1i32) as u8;
+                                        let super::super::super::wasi::clocks::wall_clock::Datetime {
+                                            seconds: seconds12,
+                                            nanoseconds: nanoseconds12,
+                                        } = e;
+                                        *base.add(56).cast::<i64>() = _rt::as_i64(seconds12);
+                                        *base.add(64).cast::<i32>() = _rt::as_i32(nanoseconds12);
+                                    }
+                                    None => {
+                                        *base.add(48).cast::<u8>() = (0i32) as u8;
+                                    }
+                                };
+                            }
+                        }
                         #[cfg(target_arch = "wasm32")]
                         #[link(
                             wasm_import_module = "golem:pricing-client/pricing-client"
@@ -1448,6 +1609,8 @@ pub mod golem {
                             #[link_name = "[method]api.initialize-pricing"]
                             fn wit_import(
                                 _: i32,
+                                _: *mut u8,
+                                _: usize,
                                 _: *mut u8,
                                 _: usize,
                                 _: *mut u8,
@@ -1461,15 +1624,28 @@ pub mod golem {
                             _: usize,
                             _: *mut u8,
                             _: usize,
+                            _: *mut u8,
+                            _: usize,
                         ) {
                             unreachable!()
                         }
-                        wit_import((self).handle() as i32, result3, len3, result7, len7);
+                        wit_import(
+                            (self).handle() as i32,
+                            result3,
+                            len3,
+                            result7,
+                            len7,
+                            result13,
+                            len13,
+                        );
                         if layout3.size() != 0 {
                             _rt::alloc::dealloc(result3.cast(), layout3);
                         }
                         if layout7.size() != 0 {
                             _rt::alloc::dealloc(result7.cast(), layout7);
+                        }
+                        if layout13.size() != 0 {
+                            _rt::alloc::dealloc(result13.cast(), layout13);
                         }
                     }
                 }
@@ -1480,6 +1656,7 @@ pub mod golem {
                     &self,
                     msrp_prices: &[PricingItem],
                     list_prices: &[PricingItem],
+                    sale_prices: &[SalePricingItem],
                     scheduled_for: WasiClocksDatetime,
                 ) -> GolemRpcCancellationToken {
                     unsafe {
@@ -1555,9 +1732,75 @@ pub mod golem {
                                 *base.add(12).cast::<*mut u8>() = ptr6.cast_mut();
                             }
                         }
+                        let vec13 = sale_prices;
+                        let len13 = vec13.len();
+                        let layout13 = _rt::alloc::Layout::from_size_align_unchecked(
+                            vec13.len() * 72,
+                            8,
+                        );
+                        let result13 = if layout13.size() != 0 {
+                            let ptr = _rt::alloc::alloc(layout13).cast::<u8>();
+                            if ptr.is_null() {
+                                _rt::alloc::handle_alloc_error(layout13);
+                            }
+                            ptr
+                        } else {
+                            ::core::ptr::null_mut()
+                        };
+                        for (i, e) in vec13.into_iter().enumerate() {
+                            let base = result13.add(i * 72);
+                            {
+                                let super::super::super::golem::pricing_exports::api::SalePricingItem {
+                                    price: price8,
+                                    currency: currency8,
+                                    zone: zone8,
+                                    start: start8,
+                                    end: end8,
+                                } = e;
+                                *base.add(0).cast::<f32>() = _rt::as_f32(price8);
+                                let vec9 = currency8;
+                                let ptr9 = vec9.as_ptr().cast::<u8>();
+                                let len9 = vec9.len();
+                                *base.add(8).cast::<usize>() = len9;
+                                *base.add(4).cast::<*mut u8>() = ptr9.cast_mut();
+                                let vec10 = zone8;
+                                let ptr10 = vec10.as_ptr().cast::<u8>();
+                                let len10 = vec10.len();
+                                *base.add(16).cast::<usize>() = len10;
+                                *base.add(12).cast::<*mut u8>() = ptr10.cast_mut();
+                                match start8 {
+                                    Some(e) => {
+                                        *base.add(24).cast::<u8>() = (1i32) as u8;
+                                        let super::super::super::wasi::clocks::wall_clock::Datetime {
+                                            seconds: seconds11,
+                                            nanoseconds: nanoseconds11,
+                                        } = e;
+                                        *base.add(32).cast::<i64>() = _rt::as_i64(seconds11);
+                                        *base.add(40).cast::<i32>() = _rt::as_i32(nanoseconds11);
+                                    }
+                                    None => {
+                                        *base.add(24).cast::<u8>() = (0i32) as u8;
+                                    }
+                                };
+                                match end8 {
+                                    Some(e) => {
+                                        *base.add(48).cast::<u8>() = (1i32) as u8;
+                                        let super::super::super::wasi::clocks::wall_clock::Datetime {
+                                            seconds: seconds12,
+                                            nanoseconds: nanoseconds12,
+                                        } = e;
+                                        *base.add(56).cast::<i64>() = _rt::as_i64(seconds12);
+                                        *base.add(64).cast::<i32>() = _rt::as_i32(nanoseconds12);
+                                    }
+                                    None => {
+                                        *base.add(48).cast::<u8>() = (0i32) as u8;
+                                    }
+                                };
+                            }
+                        }
                         let super::super::super::wasi::clocks::wall_clock::Datetime {
-                            seconds: seconds8,
-                            nanoseconds: nanoseconds8,
+                            seconds: seconds14,
+                            nanoseconds: nanoseconds14,
                         } = scheduled_for;
                         #[cfg(target_arch = "wasm32")]
                         #[link(
@@ -1567,6 +1810,8 @@ pub mod golem {
                             #[link_name = "[method]api.schedule-initialize-pricing"]
                             fn wit_import(
                                 _: i32,
+                                _: *mut u8,
+                                _: usize,
                                 _: *mut u8,
                                 _: usize,
                                 _: *mut u8,
@@ -1582,6 +1827,8 @@ pub mod golem {
                             _: usize,
                             _: *mut u8,
                             _: usize,
+                            _: *mut u8,
+                            _: usize,
                             _: i64,
                             _: i32,
                         ) -> i32 {
@@ -1593,14 +1840,19 @@ pub mod golem {
                             len3,
                             result7,
                             len7,
-                            _rt::as_i64(seconds8),
-                            _rt::as_i32(nanoseconds8),
+                            result13,
+                            len13,
+                            _rt::as_i64(seconds14),
+                            _rt::as_i32(nanoseconds14),
                         );
                         if layout3.size() != 0 {
                             _rt::alloc::dealloc(result3.cast(), layout3);
                         }
                         if layout7.size() != 0 {
                             _rt::alloc::dealloc(result7.cast(), layout7);
+                        }
+                        if layout13.size() != 0 {
+                            _rt::alloc::dealloc(result13.cast(), layout13);
                         }
                         super::super::super::golem::rpc::types::CancellationToken::from_handle(
                             ret as u32,
@@ -2610,6 +2862,7 @@ pub mod golem {
                 pub msrp_prices: _rt::Vec<PricingItem>,
                 pub list_prices: _rt::Vec<PricingItem>,
                 pub sale_prices: _rt::Vec<SalePricingItem>,
+                pub created_at: Datetime,
             }
             impl ::core::fmt::Debug for Pricing {
                 fn fmt(
@@ -2621,15 +2874,16 @@ pub mod golem {
                         .field("msrp-prices", &self.msrp_prices)
                         .field("list-prices", &self.list_prices)
                         .field("sale-prices", &self.sale_prices)
+                        .field("created-at", &self.created_at)
                         .finish()
                 }
             }
             #[allow(unused_unsafe, clippy::all)]
             pub fn get() -> Option<Pricing> {
                 unsafe {
-                    #[repr(align(4))]
-                    struct RetArea([::core::mem::MaybeUninit<u8>; 36]);
-                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 36]);
+                    #[repr(align(8))]
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 56]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 56]);
                     let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                     #[cfg(target_arch = "wasm32")]
                     #[link(wasm_import_module = "golem:pricing-exports/api")]
@@ -2647,16 +2901,16 @@ pub mod golem {
                         0 => None,
                         1 => {
                             let e = {
-                                let l2 = *ptr0.add(4).cast::<*mut u8>();
-                                let l3 = *ptr0.add(8).cast::<usize>();
+                                let l2 = *ptr0.add(8).cast::<*mut u8>();
+                                let l3 = *ptr0.add(12).cast::<usize>();
                                 let len4 = l3;
                                 let bytes4 = _rt::Vec::from_raw_parts(
                                     l2.cast(),
                                     len4,
                                     len4,
                                 );
-                                let l5 = *ptr0.add(12).cast::<*mut u8>();
-                                let l6 = *ptr0.add(16).cast::<usize>();
+                                let l5 = *ptr0.add(16).cast::<*mut u8>();
+                                let l6 = *ptr0.add(20).cast::<usize>();
                                 let base14 = l5;
                                 let len14 = l6;
                                 let mut result14 = _rt::Vec::with_capacity(len14);
@@ -2689,8 +2943,8 @@ pub mod golem {
                                     result14.push(e14);
                                 }
                                 _rt::cabi_dealloc(base14, len14 * 20, 4);
-                                let l15 = *ptr0.add(20).cast::<*mut u8>();
-                                let l16 = *ptr0.add(24).cast::<usize>();
+                                let l15 = *ptr0.add(24).cast::<*mut u8>();
+                                let l16 = *ptr0.add(28).cast::<usize>();
                                 let base24 = l15;
                                 let len24 = l16;
                                 let mut result24 = _rt::Vec::with_capacity(len24);
@@ -2723,8 +2977,8 @@ pub mod golem {
                                     result24.push(e24);
                                 }
                                 _rt::cabi_dealloc(base24, len24 * 20, 4);
-                                let l25 = *ptr0.add(28).cast::<*mut u8>();
-                                let l26 = *ptr0.add(32).cast::<usize>();
+                                let l25 = *ptr0.add(32).cast::<*mut u8>();
+                                let l26 = *ptr0.add(36).cast::<usize>();
                                 let base40 = l25;
                                 let len40 = l26;
                                 let mut result40 = _rt::Vec::with_capacity(len40);
@@ -2789,11 +3043,17 @@ pub mod golem {
                                     result40.push(e40);
                                 }
                                 _rt::cabi_dealloc(base40, len40 * 72, 8);
+                                let l41 = *ptr0.add(40).cast::<i64>();
+                                let l42 = *ptr0.add(48).cast::<i32>();
                                 Pricing {
                                     product_id: _rt::string_lift(bytes4),
                                     msrp_prices: result14,
                                     list_prices: result24,
                                     sale_prices: result40,
+                                    created_at: super::super::super::wasi::clocks::wall_clock::Datetime {
+                                        seconds: l41 as u64,
+                                        nanoseconds: l42 as u32,
+                                    },
                                 }
                             };
                             Some(e)
@@ -2876,6 +3136,7 @@ pub mod golem {
             pub fn initialize_pricing(
                 msrp_prices: &[PricingItem],
                 list_prices: &[PricingItem],
+                sale_prices: &[SalePricingItem],
             ) {
                 unsafe {
                     let vec3 = msrp_prices;
@@ -2950,22 +3211,105 @@ pub mod golem {
                             *base.add(12).cast::<*mut u8>() = ptr6.cast_mut();
                         }
                     }
+                    let vec13 = sale_prices;
+                    let len13 = vec13.len();
+                    let layout13 = _rt::alloc::Layout::from_size_align_unchecked(
+                        vec13.len() * 72,
+                        8,
+                    );
+                    let result13 = if layout13.size() != 0 {
+                        let ptr = _rt::alloc::alloc(layout13).cast::<u8>();
+                        if ptr.is_null() {
+                            _rt::alloc::handle_alloc_error(layout13);
+                        }
+                        ptr
+                    } else {
+                        ::core::ptr::null_mut()
+                    };
+                    for (i, e) in vec13.into_iter().enumerate() {
+                        let base = result13.add(i * 72);
+                        {
+                            let SalePricingItem {
+                                price: price8,
+                                currency: currency8,
+                                zone: zone8,
+                                start: start8,
+                                end: end8,
+                            } = e;
+                            *base.add(0).cast::<f32>() = _rt::as_f32(price8);
+                            let vec9 = currency8;
+                            let ptr9 = vec9.as_ptr().cast::<u8>();
+                            let len9 = vec9.len();
+                            *base.add(8).cast::<usize>() = len9;
+                            *base.add(4).cast::<*mut u8>() = ptr9.cast_mut();
+                            let vec10 = zone8;
+                            let ptr10 = vec10.as_ptr().cast::<u8>();
+                            let len10 = vec10.len();
+                            *base.add(16).cast::<usize>() = len10;
+                            *base.add(12).cast::<*mut u8>() = ptr10.cast_mut();
+                            match start8 {
+                                Some(e) => {
+                                    *base.add(24).cast::<u8>() = (1i32) as u8;
+                                    let super::super::super::wasi::clocks::wall_clock::Datetime {
+                                        seconds: seconds11,
+                                        nanoseconds: nanoseconds11,
+                                    } = e;
+                                    *base.add(32).cast::<i64>() = _rt::as_i64(seconds11);
+                                    *base.add(40).cast::<i32>() = _rt::as_i32(nanoseconds11);
+                                }
+                                None => {
+                                    *base.add(24).cast::<u8>() = (0i32) as u8;
+                                }
+                            };
+                            match end8 {
+                                Some(e) => {
+                                    *base.add(48).cast::<u8>() = (1i32) as u8;
+                                    let super::super::super::wasi::clocks::wall_clock::Datetime {
+                                        seconds: seconds12,
+                                        nanoseconds: nanoseconds12,
+                                    } = e;
+                                    *base.add(56).cast::<i64>() = _rt::as_i64(seconds12);
+                                    *base.add(64).cast::<i32>() = _rt::as_i32(nanoseconds12);
+                                }
+                                None => {
+                                    *base.add(48).cast::<u8>() = (0i32) as u8;
+                                }
+                            };
+                        }
+                    }
                     #[cfg(target_arch = "wasm32")]
                     #[link(wasm_import_module = "golem:pricing-exports/api")]
                     extern "C" {
                         #[link_name = "initialize-pricing"]
-                        fn wit_import(_: *mut u8, _: usize, _: *mut u8, _: usize);
+                        fn wit_import(
+                            _: *mut u8,
+                            _: usize,
+                            _: *mut u8,
+                            _: usize,
+                            _: *mut u8,
+                            _: usize,
+                        );
                     }
                     #[cfg(not(target_arch = "wasm32"))]
-                    fn wit_import(_: *mut u8, _: usize, _: *mut u8, _: usize) {
+                    fn wit_import(
+                        _: *mut u8,
+                        _: usize,
+                        _: *mut u8,
+                        _: usize,
+                        _: *mut u8,
+                        _: usize,
+                    ) {
                         unreachable!()
                     }
-                    wit_import(result3, len3, result7, len7);
+                    wit_import(result3, len3, result7, len7, result13, len13);
                     if layout3.size() != 0 {
                         _rt::alloc::dealloc(result3.cast(), layout3);
                     }
                     if layout7.size() != 0 {
                         _rt::alloc::dealloc(result7.cast(), layout7);
+                    }
+                    if layout13.size() != 0 {
+                        _rt::alloc::dealloc(result13.cast(), layout13);
                     }
                 }
             }
@@ -9542,6 +9886,7 @@ pub mod exports {
                 #[doc(hidden)]
                 static __FORCE_SECTION_REF: fn() = super::super::super::super::__link_custom_section_describing_imports;
                 use super::super::super::super::_rt;
+                pub type Datetime = super::super::super::super::wasi::clocks::wall_clock::Datetime;
                 #[derive(Clone)]
                 pub struct Address {
                     pub street: _rt::String,
@@ -9685,7 +10030,6 @@ pub mod exports {
                     pub shipping_address: Option<Address>,
                     pub total: f32,
                     pub currency: _rt::String,
-                    pub timestamp: u64,
                 }
                 impl ::core::fmt::Debug for CreateOrder {
                     fn fmt(
@@ -9700,7 +10044,6 @@ pub mod exports {
                             .field("shipping-address", &self.shipping_address)
                             .field("total", &self.total)
                             .field("currency", &self.currency)
-                            .field("timestamp", &self.timestamp)
                             .finish()
                     }
                 }
@@ -9824,7 +10167,8 @@ pub mod exports {
                     pub shipping_address: Option<Address>,
                     pub total: f32,
                     pub currency: _rt::String,
-                    pub timestamp: u64,
+                    pub created_at: Datetime,
+                    pub updated_at: Datetime,
                 }
                 impl ::core::fmt::Debug for Order {
                     fn fmt(
@@ -9841,7 +10185,8 @@ pub mod exports {
                             .field("shipping-address", &self.shipping_address)
                             .field("total", &self.total)
                             .field("currency", &self.currency)
-                            .field("timestamp", &self.timestamp)
+                            .field("created-at", &self.created_at)
+                            .field("updated-at", &self.updated_at)
                             .finish()
                     }
                 }
@@ -10272,7 +10617,8 @@ pub mod exports {
                                 shipping_address: shipping_address2,
                                 total: total2,
                                 currency: currency2,
-                                timestamp: timestamp2,
+                                created_at: created_at2,
+                                updated_at: updated_at2,
                             } = e;
                             let vec3 = (order_id2.into_bytes()).into_boxed_slice();
                             let ptr3 = vec3.as_ptr().cast::<u8>();
@@ -10510,7 +10856,18 @@ pub mod exports {
                             ::core::mem::forget(vec27);
                             *ptr1.add(192).cast::<usize>() = len27;
                             *ptr1.add(188).cast::<*mut u8>() = ptr27.cast_mut();
-                            *ptr1.add(200).cast::<i64>() = _rt::as_i64(timestamp2);
+                            let super::super::super::super::wasi::clocks::wall_clock::Datetime {
+                                seconds: seconds28,
+                                nanoseconds: nanoseconds28,
+                            } = created_at2;
+                            *ptr1.add(200).cast::<i64>() = _rt::as_i64(seconds28);
+                            *ptr1.add(208).cast::<i32>() = _rt::as_i32(nanoseconds28);
+                            let super::super::super::super::wasi::clocks::wall_clock::Datetime {
+                                seconds: seconds29,
+                                nanoseconds: nanoseconds29,
+                            } = updated_at2;
+                            *ptr1.add(216).cast::<i64>() = _rt::as_i64(seconds29);
+                            *ptr1.add(224).cast::<i32>() = _rt::as_i32(nanoseconds29);
                         }
                         None => {
                             *ptr1.add(0).cast::<u8>() = (0i32) as u8;
@@ -10709,8 +11066,7 @@ pub mod exports {
                     let l70 = *arg0.add(168).cast::<usize>();
                     let len71 = l70;
                     let bytes71 = _rt::Vec::from_raw_parts(l69.cast(), len71, len71);
-                    let l72 = *arg0.add(176).cast::<i64>();
-                    let result73 = T::initialize_order(CreateOrder {
+                    let result72 = T::initialize_order(CreateOrder {
                         user_id: _rt::string_lift(bytes2),
                         email: _rt::string_lift(bytes5),
                         items: result19,
@@ -10904,36 +11260,35 @@ pub mod exports {
                         },
                         total: l68,
                         currency: _rt::string_lift(bytes71),
-                        timestamp: l72 as u64,
                     });
-                    _rt::cabi_dealloc(arg0, 184, 8);
-                    let ptr74 = _RET_AREA.0.as_mut_ptr().cast::<u8>();
-                    match result73 {
+                    _rt::cabi_dealloc(arg0, 172, 4);
+                    let ptr73 = _RET_AREA.0.as_mut_ptr().cast::<u8>();
+                    match result72 {
                         Ok(_) => {
-                            *ptr74.add(0).cast::<u8>() = (0i32) as u8;
+                            *ptr73.add(0).cast::<u8>() = (0i32) as u8;
                         }
                         Err(e) => {
-                            *ptr74.add(0).cast::<u8>() = (1i32) as u8;
+                            *ptr73.add(0).cast::<u8>() = (1i32) as u8;
                             match e {
                                 InitOrderError::ActionNotAllowed(e) => {
-                                    *ptr74.add(4).cast::<u8>() = (0i32) as u8;
+                                    *ptr73.add(4).cast::<u8>() = (0i32) as u8;
                                     let ActionNotAllowedError {
-                                        message: message75,
-                                        status: status75,
+                                        message: message74,
+                                        status: status74,
                                     } = e;
-                                    let vec76 = (message75.into_bytes()).into_boxed_slice();
-                                    let ptr76 = vec76.as_ptr().cast::<u8>();
-                                    let len76 = vec76.len();
-                                    ::core::mem::forget(vec76);
-                                    *ptr74.add(12).cast::<usize>() = len76;
-                                    *ptr74.add(8).cast::<*mut u8>() = ptr76.cast_mut();
-                                    *ptr74.add(16).cast::<u8>() = (status75.clone() as i32)
+                                    let vec75 = (message74.into_bytes()).into_boxed_slice();
+                                    let ptr75 = vec75.as_ptr().cast::<u8>();
+                                    let len75 = vec75.len();
+                                    ::core::mem::forget(vec75);
+                                    *ptr73.add(12).cast::<usize>() = len75;
+                                    *ptr73.add(8).cast::<*mut u8>() = ptr75.cast_mut();
+                                    *ptr73.add(16).cast::<u8>() = (status74.clone() as i32)
                                         as u8;
                                 }
                             }
                         }
                     };
-                    ptr74
+                    ptr73
                 }
                 #[doc(hidden)]
                 #[allow(non_snake_case)]
@@ -11668,9 +12023,9 @@ pub mod exports {
                 #[doc(hidden)]
                 pub(crate) use __export_golem_order_exports_api_cabi;
                 #[repr(align(8))]
-                struct _RetArea([::core::mem::MaybeUninit<u8>; 208]);
+                struct _RetArea([::core::mem::MaybeUninit<u8>; 232]);
                 static mut _RET_AREA: _RetArea = _RetArea(
-                    [::core::mem::MaybeUninit::uninit(); 208],
+                    [::core::mem::MaybeUninit::uninit(); 232],
                 );
             }
         }
@@ -11955,8 +12310,8 @@ pub(crate) use __export_order_impl as export;
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.36.0:golem:order:order:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 9084] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\x80F\x01A\x02\x01A\x1e\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 8996] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xa8E\x01A\x02\x01A\x1e\
 \x01B\x0a\x04\0\x08pollable\x03\x01\x01h\0\x01@\x01\x04self\x01\0\x7f\x04\0\x16[\
 method]pollable.ready\x01\x02\x01@\x01\x04self\x01\x01\0\x04\0\x16[method]pollab\
 le.block\x01\x03\x01p\x01\x01py\x01@\x01\x02in\x04\0\x05\x04\0\x04poll\x01\x06\x03\
@@ -12004,75 +12359,73 @@ elf>\0?\x04\0&[method]future-invoke-result.subscribe\x01@\x01k5\x01@\x01\x04self
 \0\x01\0\x04\0![method]cancellation-token.cancel\x01D\x01j\x01\x05\x01s\x01@\x01\
 \x04uuids\0\xc5\0\x04\0\x0aparse-uuid\x01F\x01@\x01\x04uuid\x05\0s\x04\0\x0euuid\
 -to-string\x01G\x01@\x01\x03vnt*\0(\x04\0\x0dextract-value\x01H\x01@\x01\x03vnt*\
-\0\x1d\x04\0\x0cextract-type\x01I\x03\0\x15golem:rpc/types@0.2.0\x05\x04\x01B\x15\
+\0\x1d\x04\0\x0cextract-type\x01I\x03\0\x15golem:rpc/types@0.2.0\x05\x04\x01B\x14\
 \x02\x03\x02\x01\x02\x04\0\x08datetime\x03\0\0\x01r\x03\x05pricev\x08currencys\x04\
 zones\x04\0\x0cpricing-item\x03\0\x02\x01k\x01\x01r\x05\x05pricev\x08currencys\x04\
 zones\x05start\x04\x03end\x04\x04\0\x11sale-pricing-item\x03\0\x05\x01p\x03\x01p\
-\x06\x01r\x04\x0aproduct-ids\x0bmsrp-prices\x07\x0blist-prices\x07\x0bsale-price\
-s\x08\x04\0\x07pricing\x03\0\x09\x01k\x0a\x01@\0\0\x0b\x04\0\x03get\x01\x0c\x01k\
-\x03\x01@\x02\x08currencys\x04zones\0\x0d\x04\0\x09get-price\x01\x0e\x01@\x02\x0b\
-msrp-prices\x07\x0blist-prices\x07\x01\0\x04\0\x12initialize-pricing\x01\x0f\x01\
-@\x03\x0bmsrp-prices\x07\x0blist-prices\x07\x0bsale-prices\x08\x01\0\x04\0\x0eup\
-date-pricing\x01\x10\x03\0\x19golem:pricing-exports/api\x05\x05\x02\x03\0\x02\x0c\
-component-id\x02\x03\0\x02\x09worker-id\x02\x03\0\x02\x12cancellation-token\x02\x03\
-\0\x03\x08datetime\x02\x03\0\x03\x07pricing\x02\x03\0\x03\x0cpricing-item\x02\x03\
-\0\x03\x11sale-pricing-item\x01Bq\x02\x03\x02\x01\x03\x04\0\x10wasi-io-pollable\x03\
-\0\0\x02\x03\x02\x01\x02\x04\0\x14wasi-clocks-datetime\x03\0\x02\x02\x03\x02\x01\
-\x06\x04\0\x16golem-rpc-component-id\x03\0\x04\x02\x03\x02\x01\x07\x04\0\x13gole\
-m-rpc-worker-id\x03\0\x06\x02\x03\x02\x01\x08\x04\0\x1cgolem-rpc-cancellation-to\
-ken\x03\0\x08\x02\x03\x02\x01\x09\x04\0\x08datetime\x03\0\x0a\x02\x03\x02\x01\x0a\
-\x04\0\x07pricing\x03\0\x0c\x02\x03\x02\x01\x0b\x04\0\x0cpricing-item\x03\0\x0e\x02\
-\x03\x02\x01\x0c\x04\0\x11sale-pricing-item\x03\0\x10\x04\0\x11future-get-result\
-\x03\x01\x04\0\x17future-get-price-result\x03\x01\x04\0\x12future-load-result\x03\
-\x01\x04\0\x12future-save-result\x03\x01\x04\0\x03api\x03\x01\x04\0\x0dload-snap\
-shot\x03\x01\x04\0\x0dsave-snapshot\x03\x01\x01h\x12\x01i\x01\x01@\x01\x04self\x19\
-\0\x1a\x04\0#[method]future-get-result.subscribe\x01\x1b\x01k\x0d\x01k\x1c\x01@\x01\
-\x04self\x19\0\x1d\x04\0\x1d[method]future-get-result.get\x01\x1e\x01h\x13\x01@\x01\
-\x04self\x1f\0\x1a\x04\0)[method]future-get-price-result.subscribe\x01\x20\x01k\x0f\
-\x01k!\x01@\x01\x04self\x1f\0\"\x04\0#[method]future-get-price-result.get\x01#\x01\
-h\x14\x01@\x01\x04self$\0\x1a\x04\0$[method]future-load-result.subscribe\x01%\x01\
-j\0\x01s\x01k&\x01@\x01\x04self$\0'\x04\0\x1e[method]future-load-result.get\x01(\
-\x01h\x15\x01@\x01\x04self)\0\x1a\x04\0$[method]future-save-result.subscribe\x01\
-*\x01p}\x01k+\x01@\x01\x04self)\0,\x04\0\x1e[method]future-save-result.get\x01-\x01\
-i\x16\x01@\x01\x0bworker-names\0.\x04\0\x10[constructor]api\x01/\x01@\x01\x09wor\
-ker-id\x07\0.\x04\0\x12[static]api.custom\x010\x01h\x16\x01@\x01\x04self1\0\x1c\x04\
-\0\x18[method]api.blocking-get\x012\x01i\x12\x01@\x01\x04self1\03\x04\0\x0f[meth\
-od]api.get\x014\x01i\x09\x01@\x02\x04self1\x0dscheduled-for\x03\05\x04\0\x18[met\
-hod]api.schedule-get\x016\x01@\x03\x04self1\x08currencys\x04zones\0!\x04\0\x1e[m\
-ethod]api.blocking-get-price\x017\x01i\x13\x01@\x03\x04self1\x08currencys\x04zon\
-es\08\x04\0\x15[method]api.get-price\x019\x01@\x04\x04self1\x08currencys\x04zone\
-s\x0dscheduled-for\x03\05\x04\0\x1e[method]api.schedule-get-price\x01:\x01p\x0f\x01\
-@\x03\x04self1\x0bmsrp-prices;\x0blist-prices;\x01\0\x04\0'[method]api.blocking-\
-initialize-pricing\x01<\x04\0\x1e[method]api.initialize-pricing\x01<\x01@\x04\x04\
-self1\x0bmsrp-prices;\x0blist-prices;\x0dscheduled-for\x03\05\x04\0'[method]api.\
-schedule-initialize-pricing\x01=\x01p\x11\x01@\x04\x04self1\x0bmsrp-prices;\x0bl\
-ist-prices;\x0bsale-prices>\x01\0\x04\0#[method]api.blocking-update-pricing\x01?\
-\x04\0\x1a[method]api.update-pricing\x01?\x01@\x05\x04self1\x0bmsrp-prices;\x0bl\
-ist-prices;\x0bsale-prices>\x0dscheduled-for\x03\05\x04\0#[method]api.schedule-u\
-pdate-pricing\x01@\x01i\x17\x01@\x01\x0bworker-names\0\xc1\0\x04\0\x1a[construct\
-or]load-snapshot\x01B\x01@\x01\x09worker-id\x07\0\xc1\0\x04\0\x1c[static]load-sn\
-apshot.custom\x01C\x01h\x17\x01@\x02\x04self\xc4\0\x05bytes+\0&\x04\0#[method]lo\
-ad-snapshot.blocking-load\x01E\x01i\x14\x01@\x02\x04self\xc4\0\x05bytes+\0\xc6\0\
-\x04\0\x1a[method]load-snapshot.load\x01G\x01@\x03\x04self\xc4\0\x05bytes+\x0dsc\
-heduled-for\x03\05\x04\0#[method]load-snapshot.schedule-load\x01H\x01i\x18\x01@\x01\
-\x0bworker-names\0\xc9\0\x04\0\x1a[constructor]save-snapshot\x01J\x01@\x01\x09wo\
-rker-id\x07\0\xc9\0\x04\0\x1c[static]save-snapshot.custom\x01K\x01h\x18\x01@\x01\
-\x04self\xcc\0\0+\x04\0#[method]save-snapshot.blocking-save\x01M\x01i\x15\x01@\x01\
-\x04self\xcc\0\0\xce\0\x04\0\x1a[method]save-snapshot.save\x01O\x01@\x02\x04self\
-\xcc\0\x0dscheduled-for\x03\05\x04\0#[method]save-snapshot.schedule-save\x01P\x03\
-\0#golem:pricing-client/pricing-client\x05\x0d\x01B\x08\x01ps\x01r\x05\x0aproduc\
-t-ids\x04names\x05brands\x0bdescriptions\x04tags\0\x04\0\x07product\x03\0\x01\x01\
-k\x02\x01@\0\0\x03\x04\0\x03get\x01\x04\x01@\x04\x04names\x05brands\x0bdescripti\
-ons\x04tags\0\x01\0\x04\0\x12initialize-product\x01\x05\x03\0\x19golem:product-e\
-xports/api\x05\x0e\x02\x03\0\x05\x07product\x01BV\x02\x03\x02\x01\x03\x04\0\x10w\
-asi-io-pollable\x03\0\0\x02\x03\x02\x01\x02\x04\0\x14wasi-clocks-datetime\x03\0\x02\
-\x02\x03\x02\x01\x06\x04\0\x16golem-rpc-component-id\x03\0\x04\x02\x03\x02\x01\x07\
-\x04\0\x13golem-rpc-worker-id\x03\0\x06\x02\x03\x02\x01\x08\x04\0\x1cgolem-rpc-c\
-ancellation-token\x03\0\x08\x02\x03\x02\x01\x0f\x04\0\x07product\x03\0\x0a\x04\0\
-\x11future-get-result\x03\x01\x04\0\x12future-load-result\x03\x01\x04\0\x12futur\
-e-save-result\x03\x01\x04\0\x03api\x03\x01\x04\0\x0dload-snapshot\x03\x01\x04\0\x0d\
-save-snapshot\x03\x01\x01h\x0c\x01i\x01\x01@\x01\x04self\x12\0\x13\x04\0#[method\
-]future-get-result.subscribe\x01\x14\x01k\x0b\x01k\x15\x01@\x01\x04self\x12\0\x16\
+\x06\x01r\x05\x0aproduct-ids\x0bmsrp-prices\x07\x0blist-prices\x07\x0bsale-price\
+s\x08\x0acreated-at\x01\x04\0\x07pricing\x03\0\x09\x01k\x0a\x01@\0\0\x0b\x04\0\x03\
+get\x01\x0c\x01k\x03\x01@\x02\x08currencys\x04zones\0\x0d\x04\0\x09get-price\x01\
+\x0e\x01@\x03\x0bmsrp-prices\x07\x0blist-prices\x07\x0bsale-prices\x08\x01\0\x04\
+\0\x12initialize-pricing\x01\x0f\x04\0\x0eupdate-pricing\x01\x0f\x03\0\x19golem:\
+pricing-exports/api\x05\x05\x02\x03\0\x02\x0ccomponent-id\x02\x03\0\x02\x09worke\
+r-id\x02\x03\0\x02\x12cancellation-token\x02\x03\0\x03\x08datetime\x02\x03\0\x03\
+\x07pricing\x02\x03\0\x03\x0cpricing-item\x02\x03\0\x03\x11sale-pricing-item\x01\
+Bo\x02\x03\x02\x01\x03\x04\0\x10wasi-io-pollable\x03\0\0\x02\x03\x02\x01\x02\x04\
+\0\x14wasi-clocks-datetime\x03\0\x02\x02\x03\x02\x01\x06\x04\0\x16golem-rpc-comp\
+onent-id\x03\0\x04\x02\x03\x02\x01\x07\x04\0\x13golem-rpc-worker-id\x03\0\x06\x02\
+\x03\x02\x01\x08\x04\0\x1cgolem-rpc-cancellation-token\x03\0\x08\x02\x03\x02\x01\
+\x09\x04\0\x08datetime\x03\0\x0a\x02\x03\x02\x01\x0a\x04\0\x07pricing\x03\0\x0c\x02\
+\x03\x02\x01\x0b\x04\0\x0cpricing-item\x03\0\x0e\x02\x03\x02\x01\x0c\x04\0\x11sa\
+le-pricing-item\x03\0\x10\x04\0\x11future-get-result\x03\x01\x04\0\x17future-get\
+-price-result\x03\x01\x04\0\x12future-load-result\x03\x01\x04\0\x12future-save-r\
+esult\x03\x01\x04\0\x03api\x03\x01\x04\0\x0dload-snapshot\x03\x01\x04\0\x0dsave-\
+snapshot\x03\x01\x01h\x12\x01i\x01\x01@\x01\x04self\x19\0\x1a\x04\0#[method]futu\
+re-get-result.subscribe\x01\x1b\x01k\x0d\x01k\x1c\x01@\x01\x04self\x19\0\x1d\x04\
+\0\x1d[method]future-get-result.get\x01\x1e\x01h\x13\x01@\x01\x04self\x1f\0\x1a\x04\
+\0)[method]future-get-price-result.subscribe\x01\x20\x01k\x0f\x01k!\x01@\x01\x04\
+self\x1f\0\"\x04\0#[method]future-get-price-result.get\x01#\x01h\x14\x01@\x01\x04\
+self$\0\x1a\x04\0$[method]future-load-result.subscribe\x01%\x01j\0\x01s\x01k&\x01\
+@\x01\x04self$\0'\x04\0\x1e[method]future-load-result.get\x01(\x01h\x15\x01@\x01\
+\x04self)\0\x1a\x04\0$[method]future-save-result.subscribe\x01*\x01p}\x01k+\x01@\
+\x01\x04self)\0,\x04\0\x1e[method]future-save-result.get\x01-\x01i\x16\x01@\x01\x0b\
+worker-names\0.\x04\0\x10[constructor]api\x01/\x01@\x01\x09worker-id\x07\0.\x04\0\
+\x12[static]api.custom\x010\x01h\x16\x01@\x01\x04self1\0\x1c\x04\0\x18[method]ap\
+i.blocking-get\x012\x01i\x12\x01@\x01\x04self1\03\x04\0\x0f[method]api.get\x014\x01\
+i\x09\x01@\x02\x04self1\x0dscheduled-for\x03\05\x04\0\x18[method]api.schedule-ge\
+t\x016\x01@\x03\x04self1\x08currencys\x04zones\0!\x04\0\x1e[method]api.blocking-\
+get-price\x017\x01i\x13\x01@\x03\x04self1\x08currencys\x04zones\08\x04\0\x15[met\
+hod]api.get-price\x019\x01@\x04\x04self1\x08currencys\x04zones\x0dscheduled-for\x03\
+\05\x04\0\x1e[method]api.schedule-get-price\x01:\x01p\x0f\x01p\x11\x01@\x04\x04s\
+elf1\x0bmsrp-prices;\x0blist-prices;\x0bsale-prices<\x01\0\x04\0'[method]api.blo\
+cking-initialize-pricing\x01=\x04\0\x1e[method]api.initialize-pricing\x01=\x01@\x05\
+\x04self1\x0bmsrp-prices;\x0blist-prices;\x0bsale-prices<\x0dscheduled-for\x03\0\
+5\x04\0'[method]api.schedule-initialize-pricing\x01>\x04\0#[method]api.blocking-\
+update-pricing\x01=\x04\0\x1a[method]api.update-pricing\x01=\x04\0#[method]api.s\
+chedule-update-pricing\x01>\x01i\x17\x01@\x01\x0bworker-names\0?\x04\0\x1a[const\
+ructor]load-snapshot\x01@\x01@\x01\x09worker-id\x07\0?\x04\0\x1c[static]load-sna\
+pshot.custom\x01A\x01h\x17\x01@\x02\x04self\xc2\0\x05bytes+\0&\x04\0#[method]loa\
+d-snapshot.blocking-load\x01C\x01i\x14\x01@\x02\x04self\xc2\0\x05bytes+\0\xc4\0\x04\
+\0\x1a[method]load-snapshot.load\x01E\x01@\x03\x04self\xc2\0\x05bytes+\x0dschedu\
+led-for\x03\05\x04\0#[method]load-snapshot.schedule-load\x01F\x01i\x18\x01@\x01\x0b\
+worker-names\0\xc7\0\x04\0\x1a[constructor]save-snapshot\x01H\x01@\x01\x09worker\
+-id\x07\0\xc7\0\x04\0\x1c[static]save-snapshot.custom\x01I\x01h\x18\x01@\x01\x04\
+self\xca\0\0+\x04\0#[method]save-snapshot.blocking-save\x01K\x01i\x15\x01@\x01\x04\
+self\xca\0\0\xcc\0\x04\0\x1a[method]save-snapshot.save\x01M\x01@\x02\x04self\xca\
+\0\x0dscheduled-for\x03\05\x04\0#[method]save-snapshot.schedule-save\x01N\x03\0#\
+golem:pricing-client/pricing-client\x05\x0d\x01B\x08\x01ps\x01r\x05\x0aproduct-i\
+ds\x04names\x05brands\x0bdescriptions\x04tags\0\x04\0\x07product\x03\0\x01\x01k\x02\
+\x01@\0\0\x03\x04\0\x03get\x01\x04\x01@\x04\x04names\x05brands\x0bdescriptions\x04\
+tags\0\x01\0\x04\0\x12initialize-product\x01\x05\x03\0\x19golem:product-exports/\
+api\x05\x0e\x02\x03\0\x05\x07product\x01BV\x02\x03\x02\x01\x03\x04\0\x10wasi-io-\
+pollable\x03\0\0\x02\x03\x02\x01\x02\x04\0\x14wasi-clocks-datetime\x03\0\x02\x02\
+\x03\x02\x01\x06\x04\0\x16golem-rpc-component-id\x03\0\x04\x02\x03\x02\x01\x07\x04\
+\0\x13golem-rpc-worker-id\x03\0\x06\x02\x03\x02\x01\x08\x04\0\x1cgolem-rpc-cance\
+llation-token\x03\0\x08\x02\x03\x02\x01\x0f\x04\0\x07product\x03\0\x0a\x04\0\x11\
+future-get-result\x03\x01\x04\0\x12future-load-result\x03\x01\x04\0\x12future-sa\
+ve-result\x03\x01\x04\0\x03api\x03\x01\x04\0\x0dload-snapshot\x03\x01\x04\0\x0ds\
+ave-snapshot\x03\x01\x01h\x0c\x01i\x01\x01@\x01\x04self\x12\0\x13\x04\0#[method]\
+future-get-result.subscribe\x01\x14\x01k\x0b\x01k\x15\x01@\x01\x04self\x12\0\x16\
 \x04\0\x1d[method]future-get-result.get\x01\x17\x01h\x0d\x01@\x01\x04self\x18\0\x13\
 \x04\0$[method]future-load-result.subscribe\x01\x19\x01j\0\x01s\x01k\x1a\x01@\x01\
 \x04self\x18\0\x1b\x04\0\x1e[method]future-load-result.get\x01\x1c\x01h\x0e\x01@\
@@ -12099,44 +12452,45 @@ load-snapshot.load\x014\x01@\x03\x04self1\x05bytes\x1f\x0dscheduled-for\x03\0)\x
 ]save-snapshot.schedule-save\x01=\x03\0#golem:product-client/product-client\x05\x10\
 \x01B\x04\x01p}\x01j\0\x01s\x01@\x01\x05bytes\0\0\x01\x04\0\x04load\x01\x02\x04\0\
 \x1dgolem:api/load-snapshot@1.1.6\x05\x11\x01B\x03\x01p}\x01@\0\0\0\x04\0\x04sav\
-e\x01\x01\x04\0\x1dgolem:api/save-snapshot@1.1.6\x05\x12\x01BK\x01ks\x01r\x07\x06\
-streets\x04citys\x0fstate-or-regions\x07countrys\x0bpostal-codes\x04name\0\x0cph\
-one-number\0\x04\0\x07address\x03\0\x01\x01r\x01\x07messages\x04\0\x17address-no\
-t-valid-error\x03\0\x03\x01r\x01\x07messages\x04\0\x1dbilling-address-not-set-er\
-ror\x03\0\x05\x01r\x01\x07messages\x04\0\x15email-not-valid-error\x03\0\x07\x01r\
-\x01\x07messages\x04\0\x11empty-email-error\x03\0\x09\x01r\x01\x07messages\x04\0\
-\x11empty-items-error\x03\0\x0b\x01r\x02\x07messages\x0aproduct-ids\x04\0\x14ite\
-m-not-found-error\x03\0\x0d\x01r\x05\x0aproduct-ids\x0cproduct-names\x0dproduct-\
-brands\x05pricev\x08quantityy\x04\0\x0aorder-item\x03\0\x0f\x01p\x10\x01k\x02\x01\
-r\x08\x07user-ids\x05emails\x05items\x11\x0fbilling-address\x12\x10shipping-addr\
-ess\x12\x05totalv\x08currencys\x09timestampw\x04\0\x0ccreate-order\x03\0\x13\x01\
-m\x03\x03new\x07shipped\x09cancelled\x04\0\x0corder-status\x03\0\x15\x01r\x02\x07\
-messages\x06status\x16\x04\0\x18action-not-allowed-error\x03\0\x17\x01q\x01\x12a\
-ction-not-allowed\x01\x18\0\x04\0\x12cancel-order-error\x03\0\x19\x01q\x01\x12ac\
-tion-not-allowed\x01\x18\0\x04\0\x10init-order-error\x03\0\x1b\x01r\x0a\x08order\
--ids\x07user-ids\x0corder-status\x16\x05email\0\x05items\x11\x0fbilling-address\x12\
-\x10shipping-address\x12\x05totalv\x08currencys\x09timestampw\x04\0\x05order\x03\
-\0\x1d\x01r\x02\x07messages\x0aproduct-ids\x04\0\x17pricing-not-found-error\x03\0\
-\x1f\x01r\x02\x07messages\x0aproduct-ids\x04\0\x17product-not-found-error\x03\0!\
-\x01q\x03\x11product-not-found\x01\"\0\x11pricing-not-found\x01\x20\0\x12action-\
-not-allowed\x01\x18\0\x04\0\x0eadd-item-error\x03\0#\x01q\x02\x0eitem-not-found\x01\
-\x0e\0\x12action-not-allowed\x01\x18\0\x04\0\x11remove-item-error\x03\0%\x01q\x04\
-\x0bempty-items\x01\x0c\0\x0bempty-email\x01\x0a\0\x17billing-address-not-set\x01\
-\x06\0\x12action-not-allowed\x01\x18\0\x04\0\x10ship-order-error\x03\0'\x01q\x02\
-\x11address-not-valid\x01\x04\0\x12action-not-allowed\x01\x18\0\x04\0\x14update-\
-address-error\x03\0)\x01q\x02\x0femail-not-valid\x01\x08\0\x12action-not-allowed\
-\x01\x18\0\x04\0\x12update-email-error\x03\0+\x01q\x02\x0eitem-not-found\x01\x0e\
-\0\x12action-not-allowed\x01\x18\0\x04\0\x1aupdate-item-quantity-error\x03\0-\x01\
-j\0\x01$\x01@\x02\x0aproduct-ids\x08quantityy\0/\x04\0\x08add-item\x010\x01j\0\x01\
-\x1a\x01@\0\01\x04\0\x0ccancel-order\x012\x01k\x1e\x01@\0\03\x04\0\x03get\x014\x01\
-j\0\x01\x1c\x01@\x01\x04data\x14\05\x04\0\x10initialize-order\x016\x01j\0\x01&\x01\
-@\x01\x0aproduct-ids\07\x04\0\x0bremove-item\x018\x01j\0\x01(\x01@\0\09\x04\0\x0a\
-ship-order\x01:\x01j\0\x01*\x01@\x01\x07address\x02\0;\x04\0\x16update-billing-a\
-ddress\x01<\x01j\0\x01,\x01@\x01\x05emails\0=\x04\0\x0cupdate-email\x01>\x01j\0\x01\
-.\x01@\x02\x0aproduct-ids\x08quantityy\0?\x04\0\x14update-item-quantity\x01@\x04\
-\0\x17update-shipping-address\x01<\x04\0\x17golem:order-exports/api\x05\x13\x04\0\
-\x11golem:order/order\x04\0\x0b\x0b\x01\0\x05order\x03\0\0\0G\x09producers\x01\x0c\
-processed-by\x02\x0dwit-component\x070.220.0\x10wit-bindgen-rust\x060.36.0";
+e\x01\x01\x04\0\x1dgolem:api/save-snapshot@1.1.6\x05\x12\x01BM\x02\x03\x02\x01\x02\
+\x04\0\x08datetime\x03\0\0\x01ks\x01r\x07\x06streets\x04citys\x0fstate-or-region\
+s\x07countrys\x0bpostal-codes\x04name\x02\x0cphone-number\x02\x04\0\x07address\x03\
+\0\x03\x01r\x01\x07messages\x04\0\x17address-not-valid-error\x03\0\x05\x01r\x01\x07\
+messages\x04\0\x1dbilling-address-not-set-error\x03\0\x07\x01r\x01\x07messages\x04\
+\0\x15email-not-valid-error\x03\0\x09\x01r\x01\x07messages\x04\0\x11empty-email-\
+error\x03\0\x0b\x01r\x01\x07messages\x04\0\x11empty-items-error\x03\0\x0d\x01r\x02\
+\x07messages\x0aproduct-ids\x04\0\x14item-not-found-error\x03\0\x0f\x01r\x05\x0a\
+product-ids\x0cproduct-names\x0dproduct-brands\x05pricev\x08quantityy\x04\0\x0ao\
+rder-item\x03\0\x11\x01p\x12\x01k\x04\x01r\x07\x07user-ids\x05emails\x05items\x13\
+\x0fbilling-address\x14\x10shipping-address\x14\x05totalv\x08currencys\x04\0\x0c\
+create-order\x03\0\x15\x01m\x03\x03new\x07shipped\x09cancelled\x04\0\x0corder-st\
+atus\x03\0\x17\x01r\x02\x07messages\x06status\x18\x04\0\x18action-not-allowed-er\
+ror\x03\0\x19\x01q\x01\x12action-not-allowed\x01\x1a\0\x04\0\x12cancel-order-err\
+or\x03\0\x1b\x01q\x01\x12action-not-allowed\x01\x1a\0\x04\0\x10init-order-error\x03\
+\0\x1d\x01r\x0b\x08order-ids\x07user-ids\x0corder-status\x18\x05email\x02\x05ite\
+ms\x13\x0fbilling-address\x14\x10shipping-address\x14\x05totalv\x08currencys\x0a\
+created-at\x01\x0aupdated-at\x01\x04\0\x05order\x03\0\x1f\x01r\x02\x07messages\x0a\
+product-ids\x04\0\x17pricing-not-found-error\x03\0!\x01r\x02\x07messages\x0aprod\
+uct-ids\x04\0\x17product-not-found-error\x03\0#\x01q\x03\x11product-not-found\x01\
+$\0\x11pricing-not-found\x01\"\0\x12action-not-allowed\x01\x1a\0\x04\0\x0eadd-it\
+em-error\x03\0%\x01q\x02\x0eitem-not-found\x01\x10\0\x12action-not-allowed\x01\x1a\
+\0\x04\0\x11remove-item-error\x03\0'\x01q\x04\x0bempty-items\x01\x0e\0\x0bempty-\
+email\x01\x0c\0\x17billing-address-not-set\x01\x08\0\x12action-not-allowed\x01\x1a\
+\0\x04\0\x10ship-order-error\x03\0)\x01q\x02\x11address-not-valid\x01\x06\0\x12a\
+ction-not-allowed\x01\x1a\0\x04\0\x14update-address-error\x03\0+\x01q\x02\x0fema\
+il-not-valid\x01\x0a\0\x12action-not-allowed\x01\x1a\0\x04\0\x12update-email-err\
+or\x03\0-\x01q\x02\x0eitem-not-found\x01\x10\0\x12action-not-allowed\x01\x1a\0\x04\
+\0\x1aupdate-item-quantity-error\x03\0/\x01j\0\x01&\x01@\x02\x0aproduct-ids\x08q\
+uantityy\01\x04\0\x08add-item\x012\x01j\0\x01\x1c\x01@\0\03\x04\0\x0ccancel-orde\
+r\x014\x01k\x20\x01@\0\05\x04\0\x03get\x016\x01j\0\x01\x1e\x01@\x01\x04data\x16\0\
+7\x04\0\x10initialize-order\x018\x01j\0\x01(\x01@\x01\x0aproduct-ids\09\x04\0\x0b\
+remove-item\x01:\x01j\0\x01*\x01@\0\0;\x04\0\x0aship-order\x01<\x01j\0\x01,\x01@\
+\x01\x07address\x04\0=\x04\0\x16update-billing-address\x01>\x01j\0\x01.\x01@\x01\
+\x05emails\0?\x04\0\x0cupdate-email\x01@\x01j\0\x010\x01@\x02\x0aproduct-ids\x08\
+quantityy\0\xc1\0\x04\0\x14update-item-quantity\x01B\x04\0\x17update-shipping-ad\
+dress\x01>\x04\0\x17golem:order-exports/api\x05\x13\x04\0\x11golem:order/order\x04\
+\0\x0b\x0b\x01\0\x05order\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit\
+-component\x070.220.0\x10wit-bindgen-rust\x060.36.0";
 #[inline(never)]
 #[doc(hidden)]
 pub fn __link_custom_section_describing_imports() {

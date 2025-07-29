@@ -10,15 +10,25 @@ pub mod pricing {
         pub msrp_prices: Vec<PricingItem>,
         pub list_prices: Vec<PricingItem>,
         pub sale_prices: Vec<SalePricingItem>,
+        pub created_at: chrono::DateTime<chrono::Utc>,
+        pub updated_at: chrono::DateTime<chrono::Utc>,
     }
 
     impl Pricing {
         pub fn new(product_id: String) -> Self {
-            Self { product_id, msrp_prices: vec![], list_prices: vec![], sale_prices: vec![] }
+            let now = chrono::Utc::now();
+            Self { product_id, msrp_prices: vec![], list_prices: vec![], sale_prices: vec![], created_at: now, updated_at: now }
         }
 
         pub fn get_price(&self, currency: String, zone: String) -> Option<PricingItem> {
             get_price(currency, zone, self.clone())
+        }
+
+        pub fn set_prices(&mut self, msrp_prices: Vec<PricingItem>, list_prices: Vec<PricingItem>, sale_prices: Vec<SalePricingItem>) {
+            self.msrp_prices = msrp_prices;
+            self.list_prices = list_prices;
+            self.sale_prices = sale_prices;
+            self.updated_at = chrono::Utc::now();
         }
 
         pub fn update_prices(
@@ -30,6 +40,7 @@ pub mod pricing {
             self.msrp_prices = merge_items(msrp_prices, self.msrp_prices.clone());
             self.list_prices = merge_items(list_prices, self.list_prices.clone());
             self.sale_prices = merge_sale_items(sale_prices, self.sale_prices.clone());
+            self.updated_at = chrono::Utc::now();
         }
     }
 
@@ -40,6 +51,8 @@ pub mod pricing {
                 msrp_prices: value.msrp_prices.into_iter().map(|item| item.into()).collect(),
                 list_prices: value.list_prices.into_iter().map(|item| item.into()).collect(),
                 sale_prices: value.sale_prices.into_iter().map(|item| item.into()).collect(),
+                created_at: value.created_at.into(),
+                updated_at: value.updated_at.into(),
             }
         }
     }
@@ -51,6 +64,8 @@ pub mod pricing {
                 msrp_prices: value.msrp_prices.into_iter().map(|item| item.into()).collect(),
                 list_prices: value.list_prices.into_iter().map(|item| item.into()).collect(),
                 sale_prices: value.sale_prices.into_iter().map(|item| item.into()).collect(),
+                created_at: value.created_at.into(),
+                updated_at: value.updated_at.into(),
             }
         }
     }
@@ -102,23 +117,6 @@ pub mod pricing {
             Self { price: value.price, currency: value.currency, zone: value.zone, start: value.start.map(|v| v.into()), end: value.end.map(|v| v.into()) }
         }
     }
-
-    impl From<bindings::wasi::clocks::wall_clock::Datetime> for chrono::DateTime<chrono::Utc> {
-        fn from(value: bindings::wasi::clocks::wall_clock::Datetime) -> chrono::DateTime<chrono::Utc> {
-            chrono::DateTime::from_timestamp(value.seconds as i64, value.nanoseconds)
-                .expect("Received invalid datetime from wasi")
-        }
-    }
-
-    impl From<chrono::DateTime<chrono::Utc>> for bindings::wasi::clocks::wall_clock::Datetime {
-        fn from(value: chrono::DateTime<chrono::Utc>) -> bindings::wasi::clocks::wall_clock::Datetime {
-            bindings::wasi::clocks::wall_clock::Datetime {
-                seconds: value.timestamp() as u64,
-                nanoseconds: value.timestamp_subsec_nanos(),
-            }
-        }
-    }
-
     fn get_price(currency: String, zone: String, pricing: Pricing) -> Option<PricingItem> {
         let now = chrono::Utc::now();
 
@@ -197,6 +195,22 @@ pub mod pricing {
         }
     }
 
+
+    impl From<bindings::wasi::clocks::wall_clock::Datetime> for chrono::DateTime<chrono::Utc> {
+        fn from(value: bindings::wasi::clocks::wall_clock::Datetime) -> chrono::DateTime<chrono::Utc> {
+            chrono::DateTime::from_timestamp(value.seconds as i64, value.nanoseconds)
+                .expect("Received invalid datetime from wasi")
+        }
+    }
+
+    impl From<chrono::DateTime<chrono::Utc>> for bindings::wasi::clocks::wall_clock::Datetime {
+        fn from(value: chrono::DateTime<chrono::Utc>) -> bindings::wasi::clocks::wall_clock::Datetime {
+            bindings::wasi::clocks::wall_clock::Datetime {
+                seconds: value.timestamp() as u64,
+                nanoseconds: value.timestamp_subsec_nanos(),
+            }
+        }
+    }
 
     pub mod serdes {
         use crate::domain::pricing::Pricing;

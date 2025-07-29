@@ -3,6 +3,118 @@
 //   * runtime_path: "wit_bindgen_rt"
 #[rustfmt::skip]
 #[allow(dead_code, clippy::all)]
+pub mod wasi {
+    pub mod clocks {
+        /// WASI Wall Clock is a clock API intended to let users query the current
+        /// time. The name "wall" makes an analogy to a "clock on the wall", which
+        /// is not necessarily monotonic as it may be reset.
+        ///
+        /// It is intended to be portable at least between Unix-family platforms and
+        /// Windows.
+        ///
+        /// A wall clock is a clock which measures the date and time according to
+        /// some external reference.
+        ///
+        /// External references may be reset, so this clock is not necessarily
+        /// monotonic, making it unsuitable for measuring elapsed time.
+        ///
+        /// It is intended for reporting the current date and time for humans.
+        #[allow(dead_code, clippy::all)]
+        pub mod wall_clock {
+            #[used]
+            #[doc(hidden)]
+            static __FORCE_SECTION_REF: fn() = super::super::super::__link_custom_section_describing_imports;
+            /// A time and date in seconds plus nanoseconds.
+            #[repr(C)]
+            #[derive(Clone, Copy)]
+            pub struct Datetime {
+                pub seconds: u64,
+                pub nanoseconds: u32,
+            }
+            impl ::core::fmt::Debug for Datetime {
+                fn fmt(
+                    &self,
+                    f: &mut ::core::fmt::Formatter<'_>,
+                ) -> ::core::fmt::Result {
+                    f.debug_struct("Datetime")
+                        .field("seconds", &self.seconds)
+                        .field("nanoseconds", &self.nanoseconds)
+                        .finish()
+                }
+            }
+            #[allow(unused_unsafe, clippy::all)]
+            /// Read the current value of the clock.
+            ///
+            /// This clock is not monotonic, therefore calling this function repeatedly
+            /// will not necessarily produce a sequence of non-decreasing values.
+            ///
+            /// The returned timestamps represent the number of seconds since
+            /// 1970-01-01T00:00:00Z, also known as [POSIX's Seconds Since the Epoch],
+            /// also known as [Unix Time].
+            ///
+            /// The nanoseconds field of the output is always less than 1000000000.
+            ///
+            /// [POSIX's Seconds Since the Epoch]: https://pubs.opengroup.org/onlinepubs/9699919799/xrat/V4_xbd_chap04.html#tag_21_04_16
+            /// [Unix Time]: https://en.wikipedia.org/wiki/Unix_time
+            pub fn now() -> Datetime {
+                unsafe {
+                    #[repr(align(8))]
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 16]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 16]);
+                    let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
+                    #[cfg(target_arch = "wasm32")]
+                    #[link(wasm_import_module = "wasi:clocks/wall-clock@0.2.0")]
+                    extern "C" {
+                        #[link_name = "now"]
+                        fn wit_import(_: *mut u8);
+                    }
+                    #[cfg(not(target_arch = "wasm32"))]
+                    fn wit_import(_: *mut u8) {
+                        unreachable!()
+                    }
+                    wit_import(ptr0);
+                    let l1 = *ptr0.add(0).cast::<i64>();
+                    let l2 = *ptr0.add(8).cast::<i32>();
+                    Datetime {
+                        seconds: l1 as u64,
+                        nanoseconds: l2 as u32,
+                    }
+                }
+            }
+            #[allow(unused_unsafe, clippy::all)]
+            /// Query the resolution of the clock.
+            ///
+            /// The nanoseconds field of the output is always less than 1000000000.
+            pub fn resolution() -> Datetime {
+                unsafe {
+                    #[repr(align(8))]
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 16]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 16]);
+                    let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
+                    #[cfg(target_arch = "wasm32")]
+                    #[link(wasm_import_module = "wasi:clocks/wall-clock@0.2.0")]
+                    extern "C" {
+                        #[link_name = "resolution"]
+                        fn wit_import(_: *mut u8);
+                    }
+                    #[cfg(not(target_arch = "wasm32"))]
+                    fn wit_import(_: *mut u8) {
+                        unreachable!()
+                    }
+                    wit_import(ptr0);
+                    let l1 = *ptr0.add(0).cast::<i64>();
+                    let l2 = *ptr0.add(8).cast::<i32>();
+                    Datetime {
+                        seconds: l1 as u64,
+                        nanoseconds: l2 as u32,
+                    }
+                }
+            }
+        }
+    }
+}
+#[rustfmt::skip]
+#[allow(dead_code, clippy::all)]
 pub mod exports {
     pub mod golem {
         pub mod api {
@@ -143,6 +255,7 @@ pub mod exports {
                 #[doc(hidden)]
                 static __FORCE_SECTION_REF: fn() = super::super::super::super::__link_custom_section_describing_imports;
                 use super::super::super::super::_rt;
+                pub type Datetime = super::super::super::super::wasi::clocks::wall_clock::Datetime;
                 #[derive(Clone)]
                 pub struct Product {
                     pub product_id: _rt::String,
@@ -150,6 +263,8 @@ pub mod exports {
                     pub brand: _rt::String,
                     pub description: _rt::String,
                     pub tags: _rt::Vec<_rt::String>,
+                    pub created_at: Datetime,
+                    pub updated_at: Datetime,
                 }
                 impl ::core::fmt::Debug for Product {
                     fn fmt(
@@ -162,6 +277,8 @@ pub mod exports {
                             .field("brand", &self.brand)
                             .field("description", &self.description)
                             .field("tags", &self.tags)
+                            .field("created-at", &self.created_at)
+                            .field("updated-at", &self.updated_at)
                             .finish()
                     }
                 }
@@ -180,31 +297,33 @@ pub mod exports {
                                 brand: brand2,
                                 description: description2,
                                 tags: tags2,
+                                created_at: created_at2,
+                                updated_at: updated_at2,
                             } = e;
                             let vec3 = (product_id2.into_bytes()).into_boxed_slice();
                             let ptr3 = vec3.as_ptr().cast::<u8>();
                             let len3 = vec3.len();
                             ::core::mem::forget(vec3);
-                            *ptr1.add(8).cast::<usize>() = len3;
-                            *ptr1.add(4).cast::<*mut u8>() = ptr3.cast_mut();
+                            *ptr1.add(12).cast::<usize>() = len3;
+                            *ptr1.add(8).cast::<*mut u8>() = ptr3.cast_mut();
                             let vec4 = (name2.into_bytes()).into_boxed_slice();
                             let ptr4 = vec4.as_ptr().cast::<u8>();
                             let len4 = vec4.len();
                             ::core::mem::forget(vec4);
-                            *ptr1.add(16).cast::<usize>() = len4;
-                            *ptr1.add(12).cast::<*mut u8>() = ptr4.cast_mut();
+                            *ptr1.add(20).cast::<usize>() = len4;
+                            *ptr1.add(16).cast::<*mut u8>() = ptr4.cast_mut();
                             let vec5 = (brand2.into_bytes()).into_boxed_slice();
                             let ptr5 = vec5.as_ptr().cast::<u8>();
                             let len5 = vec5.len();
                             ::core::mem::forget(vec5);
-                            *ptr1.add(24).cast::<usize>() = len5;
-                            *ptr1.add(20).cast::<*mut u8>() = ptr5.cast_mut();
+                            *ptr1.add(28).cast::<usize>() = len5;
+                            *ptr1.add(24).cast::<*mut u8>() = ptr5.cast_mut();
                             let vec6 = (description2.into_bytes()).into_boxed_slice();
                             let ptr6 = vec6.as_ptr().cast::<u8>();
                             let len6 = vec6.len();
                             ::core::mem::forget(vec6);
-                            *ptr1.add(32).cast::<usize>() = len6;
-                            *ptr1.add(28).cast::<*mut u8>() = ptr6.cast_mut();
+                            *ptr1.add(36).cast::<usize>() = len6;
+                            *ptr1.add(32).cast::<*mut u8>() = ptr6.cast_mut();
                             let vec8 = tags2;
                             let len8 = vec8.len();
                             let layout8 = _rt::alloc::Layout::from_size_align_unchecked(
@@ -231,8 +350,20 @@ pub mod exports {
                                     *base.add(0).cast::<*mut u8>() = ptr7.cast_mut();
                                 }
                             }
-                            *ptr1.add(40).cast::<usize>() = len8;
-                            *ptr1.add(36).cast::<*mut u8>() = result8;
+                            *ptr1.add(44).cast::<usize>() = len8;
+                            *ptr1.add(40).cast::<*mut u8>() = result8;
+                            let super::super::super::super::wasi::clocks::wall_clock::Datetime {
+                                seconds: seconds9,
+                                nanoseconds: nanoseconds9,
+                            } = created_at2;
+                            *ptr1.add(48).cast::<i64>() = _rt::as_i64(seconds9);
+                            *ptr1.add(56).cast::<i32>() = _rt::as_i32(nanoseconds9);
+                            let super::super::super::super::wasi::clocks::wall_clock::Datetime {
+                                seconds: seconds10,
+                                nanoseconds: nanoseconds10,
+                            } = updated_at2;
+                            *ptr1.add(64).cast::<i64>() = _rt::as_i64(seconds10);
+                            *ptr1.add(72).cast::<i32>() = _rt::as_i32(nanoseconds10);
                         }
                         None => {
                             *ptr1.add(0).cast::<u8>() = (0i32) as u8;
@@ -247,20 +378,20 @@ pub mod exports {
                     match l0 {
                         0 => {}
                         _ => {
-                            let l1 = *arg0.add(4).cast::<*mut u8>();
-                            let l2 = *arg0.add(8).cast::<usize>();
+                            let l1 = *arg0.add(8).cast::<*mut u8>();
+                            let l2 = *arg0.add(12).cast::<usize>();
                             _rt::cabi_dealloc(l1, l2, 1);
-                            let l3 = *arg0.add(12).cast::<*mut u8>();
-                            let l4 = *arg0.add(16).cast::<usize>();
+                            let l3 = *arg0.add(16).cast::<*mut u8>();
+                            let l4 = *arg0.add(20).cast::<usize>();
                             _rt::cabi_dealloc(l3, l4, 1);
-                            let l5 = *arg0.add(20).cast::<*mut u8>();
-                            let l6 = *arg0.add(24).cast::<usize>();
+                            let l5 = *arg0.add(24).cast::<*mut u8>();
+                            let l6 = *arg0.add(28).cast::<usize>();
                             _rt::cabi_dealloc(l5, l6, 1);
-                            let l7 = *arg0.add(28).cast::<*mut u8>();
-                            let l8 = *arg0.add(32).cast::<usize>();
+                            let l7 = *arg0.add(32).cast::<*mut u8>();
+                            let l8 = *arg0.add(36).cast::<usize>();
                             _rt::cabi_dealloc(l7, l8, 1);
-                            let l9 = *arg0.add(36).cast::<*mut u8>();
-                            let l10 = *arg0.add(40).cast::<usize>();
+                            let l9 = *arg0.add(40).cast::<*mut u8>();
+                            let l10 = *arg0.add(44).cast::<usize>();
                             let base13 = l9;
                             let len13 = l10;
                             for i in 0..len13 {
@@ -344,10 +475,10 @@ pub mod exports {
                 }
                 #[doc(hidden)]
                 pub(crate) use __export_golem_product_exports_api_cabi;
-                #[repr(align(4))]
-                struct _RetArea([::core::mem::MaybeUninit<u8>; 44]);
+                #[repr(align(8))]
+                struct _RetArea([::core::mem::MaybeUninit<u8>; 80]);
                 static mut _RET_AREA: _RetArea = _RetArea(
-                    [::core::mem::MaybeUninit::uninit(); 44],
+                    [::core::mem::MaybeUninit::uninit(); 80],
                 );
             }
         }
@@ -362,6 +493,88 @@ mod _rt {
         wit_bindgen_rt::run_ctors_once();
     }
     pub use alloc_crate::alloc;
+    pub fn as_i64<T: AsI64>(t: T) -> i64 {
+        t.as_i64()
+    }
+    pub trait AsI64 {
+        fn as_i64(self) -> i64;
+    }
+    impl<'a, T: Copy + AsI64> AsI64 for &'a T {
+        fn as_i64(self) -> i64 {
+            (*self).as_i64()
+        }
+    }
+    impl AsI64 for i64 {
+        #[inline]
+        fn as_i64(self) -> i64 {
+            self as i64
+        }
+    }
+    impl AsI64 for u64 {
+        #[inline]
+        fn as_i64(self) -> i64 {
+            self as i64
+        }
+    }
+    pub fn as_i32<T: AsI32>(t: T) -> i32 {
+        t.as_i32()
+    }
+    pub trait AsI32 {
+        fn as_i32(self) -> i32;
+    }
+    impl<'a, T: Copy + AsI32> AsI32 for &'a T {
+        fn as_i32(self) -> i32 {
+            (*self).as_i32()
+        }
+    }
+    impl AsI32 for i32 {
+        #[inline]
+        fn as_i32(self) -> i32 {
+            self as i32
+        }
+    }
+    impl AsI32 for u32 {
+        #[inline]
+        fn as_i32(self) -> i32 {
+            self as i32
+        }
+    }
+    impl AsI32 for i16 {
+        #[inline]
+        fn as_i32(self) -> i32 {
+            self as i32
+        }
+    }
+    impl AsI32 for u16 {
+        #[inline]
+        fn as_i32(self) -> i32 {
+            self as i32
+        }
+    }
+    impl AsI32 for i8 {
+        #[inline]
+        fn as_i32(self) -> i32 {
+            self as i32
+        }
+    }
+    impl AsI32 for u8 {
+        #[inline]
+        fn as_i32(self) -> i32 {
+            self as i32
+        }
+    }
+    impl AsI32 for char {
+        #[inline]
+        fn as_i32(self) -> i32 {
+            self as i32
+        }
+    }
+    impl AsI32 for usize {
+        #[inline]
+        fn as_i32(self) -> i32 {
+            self as i32
+        }
+    }
     pub unsafe fn cabi_dealloc(ptr: *mut u8, size: usize, align: usize) {
         if size == 0 {
             return;
@@ -417,17 +630,21 @@ pub(crate) use __export_product_impl as export;
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.36.0:golem:product:product:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 450] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xc4\x02\x01A\x02\x01\
-A\x06\x01B\x08\x01ps\x01r\x05\x0aproduct-ids\x04names\x05brands\x0bdescriptions\x04\
-tags\0\x04\0\x07product\x03\0\x01\x01k\x02\x01@\0\0\x03\x04\0\x03get\x01\x04\x01\
-@\x04\x04names\x05brands\x0bdescriptions\x04tags\0\x01\0\x04\0\x12initialize-pro\
-duct\x01\x05\x04\0\x19golem:product-exports/api\x05\0\x01B\x04\x01p}\x01j\0\x01s\
-\x01@\x01\x05bytes\0\0\x01\x04\0\x04load\x01\x02\x04\0\x1dgolem:api/load-snapsho\
-t@1.1.6\x05\x01\x01B\x03\x01p}\x01@\0\0\0\x04\0\x04save\x01\x01\x04\0\x1dgolem:a\
-pi/save-snapshot@1.1.6\x05\x02\x04\0\x15golem:product/product\x04\0\x0b\x0d\x01\0\
-\x07product\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit-component\x07\
-0.220.0\x10wit-bindgen-rust\x060.36.0";
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 609] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xe3\x03\x01A\x02\x01\
+A\x09\x01B\x05\x01r\x02\x07secondsw\x0bnanosecondsy\x04\0\x08datetime\x03\0\0\x01\
+@\0\0\x01\x04\0\x03now\x01\x02\x04\0\x0aresolution\x01\x02\x03\0\x1cwasi:clocks/\
+wall-clock@0.2.0\x05\0\x02\x03\0\0\x08datetime\x01B\x0a\x02\x03\x02\x01\x01\x04\0\
+\x08datetime\x03\0\0\x01ps\x01r\x07\x0aproduct-ids\x04names\x05brands\x0bdescrip\
+tions\x04tags\x02\x0acreated-at\x01\x0aupdated-at\x01\x04\0\x07product\x03\0\x03\
+\x01k\x04\x01@\0\0\x05\x04\0\x03get\x01\x06\x01@\x04\x04names\x05brands\x0bdescr\
+iptions\x04tags\x02\x01\0\x04\0\x12initialize-product\x01\x07\x04\0\x19golem:pro\
+duct-exports/api\x05\x02\x01B\x04\x01p}\x01j\0\x01s\x01@\x01\x05bytes\0\0\x01\x04\
+\0\x04load\x01\x02\x04\0\x1dgolem:api/load-snapshot@1.1.6\x05\x03\x01B\x03\x01p}\
+\x01@\0\0\0\x04\0\x04save\x01\x01\x04\0\x1dgolem:api/save-snapshot@1.1.6\x05\x04\
+\x04\0\x15golem:product/product\x04\0\x0b\x0d\x01\0\x07product\x03\0\0\0G\x09pro\
+ducers\x01\x0cprocessed-by\x02\x0dwit-component\x070.220.0\x10wit-bindgen-rust\x06\
+0.36.0";
 #[inline(never)]
 #[doc(hidden)]
 pub fn __link_custom_section_describing_imports() {

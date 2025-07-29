@@ -8,6 +8,8 @@ interface api {
     msrp-prices: list<pricing-item>,
     list-prices: list<pricing-item>,
     sale-prices: list<sale-pricing-item>,
+    created-at: datetime,
+    updated-at: datetime
   }
 
   record pricing-item {
@@ -21,7 +23,7 @@ interface api {
     currency: string,
     zone: string,
     start: option<datetime>,
-    end: option<datetime>,
+    end: option<datetime>
   }
 
   initialize-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>, sale-prices: list<sale-pricing-item>);

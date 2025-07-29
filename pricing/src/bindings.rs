@@ -302,6 +302,8 @@ pub mod exports {
                     pub msrp_prices: _rt::Vec<PricingItem>,
                     pub list_prices: _rt::Vec<PricingItem>,
                     pub sale_prices: _rt::Vec<SalePricingItem>,
+                    pub created_at: Datetime,
+                    pub updated_at: Datetime,
                 }
                 impl ::core::fmt::Debug for Pricing {
                     fn fmt(
@@ -313,6 +315,8 @@ pub mod exports {
                             .field("msrp-prices", &self.msrp_prices)
                             .field("list-prices", &self.list_prices)
                             .field("sale-prices", &self.sale_prices)
+                            .field("created-at", &self.created_at)
+                            .field("updated-at", &self.updated_at)
                             .finish()
                     }
                 }
@@ -330,13 +334,15 @@ pub mod exports {
                                 msrp_prices: msrp_prices2,
                                 list_prices: list_prices2,
                                 sale_prices: sale_prices2,
+                                created_at: created_at2,
+                                updated_at: updated_at2,
                             } = e;
                             let vec3 = (product_id2.into_bytes()).into_boxed_slice();
                             let ptr3 = vec3.as_ptr().cast::<u8>();
                             let len3 = vec3.len();
                             ::core::mem::forget(vec3);
-                            *ptr1.add(8).cast::<usize>() = len3;
-                            *ptr1.add(4).cast::<*mut u8>() = ptr3.cast_mut();
+                            *ptr1.add(12).cast::<usize>() = len3;
+                            *ptr1.add(8).cast::<*mut u8>() = ptr3.cast_mut();
                             let vec7 = msrp_prices2;
                             let len7 = vec7.len();
                             let layout7 = _rt::alloc::Layout::from_size_align_unchecked(
@@ -375,8 +381,8 @@ pub mod exports {
                                     *base.add(12).cast::<*mut u8>() = ptr6.cast_mut();
                                 }
                             }
-                            *ptr1.add(16).cast::<usize>() = len7;
-                            *ptr1.add(12).cast::<*mut u8>() = result7;
+                            *ptr1.add(20).cast::<usize>() = len7;
+                            *ptr1.add(16).cast::<*mut u8>() = result7;
                             let vec11 = list_prices2;
                             let len11 = vec11.len();
                             let layout11 = _rt::alloc::Layout::from_size_align_unchecked(
@@ -415,8 +421,8 @@ pub mod exports {
                                     *base.add(12).cast::<*mut u8>() = ptr10.cast_mut();
                                 }
                             }
-                            *ptr1.add(24).cast::<usize>() = len11;
-                            *ptr1.add(20).cast::<*mut u8>() = result11;
+                            *ptr1.add(28).cast::<usize>() = len11;
+                            *ptr1.add(24).cast::<*mut u8>() = result11;
                             let vec17 = sale_prices2;
                             let len17 = vec17.len();
                             let layout17 = _rt::alloc::Layout::from_size_align_unchecked(
@@ -485,8 +491,20 @@ pub mod exports {
                                     };
                                 }
                             }
-                            *ptr1.add(32).cast::<usize>() = len17;
-                            *ptr1.add(28).cast::<*mut u8>() = result17;
+                            *ptr1.add(36).cast::<usize>() = len17;
+                            *ptr1.add(32).cast::<*mut u8>() = result17;
+                            let super::super::super::super::wasi::clocks::wall_clock::Datetime {
+                                seconds: seconds18,
+                                nanoseconds: nanoseconds18,
+                            } = created_at2;
+                            *ptr1.add(40).cast::<i64>() = _rt::as_i64(seconds18);
+                            *ptr1.add(48).cast::<i32>() = _rt::as_i32(nanoseconds18);
+                            let super::super::super::super::wasi::clocks::wall_clock::Datetime {
+                                seconds: seconds19,
+                                nanoseconds: nanoseconds19,
+                            } = updated_at2;
+                            *ptr1.add(56).cast::<i64>() = _rt::as_i64(seconds19);
+                            *ptr1.add(64).cast::<i32>() = _rt::as_i32(nanoseconds19);
                         }
                         None => {
                             *ptr1.add(0).cast::<u8>() = (0i32) as u8;
@@ -501,11 +519,11 @@ pub mod exports {
                     match l0 {
                         0 => {}
                         _ => {
-                            let l1 = *arg0.add(4).cast::<*mut u8>();
-                            let l2 = *arg0.add(8).cast::<usize>();
+                            let l1 = *arg0.add(8).cast::<*mut u8>();
+                            let l2 = *arg0.add(12).cast::<usize>();
                             _rt::cabi_dealloc(l1, l2, 1);
-                            let l3 = *arg0.add(12).cast::<*mut u8>();
-                            let l4 = *arg0.add(16).cast::<usize>();
+                            let l3 = *arg0.add(16).cast::<*mut u8>();
+                            let l4 = *arg0.add(20).cast::<usize>();
                             let base9 = l3;
                             let len9 = l4;
                             for i in 0..len9 {
@@ -520,8 +538,8 @@ pub mod exports {
                                 }
                             }
                             _rt::cabi_dealloc(base9, len9 * 20, 4);
-                            let l10 = *arg0.add(20).cast::<*mut u8>();
-                            let l11 = *arg0.add(24).cast::<usize>();
+                            let l10 = *arg0.add(24).cast::<*mut u8>();
+                            let l11 = *arg0.add(28).cast::<usize>();
                             let base16 = l10;
                             let len16 = l11;
                             for i in 0..len16 {
@@ -536,8 +554,8 @@ pub mod exports {
                                 }
                             }
                             _rt::cabi_dealloc(base16, len16 * 20, 4);
-                            let l17 = *arg0.add(28).cast::<*mut u8>();
-                            let l18 = *arg0.add(32).cast::<usize>();
+                            let l17 = *arg0.add(32).cast::<*mut u8>();
+                            let l18 = *arg0.add(36).cast::<usize>();
                             let base23 = l17;
                             let len23 = l18;
                             for i in 0..len23 {
@@ -931,10 +949,10 @@ pub mod exports {
                 }
                 #[doc(hidden)]
                 pub(crate) use __export_golem_pricing_exports_api_cabi;
-                #[repr(align(4))]
-                struct _RetArea([::core::mem::MaybeUninit<u8>; 36]);
+                #[repr(align(8))]
+                struct _RetArea([::core::mem::MaybeUninit<u8>; 72]);
                 static mut _RET_AREA: _RetArea = _RetArea(
-                    [::core::mem::MaybeUninit::uninit(); 36],
+                    [::core::mem::MaybeUninit::uninit(); 72],
                 );
             }
         }
@@ -1110,24 +1128,25 @@ pub(crate) use __export_pricing_impl as export;
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.36.0:golem:pricing:pricing:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 767] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\x81\x05\x01A\x02\x01\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 791] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\x99\x05\x01A\x02\x01\
 A\x09\x01B\x05\x01r\x02\x07secondsw\x0bnanosecondsy\x04\0\x08datetime\x03\0\0\x01\
 @\0\0\x01\x04\0\x03now\x01\x02\x04\0\x0aresolution\x01\x02\x03\0\x1cwasi:clocks/\
 wall-clock@0.2.0\x05\0\x02\x03\0\0\x08datetime\x01B\x14\x02\x03\x02\x01\x01\x04\0\
 \x08datetime\x03\0\0\x01r\x03\x05pricev\x08currencys\x04zones\x04\0\x0cpricing-i\
 tem\x03\0\x02\x01k\x01\x01r\x05\x05pricev\x08currencys\x04zones\x05start\x04\x03\
-end\x04\x04\0\x11sale-pricing-item\x03\0\x05\x01p\x03\x01p\x06\x01r\x04\x0aprodu\
-ct-ids\x0bmsrp-prices\x07\x0blist-prices\x07\x0bsale-prices\x08\x04\0\x07pricing\
-\x03\0\x09\x01k\x0a\x01@\0\0\x0b\x04\0\x03get\x01\x0c\x01k\x03\x01@\x02\x08curre\
-ncys\x04zones\0\x0d\x04\0\x09get-price\x01\x0e\x01@\x03\x0bmsrp-prices\x07\x0bli\
-st-prices\x07\x0bsale-prices\x08\x01\0\x04\0\x12initialize-pricing\x01\x0f\x04\0\
-\x0eupdate-pricing\x01\x0f\x04\0\x19golem:pricing-exports/api\x05\x02\x01B\x04\x01\
-p}\x01j\0\x01s\x01@\x01\x05bytes\0\0\x01\x04\0\x04load\x01\x02\x04\0\x1dgolem:ap\
-i/load-snapshot@1.1.6\x05\x03\x01B\x03\x01p}\x01@\0\0\0\x04\0\x04save\x01\x01\x04\
-\0\x1dgolem:api/save-snapshot@1.1.6\x05\x04\x04\0\x15golem:pricing/pricing\x04\0\
-\x0b\x0d\x01\0\x07pricing\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit\
--component\x070.220.0\x10wit-bindgen-rust\x060.36.0";
+end\x04\x04\0\x11sale-pricing-item\x03\0\x05\x01p\x03\x01p\x06\x01r\x06\x0aprodu\
+ct-ids\x0bmsrp-prices\x07\x0blist-prices\x07\x0bsale-prices\x08\x0acreated-at\x01\
+\x0aupdated-at\x01\x04\0\x07pricing\x03\0\x09\x01k\x0a\x01@\0\0\x0b\x04\0\x03get\
+\x01\x0c\x01k\x03\x01@\x02\x08currencys\x04zones\0\x0d\x04\0\x09get-price\x01\x0e\
+\x01@\x03\x0bmsrp-prices\x07\x0blist-prices\x07\x0bsale-prices\x08\x01\0\x04\0\x12\
+initialize-pricing\x01\x0f\x04\0\x0eupdate-pricing\x01\x0f\x04\0\x19golem:pricin\
+g-exports/api\x05\x02\x01B\x04\x01p}\x01j\0\x01s\x01@\x01\x05bytes\0\0\x01\x04\0\
+\x04load\x01\x02\x04\0\x1dgolem:api/load-snapshot@1.1.6\x05\x03\x01B\x03\x01p}\x01\
+@\0\0\0\x04\0\x04save\x01\x01\x04\0\x1dgolem:api/save-snapshot@1.1.6\x05\x04\x04\
+\0\x15golem:pricing/pricing\x04\0\x0b\x0d\x01\0\x07pricing\x03\0\0\0G\x09produce\
+rs\x01\x0cprocessed-by\x02\x0dwit-component\x070.220.0\x10wit-bindgen-rust\x060.\
+36.0";
 #[inline(never)]
 #[doc(hidden)]
 pub fn __link_custom_section_describing_imports() {

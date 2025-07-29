@@ -1,6 +1,7 @@
 package golem:order-exports;
 
 interface api {
+  use wasi:clocks/wall-clock@0.2.0.{ datetime };
   record action-not-allowed-error {
     message: string,
     status: order-status,
@@ -36,7 +37,6 @@ interface api {
     shipping-address: option<address>,
     total: f32,
     currency: string,
-    timestamp: u64,
   }
   record email-not-valid-error {
     message: string,
@@ -64,7 +64,8 @@ interface api {
     shipping-address: option<address>,
     total: f32,
     currency: string,
-    timestamp: u64,
+    created-at: datetime,
+    updated-at: datetime,
   }
   record order-item {
     product-id: string,

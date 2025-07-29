@@ -1,6 +1,7 @@
 package golem: order;
 
 interface api {
+  use wasi:clocks/wall-clock@0.2.0.{datetime};
 
   enum order-status {
     new,
@@ -36,7 +37,8 @@ interface api {
     shipping-address: option<address>,
     total: float32,
     currency: string,
-    timestamp: u64,
+    created-at: datetime,
+    updated-at: datetime
   }
 
   record create-order {
@@ -46,8 +48,7 @@ interface api {
     billing-address: option<address>,
     shipping-address: option<address>,
     total: float32,
-    currency: string,
-    timestamp: u64,
+    currency: string
   }
 
   record product-not-found-error {
