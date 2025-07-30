@@ -46,4 +46,10 @@ pub mod cart {
     pub struct OrderCreated {
         pub order_id: String,
     }
+
+    #[derive(Clone, Debug, Serialize, Deserialize)]
+    #[serde(rename_all = "kebab-case")]
+    pub struct OkOrderCreated {
+        pub ok: OrderCreated,
+    }
 }
