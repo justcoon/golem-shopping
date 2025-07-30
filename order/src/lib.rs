@@ -5,9 +5,9 @@ use crate::bindings::exports::golem::api::{load_snapshot, save_snapshot};
 use crate::bindings::exports::golem::order_exports::api::*;
 use crate::bindings::golem::pricing_exports::api::PricingItem;
 use crate::bindings::golem::product_exports::api::Product;
+use email_address::EmailAddress;
 use std::cell::RefCell;
 use std::str::FromStr;
-use email_address::EmailAddress;
 
 struct Component;
 
@@ -90,10 +90,12 @@ impl Guest for Component {
         })
     }
 
-
     fn update_email(email: String) -> Result<(), UpdateEmailError> {
         with_state(|state| {
-            println!("Updating email {} for the order {} of user {}", email, state.order_id, state.user_id);
+            println!(
+                "Updating email {} for the order {} of user {}",
+                email, state.order_id, state.user_id
+            );
 
             if state.order_status == domain::order::OrderStatus::New {
                 match EmailAddress::from_str(email.as_str()) {
@@ -106,7 +108,9 @@ impl Guest for Component {
                     })),
                 }
             } else {
-                Err(UpdateEmailError::ActionNotAllowed(action_not_allowed_error(state.order_status)))
+                Err(UpdateEmailError::ActionNotAllowed(action_not_allowed_error(
+                    state.order_status,
+                )))
             }
         })
     }
@@ -224,13 +228,17 @@ impl Guest for Component {
             if state.order_status != domain::order::OrderStatus::New {
                 Err(ShipOrderError::ActionNotAllowed(action_not_allowed_error(state.order_status)))
             } else if state.items.is_empty() {
-                Err(ShipOrderError::EmptyItems(EmptyItemsError { message: "Empty items".to_string() }))
+                Err(ShipOrderError::EmptyItems(EmptyItemsError {
+                    message: "Empty items".to_string(),
+                }))
             } else if state.billing_address.is_none() {
                 Err(ShipOrderError::BillingAddressNotSet(BillingAddressNotSetError {
                     message: "Billing address not set".to_string(),
                 }))
             } else if state.email.is_none() {
-                Err(ShipOrderError::EmptyEmail(EmptyEmailError { message: "Email not set".to_string() }))
+                Err(ShipOrderError::EmptyEmail(EmptyEmailError {
+                    message: "Email not set".to_string(),
+                }))
             } else {
                 state.set_order_status(domain::order::OrderStatus::Shipped);
                 Ok(())

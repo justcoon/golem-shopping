@@ -111,22 +111,22 @@ pub mod cart {
             self.recalculate_total();
             true
         }
-        
+
         pub fn set_items(&mut self, items: Vec<CartItem>) {
             self.items = items;
             self.recalculate_total();
         }
-        
+
         pub fn set_billing_address(&mut self, address: Address) {
             self.billing_address = Some(address);
             self.updated_at = chrono::Utc::now();
         }
-        
+
         pub fn set_shipping_address(&mut self, address: Address) {
             self.shipping_address = Some(address);
             self.updated_at = chrono::Utc::now();
         }
-        
+
         pub fn set_email(&mut self, email: String) {
             self.email = Some(email);
             self.updated_at = chrono::Utc::now();
@@ -237,16 +237,19 @@ pub mod cart {
         total
     }
 
-
     impl From<bindings::wasi::clocks::wall_clock::Datetime> for chrono::DateTime<chrono::Utc> {
-        fn from(value: bindings::wasi::clocks::wall_clock::Datetime) -> chrono::DateTime<chrono::Utc> {
+        fn from(
+            value: bindings::wasi::clocks::wall_clock::Datetime,
+        ) -> chrono::DateTime<chrono::Utc> {
             chrono::DateTime::from_timestamp(value.seconds as i64, value.nanoseconds)
                 .expect("Received invalid datetime from wasi")
         }
     }
 
     impl From<chrono::DateTime<chrono::Utc>> for bindings::wasi::clocks::wall_clock::Datetime {
-        fn from(value: chrono::DateTime<chrono::Utc>) -> bindings::wasi::clocks::wall_clock::Datetime {
+        fn from(
+            value: chrono::DateTime<chrono::Utc>,
+        ) -> bindings::wasi::clocks::wall_clock::Datetime {
             bindings::wasi::clocks::wall_clock::Datetime {
                 seconds: value.timestamp() as u64,
                 nanoseconds: value.timestamp_subsec_nanos(),

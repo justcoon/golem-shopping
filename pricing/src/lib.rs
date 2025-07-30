@@ -25,7 +25,11 @@ fn with_state<T>(f: impl FnOnce(&mut domain::pricing::Pricing) -> T) -> T {
 }
 
 impl Guest for Component {
-    fn initialize_pricing(msrp_prices: Vec<PricingItem>, list_prices: Vec<PricingItem>, sale_prices: Vec<SalePricingItem>) -> () {
+    fn initialize_pricing(
+        msrp_prices: Vec<PricingItem>,
+        list_prices: Vec<PricingItem>,
+        sale_prices: Vec<SalePricingItem>,
+    ) -> () {
         with_state(|state| {
             println!("Initializing pricing {}", state.product_id);
             state.set_prices(
@@ -36,7 +40,11 @@ impl Guest for Component {
         });
     }
 
-    fn update_pricing(msrp_prices: Vec<PricingItem>, list_prices: Vec<PricingItem>, sale_prices: Vec<SalePricingItem>) -> () {
+    fn update_pricing(
+        msrp_prices: Vec<PricingItem>,
+        list_prices: Vec<PricingItem>,
+        sale_prices: Vec<SalePricingItem>,
+    ) -> () {
         with_state(|state| {
             println!("Update pricing {}", state.product_id);
             state.update_prices(

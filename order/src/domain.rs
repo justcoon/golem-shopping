@@ -98,7 +98,7 @@ pub mod order {
             self.email = Some(email);
             self.updated_at = chrono::Utc::now();
         }
-        
+
         pub fn set_order_status(&mut self, status: OrderStatus) {
             self.order_status = status;
             self.updated_at = chrono::Utc::now();
@@ -232,7 +232,9 @@ pub mod order {
             match value {
                 bindings::exports::golem::order_exports::api::OrderStatus::New => Self::New,
                 bindings::exports::golem::order_exports::api::OrderStatus::Shipped => Self::Shipped,
-                bindings::exports::golem::order_exports::api::OrderStatus::Cancelled => Self::Cancelled,
+                bindings::exports::golem::order_exports::api::OrderStatus::Cancelled => {
+                    Self::Cancelled
+                }
             }
         }
     }
@@ -248,14 +250,18 @@ pub mod order {
     }
 
     impl From<bindings::wasi::clocks::wall_clock::Datetime> for chrono::DateTime<chrono::Utc> {
-        fn from(value: bindings::wasi::clocks::wall_clock::Datetime) -> chrono::DateTime<chrono::Utc> {
+        fn from(
+            value: bindings::wasi::clocks::wall_clock::Datetime,
+        ) -> chrono::DateTime<chrono::Utc> {
             chrono::DateTime::from_timestamp(value.seconds as i64, value.nanoseconds)
                 .expect("Received invalid datetime from wasi")
         }
     }
 
     impl From<chrono::DateTime<chrono::Utc>> for bindings::wasi::clocks::wall_clock::Datetime {
-        fn from(value: chrono::DateTime<chrono::Utc>) -> bindings::wasi::clocks::wall_clock::Datetime {
+        fn from(
+            value: chrono::DateTime<chrono::Utc>,
+        ) -> bindings::wasi::clocks::wall_clock::Datetime {
             bindings::wasi::clocks::wall_clock::Datetime {
                 seconds: value.timestamp() as u64,
                 nanoseconds: value.timestamp_subsec_nanos(),
