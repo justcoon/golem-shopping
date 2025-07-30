@@ -23,9 +23,9 @@ interface product-client {
     blocking-get: func() -> option<product>;
     get: func() -> future-get-result;
     schedule-get: func(scheduled-for: wasi-clocks-datetime) -> golem-rpc-cancellation-token;
-    blocking-initialize-product: func(name: string, description: string, tags: list<string>);
-    initialize-product: func(name: string, description: string, tags: list<string>);
-    schedule-initialize-product: func(name: string, description: string, tags: list<string>, scheduled-for: wasi-clocks-datetime) -> golem-rpc-cancellation-token;
+    blocking-initialize-product: func(name: string, brand: string, description: string, tags: list<string>);
+    initialize-product: func(name: string, brand: string, description: string, tags: list<string>);
+    schedule-initialize-product: func(name: string, brand: string, description: string, tags: list<string>, scheduled-for: wasi-clocks-datetime) -> golem-rpc-cancellation-token;
   }
   resource load-snapshot {
     constructor(worker-name: string);

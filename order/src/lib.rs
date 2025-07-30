@@ -5,9 +5,9 @@ use crate::bindings::exports::golem::api::{load_snapshot, save_snapshot};
 use crate::bindings::exports::golem::order_exports::api::*;
 use crate::bindings::golem::pricing_exports::api::PricingItem;
 use crate::bindings::golem::product_exports::api::Product;
+use email_address::EmailAddress;
 use std::cell::RefCell;
 use std::str::FromStr;
-use email_address::EmailAddress;
 
 struct Component;
 
@@ -72,10 +72,12 @@ impl Guest for Component {
         with_state(|state| {
             println!("Initializing order {} for user {}", state.order_id, data.user_id);
             if state.order_status == domain::order::OrderStatus::New {
+                let now = chrono::Utc::now();
                 state.user_id = data.user_id;
                 state.email = Some(data.email);
                 state.currency = data.currency;
-                state.timestamp = data.timestamp;
+                state.created_at = now;
+                state.updated_at = now;
                 state.billing_address = data.billing_address.map(|v| v.into());
                 state.shipping_address = data.shipping_address.map(|v| v.into());
                 state.total = data.total;
@@ -88,15 +90,17 @@ impl Guest for Component {
         })
     }
 
-
     fn update_email(email: String) -> Result<(), UpdateEmailError> {
         with_state(|state| {
-            println!("Updating email {} for the order {} of user {}", email, state.order_id, state.user_id);
+            println!(
+                "Updating email {} for the order {} of user {}",
+                email, state.order_id, state.user_id
+            );
 
             if state.order_status == domain::order::OrderStatus::New {
                 match EmailAddress::from_str(email.as_str()) {
                     Ok(_) => {
-                        state.email = Some(email);
+                        state.set_email(email);
                         Ok(())
                     }
                     Err(e) => Err(UpdateEmailError::EmailNotValid(EmailNotValidError {
@@ -104,7 +108,9 @@ impl Guest for Component {
                     })),
                 }
             } else {
-                Err(UpdateEmailError::ActionNotAllowed(action_not_allowed_error(state.order_status)))
+                Err(UpdateEmailError::ActionNotAllowed(action_not_allowed_error(
+                    state.order_status,
+                )))
             }
         })
     }
@@ -130,7 +136,8 @@ impl Guest for Component {
                         (Some(product), Some(pricing)) => {
                             state.add_item(domain::order::OrderItem {
                                 product_id,
-                                name: product.name,
+                                product_name: product.name,
+                                product_brand: product.brand,
                                 price: pricing.price,
                                 quantity,
                             });
@@ -204,7 +211,7 @@ impl Guest for Component {
 
             if state.order_status == domain::order::OrderStatus::New {
                 println!("Cancelling order {} of user {}", state.order_id, state.user_id);
-                state.order_status = domain::order::OrderStatus::Cancelled;
+                state.set_order_status(domain::order::OrderStatus::Cancelled);
                 Ok(())
             } else {
                 println!("Cancelling order {} of user {}", state.order_id, state.user_id);
@@ -221,15 +228,19 @@ impl Guest for Component {
             if state.order_status != domain::order::OrderStatus::New {
                 Err(ShipOrderError::ActionNotAllowed(action_not_allowed_error(state.order_status)))
             } else if state.items.is_empty() {
-                Err(ShipOrderError::EmptyItems(EmptyItemsError { message: "Empty items".to_string() }))
+                Err(ShipOrderError::EmptyItems(EmptyItemsError {
+                    message: "Empty items".to_string(),
+                }))
             } else if state.billing_address.is_none() {
                 Err(ShipOrderError::BillingAddressNotSet(BillingAddressNotSetError {
                     message: "Billing address not set".to_string(),
                 }))
             } else if state.email.is_none() {
-                Err(ShipOrderError::EmptyEmail(EmptyEmailError { message: "Email not set".to_string() }))
+                Err(ShipOrderError::EmptyEmail(EmptyEmailError {
+                    message: "Email not set".to_string(),
+                }))
             } else {
-                state.order_status = domain::order::OrderStatus::Shipped;
+                state.set_order_status(domain::order::OrderStatus::Shipped);
                 Ok(())
             }
         })
@@ -242,7 +253,7 @@ impl Guest for Component {
                 state.order_id, state.user_id
             );
             if state.order_status == domain::order::OrderStatus::New {
-                state.billing_address = Some(address.into());
+                state.set_billing_address(address.into());
                 Ok(())
             } else {
                 Err(UpdateAddressError::ActionNotAllowed(action_not_allowed_error(
@@ -259,7 +270,7 @@ impl Guest for Component {
                 state.order_id, state.user_id
             );
             if state.order_status == domain::order::OrderStatus::New {
-                state.shipping_address = Some(address.into());
+                state.set_shipping_address(address.into());
                 Ok(())
             } else {
                 Err(UpdateAddressError::ActionNotAllowed(action_not_allowed_error(

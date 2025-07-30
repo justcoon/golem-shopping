@@ -4,7 +4,7 @@ interface pricing-client {
   use wasi:io/poll@0.2.0.{ pollable as wasi-io-pollable };
   use wasi:clocks/wall-clock@0.2.0.{ datetime as wasi-clocks-datetime };
   use golem:rpc/types@0.2.0.{ component-id as golem-rpc-component-id, worker-id as golem-rpc-worker-id, cancellation-token as golem-rpc-cancellation-token };
-  use golem:pricing-exports/api.{ pricing, pricing-item };
+  use golem:pricing-exports/api.{ datetime, pricing, pricing-item, sale-pricing-item };
   resource future-get-result {
     subscribe: func() -> wasi-io-pollable;
     get: func() -> option<option<pricing>>;
@@ -30,12 +30,12 @@ interface pricing-client {
     blocking-get-price: func(currency: string, zone: string) -> option<pricing-item>;
     get-price: func(currency: string, zone: string) -> future-get-price-result;
     schedule-get-price: func(currency: string, zone: string, scheduled-for: wasi-clocks-datetime) -> golem-rpc-cancellation-token;
-    blocking-initialize-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>);
-    initialize-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>);
-    schedule-initialize-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>, scheduled-for: wasi-clocks-datetime) -> golem-rpc-cancellation-token;
-    blocking-update-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>);
-    update-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>);
-    schedule-update-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>, scheduled-for: wasi-clocks-datetime) -> golem-rpc-cancellation-token;
+    blocking-initialize-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>, sale-prices: list<sale-pricing-item>);
+    initialize-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>, sale-prices: list<sale-pricing-item>);
+    schedule-initialize-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>, sale-prices: list<sale-pricing-item>, scheduled-for: wasi-clocks-datetime) -> golem-rpc-cancellation-token;
+    blocking-update-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>, sale-prices: list<sale-pricing-item>);
+    update-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>, sale-prices: list<sale-pricing-item>);
+    schedule-update-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>, sale-prices: list<sale-pricing-item>, scheduled-for: wasi-clocks-datetime) -> golem-rpc-cancellation-token;
   }
   resource load-snapshot {
     constructor(worker-name: string);

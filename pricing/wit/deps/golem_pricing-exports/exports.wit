@@ -1,20 +1,31 @@
 package golem:pricing-exports;
 
 interface api {
+  use wasi:clocks/wall-clock@0.2.0.{ datetime };
   record pricing {
     product-id: string,
     msrp-prices: list<pricing-item>,
     list-prices: list<pricing-item>,
+    sale-prices: list<sale-pricing-item>,
+    created-at: datetime,
+    updated-at: datetime,
   }
   record pricing-item {
     price: f32,
     currency: string,
     zone: string,
   }
+  record sale-pricing-item {
+    price: f32,
+    currency: string,
+    zone: string,
+    start: option<datetime>,
+    end: option<datetime>,
+  }
   get: func() -> option<pricing>;
   get-price: func(currency: string, zone: string) -> option<pricing-item>;
-  initialize-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>);
-  update-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>);
+  initialize-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>, sale-prices: list<sale-pricing-item>);
+  update-pricing: func(msrp-prices: list<pricing-item>, list-prices: list<pricing-item>, sale-prices: list<sale-pricing-item>);
 }
 
 interface pricing-inline-functions {}

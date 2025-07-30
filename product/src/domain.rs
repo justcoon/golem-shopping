@@ -7,13 +7,39 @@ pub mod product {
     pub struct Product {
         pub product_id: String,
         pub name: String,
+        pub brand: String,
         pub description: String,
         pub tags: Vec<String>,
+        pub created_at: chrono::DateTime<chrono::Utc>,
+        pub updated_at: chrono::DateTime<chrono::Utc>,
     }
 
     impl Product {
         pub fn new(product_id: String) -> Self {
-            Self { product_id, name: "".to_string(), description: "".to_string(), tags: vec![] }
+            let now = chrono::Utc::now();
+            Self {
+                product_id,
+                name: "".to_string(),
+                brand: "".to_string(),
+                description: "".to_string(),
+                tags: vec![],
+                created_at: now,
+                updated_at: now,
+            }
+        }
+
+        pub fn update(
+            &mut self,
+            name: String,
+            brand: String,
+            description: String,
+            tags: Vec<String>,
+        ) {
+            self.name = name;
+            self.brand = brand;
+            self.description = description;
+            self.tags = tags;
+            self.updated_at = chrono::Utc::now();
         }
     }
 
@@ -22,8 +48,11 @@ pub mod product {
             Self {
                 product_id: value.product_id,
                 name: value.name,
+                brand: value.brand,
                 description: value.description,
                 tags: value.tags,
+                created_at: value.created_at.into(),
+                updated_at: value.updated_at.into(),
             }
         }
     }
@@ -33,8 +62,31 @@ pub mod product {
             Self {
                 product_id: value.product_id,
                 name: value.name,
+                brand: value.brand,
                 description: value.description,
                 tags: value.tags,
+                created_at: value.created_at.into(),
+                updated_at: value.updated_at.into(),
+            }
+        }
+    }
+
+    impl From<bindings::wasi::clocks::wall_clock::Datetime> for chrono::DateTime<chrono::Utc> {
+        fn from(
+            value: bindings::wasi::clocks::wall_clock::Datetime,
+        ) -> chrono::DateTime<chrono::Utc> {
+            chrono::DateTime::from_timestamp(value.seconds as i64, value.nanoseconds)
+                .expect("Received invalid datetime from wasi")
+        }
+    }
+
+    impl From<chrono::DateTime<chrono::Utc>> for bindings::wasi::clocks::wall_clock::Datetime {
+        fn from(
+            value: chrono::DateTime<chrono::Utc>,
+        ) -> bindings::wasi::clocks::wall_clock::Datetime {
+            bindings::wasi::clocks::wall_clock::Datetime {
+                seconds: value.timestamp() as u64,
+                nanoseconds: value.timestamp_subsec_nanos(),
             }
         }
     }

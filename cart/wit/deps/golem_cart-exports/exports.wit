@@ -1,6 +1,7 @@
 package golem:cart-exports;
 
 interface api {
+  use wasi:clocks/wall-clock@0.2.0.{ datetime };
   variant add-item-error {
     product-not-found(product-not-found-error),
     pricing-not-found(pricing-not-found-error),
@@ -28,12 +29,13 @@ interface api {
     shipping-address: option<address>,
     total: f32,
     currency: string,
-    timestamp: u64,
     previous-order-ids: list<string>,
+    updated-at: datetime,
   }
   record cart-item {
     product-id: string,
-    name: string,
+    product-name: string,
+    product-brand: string,
     price: f32,
     quantity: u32,
   }
@@ -86,6 +88,7 @@ interface api {
   }
   add-item: func(product-id: string, quantity: u32) -> result<_, add-item-error>;
   checkout: func() -> result<order-confirmation, checkout-error>;
+  clear: func();
   get: func() -> option<cart>;
   remove-item: func(product-id: string) -> result<_, remove-item-error>;
   update-billing-address: func(address: address) -> result<_, update-address-error>;

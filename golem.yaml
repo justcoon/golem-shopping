@@ -234,10 +234,10 @@ httpApi:
               let id: string = request.path.product-id;
               let worker = instance(id);
               let name: string = request.body.name;
+              let brand: string = request.body.brand;
               let description: string = request.body.description;
               let tags: list<string> = request.body.tags;
-              worker.initialize-product
-              (name, description, tags);
+              worker.initialize-product(name, brand, description, tags);
               {status: 200u64, body: {message: "created"}}
     pricing:
       version: 0.0.1
@@ -260,7 +260,7 @@ httpApi:
             response: |-
               let id: string = request.path.product-id;
               let worker = instance(id);
-              worker.initialize-pricing(request.body.msrp-prices, request.body.list-prices);
+              worker.initialize-pricing(request.body.msrp-prices, request.body.list-prices, request.body.sale-prices);
               {status: 200u64, body: {message: "created"}}
         - method: Patch
           path: "/v1/pricing/{product-id}"
@@ -270,7 +270,7 @@ httpApi:
             response: |-
               let id: string = request.path.product-id;
               let worker = instance(id);
-              worker.update-pricing(request.body.msrp-prices, request.body.list-prices);
+              worker.update-pricing(request.body.msrp-prices, request.body.list-prices, request.body.sale-prices);
               {status: 200u64, body: {message: "updated"}}
   deployments:
     local:

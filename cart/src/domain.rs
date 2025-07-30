@@ -69,8 +69,8 @@ pub mod cart {
         pub shipping_address: Option<Address>,
         pub total: f32,
         pub currency: String,
-        pub timestamp: u64,
         pub previous_order_ids: Vec<String>,
+        pub updated_at: chrono::DateTime<chrono::Utc>,
     }
 
     impl Cart {
@@ -83,27 +83,53 @@ pub mod cart {
                 shipping_address: None,
                 total: 0.0,
                 currency: CURRENCY_DEFAULT.to_string(),
-                timestamp: 0,
+                updated_at: chrono::Utc::now(),
                 previous_order_ids: vec![],
             }
         }
 
         pub fn order_created(&mut self, order_id: String) {
+            self.clear();
+            self.previous_order_ids.push(order_id);
+        }
+
+        pub fn clear(&mut self) {
             self.items.clear();
             self.billing_address = None;
             self.shipping_address = None;
             self.total = 0.0;
-            self.previous_order_ids.push(order_id);
+            self.updated_at = chrono::Utc::now();
         }
 
         pub fn recalculate_total(&mut self) {
             self.total = get_total_price(self.items.clone());
+            self.updated_at = chrono::Utc::now();
         }
 
         pub fn add_item(&mut self, item: CartItem) -> bool {
             self.items.push(item);
             self.recalculate_total();
             true
+        }
+
+        pub fn set_items(&mut self, items: Vec<CartItem>) {
+            self.items = items;
+            self.recalculate_total();
+        }
+
+        pub fn set_billing_address(&mut self, address: Address) {
+            self.billing_address = Some(address);
+            self.updated_at = chrono::Utc::now();
+        }
+
+        pub fn set_shipping_address(&mut self, address: Address) {
+            self.shipping_address = Some(address);
+            self.updated_at = chrono::Utc::now();
+        }
+
+        pub fn set_email(&mut self, email: String) {
+            self.email = Some(email);
+            self.updated_at = chrono::Utc::now();
         }
 
         pub fn update_item_quantity(&mut self, product_id: String, quantity: u32) -> bool {
@@ -139,7 +165,8 @@ pub mod cart {
     #[serde(rename_all = "kebab-case")]
     pub struct CartItem {
         pub product_id: String,
-        pub name: String,
+        pub product_name: String,
+        pub product_brand: String,
         pub price: f32,
         pub quantity: u32,
     }
@@ -150,7 +177,8 @@ pub mod cart {
                 product_id: value.product_id,
                 quantity: value.quantity,
                 price: value.price,
-                name: value.name,
+                product_name: value.product_name,
+                product_brand: value.product_brand,
             }
         }
     }
@@ -160,7 +188,8 @@ pub mod cart {
                 product_id: value.product_id,
                 quantity: value.quantity,
                 price: value.price,
-                name: value.name,
+                product_name: value.product_name,
+                product_brand: value.product_brand,
             }
         }
     }
@@ -176,7 +205,6 @@ pub mod cart {
                 items: value.items.into_iter().map(|item| item.into()).collect(),
                 total: value.total,
                 currency: value.currency,
-                timestamp: value.timestamp,
                 shipping_address: value.shipping_address.map(|a| a.into()),
                 billing_address: value.billing_address.map(|a| a.into()),
             })
@@ -191,7 +219,7 @@ pub mod cart {
                 items: value.items.into_iter().map(|item| item.into()).collect(),
                 total: value.total,
                 currency: value.currency,
-                timestamp: value.timestamp,
+                updated_at: value.updated_at.into(),
                 shipping_address: value.shipping_address.map(|a| a.into()),
                 billing_address: value.billing_address.map(|a| a.into()),
                 previous_order_ids: value.previous_order_ids,
@@ -207,6 +235,26 @@ pub mod cart {
         }
 
         total
+    }
+
+    impl From<bindings::wasi::clocks::wall_clock::Datetime> for chrono::DateTime<chrono::Utc> {
+        fn from(
+            value: bindings::wasi::clocks::wall_clock::Datetime,
+        ) -> chrono::DateTime<chrono::Utc> {
+            chrono::DateTime::from_timestamp(value.seconds as i64, value.nanoseconds)
+                .expect("Received invalid datetime from wasi")
+        }
+    }
+
+    impl From<chrono::DateTime<chrono::Utc>> for bindings::wasi::clocks::wall_clock::Datetime {
+        fn from(
+            value: chrono::DateTime<chrono::Utc>,
+        ) -> bindings::wasi::clocks::wall_clock::Datetime {
+            bindings::wasi::clocks::wall_clock::Datetime {
+                seconds: value.timestamp() as u64,
+                nanoseconds: value.timestamp_subsec_nanos(),
+            }
+        }
     }
 
     pub mod serdes {

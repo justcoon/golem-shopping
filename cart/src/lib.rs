@@ -36,6 +36,16 @@ fn get_pricing(product_id: String, currency: String, zone: String) -> Option<Pri
     api.blocking_get_price(&currency, &zone)
 }
 
+fn get_cart_item(product: Product, pricing: PricingItem, quantity: u32) -> domain::cart::CartItem {
+    domain::cart::CartItem {
+        product_id: product.product_id,
+        product_name: product.name,
+        product_brand: product.brand,
+        price: pricing.price,
+        quantity,
+    }
+}
+
 fn validate_cart(cart: domain::cart::Cart) -> Result<(), CheckoutError> {
     if cart.items.is_empty() {
         Err(CheckoutError::EmptyItems(EmptyItemsError { message: "Empty items".to_string() }))
@@ -119,12 +129,7 @@ impl Guest for Component {
                 );
                 match (product, pricing) {
                     (Some(product), Some(pricing)) => {
-                        state.add_item(domain::cart::CartItem {
-                            product_id,
-                            name: product.name,
-                            price: pricing.price,
-                            quantity,
-                        });
+                        state.add_item(get_cart_item(product, pricing, quantity));
                     }
                     (None, _) => {
                         return Err(AddItemError::ProductNotFound(product_not_found_error(
@@ -148,7 +153,7 @@ impl Guest for Component {
 
             match EmailAddress::from_str(email.as_str()) {
                 Ok(_) => {
-                    state.email = Some(email);
+                    state.set_email(email);
                     Ok(())
                 }
                 Err(e) => Err(UpdateEmailError::EmailNotValid(EmailNotValidError {
@@ -210,7 +215,7 @@ impl Guest for Component {
         with_state(|state| {
             println!("Updating billing address in the cart of user {}", state.user_id);
 
-            state.billing_address = Some(address.into());
+            state.set_billing_address(address.into());
             Ok(())
         })
     }
@@ -219,8 +224,15 @@ impl Guest for Component {
         with_state(|state| {
             println!("Updating shipping address in the cart of user {}", state.user_id);
 
-            state.shipping_address = Some(address.into());
+            state.set_shipping_address(address.into());
             Ok(())
+        })
+    }
+
+    fn clear() {
+        with_state(|state| {
+            println!("Clearing the cart of user {}", state.user_id);
+            state.clear();
         })
     }
 
@@ -240,20 +252,14 @@ impl Guest for Component {
                     );
                     match (product, pricing) {
                         (Some(product), Some(pricing)) => {
-                            items.push(domain::cart::CartItem {
-                                product_id,
-                                name: product.name,
-                                price: pricing.price,
-                                quantity,
-                            });
+                            items.push(get_cart_item(product, pricing, quantity));
                         }
-                        _ => ()
+                        _ => (),
                     }
                 }
-                cart.items = items;
-                cart.recalculate_total();
+                cart.set_items(items);
                 Some(cart.clone().into())
-            } else { 
+            } else {
                 None
             }
         })

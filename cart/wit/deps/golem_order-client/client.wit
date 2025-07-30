@@ -4,7 +4,7 @@ interface order-client {
   use wasi:io/poll@0.2.0.{ pollable as wasi-io-pollable };
   use wasi:clocks/wall-clock@0.2.0.{ datetime as wasi-clocks-datetime };
   use golem:rpc/types@0.2.0.{ component-id as golem-rpc-component-id, worker-id as golem-rpc-worker-id, cancellation-token as golem-rpc-cancellation-token };
-  use golem:order-exports/api.{ action-not-allowed-error, add-item-error, address, address-not-valid-error, billing-address-not-set-error, cancel-order-error, create-order, email-not-valid-error, empty-email-error, empty-items-error, init-order-error, item-not-found-error, order, order-item, order-status, pricing-not-found-error, product-not-found-error, remove-item-error, ship-order-error, update-address-error, update-email-error, update-item-quantity-error };
+  use golem:order-exports/api.{ action-not-allowed-error, add-item-error, address, address-not-valid-error, billing-address-not-set-error, cancel-order-error, create-order, datetime, email-not-valid-error, empty-email-error, empty-items-error, init-order-error, item-not-found-error, order, order-item, order-status, pricing-not-found-error, product-not-found-error, remove-item-error, ship-order-error, update-address-error, update-email-error, update-item-quantity-error };
   resource future-add-item-result {
     subscribe: func() -> wasi-io-pollable;
     get: func() -> option<result<_, add-item-error>>;

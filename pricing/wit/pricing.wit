@@ -1,6 +1,7 @@
 package golem:pricing;
 
 world pricing {
+  import wasi:clocks/wall-clock@0.2.0;
   export golem:pricing-exports/api;
   export golem:api/load-snapshot@1.1.6;
   export golem:api/save-snapshot@1.1.6;
