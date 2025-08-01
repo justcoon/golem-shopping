@@ -7671,9 +7671,9 @@ pub mod golem {
                 pub fn get(&self) -> Option<Option<Pricing>> {
                     unsafe {
                         #[repr(align(8))]
-                        struct RetArea([::core::mem::MaybeUninit<u8>; 64]);
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 80]);
                         let mut ret_area = RetArea(
-                            [::core::mem::MaybeUninit::uninit(); 64],
+                            [::core::mem::MaybeUninit::uninit(); 80],
                         );
                         let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
@@ -7843,6 +7843,8 @@ pub mod golem {
                                                 _rt::cabi_dealloc(base41, len41 * 72, 8);
                                                 let l42 = *ptr0.add(48).cast::<i64>();
                                                 let l43 = *ptr0.add(56).cast::<i32>();
+                                                let l44 = *ptr0.add(64).cast::<i64>();
+                                                let l45 = *ptr0.add(72).cast::<i32>();
                                                 super::super::super::golem::pricing_exports::api::Pricing {
                                                     product_id: _rt::string_lift(bytes5),
                                                     msrp_prices: result15,
@@ -7851,6 +7853,10 @@ pub mod golem {
                                                     created_at: super::super::super::wasi::clocks::wall_clock::Datetime {
                                                         seconds: l42 as u64,
                                                         nanoseconds: l43 as u32,
+                                                    },
+                                                    updated_at: super::super::super::wasi::clocks::wall_clock::Datetime {
+                                                        seconds: l44 as u64,
+                                                        nanoseconds: l45 as u32,
                                                     },
                                                 }
                                             };
@@ -8170,9 +8176,9 @@ pub mod golem {
                 pub fn blocking_get(&self) -> Option<Pricing> {
                     unsafe {
                         #[repr(align(8))]
-                        struct RetArea([::core::mem::MaybeUninit<u8>; 56]);
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 72]);
                         let mut ret_area = RetArea(
-                            [::core::mem::MaybeUninit::uninit(); 56],
+                            [::core::mem::MaybeUninit::uninit(); 72],
                         );
                         let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
@@ -8337,6 +8343,8 @@ pub mod golem {
                                     _rt::cabi_dealloc(base40, len40 * 72, 8);
                                     let l41 = *ptr0.add(40).cast::<i64>();
                                     let l42 = *ptr0.add(48).cast::<i32>();
+                                    let l43 = *ptr0.add(56).cast::<i64>();
+                                    let l44 = *ptr0.add(64).cast::<i32>();
                                     super::super::super::golem::pricing_exports::api::Pricing {
                                         product_id: _rt::string_lift(bytes4),
                                         msrp_prices: result14,
@@ -8345,6 +8353,10 @@ pub mod golem {
                                         created_at: super::super::super::wasi::clocks::wall_clock::Datetime {
                                             seconds: l41 as u64,
                                             nanoseconds: l42 as u32,
+                                        },
+                                        updated_at: super::super::super::wasi::clocks::wall_clock::Datetime {
+                                            seconds: l43 as u64,
+                                            nanoseconds: l44 as u32,
                                         },
                                     }
                                 };
@@ -10215,6 +10227,7 @@ pub mod golem {
                 pub list_prices: _rt::Vec<PricingItem>,
                 pub sale_prices: _rt::Vec<SalePricingItem>,
                 pub created_at: Datetime,
+                pub updated_at: Datetime,
             }
             impl ::core::fmt::Debug for Pricing {
                 fn fmt(
@@ -10227,6 +10240,7 @@ pub mod golem {
                         .field("list-prices", &self.list_prices)
                         .field("sale-prices", &self.sale_prices)
                         .field("created-at", &self.created_at)
+                        .field("updated-at", &self.updated_at)
                         .finish()
                 }
             }
@@ -10234,8 +10248,8 @@ pub mod golem {
             pub fn get() -> Option<Pricing> {
                 unsafe {
                     #[repr(align(8))]
-                    struct RetArea([::core::mem::MaybeUninit<u8>; 56]);
-                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 56]);
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 72]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 72]);
                     let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                     #[cfg(target_arch = "wasm32")]
                     #[link(wasm_import_module = "golem:pricing-exports/api")]
@@ -10397,6 +10411,8 @@ pub mod golem {
                                 _rt::cabi_dealloc(base40, len40 * 72, 8);
                                 let l41 = *ptr0.add(40).cast::<i64>();
                                 let l42 = *ptr0.add(48).cast::<i32>();
+                                let l43 = *ptr0.add(56).cast::<i64>();
+                                let l44 = *ptr0.add(64).cast::<i32>();
                                 Pricing {
                                     product_id: _rt::string_lift(bytes4),
                                     msrp_prices: result14,
@@ -10405,6 +10421,10 @@ pub mod golem {
                                     created_at: super::super::super::wasi::clocks::wall_clock::Datetime {
                                         seconds: l41 as u64,
                                         nanoseconds: l42 as u32,
+                                    },
+                                    updated_at: super::super::super::wasi::clocks::wall_clock::Datetime {
+                                        seconds: l43 as u64,
+                                        nanoseconds: l44 as u32,
                                     },
                                 }
                             };
@@ -11121,10 +11141,10 @@ pub mod golem {
                 #[allow(unused_unsafe, clippy::all)]
                 pub fn get(&self) -> Option<Option<Product>> {
                     unsafe {
-                        #[repr(align(4))]
-                        struct RetArea([::core::mem::MaybeUninit<u8>; 48]);
+                        #[repr(align(8))]
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 88]);
                         let mut ret_area = RetArea(
-                            [::core::mem::MaybeUninit::uninit(); 48],
+                            [::core::mem::MaybeUninit::uninit(); 88],
                         );
                         let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
@@ -11145,45 +11165,45 @@ pub mod golem {
                             0 => None,
                             1 => {
                                 let e = {
-                                    let l2 = i32::from(*ptr0.add(4).cast::<u8>());
+                                    let l2 = i32::from(*ptr0.add(8).cast::<u8>());
                                     match l2 {
                                         0 => None,
                                         1 => {
                                             let e = {
-                                                let l3 = *ptr0.add(8).cast::<*mut u8>();
-                                                let l4 = *ptr0.add(12).cast::<usize>();
+                                                let l3 = *ptr0.add(16).cast::<*mut u8>();
+                                                let l4 = *ptr0.add(20).cast::<usize>();
                                                 let len5 = l4;
                                                 let bytes5 = _rt::Vec::from_raw_parts(
                                                     l3.cast(),
                                                     len5,
                                                     len5,
                                                 );
-                                                let l6 = *ptr0.add(16).cast::<*mut u8>();
-                                                let l7 = *ptr0.add(20).cast::<usize>();
+                                                let l6 = *ptr0.add(24).cast::<*mut u8>();
+                                                let l7 = *ptr0.add(28).cast::<usize>();
                                                 let len8 = l7;
                                                 let bytes8 = _rt::Vec::from_raw_parts(
                                                     l6.cast(),
                                                     len8,
                                                     len8,
                                                 );
-                                                let l9 = *ptr0.add(24).cast::<*mut u8>();
-                                                let l10 = *ptr0.add(28).cast::<usize>();
+                                                let l9 = *ptr0.add(32).cast::<*mut u8>();
+                                                let l10 = *ptr0.add(36).cast::<usize>();
                                                 let len11 = l10;
                                                 let bytes11 = _rt::Vec::from_raw_parts(
                                                     l9.cast(),
                                                     len11,
                                                     len11,
                                                 );
-                                                let l12 = *ptr0.add(32).cast::<*mut u8>();
-                                                let l13 = *ptr0.add(36).cast::<usize>();
+                                                let l12 = *ptr0.add(40).cast::<*mut u8>();
+                                                let l13 = *ptr0.add(44).cast::<usize>();
                                                 let len14 = l13;
                                                 let bytes14 = _rt::Vec::from_raw_parts(
                                                     l12.cast(),
                                                     len14,
                                                     len14,
                                                 );
-                                                let l15 = *ptr0.add(40).cast::<*mut u8>();
-                                                let l16 = *ptr0.add(44).cast::<usize>();
+                                                let l15 = *ptr0.add(48).cast::<*mut u8>();
+                                                let l16 = *ptr0.add(52).cast::<usize>();
                                                 let base20 = l15;
                                                 let len20 = l16;
                                                 let mut result20 = _rt::Vec::with_capacity(len20);
@@ -11203,12 +11223,24 @@ pub mod golem {
                                                     result20.push(e20);
                                                 }
                                                 _rt::cabi_dealloc(base20, len20 * 8, 4);
+                                                let l21 = *ptr0.add(56).cast::<i64>();
+                                                let l22 = *ptr0.add(64).cast::<i32>();
+                                                let l23 = *ptr0.add(72).cast::<i64>();
+                                                let l24 = *ptr0.add(80).cast::<i32>();
                                                 super::super::super::golem::product_exports::api::Product {
                                                     product_id: _rt::string_lift(bytes5),
                                                     name: _rt::string_lift(bytes8),
                                                     brand: _rt::string_lift(bytes11),
                                                     description: _rt::string_lift(bytes14),
                                                     tags: result20,
+                                                    created_at: super::super::super::wasi::clocks::wall_clock::Datetime {
+                                                        seconds: l21 as u64,
+                                                        nanoseconds: l22 as u32,
+                                                    },
+                                                    updated_at: super::super::super::wasi::clocks::wall_clock::Datetime {
+                                                        seconds: l23 as u64,
+                                                        nanoseconds: l24 as u32,
+                                                    },
                                                 }
                                             };
                                             Some(e)
@@ -11435,10 +11467,10 @@ pub mod golem {
                 #[allow(unused_unsafe, clippy::all)]
                 pub fn blocking_get(&self) -> Option<Product> {
                     unsafe {
-                        #[repr(align(4))]
-                        struct RetArea([::core::mem::MaybeUninit<u8>; 44]);
+                        #[repr(align(8))]
+                        struct RetArea([::core::mem::MaybeUninit<u8>; 80]);
                         let mut ret_area = RetArea(
-                            [::core::mem::MaybeUninit::uninit(); 44],
+                            [::core::mem::MaybeUninit::uninit(); 80],
                         );
                         let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
@@ -11459,40 +11491,40 @@ pub mod golem {
                             0 => None,
                             1 => {
                                 let e = {
-                                    let l2 = *ptr0.add(4).cast::<*mut u8>();
-                                    let l3 = *ptr0.add(8).cast::<usize>();
+                                    let l2 = *ptr0.add(8).cast::<*mut u8>();
+                                    let l3 = *ptr0.add(12).cast::<usize>();
                                     let len4 = l3;
                                     let bytes4 = _rt::Vec::from_raw_parts(
                                         l2.cast(),
                                         len4,
                                         len4,
                                     );
-                                    let l5 = *ptr0.add(12).cast::<*mut u8>();
-                                    let l6 = *ptr0.add(16).cast::<usize>();
+                                    let l5 = *ptr0.add(16).cast::<*mut u8>();
+                                    let l6 = *ptr0.add(20).cast::<usize>();
                                     let len7 = l6;
                                     let bytes7 = _rt::Vec::from_raw_parts(
                                         l5.cast(),
                                         len7,
                                         len7,
                                     );
-                                    let l8 = *ptr0.add(20).cast::<*mut u8>();
-                                    let l9 = *ptr0.add(24).cast::<usize>();
+                                    let l8 = *ptr0.add(24).cast::<*mut u8>();
+                                    let l9 = *ptr0.add(28).cast::<usize>();
                                     let len10 = l9;
                                     let bytes10 = _rt::Vec::from_raw_parts(
                                         l8.cast(),
                                         len10,
                                         len10,
                                     );
-                                    let l11 = *ptr0.add(28).cast::<*mut u8>();
-                                    let l12 = *ptr0.add(32).cast::<usize>();
+                                    let l11 = *ptr0.add(32).cast::<*mut u8>();
+                                    let l12 = *ptr0.add(36).cast::<usize>();
                                     let len13 = l12;
                                     let bytes13 = _rt::Vec::from_raw_parts(
                                         l11.cast(),
                                         len13,
                                         len13,
                                     );
-                                    let l14 = *ptr0.add(36).cast::<*mut u8>();
-                                    let l15 = *ptr0.add(40).cast::<usize>();
+                                    let l14 = *ptr0.add(40).cast::<*mut u8>();
+                                    let l15 = *ptr0.add(44).cast::<usize>();
                                     let base19 = l14;
                                     let len19 = l15;
                                     let mut result19 = _rt::Vec::with_capacity(len19);
@@ -11512,12 +11544,24 @@ pub mod golem {
                                         result19.push(e19);
                                     }
                                     _rt::cabi_dealloc(base19, len19 * 8, 4);
+                                    let l20 = *ptr0.add(48).cast::<i64>();
+                                    let l21 = *ptr0.add(56).cast::<i32>();
+                                    let l22 = *ptr0.add(64).cast::<i64>();
+                                    let l23 = *ptr0.add(72).cast::<i32>();
                                     super::super::super::golem::product_exports::api::Product {
                                         product_id: _rt::string_lift(bytes4),
                                         name: _rt::string_lift(bytes7),
                                         brand: _rt::string_lift(bytes10),
                                         description: _rt::string_lift(bytes13),
                                         tags: result19,
+                                        created_at: super::super::super::wasi::clocks::wall_clock::Datetime {
+                                            seconds: l20 as u64,
+                                            nanoseconds: l21 as u32,
+                                        },
+                                        updated_at: super::super::super::wasi::clocks::wall_clock::Datetime {
+                                            seconds: l22 as u64,
+                                            nanoseconds: l23 as u32,
+                                        },
                                     }
                                 };
                                 Some(e)
@@ -12228,6 +12272,7 @@ pub mod golem {
             #[doc(hidden)]
             static __FORCE_SECTION_REF: fn() = super::super::super::__link_custom_section_describing_imports;
             use super::super::super::_rt;
+            pub type Datetime = super::super::super::wasi::clocks::wall_clock::Datetime;
             #[derive(Clone)]
             pub struct Product {
                 pub product_id: _rt::String,
@@ -12235,6 +12280,8 @@ pub mod golem {
                 pub brand: _rt::String,
                 pub description: _rt::String,
                 pub tags: _rt::Vec<_rt::String>,
+                pub created_at: Datetime,
+                pub updated_at: Datetime,
             }
             impl ::core::fmt::Debug for Product {
                 fn fmt(
@@ -12247,15 +12294,17 @@ pub mod golem {
                         .field("brand", &self.brand)
                         .field("description", &self.description)
                         .field("tags", &self.tags)
+                        .field("created-at", &self.created_at)
+                        .field("updated-at", &self.updated_at)
                         .finish()
                 }
             }
             #[allow(unused_unsafe, clippy::all)]
             pub fn get() -> Option<Product> {
                 unsafe {
-                    #[repr(align(4))]
-                    struct RetArea([::core::mem::MaybeUninit<u8>; 44]);
-                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 44]);
+                    #[repr(align(8))]
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 80]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 80]);
                     let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                     #[cfg(target_arch = "wasm32")]
                     #[link(wasm_import_module = "golem:product-exports/api")]
@@ -12273,40 +12322,40 @@ pub mod golem {
                         0 => None,
                         1 => {
                             let e = {
-                                let l2 = *ptr0.add(4).cast::<*mut u8>();
-                                let l3 = *ptr0.add(8).cast::<usize>();
+                                let l2 = *ptr0.add(8).cast::<*mut u8>();
+                                let l3 = *ptr0.add(12).cast::<usize>();
                                 let len4 = l3;
                                 let bytes4 = _rt::Vec::from_raw_parts(
                                     l2.cast(),
                                     len4,
                                     len4,
                                 );
-                                let l5 = *ptr0.add(12).cast::<*mut u8>();
-                                let l6 = *ptr0.add(16).cast::<usize>();
+                                let l5 = *ptr0.add(16).cast::<*mut u8>();
+                                let l6 = *ptr0.add(20).cast::<usize>();
                                 let len7 = l6;
                                 let bytes7 = _rt::Vec::from_raw_parts(
                                     l5.cast(),
                                     len7,
                                     len7,
                                 );
-                                let l8 = *ptr0.add(20).cast::<*mut u8>();
-                                let l9 = *ptr0.add(24).cast::<usize>();
+                                let l8 = *ptr0.add(24).cast::<*mut u8>();
+                                let l9 = *ptr0.add(28).cast::<usize>();
                                 let len10 = l9;
                                 let bytes10 = _rt::Vec::from_raw_parts(
                                     l8.cast(),
                                     len10,
                                     len10,
                                 );
-                                let l11 = *ptr0.add(28).cast::<*mut u8>();
-                                let l12 = *ptr0.add(32).cast::<usize>();
+                                let l11 = *ptr0.add(32).cast::<*mut u8>();
+                                let l12 = *ptr0.add(36).cast::<usize>();
                                 let len13 = l12;
                                 let bytes13 = _rt::Vec::from_raw_parts(
                                     l11.cast(),
                                     len13,
                                     len13,
                                 );
-                                let l14 = *ptr0.add(36).cast::<*mut u8>();
-                                let l15 = *ptr0.add(40).cast::<usize>();
+                                let l14 = *ptr0.add(40).cast::<*mut u8>();
+                                let l15 = *ptr0.add(44).cast::<usize>();
                                 let base19 = l14;
                                 let len19 = l15;
                                 let mut result19 = _rt::Vec::with_capacity(len19);
@@ -12326,12 +12375,24 @@ pub mod golem {
                                     result19.push(e19);
                                 }
                                 _rt::cabi_dealloc(base19, len19 * 8, 4);
+                                let l20 = *ptr0.add(48).cast::<i64>();
+                                let l21 = *ptr0.add(56).cast::<i32>();
+                                let l22 = *ptr0.add(64).cast::<i64>();
+                                let l23 = *ptr0.add(72).cast::<i32>();
                                 Product {
                                     product_id: _rt::string_lift(bytes4),
                                     name: _rt::string_lift(bytes7),
                                     brand: _rt::string_lift(bytes10),
                                     description: _rt::string_lift(bytes13),
                                     tags: result19,
+                                    created_at: super::super::super::wasi::clocks::wall_clock::Datetime {
+                                        seconds: l20 as u64,
+                                        nanoseconds: l21 as u32,
+                                    },
+                                    updated_at: super::super::super::wasi::clocks::wall_clock::Datetime {
+                                        seconds: l22 as u64,
+                                        nanoseconds: l23 as u32,
+                                    },
                                 }
                             };
                             Some(e)
@@ -19132,8 +19193,8 @@ pub(crate) use __export_cart_impl as export;
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.36.0:golem:cart:cart:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 16264] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\x8d~\x01A\x02\x01A9\x01\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 16351] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xe4~\x01A\x02\x01A:\x01\
 B\x0a\x04\0\x08pollable\x03\x01\x01h\0\x01@\x01\x04self\x01\0\x7f\x04\0\x16[meth\
 od]pollable.ready\x01\x02\x01@\x01\x04self\x01\x01\0\x04\0\x16[method]pollable.b\
 lock\x01\x03\x01p\x01\x01py\x01@\x01\x02in\x04\0\x05\x04\0\x04poll\x01\x06\x03\0\
@@ -19339,106 +19400,108 @@ ave-snapshot.schedule-save\x01\xb9\x01\x03\0\x1fgolem:order-client/order-client\
 \x20\x01B\x14\x02\x03\x02\x01\x02\x04\0\x08datetime\x03\0\0\x01r\x03\x05pricev\x08\
 currencys\x04zones\x04\0\x0cpricing-item\x03\0\x02\x01k\x01\x01r\x05\x05pricev\x08\
 currencys\x04zones\x05start\x04\x03end\x04\x04\0\x11sale-pricing-item\x03\0\x05\x01\
-p\x03\x01p\x06\x01r\x05\x0aproduct-ids\x0bmsrp-prices\x07\x0blist-prices\x07\x0b\
-sale-prices\x08\x0acreated-at\x01\x04\0\x07pricing\x03\0\x09\x01k\x0a\x01@\0\0\x0b\
-\x04\0\x03get\x01\x0c\x01k\x03\x01@\x02\x08currencys\x04zones\0\x0d\x04\0\x09get\
--price\x01\x0e\x01@\x03\x0bmsrp-prices\x07\x0blist-prices\x07\x0bsale-prices\x08\
-\x01\0\x04\0\x12initialize-pricing\x01\x0f\x04\0\x0eupdate-pricing\x01\x0f\x03\0\
-\x19golem:pricing-exports/api\x05!\x02\x03\0\x05\x08datetime\x02\x03\0\x05\x07pr\
-icing\x02\x03\0\x05\x0cpricing-item\x02\x03\0\x05\x11sale-pricing-item\x01Bo\x02\
-\x03\x02\x01\x03\x04\0\x10wasi-io-pollable\x03\0\0\x02\x03\x02\x01\x02\x04\0\x14\
-wasi-clocks-datetime\x03\0\x02\x02\x03\x02\x01\x06\x04\0\x16golem-rpc-component-\
-id\x03\0\x04\x02\x03\x02\x01\x07\x04\0\x13golem-rpc-worker-id\x03\0\x06\x02\x03\x02\
-\x01\x08\x04\0\x1cgolem-rpc-cancellation-token\x03\0\x08\x02\x03\x02\x01\"\x04\0\
-\x08datetime\x03\0\x0a\x02\x03\x02\x01#\x04\0\x07pricing\x03\0\x0c\x02\x03\x02\x01\
-$\x04\0\x0cpricing-item\x03\0\x0e\x02\x03\x02\x01%\x04\0\x11sale-pricing-item\x03\
-\0\x10\x04\0\x11future-get-result\x03\x01\x04\0\x17future-get-price-result\x03\x01\
-\x04\0\x12future-load-result\x03\x01\x04\0\x12future-save-result\x03\x01\x04\0\x03\
-api\x03\x01\x04\0\x0dload-snapshot\x03\x01\x04\0\x0dsave-snapshot\x03\x01\x01h\x12\
-\x01i\x01\x01@\x01\x04self\x19\0\x1a\x04\0#[method]future-get-result.subscribe\x01\
-\x1b\x01k\x0d\x01k\x1c\x01@\x01\x04self\x19\0\x1d\x04\0\x1d[method]future-get-re\
-sult.get\x01\x1e\x01h\x13\x01@\x01\x04self\x1f\0\x1a\x04\0)[method]future-get-pr\
-ice-result.subscribe\x01\x20\x01k\x0f\x01k!\x01@\x01\x04self\x1f\0\"\x04\0#[meth\
-od]future-get-price-result.get\x01#\x01h\x14\x01@\x01\x04self$\0\x1a\x04\0$[meth\
-od]future-load-result.subscribe\x01%\x01j\0\x01s\x01k&\x01@\x01\x04self$\0'\x04\0\
-\x1e[method]future-load-result.get\x01(\x01h\x15\x01@\x01\x04self)\0\x1a\x04\0$[\
-method]future-save-result.subscribe\x01*\x01p}\x01k+\x01@\x01\x04self)\0,\x04\0\x1e\
-[method]future-save-result.get\x01-\x01i\x16\x01@\x01\x0bworker-names\0.\x04\0\x10\
-[constructor]api\x01/\x01@\x01\x09worker-id\x07\0.\x04\0\x12[static]api.custom\x01\
-0\x01h\x16\x01@\x01\x04self1\0\x1c\x04\0\x18[method]api.blocking-get\x012\x01i\x12\
-\x01@\x01\x04self1\03\x04\0\x0f[method]api.get\x014\x01i\x09\x01@\x02\x04self1\x0d\
-scheduled-for\x03\05\x04\0\x18[method]api.schedule-get\x016\x01@\x03\x04self1\x08\
-currencys\x04zones\0!\x04\0\x1e[method]api.blocking-get-price\x017\x01i\x13\x01@\
-\x03\x04self1\x08currencys\x04zones\08\x04\0\x15[method]api.get-price\x019\x01@\x04\
-\x04self1\x08currencys\x04zones\x0dscheduled-for\x03\05\x04\0\x1e[method]api.sch\
-edule-get-price\x01:\x01p\x0f\x01p\x11\x01@\x04\x04self1\x0bmsrp-prices;\x0blist\
--prices;\x0bsale-prices<\x01\0\x04\0'[method]api.blocking-initialize-pricing\x01\
-=\x04\0\x1e[method]api.initialize-pricing\x01=\x01@\x05\x04self1\x0bmsrp-prices;\
-\x0blist-prices;\x0bsale-prices<\x0dscheduled-for\x03\05\x04\0'[method]api.sched\
-ule-initialize-pricing\x01>\x04\0#[method]api.blocking-update-pricing\x01=\x04\0\
-\x1a[method]api.update-pricing\x01=\x04\0#[method]api.schedule-update-pricing\x01\
->\x01i\x17\x01@\x01\x0bworker-names\0?\x04\0\x1a[constructor]load-snapshot\x01@\x01\
-@\x01\x09worker-id\x07\0?\x04\0\x1c[static]load-snapshot.custom\x01A\x01h\x17\x01\
-@\x02\x04self\xc2\0\x05bytes+\0&\x04\0#[method]load-snapshot.blocking-load\x01C\x01\
-i\x14\x01@\x02\x04self\xc2\0\x05bytes+\0\xc4\0\x04\0\x1a[method]load-snapshot.lo\
-ad\x01E\x01@\x03\x04self\xc2\0\x05bytes+\x0dscheduled-for\x03\05\x04\0#[method]l\
-oad-snapshot.schedule-load\x01F\x01i\x18\x01@\x01\x0bworker-names\0\xc7\0\x04\0\x1a\
-[constructor]save-snapshot\x01H\x01@\x01\x09worker-id\x07\0\xc7\0\x04\0\x1c[stat\
-ic]save-snapshot.custom\x01I\x01h\x18\x01@\x01\x04self\xca\0\0+\x04\0#[method]sa\
-ve-snapshot.blocking-save\x01K\x01i\x15\x01@\x01\x04self\xca\0\0\xcc\0\x04\0\x1a\
-[method]save-snapshot.save\x01M\x01@\x02\x04self\xca\0\x0dscheduled-for\x03\05\x04\
-\0#[method]save-snapshot.schedule-save\x01N\x03\0#golem:pricing-client/pricing-c\
-lient\x05&\x01B\x08\x01ps\x01r\x05\x0aproduct-ids\x04names\x05brands\x0bdescript\
-ions\x04tags\0\x04\0\x07product\x03\0\x01\x01k\x02\x01@\0\0\x03\x04\0\x03get\x01\
-\x04\x01@\x04\x04names\x05brands\x0bdescriptions\x04tags\0\x01\0\x04\0\x12initia\
-lize-product\x01\x05\x03\0\x19golem:product-exports/api\x05'\x02\x03\0\x07\x07pr\
-oduct\x01BV\x02\x03\x02\x01\x03\x04\0\x10wasi-io-pollable\x03\0\0\x02\x03\x02\x01\
-\x02\x04\0\x14wasi-clocks-datetime\x03\0\x02\x02\x03\x02\x01\x06\x04\0\x16golem-\
-rpc-component-id\x03\0\x04\x02\x03\x02\x01\x07\x04\0\x13golem-rpc-worker-id\x03\0\
-\x06\x02\x03\x02\x01\x08\x04\0\x1cgolem-rpc-cancellation-token\x03\0\x08\x02\x03\
-\x02\x01(\x04\0\x07product\x03\0\x0a\x04\0\x11future-get-result\x03\x01\x04\0\x12\
-future-load-result\x03\x01\x04\0\x12future-save-result\x03\x01\x04\0\x03api\x03\x01\
-\x04\0\x0dload-snapshot\x03\x01\x04\0\x0dsave-snapshot\x03\x01\x01h\x0c\x01i\x01\
-\x01@\x01\x04self\x12\0\x13\x04\0#[method]future-get-result.subscribe\x01\x14\x01\
-k\x0b\x01k\x15\x01@\x01\x04self\x12\0\x16\x04\0\x1d[method]future-get-result.get\
-\x01\x17\x01h\x0d\x01@\x01\x04self\x18\0\x13\x04\0$[method]future-load-result.su\
-bscribe\x01\x19\x01j\0\x01s\x01k\x1a\x01@\x01\x04self\x18\0\x1b\x04\0\x1e[method\
-]future-load-result.get\x01\x1c\x01h\x0e\x01@\x01\x04self\x1d\0\x13\x04\0$[metho\
-d]future-save-result.subscribe\x01\x1e\x01p}\x01k\x1f\x01@\x01\x04self\x1d\0\x20\
-\x04\0\x1e[method]future-save-result.get\x01!\x01i\x0f\x01@\x01\x0bworker-names\0\
-\"\x04\0\x10[constructor]api\x01#\x01@\x01\x09worker-id\x07\0\"\x04\0\x12[static\
-]api.custom\x01$\x01h\x0f\x01@\x01\x04self%\0\x15\x04\0\x18[method]api.blocking-\
-get\x01&\x01i\x0c\x01@\x01\x04self%\0'\x04\0\x0f[method]api.get\x01(\x01i\x09\x01\
-@\x02\x04self%\x0dscheduled-for\x03\0)\x04\0\x18[method]api.schedule-get\x01*\x01\
-ps\x01@\x05\x04self%\x04names\x05brands\x0bdescriptions\x04tags+\x01\0\x04\0'[me\
-thod]api.blocking-initialize-product\x01,\x04\0\x1e[method]api.initialize-produc\
-t\x01,\x01@\x06\x04self%\x04names\x05brands\x0bdescriptions\x04tags+\x0dschedule\
-d-for\x03\0)\x04\0'[method]api.schedule-initialize-product\x01-\x01i\x10\x01@\x01\
-\x0bworker-names\0.\x04\0\x1a[constructor]load-snapshot\x01/\x01@\x01\x09worker-\
-id\x07\0.\x04\0\x1c[static]load-snapshot.custom\x010\x01h\x10\x01@\x02\x04self1\x05\
-bytes\x1f\0\x1a\x04\0#[method]load-snapshot.blocking-load\x012\x01i\x0d\x01@\x02\
-\x04self1\x05bytes\x1f\03\x04\0\x1a[method]load-snapshot.load\x014\x01@\x03\x04s\
-elf1\x05bytes\x1f\x0dscheduled-for\x03\0)\x04\0#[method]load-snapshot.schedule-l\
-oad\x015\x01i\x11\x01@\x01\x0bworker-names\06\x04\0\x1a[constructor]save-snapsho\
-t\x017\x01@\x01\x09worker-id\x07\06\x04\0\x1c[static]save-snapshot.custom\x018\x01\
-h\x11\x01@\x01\x04self9\0\x1f\x04\0#[method]save-snapshot.blocking-save\x01:\x01\
-i\x0e\x01@\x01\x04self9\0;\x04\0\x1a[method]save-snapshot.save\x01<\x01@\x02\x04\
-self9\x0dscheduled-for\x03\0)\x04\0#[method]save-snapshot.schedule-save\x01=\x03\
-\0#golem:product-client/product-client\x05)\x01B\x04\x01p}\x01j\0\x01s\x01@\x01\x05\
-bytes\0\0\x01\x04\0\x04load\x01\x02\x04\0\x1dgolem:api/load-snapshot@1.1.6\x05*\x01\
-B\x03\x01p}\x01@\0\0\0\x04\0\x04save\x01\x01\x04\0\x1dgolem:api/save-snapshot@1.\
-1.6\x05+\x01BD\x02\x03\x02\x01\x02\x04\0\x08datetime\x03\0\0\x01ks\x01r\x07\x06s\
-treets\x04citys\x0fstate-or-regions\x07countrys\x0bpostal-codes\x04name\x02\x0cp\
-hone-number\x02\x04\0\x07address\x03\0\x03\x01r\x01\x07messages\x04\0\x17address\
--not-valid-error\x03\0\x05\x01r\x01\x07messages\x04\0\x1dbilling-address-not-set\
--error\x03\0\x07\x01r\x05\x0aproduct-ids\x0cproduct-names\x0dproduct-brands\x05p\
-ricev\x08quantityy\x04\0\x09cart-item\x03\0\x09\x01p\x0a\x01k\x04\x01ps\x01r\x09\
-\x07user-ids\x05email\x02\x05items\x0b\x0fbilling-address\x0c\x10shipping-addres\
-s\x0c\x05totalv\x08currencys\x12previous-order-ids\x0d\x0aupdated-at\x01\x04\0\x04\
-cart\x03\0\x0e\x01r\x01\x07messages\x04\0\x15email-not-valid-error\x03\0\x10\x01\
-r\x01\x07messages\x04\0\x11empty-email-error\x03\0\x12\x01r\x01\x07messages\x04\0\
-\x11empty-items-error\x03\0\x14\x01r\x02\x07messages\x0aproduct-ids\x04\0\x14ite\
-m-not-found-error\x03\0\x16\x01r\x01\x08order-ids\x04\0\x12order-confirmation\x03\
+p\x03\x01p\x06\x01r\x06\x0aproduct-ids\x0bmsrp-prices\x07\x0blist-prices\x07\x0b\
+sale-prices\x08\x0acreated-at\x01\x0aupdated-at\x01\x04\0\x07pricing\x03\0\x09\x01\
+k\x0a\x01@\0\0\x0b\x04\0\x03get\x01\x0c\x01k\x03\x01@\x02\x08currencys\x04zones\0\
+\x0d\x04\0\x09get-price\x01\x0e\x01@\x03\x0bmsrp-prices\x07\x0blist-prices\x07\x0b\
+sale-prices\x08\x01\0\x04\0\x12initialize-pricing\x01\x0f\x04\0\x0eupdate-pricin\
+g\x01\x0f\x03\0\x19golem:pricing-exports/api\x05!\x02\x03\0\x05\x08datetime\x02\x03\
+\0\x05\x07pricing\x02\x03\0\x05\x0cpricing-item\x02\x03\0\x05\x11sale-pricing-it\
+em\x01Bo\x02\x03\x02\x01\x03\x04\0\x10wasi-io-pollable\x03\0\0\x02\x03\x02\x01\x02\
+\x04\0\x14wasi-clocks-datetime\x03\0\x02\x02\x03\x02\x01\x06\x04\0\x16golem-rpc-\
+component-id\x03\0\x04\x02\x03\x02\x01\x07\x04\0\x13golem-rpc-worker-id\x03\0\x06\
+\x02\x03\x02\x01\x08\x04\0\x1cgolem-rpc-cancellation-token\x03\0\x08\x02\x03\x02\
+\x01\"\x04\0\x08datetime\x03\0\x0a\x02\x03\x02\x01#\x04\0\x07pricing\x03\0\x0c\x02\
+\x03\x02\x01$\x04\0\x0cpricing-item\x03\0\x0e\x02\x03\x02\x01%\x04\0\x11sale-pri\
+cing-item\x03\0\x10\x04\0\x11future-get-result\x03\x01\x04\0\x17future-get-price\
+-result\x03\x01\x04\0\x12future-load-result\x03\x01\x04\0\x12future-save-result\x03\
+\x01\x04\0\x03api\x03\x01\x04\0\x0dload-snapshot\x03\x01\x04\0\x0dsave-snapshot\x03\
+\x01\x01h\x12\x01i\x01\x01@\x01\x04self\x19\0\x1a\x04\0#[method]future-get-resul\
+t.subscribe\x01\x1b\x01k\x0d\x01k\x1c\x01@\x01\x04self\x19\0\x1d\x04\0\x1d[metho\
+d]future-get-result.get\x01\x1e\x01h\x13\x01@\x01\x04self\x1f\0\x1a\x04\0)[metho\
+d]future-get-price-result.subscribe\x01\x20\x01k\x0f\x01k!\x01@\x01\x04self\x1f\0\
+\"\x04\0#[method]future-get-price-result.get\x01#\x01h\x14\x01@\x01\x04self$\0\x1a\
+\x04\0$[method]future-load-result.subscribe\x01%\x01j\0\x01s\x01k&\x01@\x01\x04s\
+elf$\0'\x04\0\x1e[method]future-load-result.get\x01(\x01h\x15\x01@\x01\x04self)\0\
+\x1a\x04\0$[method]future-save-result.subscribe\x01*\x01p}\x01k+\x01@\x01\x04sel\
+f)\0,\x04\0\x1e[method]future-save-result.get\x01-\x01i\x16\x01@\x01\x0bworker-n\
+ames\0.\x04\0\x10[constructor]api\x01/\x01@\x01\x09worker-id\x07\0.\x04\0\x12[st\
+atic]api.custom\x010\x01h\x16\x01@\x01\x04self1\0\x1c\x04\0\x18[method]api.block\
+ing-get\x012\x01i\x12\x01@\x01\x04self1\03\x04\0\x0f[method]api.get\x014\x01i\x09\
+\x01@\x02\x04self1\x0dscheduled-for\x03\05\x04\0\x18[method]api.schedule-get\x01\
+6\x01@\x03\x04self1\x08currencys\x04zones\0!\x04\0\x1e[method]api.blocking-get-p\
+rice\x017\x01i\x13\x01@\x03\x04self1\x08currencys\x04zones\08\x04\0\x15[method]a\
+pi.get-price\x019\x01@\x04\x04self1\x08currencys\x04zones\x0dscheduled-for\x03\0\
+5\x04\0\x1e[method]api.schedule-get-price\x01:\x01p\x0f\x01p\x11\x01@\x04\x04sel\
+f1\x0bmsrp-prices;\x0blist-prices;\x0bsale-prices<\x01\0\x04\0'[method]api.block\
+ing-initialize-pricing\x01=\x04\0\x1e[method]api.initialize-pricing\x01=\x01@\x05\
+\x04self1\x0bmsrp-prices;\x0blist-prices;\x0bsale-prices<\x0dscheduled-for\x03\0\
+5\x04\0'[method]api.schedule-initialize-pricing\x01>\x04\0#[method]api.blocking-\
+update-pricing\x01=\x04\0\x1a[method]api.update-pricing\x01=\x04\0#[method]api.s\
+chedule-update-pricing\x01>\x01i\x17\x01@\x01\x0bworker-names\0?\x04\0\x1a[const\
+ructor]load-snapshot\x01@\x01@\x01\x09worker-id\x07\0?\x04\0\x1c[static]load-sna\
+pshot.custom\x01A\x01h\x17\x01@\x02\x04self\xc2\0\x05bytes+\0&\x04\0#[method]loa\
+d-snapshot.blocking-load\x01C\x01i\x14\x01@\x02\x04self\xc2\0\x05bytes+\0\xc4\0\x04\
+\0\x1a[method]load-snapshot.load\x01E\x01@\x03\x04self\xc2\0\x05bytes+\x0dschedu\
+led-for\x03\05\x04\0#[method]load-snapshot.schedule-load\x01F\x01i\x18\x01@\x01\x0b\
+worker-names\0\xc7\0\x04\0\x1a[constructor]save-snapshot\x01H\x01@\x01\x09worker\
+-id\x07\0\xc7\0\x04\0\x1c[static]save-snapshot.custom\x01I\x01h\x18\x01@\x01\x04\
+self\xca\0\0+\x04\0#[method]save-snapshot.blocking-save\x01K\x01i\x15\x01@\x01\x04\
+self\xca\0\0\xcc\0\x04\0\x1a[method]save-snapshot.save\x01M\x01@\x02\x04self\xca\
+\0\x0dscheduled-for\x03\05\x04\0#[method]save-snapshot.schedule-save\x01N\x03\0#\
+golem:pricing-client/pricing-client\x05&\x01B\x0a\x02\x03\x02\x01\x02\x04\0\x08d\
+atetime\x03\0\0\x01ps\x01r\x07\x0aproduct-ids\x04names\x05brands\x0bdescriptions\
+\x04tags\x02\x0acreated-at\x01\x0aupdated-at\x01\x04\0\x07product\x03\0\x03\x01k\
+\x04\x01@\0\0\x05\x04\0\x03get\x01\x06\x01@\x04\x04names\x05brands\x0bdescriptio\
+ns\x04tags\x02\x01\0\x04\0\x12initialize-product\x01\x07\x03\0\x19golem:product-\
+exports/api\x05'\x02\x03\0\x07\x08datetime\x02\x03\0\x07\x07product\x01BX\x02\x03\
+\x02\x01\x03\x04\0\x10wasi-io-pollable\x03\0\0\x02\x03\x02\x01\x02\x04\0\x14wasi\
+-clocks-datetime\x03\0\x02\x02\x03\x02\x01\x06\x04\0\x16golem-rpc-component-id\x03\
+\0\x04\x02\x03\x02\x01\x07\x04\0\x13golem-rpc-worker-id\x03\0\x06\x02\x03\x02\x01\
+\x08\x04\0\x1cgolem-rpc-cancellation-token\x03\0\x08\x02\x03\x02\x01(\x04\0\x08d\
+atetime\x03\0\x0a\x02\x03\x02\x01)\x04\0\x07product\x03\0\x0c\x04\0\x11future-ge\
+t-result\x03\x01\x04\0\x12future-load-result\x03\x01\x04\0\x12future-save-result\
+\x03\x01\x04\0\x03api\x03\x01\x04\0\x0dload-snapshot\x03\x01\x04\0\x0dsave-snaps\
+hot\x03\x01\x01h\x0e\x01i\x01\x01@\x01\x04self\x14\0\x15\x04\0#[method]future-ge\
+t-result.subscribe\x01\x16\x01k\x0d\x01k\x17\x01@\x01\x04self\x14\0\x18\x04\0\x1d\
+[method]future-get-result.get\x01\x19\x01h\x0f\x01@\x01\x04self\x1a\0\x15\x04\0$\
+[method]future-load-result.subscribe\x01\x1b\x01j\0\x01s\x01k\x1c\x01@\x01\x04se\
+lf\x1a\0\x1d\x04\0\x1e[method]future-load-result.get\x01\x1e\x01h\x10\x01@\x01\x04\
+self\x1f\0\x15\x04\0$[method]future-save-result.subscribe\x01\x20\x01p}\x01k!\x01\
+@\x01\x04self\x1f\0\"\x04\0\x1e[method]future-save-result.get\x01#\x01i\x11\x01@\
+\x01\x0bworker-names\0$\x04\0\x10[constructor]api\x01%\x01@\x01\x09worker-id\x07\
+\0$\x04\0\x12[static]api.custom\x01&\x01h\x11\x01@\x01\x04self'\0\x17\x04\0\x18[\
+method]api.blocking-get\x01(\x01i\x0e\x01@\x01\x04self'\0)\x04\0\x0f[method]api.\
+get\x01*\x01i\x09\x01@\x02\x04self'\x0dscheduled-for\x03\0+\x04\0\x18[method]api\
+.schedule-get\x01,\x01ps\x01@\x05\x04self'\x04names\x05brands\x0bdescriptions\x04\
+tags-\x01\0\x04\0'[method]api.blocking-initialize-product\x01.\x04\0\x1e[method]\
+api.initialize-product\x01.\x01@\x06\x04self'\x04names\x05brands\x0bdescriptions\
+\x04tags-\x0dscheduled-for\x03\0+\x04\0'[method]api.schedule-initialize-product\x01\
+/\x01i\x12\x01@\x01\x0bworker-names\00\x04\0\x1a[constructor]load-snapshot\x011\x01\
+@\x01\x09worker-id\x07\00\x04\0\x1c[static]load-snapshot.custom\x012\x01h\x12\x01\
+@\x02\x04self3\x05bytes!\0\x1c\x04\0#[method]load-snapshot.blocking-load\x014\x01\
+i\x0f\x01@\x02\x04self3\x05bytes!\05\x04\0\x1a[method]load-snapshot.load\x016\x01\
+@\x03\x04self3\x05bytes!\x0dscheduled-for\x03\0+\x04\0#[method]load-snapshot.sch\
+edule-load\x017\x01i\x13\x01@\x01\x0bworker-names\08\x04\0\x1a[constructor]save-\
+snapshot\x019\x01@\x01\x09worker-id\x07\08\x04\0\x1c[static]save-snapshot.custom\
+\x01:\x01h\x13\x01@\x01\x04self;\0!\x04\0#[method]save-snapshot.blocking-save\x01\
+<\x01i\x10\x01@\x01\x04self;\0=\x04\0\x1a[method]save-snapshot.save\x01>\x01@\x02\
+\x04self;\x0dscheduled-for\x03\0+\x04\0#[method]save-snapshot.schedule-save\x01?\
+\x03\0#golem:product-client/product-client\x05*\x01B\x04\x01p}\x01j\0\x01s\x01@\x01\
+\x05bytes\0\0\x01\x04\0\x04load\x01\x02\x04\0\x1dgolem:api/load-snapshot@1.1.6\x05\
++\x01B\x03\x01p}\x01@\0\0\0\x04\0\x04save\x01\x01\x04\0\x1dgolem:api/save-snapsh\
+ot@1.1.6\x05,\x01BD\x02\x03\x02\x01\x02\x04\0\x08datetime\x03\0\0\x01ks\x01r\x07\
+\x06streets\x04citys\x0fstate-or-regions\x07countrys\x0bpostal-codes\x04name\x02\
+\x0cphone-number\x02\x04\0\x07address\x03\0\x03\x01r\x01\x07messages\x04\0\x17ad\
+dress-not-valid-error\x03\0\x05\x01r\x01\x07messages\x04\0\x1dbilling-address-no\
+t-set-error\x03\0\x07\x01r\x05\x0aproduct-ids\x0cproduct-names\x0dproduct-brands\
+\x05pricev\x08quantityy\x04\0\x09cart-item\x03\0\x09\x01p\x0a\x01k\x04\x01ps\x01\
+r\x09\x07user-ids\x05email\x02\x05items\x0b\x0fbilling-address\x0c\x10shipping-a\
+ddress\x0c\x05totalv\x08currencys\x12previous-order-ids\x0d\x0aupdated-at\x01\x04\
+\0\x04cart\x03\0\x0e\x01r\x01\x07messages\x04\0\x15email-not-valid-error\x03\0\x10\
+\x01r\x01\x07messages\x04\0\x11empty-email-error\x03\0\x12\x01r\x01\x07messages\x04\
+\0\x11empty-items-error\x03\0\x14\x01r\x02\x07messages\x0aproduct-ids\x04\0\x14i\
+tem-not-found-error\x03\0\x16\x01r\x01\x08order-ids\x04\0\x12order-confirmation\x03\
 \0\x18\x01r\x01\x07messages\x04\0\x12order-create-error\x03\0\x1a\x01r\x02\x07me\
 ssages\x0aproduct-ids\x04\0\x17pricing-not-found-error\x03\0\x1c\x01r\x02\x07mes\
 sages\x0aproduct-ids\x04\0\x17product-not-found-error\x03\0\x1e\x01q\x02\x11prod\
@@ -19456,7 +19519,7 @@ uantityy\0,\x04\0\x08add-item\x01-\x01j\x01\x19\x01#\x01@\0\0.\x04\0\x08checkout
 \x07address\x04\05\x04\0\x16update-billing-address\x016\x01j\0\x01)\x01@\x01\x05\
 emails\07\x04\0\x0cupdate-email\x018\x01j\0\x01+\x01@\x02\x0aproduct-ids\x08quan\
 tityy\09\x04\0\x14update-item-quantity\x01:\x04\0\x17update-shipping-address\x01\
-6\x04\0\x16golem:cart-exports/api\x05,\x04\0\x0fgolem:cart/cart\x04\0\x0b\x0a\x01\
+6\x04\0\x16golem:cart-exports/api\x05-\x04\0\x0fgolem:cart/cart\x04\0\x0b\x0a\x01\
 \0\x04cart\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit-component\x070\
 .220.0\x10wit-bindgen-rust\x060.36.0";
 #[inline(never)]
