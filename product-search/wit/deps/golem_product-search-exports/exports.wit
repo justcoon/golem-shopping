@@ -1,4 +1,4 @@
-package golem:product-exports;
+package golem:product-search-exports;
 
 interface api {
   use wasi:clocks/wall-clock@0.2.0.{ datetime };
@@ -11,8 +11,11 @@ interface api {
     created-at: datetime,
     updated-at: datetime,
   }
-  get: func() -> option<product>;
-  initialize-product: func(name: string, brand: string, description: string, tags: list<string>);
+  record product-filter {
+    name: option<string>,
+    brand: option<string>,
+  }
+  find: func(filter: product-filter) -> list<product>;
 }
 
-interface product-inline-functions {}
+interface product-search-inline-functions {}

@@ -22,6 +22,11 @@ async fn main() -> Result<(), GooseError> {
                 .register_transaction(transaction!(get_products)),
         )
         .register_scenario(
+            scenario!("Find Products By Brand")
+                .set_wait_time(Duration::from_secs(5), Duration::from_secs(15))?
+                .register_transaction(transaction!(find_products_by_brand)),
+        )
+        .register_scenario(
             scenario!("Get Pricing")
                 .set_wait_time(Duration::from_secs(5), Duration::from_secs(15))?
                 .register_transaction(transaction!(get_pricing)),
@@ -43,6 +48,16 @@ async fn get_products(user: &mut GooseUser) -> TransactionResult {
 
     let _response =
         user.get_request("product-get", format!("/v1/product/{product_id}").as_str()).await?;
+
+    Ok(())
+}
+
+async fn find_products_by_brand(user: &mut GooseUser) -> TransactionResult {
+    let brand = data::rand_product_brand();
+
+    let _response = user
+        .get_request("product-find", format!("/v1/product/find?brand={brand}&name=*").as_str())
+        .await?;
 
     Ok(())
 }
@@ -101,7 +116,7 @@ async fn create_and_checkout_cart(user: &mut GooseUser) -> TransactionResult {
         .await?;
 
     let _response = user.get_request("cart-get", format!("/v1/cart/{user_id}").as_str()).await?;
-    
+
     let response = user
         .post_request(
             "cart-checkout",
@@ -113,7 +128,7 @@ async fn create_and_checkout_cart(user: &mut GooseUser) -> TransactionResult {
     // let order_created: domain::cart::OrderCreated = response.json().await?;
     let ok_order_created: domain::cart::OkOrderCreated = response.json().await?;
     let order_created: domain::cart::OrderCreated = ok_order_created.ok;
-    
+
     let order_id = order_created.order_id;
 
     let _response = user.get_request("order-get", format!("/v1/order/{order_id}").as_str()).await?;

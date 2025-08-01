@@ -8,6 +8,7 @@ interface api {
     list-prices: list<pricing-item>,
     sale-prices: list<sale-pricing-item>,
     created-at: datetime,
+    updated-at: datetime,
   }
   record pricing-item {
     price: f32,

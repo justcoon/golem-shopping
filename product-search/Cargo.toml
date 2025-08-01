@@ -1,0 +1,30 @@
+[package]
+name = "product-search"
+version = "0.0.1"
+edition = "2021"
+
+[package.metadata.component.target]
+path = "wit"
+
+[package.metadata.component.target.dependencies]
+"wasi:io" = { path = "wit/deps/io" }
+"wasi:clocks" = { path = "wit/deps/clocks" }
+"golem:rpc" = { path = "wit/deps/golem-rpc" }
+"golem:api" = { path = "wit/deps/golem" }
+"golem:product-exports" = { path = "wit/deps/golem_product-exports" }
+"golem:product-client" = { path = "wit/deps/golem_product-client" }
+"golem:product-search-exports" = { path = "wit/deps/golem_product-search-exports" }
+
+[dependencies.wit-bindgen-rt]
+version = "0.43.0"
+features = ["bitflags"]
+
+[lib]
+path = "src/lib.rs"
+crate-type = ["cdylib"]
+required-features = []
+
+[profile.release]
+opt-level = "s"
+lto = true
+strip = true

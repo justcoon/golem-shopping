@@ -1,12 +1,15 @@
 package golem:product-exports;
 
 interface api {
+  use wasi:clocks/wall-clock@0.2.0.{ datetime };
   record product {
     product-id: string,
     name: string,
     brand: string,
     description: string,
     tags: list<string>,
+    created-at: datetime,
+    updated-at: datetime,
   }
   get: func() -> option<product>;
   initialize-product: func(name: string, brand: string, description: string, tags: list<string>);

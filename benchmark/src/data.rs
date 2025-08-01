@@ -8,6 +8,16 @@ pub fn rand_product_id() -> String {
     product_ids.choose(&mut rand::thread_rng()).unwrap().to_string()
 }
 
+pub fn rand_product_brand() -> String {
+    let product_brands = get_product_brands();
+
+    product_brands.choose(&mut rand::thread_rng()).unwrap().to_string()
+}
+
+pub fn get_product_brands() -> Vec<String> {
+    vec!["Brand A".to_string(), "Brand B".to_string(), "Brand C".to_string(), "Brand D".to_string()]
+}
+
 pub fn get_product_ids() -> Vec<String> {
     (1..=50).map(|v| format!("p{:03}", v)).collect()
 }
