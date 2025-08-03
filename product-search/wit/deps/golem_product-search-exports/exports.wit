@@ -11,11 +11,7 @@ interface api {
     created-at: datetime,
     updated-at: datetime,
   }
-  record product-filter {
-    name: option<string>,
-    brand: option<string>,
-  }
-  find: func(filter: product-filter) -> list<product>;
+  search: func(query: string) -> result<list<product>, string>;
 }
 
 interface product-search-inline-functions {}

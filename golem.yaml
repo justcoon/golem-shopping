@@ -235,15 +235,15 @@ httpApi:
       version: 0.0.1
       routes:
         - method: Get
-          path: "/v1/product/find?{name}&{brand}"
+          path: "/v1/product/search?{query}"
           binding:
             type: default
             componentName: "golem:product-search"
             response: |-
-              let name: string = request.query.name;
-              let brand: string = request.query.brand;
+              let query: string = request.query.query;
               let worker = instance();
-              worker.find( {name: some(name), brand: some(brand)})
+              let result = worker.search(query);
+              match result {  ok(x) => {status: 200u64, body: ok(x)}, err(x) => {status: 400u64, body: err({error: x})} }
         - method: Get
           path: "/v1/product/{product-id}"
           binding:

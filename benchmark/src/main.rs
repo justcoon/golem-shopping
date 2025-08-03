@@ -22,9 +22,9 @@ async fn main() -> Result<(), GooseError> {
                 .register_transaction(transaction!(get_products)),
         )
         .register_scenario(
-            scenario!("Find Products By Brand")
+            scenario!("Search Products By Brand")
                 .set_wait_time(Duration::from_secs(5), Duration::from_secs(15))?
-                .register_transaction(transaction!(find_products_by_brand)),
+                .register_transaction(transaction!(search_products_by_brand)),
         )
         .register_scenario(
             scenario!("Get Pricing")
@@ -52,11 +52,11 @@ async fn get_products(user: &mut GooseUser) -> TransactionResult {
     Ok(())
 }
 
-async fn find_products_by_brand(user: &mut GooseUser) -> TransactionResult {
+async fn search_products_by_brand(user: &mut GooseUser) -> TransactionResult {
     let brand = data::rand_product_brand();
 
     let _response = user
-        .get_request("product-find", format!("/v1/product/find?brand={brand}&name=*").as_str())
+        .get_request("product-search-by-brand", format!("/v1/product/search?query=brand:\"{brand}\"").as_str())
         .await?;
 
     Ok(())

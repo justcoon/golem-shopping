@@ -9,8 +9,6 @@ use email_address::EmailAddress;
 use std::cell::RefCell;
 use std::str::FromStr;
 
-struct Component;
-
 fn get_product(product_id: String) -> Option<Product> {
     println!("Getting product: {}", product_id);
 
@@ -66,6 +64,8 @@ fn with_state<T>(f: impl FnOnce(&mut domain::order::Order) -> T) -> T {
         f(state.as_mut().unwrap())
     })
 }
+
+struct Component;
 
 impl Guest for Component {
     fn initialize_order(data: CreateOrder) -> Result<(), InitOrderError> {
