@@ -10,8 +10,6 @@ use std::cell::RefCell;
 use std::str::FromStr;
 use uuid::Uuid;
 
-struct Component;
-
 fn generate_order_id() -> String {
     Uuid::new_v4().to_string()
 }
@@ -109,6 +107,8 @@ fn with_state<T>(f: impl FnOnce(&mut domain::cart::Cart) -> T) -> T {
         f(state.as_mut().unwrap())
     })
 }
+
+struct Component;
 
 impl Guest for Component {
     fn add_item(product_id: String, quantity: u32) -> Result<(), AddItemError> {

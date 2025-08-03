@@ -6,8 +6,6 @@ use std::cell::RefCell;
 
 use std::env;
 
-struct Component;
-
 thread_local! {
     static STATE: RefCell<Option<domain::pricing::Pricing>> = const { RefCell::new(None) };
 }
@@ -23,6 +21,8 @@ fn with_state<T>(f: impl FnOnce(&mut domain::pricing::Pricing) -> T) -> T {
         f(state.as_mut().unwrap())
     })
 }
+
+struct Component;
 
 impl Guest for Component {
     fn initialize_pricing(

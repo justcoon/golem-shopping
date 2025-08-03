@@ -75,7 +75,7 @@ invocation of worker functions with golem-cli
 golem-cli worker invoke golem:cart/user001 golem:cart-exports/api.{get}
 golem-cli worker invoke golem:product/p001 golem:product-exports/api.{get} 
 golem-cli worker invoke golem:pricing/p001 golem:pricing-exports/api.{get} 
-golem-cli worker invoke golem:product-search/- golem:product-search-exports/api.{find} '{ name: none, brand: some("Brand D") }'
+golem-cli worker invoke golem:product-search/- golem:product-search-exports/api.{search} '"brand:\"Brand C\""'
 ```
 
 ## References

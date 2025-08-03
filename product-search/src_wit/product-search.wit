@@ -13,12 +13,7 @@ interface api {
     updated-at: datetime
   }
 
-  record product-filter {
-    name: option<string>,
-    brand: option<string>
-  }
-
-  find: func(filter: product-filter) -> list<product>;
+  search: func(query: string) -> result<list<product>, string>;
 }
 
 world product-search {
