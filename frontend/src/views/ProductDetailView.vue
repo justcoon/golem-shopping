@@ -1,0 +1,320 @@
+<template>
+  <div class="product-detail">
+    <div v-if="isLoading" class="loading">Loading...</div>
+    <div v-else-if="error" class="error">
+      Error: {{ error.message }}
+      <button @click="fetchProduct" class="btn btn-outline-primary">Retry</button>
+    </div>
+    <div v-else-if="product" class="product-container">
+      <div class="product-gallery">
+        <img :src="mainImage || getProductImage(product)" :alt="product.name" class="main-image" />
+        <div class="thumbnails">
+          <img 
+            v-for="(img, i) in productImages" 
+            :key="i"
+            :src="img" 
+            @click="mainImage = img"
+            :class="{'active': mainImage === img}"
+          />
+        </div>
+      </div>
+      <div class="product-info">
+        <h1>{{ product.name }}</h1>
+        <div class="meta">
+          <span class="brand">{{ product.brand }}</span>
+          <span class="sku">SKU: {{ product.id }}</span>
+        </div>
+        
+        <div class="price" :class="{'on-sale': isOnSale}">
+          ${{ salePrice }}
+          <span v-if="isOnSale" class="original-price">${{ originalPrice }}</span>
+          <span v-if="isOnSale" class="discount">{{ discountPercentage }}% OFF</span>
+        </div>
+        
+        <div class="description">
+          <h3>Description</h3>
+          <p>{{ product.description || 'No description available.' }}</p>
+        </div>
+        
+        <div class="actions">
+          <div class="quantity">
+            <button @click="decreaseQty" :disabled="qty <= 1">-</button>
+            <input type="number" v-model.number="qty" min="1" />
+            <button @click="increaseQty">+</button>
+          </div>
+          
+          <button 
+            @click="addToCart" 
+            class="btn btn-primary"
+            :disabled="isAddingToCart"
+          >
+            {{ isAddingToCart ? 'Adding...' : 'Add to Cart' }}
+          </button>
+        </div>
+        
+        <div class="tags" v-if="product.tags?.length">
+          <span v-for="tag in product.tags" :key="tag" class="tag">{{ tag }}</span>
+        </div>
+      </div>
+    </div>
+    <div v-else class="not-found">
+      <h2>Product not found</h2>
+      <router-link to="/products" class="btn btn-primary">
+        Back to Products
+      </router-link>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, onMounted, watch } from 'vue';
+import { useRoute } from 'vue-router';
+import { useProductStore } from '@/stores/productStore';
+import { useCartStore } from '@/stores/cartStore';
+
+const route = useRoute();
+const productStore = useProductStore();
+const cartStore = useCartStore();
+
+const productId = computed(() => route.params.id as string);
+const product = computed(() => productStore.currentProduct);
+const isLoading = computed(() => productStore.isLoading);
+const error = computed(() => productStore.error);
+const isAddingToCart = ref(false);
+const qty = ref(1);
+const mainImage = ref('');
+const MOCK_USER_ID = 'user-123';
+
+// Computed
+const productImages = computed(() => {
+  const baseImg = getProductImage(product.value);
+  return [
+    baseImg,
+    `https://via.placeholder.com/600x400?text=${product.value?.name}+2`,
+    `https://via.placeholder.com/600x400?text=${product.value?.name}+3`
+  ];
+});
+
+const originalPrice = computed(() => (product.value?.price?.list || 0).toFixed(2));
+const salePrice = computed(() => 
+  (product.value?.price?.sale || product.value?.price?.list || 0).toFixed(2)
+);
+
+const isOnSale = computed(() => 
+  product.value?.price?.sale && 
+  product.value.price.sale < product.value.price?.list
+);
+
+const discountPercentage = computed(() => {
+  if (!isOnSale.value) return 0;
+  const discount = 100 - (product.value.price.sale / product.value.price.list * 100);
+  return Math.round(discount);
+});
+
+// Methods
+function getProductImage(product: any) {
+  return `https://via.placeholder.com/600x400?text=${encodeURIComponent(product.name)}`;
+}
+
+function increaseQty() { qty.value++; }
+function decreaseQty() { if (qty.value > 1) qty.value--; }
+
+async function addToCart() {
+  if (!product.value) return;
+  
+  try {
+    isAddingToCart.value = true;
+    await cartStore.addItem(MOCK_USER_ID, product.value.id, qty.value);
+  } catch (err) {
+    console.error('Error adding to cart:', err);
+  } finally {
+    isAddingToCart.value = false;
+  }
+}
+
+async function fetchProduct() {
+  if (productId.value) {
+    await productStore.fetchProduct(productId.value);
+    if (product.value) {
+      mainImage.value = getProductImage(product.value);
+    }
+  }
+}
+
+// Lifecycle
+onMounted(fetchProduct);
+watch(() => route.params.id, fetchProduct);
+</script>
+
+<style scoped>
+.product-detail {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.product-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.main-image {
+  width: 100%;
+  height: 400px;
+  object-fit: contain;
+  margin-bottom: 1rem;
+}
+
+.thumbnails {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.thumbnails img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  cursor: pointer;
+  border: 2px solid #eee;
+  border-radius: 4px;
+}
+
+.thumbnails img.active {
+  border-color: #4a6fa5;
+}
+
+h1 {
+  font-size: 2rem;
+  margin: 0 0 1rem 0;
+}
+
+.meta {
+  color: #666;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.brand {
+  color: #4a6fa5;
+  margin-right: 1rem;
+}
+
+.price {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #333;
+  margin: 1rem 0;
+}
+
+.price.on-sale {
+  color: #dc3545;
+}
+
+.original-price {
+  text-decoration: line-through;
+  color: #999;
+  font-size: 1.2rem;
+  margin-left: 0.5rem;
+}
+
+.discount {
+  background: #ffc107;
+  color: #000;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  margin-left: 0.5rem;
+}
+
+.description {
+  margin: 2rem 0;
+  line-height: 1.6;
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.quantity {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.quantity button {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: #f8f9fa;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.quantity input {
+  width: 50px;
+  height: 40px;
+  border: none;
+  text-align: center;
+  border-left: 1px solid #eee;
+  border-right: 1px solid #eee;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.tag {
+  background: #e9ecef;
+  padding: 0.25rem 0.75rem;
+  border-radius: 50px;
+  font-size: 0.8rem;
+  color: #495057;
+}
+
+.loading, .error, .not-found {
+  text-align: center;
+  padding: 4rem 1rem;
+}
+
+.error {
+  color: #dc3545;
+}
+
+.btn {
+  padding: 0.5rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: #4a6fa5;
+  color: white;
+  border: 1px solid #4a6fa5;
+}
+
+.btn-primary:hover {
+  background: #3a5a8c;
+  border-color: #3a5a8c;
+}
+
+.btn-outline-primary {
+  background: white;
+  color: #4a6fa5;
+  border: 1px solid #4a6fa5;
+  margin-left: 1rem;
+}
+
+.btn-outline-primary:hover {
+  background: #f8f9fa;
+}
+</style>
