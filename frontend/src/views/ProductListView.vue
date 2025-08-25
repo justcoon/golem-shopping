@@ -82,6 +82,7 @@ import { useRouter } from 'vue-router';
 import { useProductStore } from '@/stores/productStore';
 import { useCartStore } from '@/stores/cartStore';
 import { debounce } from 'lodash-es';
+import {Product} from "@/api/services/productService.ts";
 
 const router = useRouter();
 const productStore = useProductStore();
@@ -181,10 +182,10 @@ function isProductOnSale(product: any) {
   return product.price?.sale && product.price.sale < product.price?.list;
 }
 
-async function addToCart(product: any) {
+async function addToCart(product: Product) {
   try {
     isAddingToCart.value = true;
-    await cartStore.addItem(MOCK_USER_ID, product.id, 1);
+    await cartStore.addItem(MOCK_USER_ID, product["product-id"], 1);
   } catch (err) {
     console.error('Error adding to cart:', err);
   } finally {

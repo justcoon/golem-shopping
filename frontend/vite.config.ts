@@ -16,11 +16,14 @@ export default defineConfig({
   server: {
     port: 3000,
     proxy: {
-      '/api': {
-        target: 'http://golem-shopping.test.local',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
-      }
+        '/api': {
+            target: 'http://localhost:9006',
+            changeOrigin: true,
+            headers: {
+                Host: 'golem-shopping.test.local'
+            },
+            rewrite: (path) => path.replace(/^\/api/, '')
+        }
     }
   }
 })

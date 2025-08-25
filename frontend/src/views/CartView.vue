@@ -3,16 +3,16 @@
     <h1>Your Cart</h1>
     <p v-if="!cart?.items?.length">Your cart is empty</p>
     <div v-else>
-      <div v-for="item in cart.items" :key="item.product_id" class="cart-item">
-        <h3>{{ item.name }}</h3>
+      <div v-for="item in cart.items" :key="item['product-id']" class="cart-item">
+        <h3>{{ item["product-name"] }}</h3>
         <p>${{ (item.price / 100).toFixed(2) }} × {{ item.quantity }}</p>
-        <button @click="updateQty(item.product_id, item.quantity - 1)">-</button>
+        <button @click="updateQty(item['product-id'], item.quantity - 1)">-</button>
         <span>{{ item.quantity }}</span>
-        <button @click="updateQty(item.product_id, item.quantity + 1)">+</button>
-        <button @click="removeItem(item.product_id)">Remove</button>
+        <button @click="updateQty(item['product-id'], item.quantity + 1)">+</button>
+        <button @click="removeItem(item['product-id'])">Remove</button>
       </div>
       <div class="summary">
-        <h3>Total: ${{ (cart.subtotal / 100).toFixed(2) }}</h3>
+        <h3>Total: ${{ (cart.total / 100).toFixed(2) }}</h3>
         <router-link to="/checkout" class="btn">Checkout</router-link>
       </div>
     </div>

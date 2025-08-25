@@ -33,11 +33,11 @@
       <div class="order-grid">
         <div class="order-items">
           <h2>Order Items</h2>
-          <div v-for="item in order.items" :key="item.product_id" class="order-item">
-            <img :src="getProductImage(item)" :alt="item.name" class="item-image" />
+          <div v-for="item in order.items" :key="item['product-id']" class="order-item">
+            <img :src="getProductImage(item)" :alt="item['product-name']" class="item-image" />
             <div class="item-details">
-              <h3>{{ item.name }}</h3>
-              <p class="item-brand">{{ item.brand }}</p>
+              <h3>{{ item['product-name'] }}</h3>
+              <p class="item-brand">{{ item['product-brand'] }}</p>
               <p class="item-price">${{ (item.price / 100).toFixed(2) }} × {{ item.quantity }}</p>
             </div>
             <div class="item-total">
@@ -48,7 +48,7 @@
           <div class="order-summary">
             <div class="summary-row">
               <span>Subtotal</span>
-              <span>${{ (order.subtotal / 100).toFixed(2) }}</span>
+              <span>${{ (order.total / 100).toFixed(2) }}</span>
             </div>
             <div class="summary-row">
               <span>Shipping</span>

@@ -124,7 +124,7 @@ async function addToCart() {
   
   try {
     isAddingToCart.value = true;
-    await cartStore.addItem(MOCK_USER_ID, product.value.id, qty.value);
+    await cartStore.addItem(MOCK_USER_ID, product.value["product-id"], qty.value);
   } catch (err) {
     console.error('Error adding to cart:', err);
   } finally {

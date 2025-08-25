@@ -57,6 +57,7 @@
 import { ref, onMounted, computed } from 'vue';
 import { useProductStore } from '@/stores/productStore';
 import { useCartStore } from '@/stores/cartStore';
+import {Product} from "@/api/services/productService.ts";
 
 const productStore = useProductStore();
 const cartStore = useCartStore();
@@ -100,10 +101,10 @@ const hasDiscount = (product: any) => {
   return product.price?.sale && product.price.sale < product.price?.list;
 };
 
-const addToCart = async (product: any) => {
+const addToCart = async (product: Product) => {
   try {
     isAddingToCart.value = true;
-    await cartStore.addItem(MOCK_USER_ID, product.id, 1);
+    await cartStore.addItem(MOCK_USER_ID, product["product-id"], 1);
     // Show success message or notification
   } catch (err) {
     console.error('Error adding to cart:', err);
