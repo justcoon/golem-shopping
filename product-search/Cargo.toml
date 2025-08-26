@@ -25,7 +25,7 @@ path = "wit"
 "golem:api/host@1.1.6" = "golem_rust::bindings::golem::api::host"
 
 [dependencies.wit-bindgen-rt]
-version = "0.43.0"
+version = "0.44.0"
 features = ["bitflags"]
 
 [dependencies.golem-rust]
