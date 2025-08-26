@@ -1,4 +1,6 @@
 import apiClient from '../config';
+import type { Address } from '@/types/address';
+import {DateTime} from "@/types/datetime.ts";
 
 export interface CartItem {
     'product-id': string;
@@ -12,10 +14,16 @@ export interface Cart {
     'user-id': string;
     items: CartItem[];
     email?: string;
-    'billing-address'?: any;
-    'shipping-address'?: any;
+    'billing-address'?: Address;
+    'shipping-address'?: Address;
     total: number;
     currency: string;
+    'previous-order-ids': string[];
+    'updated-at': DateTime;
+}
+
+export interface OrderConfirmation {
+    'order-id': string;
 }
 
 export const getCart = async (userId: string): Promise<Cart> => {
@@ -55,25 +63,27 @@ export const updateCartEmail = async (userId: string, email: string): Promise<vo
     }
 };
 
-export const updateBillingAddress = async (userId: string, address: any): Promise<void> => {
+export const updateBillingAddress = async (userId: string, address: Address): Promise<Cart> => {
     try {
-        await apiClient.put(`/v1/cart/${userId}/billing-address`, address);
+        const response = await apiClient.put(`/v1/cart/${userId}/billing-address`, address);
+        return response.ok;
     } catch (error) {
-        console.error('Error updating billing address:', error);
+        console.error(`Error updating billing address for user ${userId}:`, error);
         throw error;
     }
 };
 
-export const updateShippingAddress = async (userId: string, address: any): Promise<void> => {
+export const updateShippingAddress = async (userId: string, address: Address): Promise<Cart> => {
     try {
-        await apiClient.put(`/v1/cart/${userId}/shipping-address`, address);
+        const response = await apiClient.put(`/v1/cart/${userId}/shipping-address`, address);
+        return response.ok;
     } catch (error) {
-        console.error('Error updating shipping address:', error);
+        console.error(`Error updating shipping address for user ${userId}:`, error);
         throw error;
     }
 };
 
-export const checkoutCart = async (userId: string): Promise<any> => {
+export const checkoutCart = async (userId: string): Promise<OrderConfirmation> => {
     try {
         const response = await apiClient.post(`/v1/cart/${userId}/checkout`, {});
         return response.ok;

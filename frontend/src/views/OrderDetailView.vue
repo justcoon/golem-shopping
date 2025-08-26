@@ -22,11 +22,11 @@
     <div v-else class="order-container">
       <div class="order-header">
         <div>
-          <h1>Order #{{ order.id }}</h1>
-          <p class="order-date">Placed on {{ formatDate(order.created_at) }}</p>
+          <h1>Order #{{ order['order-id'] }}</h1>
+          <p class="order-date">Placed on {{ formatDate(order['created-at']) }}</p>
         </div>
-        <div class="order-status" :class="getStatusClass(order.status)">
-          {{ formatStatus(order.status) }}
+        <div class="order-status" :class="getStatusClass(order['order-status'])">
+          {{ formatStatus(order['order-status']) }}
         </div>
       </div>
       
@@ -34,59 +34,68 @@
         <div class="order-items">
           <h2>Order Items</h2>
           <div v-for="item in order.items" :key="item['product-id']" class="order-item">
-            <img :src="getProductImage(item)" :alt="item['product-name']" class="item-image" />
+            <img :src="getProductImage({ name: item['product-name'] })" :alt="item['product-name']" class="item-image" />
             <div class="item-details">
-              <h3>{{ item['product-name'] }}</h3>
+              <h3>
+                <router-link :to="`/products/${item['product-id']}`" class="product-link">
+                  {{ item["product-name"] }}
+                </router-link>
+              </h3>
               <p class="item-brand">{{ item['product-brand'] }}</p>
-              <p class="item-price">${{ (item.price / 100).toFixed(2) }} × {{ item.quantity }}</p>
+              <p class="item-price">${{ (item.price).toFixed(2) }} × {{ item.quantity }}</p>
             </div>
             <div class="item-total">
-              ${{ ((item.price * item.quantity) / 100).toFixed(2) }}
+              ${{ ((item.price * item.quantity)).toFixed(2) }}
+            </div>
+          </div>
+          
+          <h2>Order Summary</h2>
+          
+          <!-- Order Summary -->
+          <div class="address-section">
+            <h3>Contact Information</h3>
+            <div class="address-details" v-if="order.email">
+              <p><strong>Email:</strong> {{ order.email }}</p>
+            </div>
+          </div>
+          
+          <!-- Shipping Address -->
+          <div class="address-section">
+            <h3>Shipping Address</h3>
+            <div v-if="order['shipping-address']" class="address-details">
+              <p v-if="order['shipping-address'].name"><strong>{{ order['shipping-address'].name }}</strong></p>
+              <p>{{ order['shipping-address'].street }}</p>
+              <p>{{ order['shipping-address'].city }}, {{ order['shipping-address']['state-or-region'] }} {{ order['shipping-address']['postal-code'] }}</p>
+              <p>{{ order['shipping-address'].country }}</p>
+              <p v-if="order['shipping-address']['phone-number']">
+                <i class="fas fa-phone"></i> {{ order['shipping-address']['phone-number'] }}
+              </p>
+            </div>
+            <p v-else>No shipping address provided</p>
+          </div>
+          
+          <!-- Billing Address -->
+          <div class="address-section" v-if="order['billing-address']">
+            <h3>Billing Address</h3>
+            <div class="address-details">
+              <p v-if="order['billing-address'].name"><strong>{{ order['billing-address'].name }}</strong></p>
+              <p>{{ order['billing-address'].street }}</p>
+              <p>{{ order['billing-address'].city }}, {{ order['billing-address']['state-or-region'] }} {{ order['billing-address']['postal-code'] }}</p>
+              <p>{{ order['billing-address'].country }}</p>
+              <p v-if="order['billing-address']['phone-number']">
+                <i class="fas fa-phone"></i> {{ order['billing-address']['phone-number'] }}
+              </p>
             </div>
           </div>
           
           <div class="order-summary">
-            <div class="summary-row">
-              <span>Subtotal</span>
-              <span>${{ (order.total / 100).toFixed(2) }}</span>
-            </div>
-            <div class="summary-row">
-              <span>Shipping</span>
-              <span>{{ order.shipping_cost > 0 ? `$${(order.shipping_cost / 100).toFixed(2)}` : 'Free' }}</span>
-            </div>
             <div class="summary-row total">
               <span>Total</span>
-              <span>${{ (order.total / 100).toFixed(2) }}</span>
+              <span>${{ (order.total).toFixed(2) }}</span>
             </div>
           </div>
         </div>
-        
-        <div class="order-info">
-          <div class="shipping-address">
-            <h3>Shipping Address</h3>
-            <template v-if="order.shipping_address">
-              <p>{{ order.shipping_address.name }}</p>
-              <p>{{ order.shipping_address.address }}</p>
-              <p>{{ order.shipping_address.city }}, {{ order.shipping_address.state }} {{ order.shipping_address.postal_code }}</p>
-              <p>{{ order.shipping_address.country }}</p>
-            </template>
-            <p v-else>No shipping address provided</p>
-          </div>
-          
-          <div class="payment-info">
-            <h3>Payment Method</h3>
-            <p v-if="order.payment_method === 'card'">
-              Credit Card ending in •••• {{ order.payment_details?.last4 || '1234' }}
-            </p>
-            <p v-else>{{ order.payment_method || 'No payment method specified' }}</p>
-          </div>
-          
-          <div class="order-actions" v-if="order.status === 'PROCESSING'">
-            <button @click="cancelOrder" class="btn btn-outline">
-              Cancel Order
-            </button>
-          </div>
-        </div>
+
       </div>
       
       <div class="order-timeline">
@@ -117,14 +126,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useOrderStore } from '@/stores/orderStore';
+import { getProductImage } from '@/api/services/productService';
+import {DateTime, dateTimeToDate} from "@/types/datetime.ts";
 
 const route = useRoute();
 const router = useRouter();
 const orderStore = useOrderStore();
-const MOCK_USER_ID = 'user-123';
 
 const order = computed(() => orderStore.currentOrder);
 const isLoading = computed(() => orderStore.isLoading);
@@ -132,12 +142,12 @@ const error = computed(() => orderStore.error);
 
 const orderStatuses = [
   { value: 'PROCESSING', label: 'Order Placed' },
-  { value: 'SHIPPED', label: 'Shipped' },
-  { value: 'DELIVERED', label: 'Delivered' }
+  // { value: 'SHIPPED', label: 'Shipped' },
+  // { value: 'DELIVERED', label: 'Delivered' }
 ];
 
-function formatDate(dateString: string) {
-  return new Date(dateString).toLocaleDateString('en-US', {
+function formatDate(d: DateTime) {
+  return dateTimeToDate(d).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -154,63 +164,35 @@ function formatStatus(status: string) {
 
 function getStatusClass(status: string) {
   return {
-    'status-processing': status === 'PROCESSING',
-    'status-shipped': status === 'SHIPPED',
-    'status-delivered': status === 'DELIVERED',
-    'status-cancelled': status === 'CANCELLED'
+    'new': status === 'PROCESSING',
+    'shipped': status === 'SHIPPED',
+    'cancelled': status === 'CANCELLED'
   };
 }
 
-function getProductImage(item: any) {
-  return `https://via.placeholder.com/80?text=${encodeURIComponent(item.name)}`;
-}
 
 function isStatusActive(status: string) {
   if (!order.value) return false;
-  return order.value.status === status;
+  return order.value['order-status'] === status;
 }
 
 function isStatusCompleted(status: string) {
   if (!order.value) return false;
   const statusOrder = ['PROCESSING', 'SHIPPED', 'DELIVERED'];
-  const currentStatusIndex = statusOrder.indexOf(order.value.status);
+  const currentStatusIndex = statusOrder.indexOf(order.value['order-status']);
   const statusIndex = statusOrder.indexOf(status);
   return currentStatusIndex >= statusIndex;
 }
 
 function getStatusDate(status: string) {
   if (!order.value) return null;
-  
-  switch (status) {
-    case 'PROCESSING':
-      return order.value.created_at;
-    case 'SHIPPED':
-      return order.value.shipped_at;
-    case 'DELIVERED':
-      return order.value.delivered_at;
-    default:
-      return null;
-  }
+  return order.value['updated-at'];
 }
 
 async function fetchOrder() {
   const orderId = route.params.id as string;
   if (orderId) {
-    await orderStore.fetchOrder(MOCK_USER_ID, orderId);
-  }
-}
-
-async function cancelOrder() {
-  if (!order.value) return;
-  
-  if (confirm('Are you sure you want to cancel this order?')) {
-    try {
-      await orderStore.cancelOrder(MOCK_USER_ID, order.value.id);
-      // Refresh the order details
-      await fetchOrder();
-    } catch (err) {
-      console.error('Failed to cancel order:', err);
-    }
+    await orderStore.fetchOrder(orderId);
   }
 }
 
@@ -221,6 +203,39 @@ watch(() => route.params.id, fetchOrder);
 </script>
 
 <style scoped>
+.address-section {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #e9ecef;
+}
+
+.address-section h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #343a40;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.address-details p {
+  margin: 0.25rem 0;
+  color: #495057;
+  line-height: 1.5;
+}
+
+.address-details p:last-child {
+  margin-bottom: 0;
+}
+
+.address-details i {
+  margin-right: 0.5rem;
+  color: #6c757d;
+  width: 1rem;
+  text-align: center;
+}
+
 .order-detail {
   max-width: 1200px;
   margin: 0 auto;

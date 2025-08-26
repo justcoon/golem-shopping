@@ -9,36 +9,130 @@
     
     <div v-else class="checkout-grid">
       <form @submit.prevent="submitOrder" class="checkout-form">
-        <h2>Shipping Info</h2>
-        <input v-model="shipping.name" placeholder="Full Name" required>
-        <input v-model="shipping.email" type="email" placeholder="Email" required>
-        <input v-model="shipping.address" placeholder="Address" required>
-        <div class="form-row">
-          <input v-model="shipping.city" placeholder="City" required>
-          <input v-model="shipping.postalCode" placeholder="Postal Code" required>
+        <h2>Shipping Information</h2>
+        <div class="form-group">
+          <label for="shipping-email">Email Address</label>
+          <input 
+            id="shipping-email" 
+            v-model="shipping.email" 
+            type="email" 
+            placeholder="your@email.com" 
+            required
+          >
+        </div>
+        <div class="form-group">
+          <label for="shipping-name">Full Name</label>
+          <input id="shipping-name" v-model="shipping.name" placeholder="John Doe" required>
         </div>
         
-        <h2>Payment</h2>
-        <input v-model="payment.card" placeholder="Card Number" required>
+        <div class="form-group">
+          <label for="shipping-street">Street Address</label>
+          <input id="shipping-street" v-model="shipping.street" placeholder="123 Main St" required>
+        </div>
+        
         <div class="form-row">
-          <input v-model="payment.expiry" placeholder="MM/YY" required>
-          <input v-model="payment.cvc" placeholder="CVC" type="password" required>
+          <div class="form-group">
+            <label for="shipping-city">City</label>
+            <input id="shipping-city" v-model="shipping.city" placeholder="New York" required>
+          </div>
+          <div class="form-group">
+            <label for="shipping-region">State/Region</label>
+            <input id="shipping-region" v-model="shipping['state-or-region']" placeholder="NY" required>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="shipping-postal-code">Postal Code</label>
+            <input id="shipping-postal-code" v-model="shipping['postal-code']" placeholder="10001" required>
+          </div>
+          <div class="form-group">
+            <label for="shipping-country">Country</label>
+            <input id="shipping-country" v-model="shipping.country" placeholder="United States" required>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="shipping-phone">Phone Number</label>
+          <input id="shipping-phone" v-model="shipping['phone-number']" placeholder="+1 (555) 123-4567">
+        </div>
+        
+        <div class="form-checkbox">
+          <input type="checkbox" id="same-as-billing" v-model="sameAsBilling">
+          <label for="same-as-billing">Billing address is the same as shipping</label>
+        </div>
+        
+        <div v-if="!sameAsBilling">
+          <h2>Billing Information</h2>
+          <div class="form-group">
+            <label for="billing-name">Full Name</label>
+            <input id="billing-name" v-model="billing.name" placeholder="John Doe">
+          </div>
+          
+          <div class="form-group">
+            <label for="billing-street">Street Address</label>
+            <input id="billing-street" v-model="billing.street" placeholder="123 Main St">
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="billing-city">City</label>
+              <input id="billing-city" v-model="billing.city" placeholder="New York">
+            </div>
+            <div class="form-group">
+              <label for="billing-region">State/Region</label>
+              <input id="billing-region" v-model="billing['state-or-region']" placeholder="NY">
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="billing-postal-code">Postal Code</label>
+              <input id="billing-postal-code" v-model="billing['postal-code']" placeholder="10001">
+            </div>
+            <div class="form-group">
+              <label for="billing-country">Country</label>
+              <input id="billing-country" v-model="billing.country" placeholder="United States">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="billing-phone">Phone Number</label>
+            <input id="billing-phone" v-model="billing['phone-number']" placeholder="+1 (555) 123-4567">
+          </div>
         </div>
         
         <button type="submit" :disabled="isSubmitting" class="btn">
-          {{ isSubmitting ? 'Processing...' : 'Place Order' }}
+          {{ isSubmitting ? 'Processing...' : `Pay $${(cart.total).toFixed(2)}` }}
         </button>
       </form>
       
       <div class="order-summary">
         <h2>Order Summary</h2>
-        <div v-for="item in cart.items" :key="item.product_id" class="order-item">
-          <span>{{ item.name }} × {{ item.quantity }}</span>
-          <span>${{ (item.price * item.quantity / 100).toFixed(2) }}</span>
+        <div class="order-items">
+          <div v-for="item in cart.items" :key="item['product-id']" class="order-item">
+            <div class="item-details">
+              <h6 class="item-name">
+                <router-link :to="`/products/${item['product-id']}`" class="product-link">
+                  {{ item['product-name'] }}
+                </router-link>
+              </h6>
+              <div class="item-meta">
+                <span class="item-quantity">Qty: {{ item.quantity }}</span>
+                <span class="item-price">  (${{ item.price.toFixed(2) }} each)</span>
+              </div>
+            </div>
+            <div class="item-total">
+              ${{ (item.price * item.quantity).toFixed(2) }}
+            </div>
+          </div>
         </div>
-        <div class="order-total">
-          <span>Total</span>
-          <span>${{ (cart.subtotal / 100).toFixed(2) }}</span>
+        
+        <div class="order-totals">
+          <div class="total">
+            <span>Total</span>
+            <span> ${{ (cart.total).toFixed(2) }}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -46,52 +140,98 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useCartStore } from '@/stores/cartStore';
-import { useOrderStore } from '@/stores/orderStore';
+import { useAuthStore } from '@/stores/authStore';
+import type { Address } from '@/types/address';
 
 const cartStore = useCartStore();
-const orderStore = useOrderStore();
+const authStore = useAuthStore();
 const router = useRouter();
-const MOCK_USER_ID = 'user-123';
+const currentUserId = authStore.userId;
 
 const cart = cartStore.cart;
 const isSubmitting = ref(false);
-const shipping = ref({
-  name: '',
+const sameAsBilling = ref(true);
+
+// Shipping address
+const shipping = ref<Address & { email: string }>({
   email: '',
-  address: '',
+  street: '',
   city: '',
-  postalCode: ''
+  'state-or-region': '',
+  country: '',
+  'postal-code': '',
+  name: '',
+  'phone-number': ''
 });
 
-const payment = ref({
-  card: '',
-  expiry: '',
-  cvc: ''
+// Billing address (starts as a copy of shipping address)
+const billing = ref<Address>({ ...shipping.value });
+
+// When shipping address changes, update billing address if sameAsBilling is true
+watch(shipping, (newShipping) => {
+  if (sameAsBilling.value) {
+    billing.value = { ...newShipping };
+  }
+}, { deep: true });
+
+// When sameAsBilling changes, update billing address if needed
+watch(sameAsBilling, (isSame) => {
+  if (isSame) {
+    billing.value = { ...shipping.value };
+  }
 });
+
+// const payment = ref({
+//   card: '',
+//   expiry: '',
+//   cvc: ''
+// });
 
 onMounted(() => {
-  if (!cart.value) cartStore.fetchCart(MOCK_USER_ID);
+  if (!cart) cartStore.fetchCart(currentUserId);
+  
+  // If we have a saved cart with addresses, populate the form
+  if (cart?.['shipping-address']) {
+    shipping.value = { ...cart['shipping-address'] };
+  }
+  
+  if (cart?.['billing-address']) {
+    billing.value = { ...cart['billing-address'] };
+    sameAsBilling.value = false;
+  }
 });
 
 async function submitOrder() {
-  if (!cart.value) return;
+  if (!cart) return;
   
   isSubmitting.value = true;
+  
   try {
-    await orderStore.createOrder(MOCK_USER_ID, {
-      shippingAddress: shipping.value,
-      paymentMethod: 'card',
-      items: cart.value.items.map(item => ({
-        product_id: item.product_id,
-        quantity: item.quantity
-      }))
-    });
+    // Update cart with email first
+    if (shipping.value.email) {
+      await cartStore.updateEmail(currentUserId, shipping.value.email);
+    }
     
-    await cartStore.clearCart(MOCK_USER_ID);
-    router.push(`/orders/${orderStore.currentOrder?.id}`);
+    // Update cart with addresses
+    await cartStore.updateShippingAddress(currentUserId, shipping.value);
+    await cartStore.updateBillingAddress(currentUserId, billing.value);
+    
+    // Create order and get the order ID from the response
+    const order = await cartStore.checkout(currentUserId);
+
+    // Redirect to order confirmation
+    if (order && order["order-id"]) {
+      // Clear cart
+      await cartStore.clearCart();
+
+      await router.push({ name: 'order-detail', params: { id: order["order-id"] } });
+    } else {
+      // If for some reason we don't have the order, go to orders page
+      await router.push({ name: 'orders' });
+    }
   } catch (error) {
     console.error('Checkout failed:', error);
   } finally {

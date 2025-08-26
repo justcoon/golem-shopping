@@ -6,10 +6,15 @@
         <div class="nav-links">
           <router-link to="/">Home</router-link>
           <router-link to="/products">Products</router-link>
-          <router-link to="/cart" class="cart-link">
+          <router-link v-if="authStore.isAuthenticated"  to="/cart" class="cart-link">
             Cart <span v-if="cartItemCount > 0" class="cart-count">{{ cartItemCount }}</span>
           </router-link>
-          <router-link to="/orders">My Orders</router-link>
+          <router-link v-if="authStore.isAuthenticated" to="/orders">My Orders</router-link>
+          <div v-if="authStore.isAuthenticated" class="user-info">
+            <span>User: {{ authStore.userId }}  </span>
+            <button @click="handleLogout" class="logout-btn">Logout</button>
+          </div>
+          <router-link v-else to="/login" class="login-btn">Login</router-link>
         </div>
       </nav>
     </header>
@@ -31,18 +36,28 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { useCartStore } from './stores/cartStore';
+import { useAuthStore } from '@/stores/authStore';
 
+const router = useRouter();
 const cartStore = useCartStore();
+const authStore = useAuthStore();
+
 const cartItemCount = computed(() => cartStore.itemCount);
 
-// In a real app, you would fetch the cart for the current user
-// For now, we'll use a mock user ID
-const MOCK_USER_ID = 'user-123';
+const handleLogout = () => {
+  authStore.logout();
+  router.push('/');
+};
 
-// Fetch cart when the app loads
-cartStore.fetchCart(MOCK_USER_ID);
+// Fetch cart when the app loads if user is authenticated
+onMounted(() => {
+  if (authStore.userId) {
+    cartStore.fetchCart(authStore.userId);
+  }
+});
 </script>
 
 <style>
@@ -102,6 +117,7 @@ body {
 .nav-links {
   display: flex;
   gap: 1.5rem;
+  align-items: center;
 }
 
 .nav-links a {

@@ -41,29 +41,13 @@
         </div>
 
         <div v-else class="product-grid">
-          <div v-for="product in paginatedProducts" :key="product.id" class="product-card">
-            <div class="product-image">
-              <img :src="getProductImage(product)" :alt="product.name" />
-              <span v-if="isProductOnSale(product)" class="sale-badge">Sale</span>
-            </div>
-            <div class="product-details">
-              <h3><router-link :to="`/products/${product.id}`">{{ product.name }}</router-link></h3>
-              <p class="brand">{{ product.brand }}</p>
-              <div class="price">
-                ${{ getSalePrice(product) }}
-                <span v-if="isProductOnSale(product)" class="original-price">
-                  ${{ getOriginalPrice(product) }}
-                </span>
-              </div>
-              <button 
-                @click="addToCart(product)" 
-                class="btn btn-primary"
-                :disabled="isAddingToCart"
-              >
-                Add to Cart
-              </button>
-            </div>
-          </div>
+          <ProductCard
+            v-for="product in paginatedProducts"
+            :key="product['product-id']"
+            :product="product"
+            :is-adding-to-cart="isAddingToCart"
+            @add-to-cart="addToCart"
+          />
         </div>
 
         <div v-if="totalPages > 1" class="pagination">
@@ -78,13 +62,16 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { useProductStore } from '@/stores/productStore';
 import { useCartStore } from '@/stores/cartStore';
+import { useAuthStore } from '@/stores/authStore';
 import { debounce } from 'lodash-es';
-import {Product} from "@/api/services/productService.ts";
+import ProductCard from '@/components/ProductCard.vue';
+import type {Product} from "@/api/services/productService.ts";
 
 const router = useRouter();
+const route = useRoute();
 const productStore = useProductStore();
 const cartStore = useCartStore();
 
@@ -92,22 +79,52 @@ const cartStore = useCartStore();
 const searchQuery = ref('');
 const sortBy = ref('name-asc');
 const selectedBrand = ref('');
+
+// Initialize from URL query parameters
+const initializeFromQuery = async () => {
+  const { brand } = route.query;
+  if (brand && typeof brand === 'string') {
+    selectedBrand.value = brand;
+    
+    // If the brand isn't in available brands, trigger a search
+    if (!availableBrands.value.includes(brand)) {
+      try {
+        await productStore.search('');
+        // If still not found after search, clear the filter
+        if (!availableBrands.value.includes(brand)) {
+          selectedBrand.value = '';
+        }
+      } catch (error) {
+        console.error('Error searching for products:', error);
+        selectedBrand.value = '';
+      }
+    }
+  } else {
+    selectedBrand.value = '';
+  }
+};
 const currentPage = ref(1);
 const itemsPerPage = 12;
 const isAddingToCart = ref(false);
-const MOCK_USER_ID = 'user-123';
+const authStore = useAuthStore();
+const currentUserId = authStore.userId;
 
-// Computed
-const { isLoading, error, products: allProducts } = productStore;
+const { isLoading, error } = productStore;
+const allProducts = computed(() => productStore.products);
 
 const availableBrands = computed(() => {
   const brands = new Set<string>();
-  allProducts.forEach(p => p.brand && brands.add(p.brand));
+  allProducts.value.forEach(p => p.brand && brands.add(p.brand));
   return Array.from(brands).sort();
 });
 
 const filteredProducts = computed(() => {
-  let result = [...allProducts];
+  let result = [...allProducts.value];
+  
+  // Brand filter
+  if (selectedBrand.value) {
+    result = result.filter(product => product.brand === selectedBrand.value);
+  }
   
   // Search filter
   if (searchQuery.value) {
@@ -119,18 +136,13 @@ const filteredProducts = computed(() => {
     );
   }
   
-  // Brand filter
-  if (selectedBrand.value) {
-    result = result.filter(p => p.brand === selectedBrand.value);
-  }
-  
   // Sorting
   return result.sort((a, b) => {
     switch (sortBy.value) {
       case 'name-asc': return a.name.localeCompare(b.name);
       case 'name-desc': return b.name.localeCompare(a.name);
-      case 'price-asc': return (a.price?.sale || a.price?.list || 0) - (b.price?.sale || b.price?.list || 0);
-      case 'price-desc': return (b.price?.sale || b.price?.list || 0) - (a.price?.sale || a.price?.list || 0);
+      case 'price-asc': return (a.bestPrice || 0) - (b.bestPrice || 0);
+      case 'price-desc': return (b.bestPrice || 0) - (a.bestPrice || 0);
       default: return 0;
     }
   });
@@ -166,26 +178,15 @@ function clearFilters() {
   currentPage.value = 1;
 }
 
-function getProductImage(product: any) {
-  return `https://via.placeholder.com/300x200?text=${encodeURIComponent(product.name)}`;
-}
-
-function getSalePrice(product: any) {
-  return (product.price?.sale || product.price?.list || 0).toFixed(2);
-}
-
-function getOriginalPrice(product: any) {
-  return (product.price?.list || 0).toFixed(2);
-}
-
-function isProductOnSale(product: any) {
-  return product.price?.sale && product.price.sale < product.price?.list;
-}
-
 async function addToCart(product: Product) {
+  if (!authStore.isAuthenticated) {
+    router.push({ name: 'login', query: { redirect: router.currentRoute.value.fullPath } });
+    return;
+  }
+  
   try {
     isAddingToCart.value = true;
-    await cartStore.addItem(MOCK_USER_ID, product["product-id"], 1);
+    await cartStore.addItem(currentUserId, product["product-id"], 1);
   } catch (err) {
     console.error('Error adding to cart:', err);
   } finally {
@@ -193,10 +194,43 @@ async function addToCart(product: Product) {
   }
 }
 
+// Watch for changes in the selected brand and update URL
+watch(selectedBrand, (newBrand) => {
+  router.push({
+    query: {
+      ...route.query,
+      brand: newBrand || undefined
+    }
+  });
+  currentPage.value = 1; // Reset to first page when brand changes
+});
+
+// Watch for changes in route query
+watch(() => route.query, async (newQuery) => {
+  if (newQuery.brand !== selectedBrand.value) {
+    selectedBrand.value = newQuery.brand || '';
+    
+    // If we have a brand in the URL but it's not in available brands, trigger a search
+    if (newQuery.brand && !availableBrands.value.includes(newQuery.brand as string)) {
+      try {
+        await productStore.search('');
+        // If the brand is still not found after search, clear the filter
+        if (!availableBrands.value.includes(newQuery.brand as string)) {
+          selectedBrand.value = '';
+        }
+      } catch (error) {
+        console.error('Error searching for products:', error);
+        selectedBrand.value = '';
+      }
+    }
+  }
+}, { immediate: true });
+
 // Lifecycle
 onMounted(async () => {
-  if (allProducts.length === 0) {
-    await productStore.search('');
+  initializeFromQuery();
+  if (allProducts.value.length === 0) {
+    performSearch()
   }
 });
 </script>
@@ -204,6 +238,102 @@ onMounted(async () => {
 <style scoped>
 .product-list-view {
   padding: 2rem 0;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.loading, .error, .no-results {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.1rem;
+}
+
+.error {
+  color: #dc3545;
+}
+
+.no-results {
+  color: #666;
+}
+
+.filters {
+  display: flex;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.search-container {
+  margin: 1rem 0;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.search-input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.form-select {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.pagination button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  background: white;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background-color: #4a6fa5;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #3a5a80;
+}
+
+.btn-outline-primary {
+  background: none;
+  border: 1px solid #4a6fa5;
+  color: #4a6fa5;
+}
+
+.btn-outline-primary:hover {
+  background-color: #f0f4f8;
 }
 
 .search-container {

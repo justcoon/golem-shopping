@@ -20,33 +20,13 @@
           Error loading products: {{ error.message }}
         </div>
         <div v-else class="product-grid">
-          <div v-for="product in featuredProducts" :key="product.id" class="product-card">
-            <div class="product-image">
-              <img :src="getProductImage(product)" :alt="product.name" />
-            </div>
-            <div class="product-details">
-              <h3 class="product-title">
-                <router-link :to="`/products/${product.id}`">
-                  {{ product.name }}
-                </router-link>
-              </h3>
-              <p class="product-brand">{{ product.brand }}</p>
-              <div class="product-price">
-                <span class="sale-price">${{ getSalePrice(product) }}</span>
-                <span v-if="hasDiscount(product)" class="original-price">
-                  ${{ getOriginalPrice(product) }}
-                </span>
-              </div>
-              <button 
-                class="btn btn-primary btn-block mt-2"
-                @click="addToCart(product)"
-                :disabled="isAddingToCart"
-              >
-                <span v-if="isAddingToCart">Adding...</span>
-                <span v-else>Add to Cart</span>
-              </button>
-            </div>
-          </div>
+          <ProductCard 
+            v-for="product in featuredProducts"
+            :key="product['product-id']" 
+            :product="product"
+            :is-adding-to-cart="isAddingToCart"
+            @add-to-cart="addToCart"
+          />
         </div>
       </div>
     </section>
@@ -57,13 +37,16 @@
 import { ref, onMounted, computed } from 'vue';
 import { useProductStore } from '@/stores/productStore';
 import { useCartStore } from '@/stores/cartStore';
-import {Product} from "@/api/services/productService.ts";
+import { useAuthStore } from '@/stores/authStore';
+import ProductCard from '@/components/ProductCard.vue';
+import type {Product} from "@/api/services/productService.ts";
 
 const productStore = useProductStore();
 const cartStore = useCartStore();
+const authStore = useAuthStore();
 
 const isAddingToCart = ref(false);
-const MOCK_USER_ID = 'user-123'; // In a real app, this would come from auth
+const currentUserId = authStore.userId;
 
 // Fetch products when component mounts
 onMounted(async () => {
@@ -80,31 +63,19 @@ const featuredProducts = computed(() => {
 const isLoading = computed(() => productStore.isLoading);
 const error = computed(() => productStore.error);
 
-// Helper methods
-const getProductImage = (product: any) => {
-  // In a real app, you would get the image URL from the product data
-  return `https://via.placeholder.com/300x200?text=${encodeURIComponent(product.name)}`;
-};
+import { useRouter } from 'vue-router';
 
-const getSalePrice = (product: any) => {
-  // In a real app, you would get the price from the product data
-  return (product.price?.sale || product.price?.list || 0).toFixed(2);
-};
-
-const getOriginalPrice = (product: any) => {
-  // In a real app, you would get the price from the product data
-  return (product.price?.list || 0).toFixed(2);
-};
-
-const hasDiscount = (product: any) => {
-  // Check if there's a sale price lower than the list price
-  return product.price?.sale && product.price.sale < product.price?.list;
-};
+const router = useRouter();
 
 const addToCart = async (product: Product) => {
+  if (!authStore.isAuthenticated) {
+    router.push({ name: 'login', query: { redirect: router.currentRoute.value.fullPath } });
+    return;
+  }
+  
   try {
     isAddingToCart.value = true;
-    await cartStore.addItem(MOCK_USER_ID, product["product-id"], 1);
+    await cartStore.addItem(currentUserId, product["product-id"], 1);
     // Show success message or notification
   } catch (err) {
     console.error('Error adding to cart:', err);

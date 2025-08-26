@@ -21,24 +21,28 @@
     </div>
     
     <div v-else class="orders">
-      <div v-for="order in orders" :key="order.id" class="order-card">
+      <div v-for="order in orders" :key="order['order-id']" class="order-card">
         <div class="order-header">
           <div>
-            <h3>Order #{{ order.id }}</h3>
-            <p class="order-date">Placed on {{ formatDate(order.created_at) }}</p>
+            <h3>Order #{{ order['order-id'] }}</h3>
+            <p class="order-date">Placed on {{ formatDate(order["created-at"]) }}</p>
           </div>
-          <div class="order-status" :class="getStatusClass(order.status)">
-            {{ formatStatus(order.status) }}
+          <div class="order-status" :class="getStatusClass(order['order-status'])">
+            {{ formatStatus(order["order-status"]) }}
           </div>
         </div>
         
         <div class="order-items">
-          <div v-for="item in order.items.slice(0, 3)" :key="item.product_id" class="order-item">
-            <img :src="getProductImage(item)" :alt="item.name" class="item-image" />
+          <div v-for="item in order.items.slice(0, 3)" :key="item['product-id']" class="order-item">
+            <img :src="getProductImage({ name: item['product-name'] })" :alt="item['product-name']" class="item-image" />
             <div class="item-details">
-              <h4>{{ item.name }}</h4>
+              <h4>
+                <router-link :to="`/products/${item['product-id']}`" class="product-link">
+                  {{ item["product-name"] }}
+                </router-link>
+              </h4>
               <p>Qty: {{ item.quantity }}</p>
-              <p class="price">${{ (item.price / 100).toFixed(2) }}</p>
+              <p class="price">${{ (item.price).toFixed(2) }}</p>
             </div>
           </div>
           
@@ -49,9 +53,9 @@
         
         <div class="order-footer">
           <div class="order-total">
-            Total: <span>${{ (order.total / 100).toFixed(2) }}</span>
+            Total: <span>${{ (order.total).toFixed(2) }}</span>
           </div>
-          <router-link :to="`/orders/${order.id}`" class="btn btn-outline">
+          <router-link :to="`/orders/${order['order-id']}`" class="btn btn-outline">
             View Order
           </router-link>
         </div>
@@ -61,18 +65,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useOrderStore } from '@/stores/orderStore';
+import { useAuthStore } from '@/stores/authStore';
+import { getProductImage } from '@/api/services/productService';
+import {DateTime, dateTimeToDate} from "@/types/datetime.ts";
 
 const orderStore = useOrderStore();
-const MOCK_USER_ID = 'user-123';
+const authStore = useAuthStore();
+const currentUserId = authStore.userId;
 
 const orders = computed(() => orderStore.orders);
 const isLoading = computed(() => orderStore.isLoading);
 const error = computed(() => orderStore.error);
 
-function formatDate(dateString: string) {
-  return new Date(dateString).toLocaleDateString('en-US', {
+function formatDate(d: DateTime) {
+  return dateTimeToDate(d).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
@@ -87,19 +95,15 @@ function formatStatus(status: string) {
 
 function getStatusClass(status: string) {
   return {
-    'status-processing': status === 'PROCESSING',
-    'status-shipped': status === 'SHIPPED',
-    'status-delivered': status === 'DELIVERED',
-    'status-cancelled': status === 'CANCELLED'
+    'new': status === 'PROCESSING',
+    'shipped': status === 'SHIPPED',
+    'cancelled': status === 'CANCELLED'
   };
 }
 
-function getProductImage(item: any) {
-  return `https://via.placeholder.com/80?text=${encodeURIComponent(item.name)}`;
-}
 
 async function fetchOrders() {
-  await orderStore.fetchOrders(MOCK_USER_ID);
+  await orderStore.fetchUserOrders(currentUserId);
 }
 
 onMounted(fetchOrders);

@@ -9,10 +9,10 @@
       <div class="product-gallery">
         <img :src="mainImage || getProductImage(product)" :alt="product.name" class="main-image" />
         <div class="thumbnails">
-          <img 
-            v-for="(img, i) in productImages" 
+          <img
+            v-for="(img, i) in productImages"
             :key="i"
-            :src="img" 
+            :src="img"
             @click="mainImage = img"
             :class="{'active': mainImage === img}"
           />
@@ -21,37 +21,44 @@
       <div class="product-info">
         <h1>{{ product.name }}</h1>
         <div class="meta">
-          <span class="brand">{{ product.brand }}</span>
-          <span class="sku">SKU: {{ product.id }}</span>
+          <router-link 
+            v-if="product.brand" 
+            :to="{ name: 'products', query: { brand: product.brand } }" 
+            class="brand-link"
+          >
+            {{ product.brand }}
+          </router-link>
+          <span v-else class="brand">No Brand</span>
+          <span class="sku">SKU: {{ product['product-id'] }}</span>
         </div>
-        
-        <div class="price" :class="{'on-sale': isOnSale}">
-          ${{ salePrice }}
-          <span v-if="isOnSale" class="original-price">${{ originalPrice }}</span>
-          <span v-if="isOnSale" class="discount">{{ discountPercentage }}% OFF</span>
+
+        <div class="price" :class="{'on-sale': hasDiscount}">
+          ${{ bestPrice }}
+          <span v-if="hasDiscount" class="original-price">${{ originalPrice }}</span>
+          <span v-if="hasDiscount" class="discount">{{ discountPercentage }}% OFF</span>
         </div>
-        
+
         <div class="description">
           <h3>Description</h3>
           <p>{{ product.description || 'No description available.' }}</p>
         </div>
-        
+
         <div class="actions">
           <div class="quantity">
             <button @click="decreaseQty" :disabled="qty <= 1">-</button>
             <input type="number" v-model.number="qty" min="1" />
             <button @click="increaseQty">+</button>
           </div>
-          
-          <button 
-            @click="addToCart" 
+
+          <button
+            @click="addToCart"
             class="btn btn-primary"
             :disabled="isAddingToCart"
           >
             {{ isAddingToCart ? 'Adding...' : 'Add to Cart' }}
           </button>
         </div>
-        
+
         <div class="tags" v-if="product.tags?.length">
           <span v-for="tag in product.tags" :key="tag" class="tag">{{ tag }}</span>
         </div>
@@ -71,6 +78,9 @@ import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useProductStore } from '@/stores/productStore';
 import { useCartStore } from '@/stores/cartStore';
+import { getProductImage } from '@/api/services/productService';
+import { useAuthStore } from '@/stores/authStore';
+import { getProductBestPrice, isProductOnSale, getProductOriginalPrice } from '@/api/services/productService';
 
 const route = useRoute();
 const productStore = useProductStore();
@@ -83,38 +93,37 @@ const error = computed(() => productStore.error);
 const isAddingToCart = ref(false);
 const qty = ref(1);
 const mainImage = ref('');
-const MOCK_USER_ID = 'user-123';
+const authStore = useAuthStore();
+const currentUserId = authStore.userId;
 
 // Computed
 const productImages = computed(() => {
-  const baseImg = getProductImage(product.value);
-  return [
-    baseImg,
-    `https://via.placeholder.com/600x400?text=${product.value?.name}+2`,
-    `https://via.placeholder.com/600x400?text=${product.value?.name}+3`
-  ];
+  const baseImg = getProductImage({ name: product.value?.name || 'Product' });
+  return [baseImg];
 });
 
-const originalPrice = computed(() => (product.value?.price?.list || 0).toFixed(2));
-const salePrice = computed(() => 
-  (product.value?.price?.sale || product.value?.price?.list || 0).toFixed(2)
+const bestPrice = computed(() => {
+      if (!product.value) return '0.00';
+      return getProductBestPrice(product.value);
+    }
 );
 
-const isOnSale = computed(() => 
-  product.value?.price?.sale && 
-  product.value.price.sale < product.value.price?.list
-);
+const originalPrice = computed(() => {
+  if (!product.value) return '0.00';
+  return getProductOriginalPrice(product.value);
+});
+
+const hasDiscount = computed(() => {
+  return product.value && isProductOnSale(product.value);
+});
 
 const discountPercentage = computed(() => {
-  if (!isOnSale.value) return 0;
-  const discount = 100 - (product.value.price.sale / product.value.price.list * 100);
+  if (!hasDiscount.value) return 0;
+  const bestSalePrice = parseFloat(bestPrice.value);
+  const listPrice = parseFloat(originalPrice.value);
+  const discount = 100 - (bestSalePrice / listPrice * 100);
   return Math.round(discount);
 });
-
-// Methods
-function getProductImage(product: any) {
-  return `https://via.placeholder.com/600x400?text=${encodeURIComponent(product.name)}`;
-}
 
 function increaseQty() { qty.value++; }
 function decreaseQty() { if (qty.value > 1) qty.value--; }
@@ -122,9 +131,14 @@ function decreaseQty() { if (qty.value > 1) qty.value--; }
 async function addToCart() {
   if (!product.value) return;
   
+  if (!authStore.isAuthenticated) {
+    router.push({ name: 'login', query: { redirect: route.fullPath } });
+    return;
+  }
+
   try {
     isAddingToCart.value = true;
-    await cartStore.addItem(MOCK_USER_ID, product.value["product-id"], qty.value);
+    await cartStore.addItem(currentUserId, product.value["product-id"], qty.value);
   } catch (err) {
     console.error('Error adding to cart:', err);
   } finally {
@@ -136,7 +150,7 @@ async function fetchProduct() {
   if (productId.value) {
     await productStore.fetchProduct(productId.value);
     if (product.value) {
-      mainImage.value = getProductImage(product.value);
+      mainImage.value = getProductImage({ name: product.value.name });
     }
   }
 }
@@ -195,9 +209,17 @@ h1 {
   font-size: 0.9rem;
 }
 
-.brand {
+.brand, .brand-link {
   color: #4a6fa5;
   margin-right: 1rem;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.brand-link:hover {
+  color: #3a5a80;
+  text-decoration: underline;
 }
 
 .price {

@@ -9,11 +9,6 @@ export const useProductStore = defineStore('products', () => {
   const error = ref<Error | null>(null);
 
   const search = async (query: string) => {
-    if (!query.trim()) {
-      products.value = [];
-      return;
-    }
-
     isLoading.value = true;
     error.value = null;
     
