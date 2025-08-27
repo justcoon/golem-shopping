@@ -1,10 +1,11 @@
 mod bindings;
 
 use crate::bindings::exports::golem::product_search_exports::api::*;
-use golem_rust::bindings::golem::api::host::{resolve_component_id, GetWorkers, WorkerMetadata};
+use golem_rust::bindings::golem::api::host::{resolve_component_id, GetWorkers};
+use std::collections::HashSet;
 
 fn get_products(
-    workers: Vec<WorkerMetadata>,
+    workers: HashSet<String>,
     matcher: ProductQueryMatcher,
 ) -> Result<Vec<Product>, String> {
     // https://learn.golem.cloud/common-language-guide/rpc#writing-non-blocking-remote-calls
@@ -12,9 +13,7 @@ fn get_products(
     let mut futures = vec![];
     let mut subs = vec![];
     for entry in workers {
-        let api = bindings::golem::product_client::product_client::Api::new(
-            entry.worker_id.worker_name.as_str(),
-        );
+        let api = bindings::golem::product_client::product_client::Api::new(entry.as_str());
         let response = api.get();
         let sub = response.subscribe();
         futures.push(response);
@@ -199,8 +198,18 @@ impl Guest for Component {
             let matcher = ProductQueryMatcher::new(&query);
 
             let get_workers = GetWorkers::new(component_id, None, false);
+
+            let mut processed_worker_names: HashSet<String> = HashSet::new();
+
             while let Some(workers) = get_workers.get_next() {
-                let products = get_products(workers, matcher.clone())?;
+                let worker_names = workers
+                    .iter()
+                    .map(|w| w.worker_id.worker_name.clone())
+                    .filter(|n| !processed_worker_names.contains(n))
+                    .collect::<HashSet<_>>();
+
+                let products = get_products(worker_names.clone(), matcher.clone())?;
+                processed_worker_names.extend(worker_names);
                 values.extend(products);
             }
 
