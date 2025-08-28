@@ -1,8 +1,12 @@
-import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
-import { searchProducts, getProductById, Product } from '@/api/services/productService';
+import { defineStore } from "pinia";
+import { ref, computed } from "vue";
+import {
+  searchProducts,
+  getProductById,
+  Product,
+} from "@/api/services/productService";
 
-export const useProductStore = defineStore('products', () => {
+export const useProductStore = defineStore("products", () => {
   const products = ref<Product[]>([]);
   const currentProduct = ref<Product | null>(null);
   const isLoading = ref(false);
@@ -11,13 +15,13 @@ export const useProductStore = defineStore('products', () => {
   const search = async (query: string) => {
     isLoading.value = true;
     error.value = null;
-    
+
     try {
       const results = await searchProducts(query);
       products.value = results;
     } catch (err) {
       error.value = err as Error;
-      console.error('Error searching products:', err);
+      console.error("Error searching products:", err);
     } finally {
       isLoading.value = false;
     }
@@ -26,7 +30,7 @@ export const useProductStore = defineStore('products', () => {
   const fetchProduct = async (productId: string) => {
     isLoading.value = true;
     error.value = null;
-    
+
     try {
       const product = await getProductById(productId);
       currentProduct.value = product;

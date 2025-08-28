@@ -1,3 +1,7 @@
+<script setup lang="ts">
+// No script logic needed for this component
+</script>
+
 <template>
   <div class="not-found">
     <div class="error-code">404</div>
@@ -14,15 +18,9 @@
         <li><router-link to="/orders">Your Orders</router-link></li>
       </ul>
     </div>
-    <router-link to="/" class="btn btn-primary">
-      Go to Homepage
-    </router-link>
+    <router-link to="/" class="btn btn-primary"> Go to Homepage </router-link>
   </div>
 </template>
-
-<script setup lang="ts">
-// No script logic needed for this component
-</script>
 
 <style scoped>
 .not-found {
@@ -117,15 +115,15 @@ h1 {
   .error-code {
     font-size: 6rem;
   }
-  
+
   h1 {
     font-size: 2rem;
   }
-  
+
   .error-message {
     font-size: 1.1rem;
   }
-  
+
   .suggestions ul {
     grid-template-columns: 1fr;
   }

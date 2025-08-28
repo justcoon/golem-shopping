@@ -1,74 +1,12 @@
-<template>
-  <div class="product-list-view">
-    <div class="container">
-      <h1>Products</h1>
-      <div class="search-container">
-        <input
-          v-model="searchQuery"
-          @input="debouncedSearch"
-          placeholder="Search products..."
-          class="search-input"
-        />
-      </div>
-
-      <div v-if="isLoading" class="loading">Loading products...</div>
-      
-      <div v-else-if="error" class="error">
-        Error: {{ error.message }}
-        <button @click="retryLoading" class="btn btn-outline-primary">Retry</button>
-      </div>
-
-      <div v-else>
-        <div class="filters">
-          <select v-model="sortBy" class="form-select">
-            <option value="name-asc">Name (A-Z)</option>
-            <option value="name-desc">Name (Z-A)</option>
-            <option value="price-asc">Price (Low to High)</option>
-            <option value="price-desc">Price (High to Low)</option>
-          </select>
-          
-          <select v-model="selectedBrand" class="form-select">
-            <option value="">All Brands</option>
-            <option v-for="brand in availableBrands" :key="brand" :value="brand">
-              {{ brand }}
-            </option>
-          </select>
-        </div>
-
-        <div v-if="filteredProducts.length === 0" class="no-results">
-          No products found.
-          <button @click="clearFilters" class="btn btn-primary">Clear Filters</button>
-        </div>
-
-        <div v-else class="product-grid">
-          <ProductCard
-            v-for="product in paginatedProducts"
-            :key="product['product-id']"
-            :product="product"
-            :is-adding-to-cart="isAddingToCart"
-            @add-to-cart="addToCart"
-          />
-        </div>
-
-        <div v-if="totalPages > 1" class="pagination">
-          <button @click="currentPage--" :disabled="currentPage === 1">Previous</button>
-          <span>Page {{ currentPage }} of {{ totalPages }}</span>
-          <button @click="currentPage++" :disabled="currentPage >= totalPages">Next</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { useProductStore } from '@/stores/productStore';
-import { useCartStore } from '@/stores/cartStore';
-import { useAuthStore } from '@/stores/authStore';
-import { debounce } from 'lodash-es';
-import ProductCard from '@/components/ProductCard.vue';
-import type {Product} from "@/api/services/productService.ts";
+import { ref, computed, watch, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useProductStore } from "@/stores/productStore";
+import { useCartStore } from "@/stores/cartStore";
+import { useAuthStore } from "@/stores/authStore";
+import { debounce } from "lodash-es";
+import ProductCard from "@/components/ProductCard.vue";
+import type { Product } from "@/api/services/productService.ts";
 
 const router = useRouter();
 const route = useRoute();
@@ -76,31 +14,31 @@ const productStore = useProductStore();
 const cartStore = useCartStore();
 
 // State
-const searchQuery = ref('');
-const sortBy = ref('name-asc');
-const selectedBrand = ref('');
+const searchQuery = ref("");
+const sortBy = ref("name-asc");
+const selectedBrand = ref("");
 
 // Initialize from URL query parameters
 const initializeFromQuery = async () => {
   const { brand } = route.query;
-  if (brand && typeof brand === 'string') {
+  if (brand && typeof brand === "string") {
     selectedBrand.value = brand;
-    
+
     // If the brand isn't in available brands, trigger a search
     if (!availableBrands.value.includes(brand)) {
       try {
-        await productStore.search('');
+        await productStore.search("");
         // If still not found after search, clear the filter
         if (!availableBrands.value.includes(brand)) {
-          selectedBrand.value = '';
+          selectedBrand.value = "";
         }
       } catch (error) {
-        console.error('Error searching for products:', error);
-        selectedBrand.value = '';
+        console.error("Error searching for products:", error);
+        selectedBrand.value = "";
       }
     }
   } else {
-    selectedBrand.value = '';
+    selectedBrand.value = "";
   }
 };
 const currentPage = ref(1);
@@ -114,42 +52,50 @@ const allProducts = computed(() => productStore.products);
 
 const availableBrands = computed(() => {
   const brands = new Set<string>();
-  allProducts.value.forEach(p => p.brand && brands.add(p.brand));
+  allProducts.value.forEach((p) => p.brand && brands.add(p.brand));
   return Array.from(brands).sort();
 });
 
 const filteredProducts = computed(() => {
   let result = [...allProducts.value];
-  
+
   // Brand filter
   if (selectedBrand.value) {
-    result = result.filter(product => product.brand === selectedBrand.value);
+    result = result.filter((product) => product.brand === selectedBrand.value);
   }
-  
+
   // Search filter
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase();
-    result = result.filter(p => 
-      p.name.toLowerCase().includes(query) ||
-      p.brand.toLowerCase().includes(query) ||
-      (p.tags && p.tags.some((t: string) => t.toLowerCase().includes(query)))
+    result = result.filter(
+      (p) =>
+        p.name.toLowerCase().includes(query) ||
+        p.brand.toLowerCase().includes(query) ||
+        (p.tags && p.tags.some((t: string) => t.toLowerCase().includes(query))),
     );
   }
-  
+
   // Sorting
   return result.sort((a, b) => {
     switch (sortBy.value) {
-      case 'name-asc': return a.name.localeCompare(b.name);
-      case 'name-desc': return b.name.localeCompare(a.name);
-      case 'price-asc': return (a.bestPrice || 0) - (b.bestPrice || 0);
-      case 'price-desc': return (b.bestPrice || 0) - (a.bestPrice || 0);
-      default: return 0;
+      case "name-asc":
+        return a.name.localeCompare(b.name);
+      case "name-desc":
+        return b.name.localeCompare(a.name);
+      case "price-asc":
+        return (a.bestPrice || 0) - (b.bestPrice || 0);
+      case "price-desc":
+        return (b.bestPrice || 0) - (a.bestPrice || 0);
+      default:
+        return 0;
     }
   });
 });
 
 // Pagination
-const totalPages = computed(() => Math.ceil(filteredProducts.value.length / itemsPerPage));
+const totalPages = computed(() =>
+  Math.ceil(filteredProducts.value.length / itemsPerPage),
+);
 const paginatedProducts = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage;
   return filteredProducts.value.slice(start, start + itemsPerPage);
@@ -164,7 +110,7 @@ watch([searchQuery, selectedBrand, sortBy], () => {
 const debouncedSearch = debounce(performSearch, 300);
 
 async function performSearch() {
-  await productStore.search(searchQuery.value || '');
+  await productStore.search(searchQuery.value || "");
 }
 
 async function retryLoading() {
@@ -172,23 +118,26 @@ async function retryLoading() {
 }
 
 function clearFilters() {
-  searchQuery.value = '';
-  selectedBrand.value = '';
-  sortBy.value = 'name-asc';
+  searchQuery.value = "";
+  selectedBrand.value = "";
+  sortBy.value = "name-asc";
   currentPage.value = 1;
 }
 
 async function addToCart(product: Product) {
   if (!authStore.isAuthenticated) {
-    router.push({ name: 'login', query: { redirect: router.currentRoute.value.fullPath } });
+    router.push({
+      name: "login",
+      query: { redirect: router.currentRoute.value.fullPath },
+    });
     return;
   }
-  
+
   try {
     isAddingToCart.value = true;
     await cartStore.addItem(currentUserId, product["product-id"], 1);
   } catch (err) {
-    console.error('Error adding to cart:', err);
+    console.error("Error adding to cart:", err);
   } finally {
     isAddingToCart.value = false;
   }
@@ -199,41 +148,122 @@ watch(selectedBrand, (newBrand) => {
   router.push({
     query: {
       ...route.query,
-      brand: newBrand || undefined
-    }
+      brand: newBrand || undefined,
+    },
   });
   currentPage.value = 1; // Reset to first page when brand changes
 });
 
 // Watch for changes in route query
-watch(() => route.query, async (newQuery) => {
-  if (newQuery.brand !== selectedBrand.value) {
-    selectedBrand.value = newQuery.brand || '';
-    
-    // If we have a brand in the URL but it's not in available brands, trigger a search
-    if (newQuery.brand && !availableBrands.value.includes(newQuery.brand as string)) {
-      try {
-        await productStore.search('');
-        // If the brand is still not found after search, clear the filter
-        if (!availableBrands.value.includes(newQuery.brand as string)) {
-          selectedBrand.value = '';
+watch(
+  () => route.query,
+  async (newQuery) => {
+    if (newQuery.brand !== selectedBrand.value) {
+      selectedBrand.value = newQuery.brand || "";
+
+      // If we have a brand in the URL but it's not in available brands, trigger a search
+      if (
+        newQuery.brand &&
+        !availableBrands.value.includes(newQuery.brand as string)
+      ) {
+        try {
+          await productStore.search("");
+          // If the brand is still not found after search, clear the filter
+          if (!availableBrands.value.includes(newQuery.brand as string)) {
+            selectedBrand.value = "";
+          }
+        } catch (error) {
+          console.error("Error searching for products:", error);
+          selectedBrand.value = "";
         }
-      } catch (error) {
-        console.error('Error searching for products:', error);
-        selectedBrand.value = '';
       }
     }
-  }
-}, { immediate: true });
+  },
+  { immediate: true },
+);
 
 // Lifecycle
 onMounted(async () => {
   initializeFromQuery();
   if (allProducts.value.length === 0) {
-    performSearch()
+    performSearch();
   }
 });
 </script>
+
+<template>
+  <div class="product-list-view">
+    <div class="container">
+      <h1>Products</h1>
+      <div class="search-container">
+        <input
+          v-model="searchQuery"
+          placeholder="Search products..."
+          class="search-input"
+          @input="debouncedSearch"
+        />
+      </div>
+
+      <div v-if="isLoading" class="loading">Loading products...</div>
+
+      <div v-else-if="error" class="error">
+        Error: {{ error.message }}
+        <button class="btn btn-outline-primary" @click="retryLoading">
+          Retry
+        </button>
+      </div>
+
+      <div v-else>
+        <div class="filters">
+          <select v-model="sortBy" class="form-select">
+            <option value="name-asc">Name (A-Z)</option>
+            <option value="name-desc">Name (Z-A)</option>
+            <option value="price-asc">Price (Low to High)</option>
+            <option value="price-desc">Price (High to Low)</option>
+          </select>
+
+          <select v-model="selectedBrand" class="form-select">
+            <option value="">All Brands</option>
+            <option
+              v-for="brand in availableBrands"
+              :key="brand"
+              :value="brand"
+            >
+              {{ brand }}
+            </option>
+          </select>
+        </div>
+
+        <div v-if="filteredProducts.length === 0" class="no-results">
+          No products found.
+          <button class="btn btn-primary" @click="clearFilters">
+            Clear Filters
+          </button>
+        </div>
+
+        <div v-else class="product-grid">
+          <ProductCard
+            v-for="product in paginatedProducts"
+            :key="product['product-id']"
+            :product="product"
+            :is-adding-to-cart="isAddingToCart"
+            @add-to-cart="addToCart"
+          />
+        </div>
+
+        <div v-if="totalPages > 1" class="pagination">
+          <button :disabled="currentPage === 1" @click="currentPage--">
+            Previous
+          </button>
+          <span>Page {{ currentPage }} of {{ totalPages }}</span>
+          <button :disabled="currentPage >= totalPages" @click="currentPage++">
+            Next
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .product-list-view {
@@ -247,7 +277,9 @@ onMounted(async () => {
   margin: 2rem 0;
 }
 
-.loading, .error, .no-results {
+.loading,
+.error,
+.no-results {
   text-align: center;
   padding: 2rem;
   font-size: 1.1rem;
@@ -378,7 +410,7 @@ onMounted(async () => {
 
 .product-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .product-image {
@@ -469,7 +501,9 @@ onMounted(async () => {
   cursor: not-allowed;
 }
 
-.loading, .error, .no-results {
+.loading,
+.error,
+.no-results {
   text-align: center;
   padding: 2rem;
   font-size: 1.1rem;

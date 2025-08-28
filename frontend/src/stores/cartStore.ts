@@ -1,65 +1,55 @@
-import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
-import { 
-  getCart, 
-  addToCart as addToCartApi, 
-  removeFromCart as removeFromCartApi, 
+import { defineStore } from "pinia";
+import { ref, computed } from "vue";
+import {
+  getCart,
+  addToCart as addToCartApi,
+  removeFromCart as removeFromCartApi,
   updateCartEmail as updateCartEmailApi,
   updateBillingAddress as updateBillingAddressApi,
   updateShippingAddress as updateShippingAddressApi,
   checkoutCart as checkoutCartApi,
   Cart,
-  CartItem
-} from '@/api/services/cartService';
-import { useProductStore } from './productStore';
-import type { Address } from '@/types/address';
+} from "@/api/services/cartService";
+import type { Address } from "@/types/address";
 
-export const useCartStore = defineStore('cart', () => {
+export const useCartStore = defineStore("cart", () => {
   const cart = ref<Cart | null>(null);
   const isLoading = ref(false);
   const error = ref<Error | null>(null);
-  const productStore = useProductStore();
 
   const cartItems = computed(() => cart.value?.items || []);
-  const itemCount = computed(() => 
-    cartItems.value.reduce((total, item) => total + item.quantity, 0)
+  const itemCount = computed(() =>
+    cartItems.value.reduce((total, item) => total + item.quantity, 0),
   );
 
   const fetchCart = async (userId: string) => {
     isLoading.value = true;
     error.value = null;
-    
+
     try {
       const cartData = await getCart(userId);
       cart.value = cartData;
-      
-      // // Fetch product details for each item in the cart
-      // await Promise.all(cartData.items.map(async (item: CartItem) => {
-      //   try {
-      //     const product = await productStore.fetchProduct(item.productId);
-      //     item.product = product;
-      //   } catch (err) {
-      //     console.error(`Error fetching product ${item.productId}:`, err);
-      //   }
-      // }));
-      //
       return cartData;
     } catch (err) {
       error.value = err as Error;
-      console.error('Error fetching cart:', err);
+      console.error("Error fetching cart:", err);
       throw err;
     } finally {
       isLoading.value = false;
     }
   };
 
-  const addItem = async (userId: string, productId: string, quantity: number = 1) => {
+  const addItem = async (
+    userId: string,
+    productId: string,
+    quantity: number = 1,
+  ) => {
     try {
       await addToCartApi(userId, productId, quantity);
       await fetchCart(userId);
     } catch (err) {
       error.value = err as Error;
-      console.error('Error adding item to cart:', err);
+      console.error("Error adding item to cart:", err);
       throw err;
     }
   };
@@ -70,25 +60,29 @@ export const useCartStore = defineStore('cart', () => {
       await fetchCart(userId);
     } catch (err) {
       error.value = err as Error;
-      console.error('Error removing item from cart:', err);
+      console.error("Error removing item from cart:", err);
       throw err;
     }
   };
 
-  const updateItem = async (userId: string, productId: string, quantity: number) => {
+  const updateItem = async (
+    userId: string,
+    productId: string,
+    quantity: number,
+  ) => {
     try {
       if (quantity <= 0) {
         // If quantity is 0 or negative, remove the item from the cart
         await removeItem(userId, productId);
         return;
       }
-      
+
       // The addToCartApi handles both adding new items and updating quantities of existing items
       await addToCartApi(userId, productId, quantity);
       await fetchCart(userId);
     } catch (err) {
       error.value = err as Error;
-      console.error('Error updating item quantity in cart:', err);
+      console.error("Error updating item quantity in cart:", err);
       throw err;
     }
   };
@@ -101,7 +95,7 @@ export const useCartStore = defineStore('cart', () => {
       }
     } catch (err) {
       error.value = err as Error;
-      console.error('Error updating cart email:', err);
+      console.error("Error updating cart email:", err);
       throw err;
     }
   };
@@ -114,7 +108,7 @@ export const useCartStore = defineStore('cart', () => {
       cart.value = updatedCart;
     } catch (err) {
       error.value = err as Error;
-      console.error('Error updating billing address:', err);
+      console.error("Error updating billing address:", err);
       throw err;
     } finally {
       isLoading.value = false;
@@ -129,10 +123,10 @@ export const useCartStore = defineStore('cart', () => {
       cart.value = updatedCart;
     } catch (err) {
       error.value = err as Error;
-      console.error('Error updating shipping address:', err);
+      console.error("Error updating shipping address:", err);
       throw err;
     }
-  };
+  }
 
   const checkout = async (userId: string) => {
     try {
@@ -141,7 +135,7 @@ export const useCartStore = defineStore('cart', () => {
       return order;
     } catch (err) {
       error.value = err as Error;
-      console.error('Error during checkout:', err);
+      console.error("Error during checkout:", err);
       throw err;
     }
   };

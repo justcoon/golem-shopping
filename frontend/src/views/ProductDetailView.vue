@@ -1,87 +1,17 @@
-<template>
-  <div class="product-detail">
-    <div v-if="isLoading" class="loading">Loading...</div>
-    <div v-else-if="error" class="error">
-      Error: {{ error.message }}
-      <button @click="fetchProduct" class="btn btn-outline-primary">Retry</button>
-    </div>
-    <div v-else-if="product" class="product-container">
-      <div class="product-gallery">
-        <img :src="mainImage || getProductImage(product)" :alt="product.name" class="main-image" />
-        <div class="thumbnails">
-          <img
-            v-for="(img, i) in productImages"
-            :key="i"
-            :src="img"
-            @click="mainImage = img"
-            :class="{'active': mainImage === img}"
-          />
-        </div>
-      </div>
-      <div class="product-info">
-        <h1>{{ product.name }}</h1>
-        <div class="meta">
-          <router-link 
-            v-if="product.brand" 
-            :to="{ name: 'products', query: { brand: product.brand } }" 
-            class="brand-link"
-          >
-            {{ product.brand }}
-          </router-link>
-          <span v-else class="brand">No Brand</span>
-          <span class="sku">SKU: {{ product['product-id'] }}</span>
-        </div>
-
-        <div class="price" :class="{'on-sale': hasDiscount}">
-          ${{ bestPrice }}
-          <span v-if="hasDiscount" class="original-price">${{ originalPrice }}</span>
-          <span v-if="hasDiscount" class="discount">{{ discountPercentage }}% OFF</span>
-        </div>
-
-        <div class="description">
-          <h3>Description</h3>
-          <p>{{ product.description || 'No description available.' }}</p>
-        </div>
-
-        <div class="actions">
-          <div class="quantity">
-            <button @click="decreaseQty" :disabled="qty <= 1">-</button>
-            <input type="number" v-model.number="qty" min="1" />
-            <button @click="increaseQty">+</button>
-          </div>
-
-          <button
-            @click="addToCart"
-            class="btn btn-primary"
-            :disabled="isAddingToCart"
-          >
-            {{ isAddingToCart ? 'Adding...' : 'Add to Cart' }}
-          </button>
-        </div>
-
-        <div class="tags" v-if="product.tags?.length">
-          <span v-for="tag in product.tags" :key="tag" class="tag">{{ tag }}</span>
-        </div>
-      </div>
-    </div>
-    <div v-else class="not-found">
-      <h2>Product not found</h2>
-      <router-link to="/products" class="btn btn-primary">
-        Back to Products
-      </router-link>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue';
-import { useRoute } from 'vue-router';
-import { useProductStore } from '@/stores/productStore';
-import { useCartStore } from '@/stores/cartStore';
-import { getProductImage } from '@/api/services/productService';
-import { useAuthStore } from '@/stores/authStore';
-import { getProductBestPrice, isProductOnSale, getProductOriginalPrice } from '@/api/services/productService';
+import { ref, computed, onMounted, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useProductStore } from "@/stores/productStore";
+import { useCartStore } from "@/stores/cartStore";
+import { getProductImage } from "@/api/services/productService";
+import { useAuthStore } from "@/stores/authStore";
+import {
+  getProductBestPrice,
+  isProductOnSale,
+  getProductOriginalPrice,
+} from "@/api/services/productService";
 
+const router = useRouter();
 const route = useRoute();
 const productStore = useProductStore();
 const cartStore = useCartStore();
@@ -92,24 +22,23 @@ const isLoading = computed(() => productStore.isLoading);
 const error = computed(() => productStore.error);
 const isAddingToCart = ref(false);
 const qty = ref(1);
-const mainImage = ref('');
+const mainImage = ref("");
 const authStore = useAuthStore();
 const currentUserId = authStore.userId;
 
 // Computed
 const productImages = computed(() => {
-  const baseImg = getProductImage({ name: product.value?.name || 'Product' });
+  const baseImg = getProductImage({ name: product.value?.name || "Product" });
   return [baseImg];
 });
 
 const bestPrice = computed(() => {
-      if (!product.value) return '0.00';
-      return getProductBestPrice(product.value);
-    }
-);
+  if (!product.value) return "0.00";
+  return getProductBestPrice(product.value);
+});
 
 const originalPrice = computed(() => {
-  if (!product.value) return '0.00';
+  if (!product.value) return "0.00";
   return getProductOriginalPrice(product.value);
 });
 
@@ -121,26 +50,34 @@ const discountPercentage = computed(() => {
   if (!hasDiscount.value) return 0;
   const bestSalePrice = parseFloat(bestPrice.value);
   const listPrice = parseFloat(originalPrice.value);
-  const discount = 100 - (bestSalePrice / listPrice * 100);
+  const discount = 100 - (bestSalePrice / listPrice) * 100;
   return Math.round(discount);
 });
 
-function increaseQty() { qty.value++; }
-function decreaseQty() { if (qty.value > 1) qty.value--; }
+function increaseQty() {
+  qty.value++;
+}
+function decreaseQty() {
+  if (qty.value > 1) qty.value--;
+}
 
 async function addToCart() {
   if (!product.value) return;
-  
+
   if (!authStore.isAuthenticated) {
-    router.push({ name: 'login', query: { redirect: route.fullPath } });
+    router.push({ name: "login", query: { redirect: route.fullPath } });
     return;
   }
 
   try {
     isAddingToCart.value = true;
-    await cartStore.addItem(currentUserId, product.value["product-id"], qty.value);
+    await cartStore.addItem(
+      currentUserId,
+      product.value["product-id"],
+      qty.value,
+    );
   } catch (err) {
-    console.error('Error adding to cart:', err);
+    console.error("Error adding to cart:", err);
   } finally {
     isAddingToCart.value = false;
   }
@@ -159,6 +96,93 @@ async function fetchProduct() {
 onMounted(fetchProduct);
 watch(() => route.params.id, fetchProduct);
 </script>
+
+<template>
+  <div class="product-detail">
+    <div v-if="isLoading" class="loading">Loading...</div>
+    <div v-else-if="error" class="error">
+      Error: {{ error.message }}
+      <button class="btn btn-outline-primary" @click="fetchProduct">
+        Retry
+      </button>
+    </div>
+    <div v-else-if="product" class="product-container">
+      <div class="product-gallery">
+        <img
+          :src="mainImage || getProductImage(product)"
+          :alt="product.name"
+          class="main-image"
+        />
+        <div class="thumbnails">
+          <img
+            v-for="(img, i) in productImages"
+            :key="i"
+            :src="img"
+            :class="{ active: mainImage === img }"
+            @click="mainImage = img"
+          />
+        </div>
+      </div>
+      <div class="product-info">
+        <h1>{{ product.name }}</h1>
+        <div class="meta">
+          <router-link
+            v-if="product.brand"
+            :to="{ name: 'products', query: { brand: product.brand } }"
+            class="brand-link"
+          >
+            {{ product.brand }}
+          </router-link>
+          <span v-else class="brand">No Brand</span>
+          <span class="sku">SKU: {{ product["product-id"] }}</span>
+        </div>
+
+        <div class="price" :class="{ 'on-sale': hasDiscount }">
+          ${{ bestPrice }}
+          <span v-if="hasDiscount" class="original-price"
+            >${{ originalPrice }}</span
+          >
+          <span v-if="hasDiscount" class="discount"
+            >{{ discountPercentage }}% OFF</span
+          >
+        </div>
+
+        <div class="description">
+          <h3>Description</h3>
+          <p>{{ product.description || "No description available." }}</p>
+        </div>
+
+        <div class="actions">
+          <div class="quantity">
+            <button :disabled="qty <= 1" @click="decreaseQty">-</button>
+            <input v-model.number="qty" type="number" min="1" />
+            <button @click="increaseQty">+</button>
+          </div>
+
+          <button
+            class="btn btn-primary"
+            :disabled="isAddingToCart"
+            @click="addToCart"
+          >
+            {{ isAddingToCart ? "Adding..." : "Add to Cart" }}
+          </button>
+        </div>
+
+        <div v-if="product.tags?.length" class="tags">
+          <span v-for="tag in product.tags" :key="tag" class="tag">{{
+            tag
+          }}</span>
+        </div>
+      </div>
+    </div>
+    <div v-else class="not-found">
+      <h2>Product not found</h2>
+      <router-link to="/products" class="btn btn-primary">
+        Back to Products
+      </router-link>
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .product-detail {
@@ -209,7 +233,8 @@ h1 {
   font-size: 0.9rem;
 }
 
-.brand, .brand-link {
+.brand,
+.brand-link {
   color: #4a6fa5;
   margin-right: 1rem;
   text-decoration: none;
@@ -301,7 +326,9 @@ h1 {
   color: #495057;
 }
 
-.loading, .error, .not-found {
+.loading,
+.error,
+.not-found {
   text-align: center;
   padding: 4rem 1rem;
 }

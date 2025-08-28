@@ -1,48 +1,7 @@
-<template>
-  <div class="cart">
-    <h1>Your Cart</h1>
-    <p v-if="!cart?.items?.length">Your cart is empty</p>
-    <div v-else>
-      <div v-for="item in cart.items" :key="item['product-id']" class="cart-item">
-        <h3>
-          <router-link :to="`/products/${item['product-id']}`" class="product-link">
-            {{ item["product-name"] }}
-          </router-link>
-        </h3>
-        <div class="price">${{ (item.price).toFixed(2) }}</div>
-        <div class="quantity-controls">
-          <button 
-            class="quantity-btn" 
-            @click="updateQty(item['product-id'], item.quantity - 1)"
-            :disabled="item.quantity <= 1"
-          >-</button>
-          <span class="quantity">{{ item.quantity }}</span>
-          <button 
-            class="quantity-btn" 
-            @click="updateQty(item['product-id'], item.quantity + 1)"
-          >+</button>
-        </div>
-        <button class="remove-btn" @click="removeItem(item['product-id'])">
-          Remove
-        </button>
-      </div>
-      <div class="summary">
-        <div>
-          <div class="total-amount">Total: ${{ (cart.total).toFixed(2) }}</div>
-          <p class="text-muted" style="margin-top: 0.25rem; color: #6c757d; font-size: 0.9rem;">
-            {{ cart.items.length }} item{{ cart.items.length !== 1 ? 's' : '' }} in cart
-          </p>
-        </div>
-        <router-link to="/checkout" class="btn">Proceed to Checkout</router-link>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
-import {computed, onMounted} from 'vue';
-import { useCartStore } from '@/stores/cartStore';
-import { useAuthStore } from '@/stores/authStore';
+import { computed, onMounted } from "vue";
+import { useCartStore } from "@/stores/cartStore";
+import { useAuthStore } from "@/stores/authStore";
 
 const cartStore = useCartStore();
 const authStore = useAuthStore();
@@ -51,24 +10,28 @@ const currentUserId = authStore.userId;
 const cart = computed(() => cartStore.cart);
 
 // Watch for changes in the cart store
-import { watch } from 'vue';
+import { watch } from "vue";
 
 onMounted(async () => {
   await cartStore.fetchCart(currentUserId);
 });
 
 // Watch for changes in the cart store and update local state
-watch(() => cartStore.cart, (newCart) => {
-  // This will trigger a re-render when the cart changes
-  console.log('Cart updated:', newCart);
-}, { deep: true });
+watch(
+  () => cartStore.cart,
+  (newCart) => {
+    // This will trigger a re-render when the cart changes
+    console.log("Cart updated:", newCart);
+  },
+  { deep: true },
+);
 
 async function updateQty(productId: string, qty: number) {
   if (qty < 1) return;
   try {
     await cartStore.updateItem(currentUserId, productId, qty);
   } catch (error) {
-    console.error('Failed to update item quantity:', error);
+    console.error("Failed to update item quantity:", error);
   }
 }
 
@@ -76,10 +39,68 @@ async function removeItem(productId: string) {
   try {
     await cartStore.removeItem(currentUserId, productId);
   } catch (error) {
-    console.error('Failed to remove item:', error);
+    console.error("Failed to remove item:", error);
   }
 }
 </script>
+
+<template>
+  <div class="cart">
+    <h1>Your Cart</h1>
+    <p v-if="!cart?.items?.length">Your cart is empty</p>
+    <div v-else>
+      <div
+        v-for="item in cart.items"
+        :key="item['product-id']"
+        class="cart-item"
+      >
+        <h3>
+          <router-link
+            :to="`/products/${item['product-id']}`"
+            class="product-link"
+          >
+            {{ item["product-name"] }}
+          </router-link>
+        </h3>
+        <div class="price">${{ item.price.toFixed(2) }}</div>
+        <div class="quantity-controls">
+          <button
+            class="quantity-btn"
+            :disabled="item.quantity <= 1"
+            @click="updateQty(item['product-id'], item.quantity - 1)"
+          >
+            -
+          </button>
+          <span class="quantity">{{ item.quantity }}</span>
+          <button
+            class="quantity-btn"
+            @click="updateQty(item['product-id'], item.quantity + 1)"
+          >
+            +
+          </button>
+        </div>
+        <button class="remove-btn" @click="removeItem(item['product-id'])">
+          Remove
+        </button>
+      </div>
+      <div class="summary">
+        <div>
+          <div class="total-amount">Total: ${{ cart.total.toFixed(2) }}</div>
+          <p
+            class="text-muted"
+            style="margin-top: 0.25rem; color: #6c757d; font-size: 0.9rem"
+          >
+            {{ cart.items.length }} item{{ cart.items.length !== 1 ? "s" : "" }}
+            in cart
+          </p>
+        </div>
+        <router-link to="/checkout" class="btn"
+          >Proceed to Checkout</router-link
+        >
+      </div>
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .cart {
@@ -206,17 +227,17 @@ async function removeItem(productId: string) {
     gap: 1rem;
     padding: 1rem 0.5rem;
   }
-  
+
   .cart-item h3 {
     grid-column: 1 / -1;
   }
-  
+
   .remove-btn {
     grid-column: 2;
     grid-row: 2;
     justify-self: end;
   }
-  
+
   .summary {
     flex-direction: column;
     gap: 1.5rem;

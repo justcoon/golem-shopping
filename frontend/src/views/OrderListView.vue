@@ -1,75 +1,9 @@
-<template>
-  <div class="order-list">
-    <h1>Your Orders</h1>
-    
-    <div v-if="isLoading" class="loading">
-      Loading your orders...
-    </div>
-    
-    <div v-else-if="error" class="error">
-      Error loading orders: {{ error.message }}
-      <button @click="fetchOrders" class="btn btn-outline">
-        Try Again
-      </button>
-    </div>
-    
-    <div v-else-if="!orders.length" class="no-orders">
-      <p>You haven't placed any orders yet.</p>
-      <router-link to="/products" class="btn">
-        Start Shopping
-      </router-link>
-    </div>
-    
-    <div v-else class="orders">
-      <div v-for="order in orders" :key="order['order-id']" class="order-card">
-        <div class="order-header">
-          <div>
-            <h3>Order #{{ order['order-id'] }}</h3>
-            <p class="order-date">Placed on {{ formatDate(order["created-at"]) }}</p>
-          </div>
-          <div class="order-status" :class="getStatusClass(order['order-status'])">
-            {{ formatStatus(order["order-status"]) }}
-          </div>
-        </div>
-        
-        <div class="order-items">
-          <div v-for="item in order.items.slice(0, 3)" :key="item['product-id']" class="order-item">
-            <img :src="getProductImage({ name: item['product-name'] })" :alt="item['product-name']" class="item-image" />
-            <div class="item-details">
-              <h4>
-                <router-link :to="`/products/${item['product-id']}`" class="product-link">
-                  {{ item["product-name"] }}
-                </router-link>
-              </h4>
-              <p>Qty: {{ item.quantity }}</p>
-              <p class="price">${{ (item.price).toFixed(2) }}</p>
-            </div>
-          </div>
-          
-          <div v-if="order.items.length > 3" class="more-items">
-            +{{ order.items.length - 3 }} more item{{ order.items.length - 3 > 1 ? 's' : '' }}
-          </div>
-        </div>
-        
-        <div class="order-footer">
-          <div class="order-total">
-            Total: <span>${{ (order.total).toFixed(2) }}</span>
-          </div>
-          <router-link :to="`/orders/${order['order-id']}`" class="btn btn-outline">
-            View Order
-          </router-link>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import { useOrderStore } from '@/stores/orderStore';
-import { useAuthStore } from '@/stores/authStore';
-import { getProductImage } from '@/api/services/productService';
-import {DateTime, dateTimeToDate} from "@/types/datetime.ts";
+import { computed, onMounted } from "vue";
+import { useOrderStore } from "@/stores/orderStore";
+import { useAuthStore } from "@/stores/authStore";
+import { getProductImage } from "@/api/services/productService";
+import { DateTime, dateTimeToDate } from "@/types/datetime.ts";
 
 const orderStore = useOrderStore();
 const authStore = useAuthStore();
@@ -80,27 +14,27 @@ const isLoading = computed(() => orderStore.isLoading);
 const error = computed(() => orderStore.error);
 
 function formatDate(d: DateTime) {
-  return dateTimeToDate(d).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
+  return dateTimeToDate(d).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   });
 }
 
 function formatStatus(status: string) {
-  return status.split('_').map(word => 
-    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-  ).join(' ');
+  return status
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
 }
 
 function getStatusClass(status: string) {
   return {
-    'new': status === 'PROCESSING',
-    'shipped': status === 'SHIPPED',
-    'cancelled': status === 'CANCELLED'
+    new: status === "PROCESSING",
+    shipped: status === "SHIPPED",
+    cancelled: status === "CANCELLED",
   };
 }
-
 
 async function fetchOrders() {
   await orderStore.fetchUserOrders(currentUserId);
@@ -109,6 +43,87 @@ async function fetchOrders() {
 onMounted(fetchOrders);
 </script>
 
+<template>
+  <div class="order-list">
+    <h1>Your Orders</h1>
+
+    <div v-if="isLoading" class="loading">Loading your orders...</div>
+
+    <div v-else-if="error" class="error">
+      Error loading orders: {{ error.message }}
+      <button class="btn btn-outline" @click="fetchOrders">Try Again</button>
+    </div>
+
+    <div v-else-if="!orders.length" class="no-orders">
+      <p>You haven't placed any orders yet.</p>
+      <router-link to="/products" class="btn"> Start Shopping </router-link>
+    </div>
+
+    <div v-else class="orders">
+      <div v-for="order in orders" :key="order['order-id']" class="order-card">
+        <div class="order-header">
+          <div>
+            <h3>Order #{{ order["order-id"] }}</h3>
+            <p class="order-date">
+              Placed on {{ formatDate(order["created-at"]) }}
+            </p>
+          </div>
+          <div
+            class="order-status"
+            :class="getStatusClass(order['order-status'])"
+          >
+            {{ formatStatus(order["order-status"]) }}
+          </div>
+        </div>
+
+        <div class="order-items">
+          <div
+            v-for="item in order.items.slice(0, 3)"
+            :key="item['product-id']"
+            class="order-item"
+          >
+            <img
+              :src="getProductImage({ name: item['product-name'] })"
+              :alt="item['product-name']"
+              class="item-image"
+            />
+            <div class="item-details">
+              <h4>
+                <router-link
+                  :to="`/products/${item['product-id']}`"
+                  class="product-link"
+                >
+                  {{ item["product-name"] }}
+                </router-link>
+              </h4>
+              <p>Qty: {{ item.quantity }}</p>
+              <p class="price">${{ item.price.toFixed(2) }}</p>
+            </div>
+          </div>
+
+          <div v-if="order.items.length > 3" class="more-items">
+            +{{ order.items.length - 3 }} more item{{
+              order.items.length - 3 > 1 ? "s" : ""
+            }}
+          </div>
+        </div>
+
+        <div class="order-footer">
+          <div class="order-total">
+            Total: <span>${{ order.total.toFixed(2) }}</span>
+          </div>
+          <router-link
+            :to="`/orders/${order['order-id']}`"
+            class="btn btn-outline"
+          >
+            View Order
+          </router-link>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
 <style scoped>
 .order-list {
   max-width: 1000px;
@@ -116,7 +131,9 @@ onMounted(fetchOrders);
   padding: 2rem 1rem;
 }
 
-.loading, .no-orders, .error {
+.loading,
+.no-orders,
+.error {
   text-align: center;
   padding: 4rem 1rem;
 }
@@ -136,7 +153,7 @@ onMounted(fetchOrders);
   border: 1px solid #e9ecef;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .order-header {
