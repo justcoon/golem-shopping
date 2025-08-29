@@ -1,31 +1,84 @@
+<script setup lang="ts">
+import {
+  Product,
+  getProductBestPrice,
+  isProductOnSale,
+  getProductOriginalPrice,
+  getProductImage,
+} from "@/api/services/productService";
+
+const props = defineProps({
+  product: {
+    type: Object as () => Product,
+    required: true,
+  },
+  isAddingToCart: {
+    type: Boolean,
+    default: false,
+  },
+  showSaleBadge: {
+    type: Boolean,
+    default: true,
+  },
+  showOriginalPrice: {
+    type: Boolean,
+    default: true,
+  },
+  showAddToCart: {
+    type: Boolean,
+    default: true,
+  },
+  hideBrand: {
+    type: Boolean,
+    default: false,
+  },
+  hideLink: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+const emit = defineEmits(["add-to-cart"]);
+</script>
+
 <template>
   <div class="product-card">
     <div class="product-image">
       <img :src="getProductImage(product)" :alt="product.name" />
-      <span v-if="showSaleBadge && isProductOnSale(product)" class="sale-badge">Sale</span>
+      <span v-if="showSaleBadge && isProductOnSale(product)" class="sale-badge"
+        >Sale</span
+      >
     </div>
     <div class="product-details">
       <h3>
-        <router-link v-if="!hideLink" :to="`/products/${product['product-id']}`">
+        <router-link
+          v-if="!hideLink"
+          :to="`/products/${product['product-id']}`"
+        >
           {{ product.name }}
         </router-link>
         <template v-else>{{ product.name }}</template>
       </h3>
       <p v-if="!hideBrand" class="brand">{{ product.brand }}</p>
       <div class="price">
-        <span :class="{ 'sale-price': showSaleBadge && isProductOnSale(product) }">
+        <span
+          :class="{ 'sale-price': showSaleBadge && isProductOnSale(product) }"
+        >
           ${{ getProductBestPrice(product) }}
         </span>
-        <span v-if="showOriginalPrice && isProductOnSale(product)" class="original-price">
+        <span
+          v-if="showOriginalPrice && isProductOnSale(product)"
+          class="original-price"
+        >
           ${{ getProductOriginalPrice(product) }}
         </span>
       </div>
       <slot>
-        <button 
+        <button
           v-if="showAddToCart"
-          @click="$emit('add-to-cart', product)" 
           class="btn btn-primary"
           :disabled="isAddingToCart"
+          @click="$emit('add-to-cart', product)"
         >
           Add to Cart
         </button>
@@ -33,46 +86,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-
-import { Product, getProductBestPrice, isProductOnSale, getProductOriginalPrice, getProductImage } from '@/api/services/productService';
-
-
-const props = defineProps({
-  product: {
-    type: Object as () => Product,
-    required: true
-  },
-  isAddingToCart: {
-    type: Boolean,
-    default: false
-  },
-  showSaleBadge: {
-    type: Boolean,
-    default: true
-  },
-  showOriginalPrice: {
-    type: Boolean,
-    default: true
-  },
-  showAddToCart: {
-    type: Boolean,
-    default: true
-  },
-  hideBrand: {
-    type: Boolean,
-    default: false
-  },
-  hideLink: {
-    type: Boolean,
-    default: false
-  }
-});
-
-const emit = defineEmits(['add-to-cart']);
-
-</script>
 
 <style scoped>
 .product-card {
@@ -87,7 +100,7 @@ const emit = defineEmits(['add-to-cart']);
 
 .product-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .product-image {

@@ -1,9 +1,9 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosInstance, AxiosResponse } from "axios";
 
 const apiClient: AxiosInstance = axios.create({
-  baseURL: '/api', // This will be proxied to http://golem-shopping.test.local
+  baseURL: "/api", // This will be proxied to http://golem-shopping.test.local
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
@@ -19,7 +19,7 @@ apiClient.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 // Response interceptor
@@ -29,9 +29,9 @@ apiClient.interceptors.response.use(
   },
   (error) => {
     // Handle errors globally
-    console.error('API Error:', error);
+    console.error("API Error:", error);
     return Promise.reject(error);
-  }
+  },
 );
 
 export default apiClient;

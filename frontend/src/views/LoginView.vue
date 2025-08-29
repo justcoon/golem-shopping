@@ -1,8 +1,26 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/authStore";
+
+const authStore = useAuthStore();
+const router = useRouter();
+const userId = ref("");
+
+const handleLogin = () => {
+  authStore.login(userId.value);
+  // Redirect to home or the originally requested page
+  const redirectPath =
+    router.currentRoute.value.query.redirect?.toString() || "/";
+  router.push(redirectPath);
+};
+</script>
+
 <template>
   <div class="login-container">
     <div class="login-box">
       <h2>Login</h2>
-      <form @submit.prevent="handleLogin" class="login-form">
+      <form class="login-form" @submit.prevent="handleLogin">
         <div class="form-group">
           <label for="userId">User ID</label>
           <input
@@ -19,23 +37,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { useAuthStore } from '@/stores/authStore';
-
-const authStore = useAuthStore();
-const router = useRouter();
-const userId = ref('');
-
-const handleLogin = () => {
-  authStore.login(userId.value);
-  // Redirect to home or the originally requested page
-  const redirectPath = router.currentRoute.value.query.redirect?.toString() || '/';
-  router.push(redirectPath);
-};
-</script>
 
 <style scoped>
 .login-container {

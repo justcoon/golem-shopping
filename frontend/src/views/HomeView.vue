@@ -1,3 +1,58 @@
+<script setup lang="ts">
+import { ref, onMounted, computed } from "vue";
+import { useProductStore } from "@/stores/productStore";
+import { useCartStore } from "@/stores/cartStore";
+import { useAuthStore } from "@/stores/authStore";
+import ProductCard from "@/components/ProductCard.vue";
+import type { Product } from "@/api/services/productService.ts";
+
+const productStore = useProductStore();
+const cartStore = useCartStore();
+const authStore = useAuthStore();
+
+const isAddingToCart = ref(false);
+const currentUserId = authStore.userId;
+
+// Fetch products when component mounts
+onMounted(async () => {
+  if (productStore.products.length === 0) {
+    await productStore.search(""); // Empty search to get featured products
+  }
+});
+
+// Get featured products (first 4 products for the homepage)
+const featuredProducts = computed(() => {
+  return productStore.products.slice(0, 4);
+});
+
+const isLoading = computed(() => productStore.isLoading);
+const error = computed(() => productStore.error);
+
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
+const addToCart = async (product: Product) => {
+  if (!authStore.isAuthenticated) {
+    router.push({
+      name: "login",
+      query: { redirect: router.currentRoute.value.fullPath },
+    });
+    return;
+  }
+
+  try {
+    isAddingToCart.value = true;
+    await cartStore.addItem(currentUserId, product["product-id"], 1);
+    // Show success message or notification
+  } catch (err) {
+    console.error("Error adding to cart:", err);
+  } finally {
+    isAddingToCart.value = false;
+  }
+};
+</script>
+
 <template>
   <div class="home-view">
     <section class="hero">
@@ -20,9 +75,9 @@
           Error loading products: {{ error.message }}
         </div>
         <div v-else class="product-grid">
-          <ProductCard 
+          <ProductCard
             v-for="product in featuredProducts"
-            :key="product['product-id']" 
+            :key="product['product-id']"
             :product="product"
             :is-adding-to-cart="isAddingToCart"
             @add-to-cart="addToCart"
@@ -32,58 +87,6 @@
     </section>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
-import { useProductStore } from '@/stores/productStore';
-import { useCartStore } from '@/stores/cartStore';
-import { useAuthStore } from '@/stores/authStore';
-import ProductCard from '@/components/ProductCard.vue';
-import type {Product} from "@/api/services/productService.ts";
-
-const productStore = useProductStore();
-const cartStore = useCartStore();
-const authStore = useAuthStore();
-
-const isAddingToCart = ref(false);
-const currentUserId = authStore.userId;
-
-// Fetch products when component mounts
-onMounted(async () => {
-  if (productStore.products.length === 0) {
-    await productStore.search(''); // Empty search to get featured products
-  }
-});
-
-// Get featured products (first 4 products for the homepage)
-const featuredProducts = computed(() => {
-  return productStore.products.slice(0, 4);
-});
-
-const isLoading = computed(() => productStore.isLoading);
-const error = computed(() => productStore.error);
-
-import { useRouter } from 'vue-router';
-
-const router = useRouter();
-
-const addToCart = async (product: Product) => {
-  if (!authStore.isAuthenticated) {
-    router.push({ name: 'login', query: { redirect: router.currentRoute.value.fullPath } });
-    return;
-  }
-  
-  try {
-    isAddingToCart.value = true;
-    await cartStore.addItem(currentUserId, product["product-id"], 1);
-    // Show success message or notification
-  } catch (err) {
-    console.error('Error adding to cart:', err);
-  } finally {
-    isAddingToCart.value = false;
-  }
-};
-</script>
 
 <style scoped>
 .home-view {

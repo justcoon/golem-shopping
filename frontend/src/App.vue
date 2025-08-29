@@ -1,3 +1,28 @@
+<script setup lang="ts">
+import { computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { useCartStore } from "./stores/cartStore";
+import { useAuthStore } from "@/stores/authStore";
+
+const router = useRouter();
+const cartStore = useCartStore();
+const authStore = useAuthStore();
+
+const cartItemCount = computed(() => cartStore.itemCount);
+
+const handleLogout = () => {
+  authStore.logout();
+  router.push("/");
+};
+
+// Fetch cart when the app loads if user is authenticated
+onMounted(() => {
+  if (authStore.userId) {
+    cartStore.fetchCart(authStore.userId);
+  }
+});
+</script>
+
 <template>
   <div class="app">
     <header class="header">
@@ -6,13 +31,22 @@
         <div class="nav-links">
           <router-link to="/">Home</router-link>
           <router-link to="/products">Products</router-link>
-          <router-link v-if="authStore.isAuthenticated"  to="/cart" class="cart-link">
-            Cart <span v-if="cartItemCount > 0" class="cart-count">{{ cartItemCount }}</span>
+          <router-link
+            v-if="authStore.isAuthenticated"
+            to="/cart"
+            class="cart-link"
+          >
+            Cart
+            <span v-if="cartItemCount > 0" class="cart-count">{{
+              cartItemCount
+            }}</span>
           </router-link>
-          <router-link v-if="authStore.isAuthenticated" to="/orders">My Orders</router-link>
+          <router-link v-if="authStore.isAuthenticated" to="/orders"
+            >My Orders</router-link
+          >
           <div v-if="authStore.isAuthenticated" class="user-info">
-            <span>User: {{ authStore.userId }}  </span>
-            <button @click="handleLogout" class="logout-btn">Logout</button>
+            <span>User: {{ authStore.userId }} </span>
+            <button class="logout-btn" @click="handleLogout">Logout</button>
           </div>
           <router-link v-else to="/login" class="login-btn">Login</router-link>
         </div>
@@ -35,31 +69,6 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { useCartStore } from './stores/cartStore';
-import { useAuthStore } from '@/stores/authStore';
-
-const router = useRouter();
-const cartStore = useCartStore();
-const authStore = useAuthStore();
-
-const cartItemCount = computed(() => cartStore.itemCount);
-
-const handleLogout = () => {
-  authStore.logout();
-  router.push('/');
-};
-
-// Fetch cart when the app loads if user is authenticated
-onMounted(() => {
-  if (authStore.userId) {
-    cartStore.fetchCart(authStore.userId);
-  }
-});
-</script>
-
 <style>
 :root {
   --primary-color: #4a6fa5;
@@ -79,7 +88,9 @@ onMounted(() => {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
   line-height: 1.6;
   color: #333;
   background-color: #f5f5f5;
@@ -137,7 +148,7 @@ body {
 }
 
 .nav-links a.router-link-active::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 0;
@@ -208,8 +219,11 @@ body {
   font-size: 1rem;
   line-height: 1.5;
   border-radius: var(--border-radius);
-  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
-    border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  transition:
+    color 0.15s ease-in-out,
+    background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
   cursor: pointer;
   text-decoration: none;
 }
@@ -242,15 +256,31 @@ body {
   text-align: center;
 }
 
-.mt-1 { margin-top: 0.5rem; }
-.mt-2 { margin-top: 1rem; }
-.mt-3 { margin-top: 1.5rem; }
-.mt-4 { margin-top: 2rem; }
+.mt-1 {
+  margin-top: 0.5rem;
+}
+.mt-2 {
+  margin-top: 1rem;
+}
+.mt-3 {
+  margin-top: 1.5rem;
+}
+.mt-4 {
+  margin-top: 2rem;
+}
 
-.mb-1 { margin-bottom: 0.5rem; }
-.mb-2 { margin-bottom: 1rem; }
-.mb-3 { margin-bottom: 1.5rem; }
-.mb-4 { margin-bottom: 2rem; }
+.mb-1 {
+  margin-bottom: 0.5rem;
+}
+.mb-2 {
+  margin-bottom: 1rem;
+}
+.mb-3 {
+  margin-bottom: 1.5rem;
+}
+.mb-4 {
+  margin-bottom: 2rem;
+}
 
 .flex {
   display: flex;
@@ -264,8 +294,16 @@ body {
   justify-content: space-between;
 }
 
-.gap-1 { gap: 0.5rem; }
-.gap-2 { gap: 1rem; }
-.gap-3 { gap: 1.5rem; }
-.gap-4 { gap: 2rem; }
+.gap-1 {
+  gap: 0.5rem;
+}
+.gap-2 {
+  gap: 1rem;
+}
+.gap-3 {
+  gap: 1.5rem;
+}
+.gap-4 {
+  gap: 2rem;
+}
 </style>
