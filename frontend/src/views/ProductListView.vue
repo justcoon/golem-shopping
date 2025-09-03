@@ -110,7 +110,10 @@ watch([searchQuery, selectedBrand, sortBy], () => {
 const debouncedSearch = debounce(performSearch, 300);
 
 async function performSearch() {
-  await productStore.search(searchQuery.value || "");
+  await productStore.search(
+    searchQuery.value || "",
+    authStore.pricePreferences,
+  );
 }
 
 async function retryLoading() {
@@ -167,7 +170,7 @@ watch(
         !availableBrands.value.includes(newQuery.brand as string)
       ) {
         try {
-          await productStore.search("");
+          await productStore.search("", authStore.pricePreferences);
           // If the brand is still not found after search, clear the filter
           if (!availableBrands.value.includes(newQuery.brand as string)) {
             selectedBrand.value = "";

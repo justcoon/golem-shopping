@@ -4,8 +4,8 @@ import {
   getBatchPricing,
   getBestPrice,
   type Pricing,
-  SalePricingItem,
-  PricingItem,
+  type SalePricingItem,
+  type PriceFilterOptions,
 } from "./pricingService";
 import { dateTimeToDate } from "@/types/datetime.ts";
 
@@ -19,13 +19,16 @@ export interface Product {
   bestPrice?: number;
 }
 
-const enhanceWithPricing = async (product: Product): Promise<Product> => {
+const enhanceWithPricing = async (
+  product: Product,
+  options?: PriceFilterOptions,
+): Promise<Product> => {
   try {
     const pricing = await getProductPricing(product["product-id"]);
     return {
       ...product,
       pricing,
-      bestPrice: getBestPrice(pricing),
+      bestPrice: getBestPrice(pricing, options),
     };
   } catch (error) {
     console.error(
@@ -36,7 +39,10 @@ const enhanceWithPricing = async (product: Product): Promise<Product> => {
   }
 };
 
-export const searchProducts = async (query: string): Promise<Product[]> => {
+export const searchProducts = async (
+  query: string,
+  options?: PriceFilterOptions,
+): Promise<Product[]> => {
   try {
     const response = await apiClient.get(
       `/v1/product/search?query=${encodeURIComponent(query)}`,
@@ -53,7 +59,7 @@ export const searchProducts = async (query: string): Promise<Product[]> => {
       return {
         ...product,
         pricing,
-        bestPrice: pricing ? getBestPrice(pricing) : undefined,
+        bestPrice: pricing ? getBestPrice(pricing, options) : undefined,
       };
     });
   } catch (error) {
@@ -65,13 +71,14 @@ export const searchProducts = async (query: string): Promise<Product[]> => {
 export const getProductById = async (
   productId: string,
   includePricing = true,
+  options?: PriceFilterOptions,
 ): Promise<Product> => {
   try {
     const response = await apiClient.get(`/v1/product/${productId}`);
     const product: Product = response.ok;
 
     if (includePricing) {
-      return enhanceWithPricing(product);
+      return enhanceWithPricing(product, options);
     }
 
     return product;
@@ -82,11 +89,16 @@ export const getProductById = async (
 };
 
 // Helper to get a product with pricing (alias for backward compatibility)
-export const getProductWithPricing = getProductById;
+// Get product with pricing (with optional currency and zone filters)
+export const getProductWithPricing = (
+  productId: string,
+  options?: PriceFilterOptions,
+): Promise<Product> => getProductById(productId, true, options);
 
 // Get multiple products by IDs with their pricing
 export const getProductsByIds = async (
   productIds: string[],
+  options?: PriceFilterOptions,
 ): Promise<Record<string, Product>> => {
   try {
     // First get all products
@@ -104,7 +116,7 @@ export const getProductsByIds = async (
       result[product["product-id"]] = {
         ...product,
         pricing,
-        bestPrice: pricing ? getBestPrice(pricing) : undefined,
+        bestPrice: pricing ? getBestPrice(pricing, options) : undefined,
       };
     });
 
@@ -115,39 +127,81 @@ export const getProductsByIds = async (
   }
 };
 
-export const getProductBestPrice = (product: Product): string => {
-  return product.bestPrice?.toFixed(2) || "0.00";
+export const getProductBestPrice = (
+  product: Product,
+  options?: PriceFilterOptions,
+): string => {
+  if (!product.pricing) return "0.00";
+  const price = getBestPrice(product.pricing, options);
+  return price?.toFixed(2) || "0.00";
 };
 
-export const getProductOriginalPrice = (product: Product): string => {
-  if (product.pricing && product.pricing?.["list-prices"].length > 0) {
-    const minListPrice = Math.min(
-      ...product.pricing["list-prices"].map((p: PricingItem) => p.price),
-    );
+export const getProductOriginalPrice = (
+  product: Product,
+  options?: PriceFilterOptions,
+): string => {
+  if (!product.pricing) return getProductBestPrice(product, options);
+
+  // Filter list prices by currency and zone if provided
+  let listPrices = [...product.pricing["list-prices"]];
+  if (options?.currency) {
+    listPrices = listPrices.filter((p) => p.currency === options.currency);
+  }
+  if (options?.zone) {
+    listPrices = listPrices.filter((p) => p.zone === options.zone);
+  }
+
+  if (listPrices.length > 0) {
+    const minListPrice = Math.min(...listPrices.map((p) => p.price));
     return minListPrice.toFixed(2);
   }
-  return getProductBestPrice(product);
+
+  return getProductBestPrice(product, options);
 };
 
-export const isProductOnSale = (product: Product): boolean => {
+export const isProductOnSale = (
+  product: Product,
+  options?: PriceFilterOptions,
+): boolean => {
   if (!product.pricing?.["sale-prices"]?.length) return false;
 
-  const bestSalePrice = Math.min(
-    ...product.pricing["sale-prices"]
-      .filter((sale: SalePricingItem) => {
-        const now = new Date();
-        const start = sale.start ? dateTimeToDate(sale.start) : null;
-        const end = sale.end ? dateTimeToDate(sale.end) : null;
-        return (!start || now >= start) && (!end || now <= end);
-      })
-      .map((s: SalePricingItem) => s.price),
+  // Filter sale prices by date, currency and zone
+  const now = new Date();
+  const salePrices = product.pricing["sale-prices"].filter(
+    (sale: SalePricingItem) => {
+      const start = sale.start ? dateTimeToDate(sale.start) : null;
+      const end = sale.end ? dateTimeToDate(sale.end) : null;
+      const matchesCurrency = options?.currency
+        ? sale.currency === options.currency
+        : true;
+      const matchesZone = options?.zone ? sale.zone === options.zone : true;
+
+      return (
+        matchesCurrency &&
+        matchesZone &&
+        (!start || now >= start) &&
+        (!end || now <= end)
+      );
+    },
   );
 
-  const minListPrice = product.pricing?.["list-prices"]?.length
-    ? Math.min(
-        ...product.pricing["list-prices"].map((p: PricingItem) => p.price),
-      )
-    : Infinity;
+  if (salePrices.length === 0) return false;
+
+  const bestSalePrice = Math.min(...salePrices.map((s) => s.price));
+
+  // Get filtered list prices for comparison
+  let listPrices = [...product.pricing["list-prices"]];
+  if (options?.currency) {
+    listPrices = listPrices.filter((p) => p.currency === options.currency);
+  }
+  if (options?.zone) {
+    listPrices = listPrices.filter((p) => p.zone === options.zone);
+  }
+
+  const minListPrice =
+    listPrices.length > 0
+      ? Math.min(...listPrices.map((p) => p.price))
+      : Infinity;
 
   return bestSalePrice < minListPrice;
 };

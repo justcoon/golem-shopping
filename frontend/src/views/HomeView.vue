@@ -16,7 +16,7 @@ const currentUserId = authStore.userId;
 // Fetch products when component mounts
 onMounted(async () => {
   if (productStore.products.length === 0) {
-    await productStore.search(""); // Empty search to get featured products
+    await productStore.search("", authStore.pricePreferences); // Empty search to get featured products
   }
 });
 

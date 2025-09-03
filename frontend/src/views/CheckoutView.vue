@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useCartStore } from "@/stores/cartStore";
 import { useAuthStore } from "@/stores/authStore";
 import type { Address } from "@/types/address";
+import { formatPrice } from "@/utils/currency";
 
 const cartStore = useCartStore();
 const authStore = useAuthStore();
 const router = useRouter();
 const currentUserId = authStore.userId;
 
-const cart = cartStore.cart;
+const cart = computed(() => cartStore.cart);
 const isSubmitting = ref(false);
 const sameAsBilling = ref(true);
 
@@ -54,21 +55,21 @@ watch(sameAsBilling, (isSame) => {
 // });
 
 onMounted(() => {
-  if (!cart) cartStore.fetchCart(currentUserId);
+  if (!cart.value) cartStore.fetchCart(currentUserId);
 
   // If we have a saved cart with addresses, populate the form
-  if (cart?.["shipping-address"]) {
-    shipping.value = { ...cart["shipping-address"] };
+  if (cart.value?.["shipping-address"]) {
+    shipping.value = { ...cart.value["shipping-address"] };
   }
 
-  if (cart?.["billing-address"]) {
-    billing.value = { ...cart["billing-address"] };
+  if (cart.value?.["billing-address"]) {
+    billing.value = { ...cart.value["billing-address"] };
     sameAsBilling.value = false;
   }
 });
 
 async function submitOrder() {
-  if (!cart) return;
+  if (!cart.value) return;
 
   isSubmitting.value = true;
 
@@ -298,13 +299,10 @@ async function submitOrder() {
               </h6>
               <div class="item-meta">
                 <span class="item-quantity">Qty: {{ item.quantity }}</span>
-                <span class="item-price">
-                  (${{ item.price.toFixed(2) }} each)</span
-                >
               </div>
-            </div>
-            <div class="item-total">
-              ${{ (item.price * item.quantity).toFixed(2) }}
+              <div class="item-price">
+                {{ formatPrice(item.price, cart.currency) }} each
+              </div>
             </div>
           </div>
         </div>
@@ -312,7 +310,7 @@ async function submitOrder() {
         <div class="order-totals">
           <div class="total">
             <span>Total</span>
-            <span> ${{ cart.total.toFixed(2) }}</span>
+            <span>{{ formatPrice(cart.total, cart.currency) }}</span>
           </div>
         </div>
       </div>

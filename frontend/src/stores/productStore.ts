@@ -1,9 +1,10 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
+import type { PriceFilterOptions } from "@/api/services/pricingService";
 import {
   searchProducts,
   getProductById,
-  Product,
+  type Product,
 } from "@/api/services/productService";
 
 export const useProductStore = defineStore("products", () => {
@@ -12,12 +13,12 @@ export const useProductStore = defineStore("products", () => {
   const isLoading = ref(false);
   const error = ref<Error | null>(null);
 
-  const search = async (query: string) => {
+  const search = async (query: string, options?: PriceFilterOptions) => {
     isLoading.value = true;
     error.value = null;
 
     try {
-      const results = await searchProducts(query);
+      const results = await searchProducts(query, options);
       products.value = results;
     } catch (err) {
       error.value = err as Error;
@@ -27,12 +28,15 @@ export const useProductStore = defineStore("products", () => {
     }
   };
 
-  const fetchProduct = async (productId: string) => {
+  const fetchProduct = async (
+    productId: string,
+    options?: PriceFilterOptions,
+  ) => {
     isLoading.value = true;
     error.value = null;
 
     try {
-      const product = await getProductById(productId);
+      const product = await getProductById(productId, true, options);
       currentProduct.value = product;
       return product;
     } catch (err) {

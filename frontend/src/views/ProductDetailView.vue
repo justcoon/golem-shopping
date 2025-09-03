@@ -3,6 +3,7 @@ import { ref, computed, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useProductStore } from "@/stores/productStore";
 import { useCartStore } from "@/stores/cartStore";
+import { formatPrice } from "@/utils/currency";
 import { getProductImage } from "@/api/services/productService";
 import { useAuthStore } from "@/stores/authStore";
 import {
@@ -34,16 +35,18 @@ const productImages = computed(() => {
 
 const bestPrice = computed(() => {
   if (!product.value) return "0.00";
-  return getProductBestPrice(product.value);
+  return getProductBestPrice(product.value, authStore.pricePreferences);
 });
 
 const originalPrice = computed(() => {
   if (!product.value) return "0.00";
-  return getProductOriginalPrice(product.value);
+  return getProductOriginalPrice(product.value, authStore.pricePreferences);
 });
 
 const hasDiscount = computed(() => {
-  return product.value && isProductOnSale(product.value);
+  return (
+    product.value && isProductOnSale(product.value, authStore.pricePreferences)
+  );
 });
 
 const discountPercentage = computed(() => {
@@ -85,7 +88,10 @@ async function addToCart() {
 
 async function fetchProduct() {
   if (productId.value) {
-    await productStore.fetchProduct(productId.value);
+    await productStore.fetchProduct(
+      productId.value,
+      authStore.pricePreferences,
+    );
     if (product.value) {
       mainImage.value = getProductImage({ name: product.value.name });
     }
@@ -138,9 +144,13 @@ watch(() => route.params.id, fetchProduct);
         </div>
 
         <div class="price" :class="{ 'on-sale': hasDiscount }">
-          ${{ bestPrice }}
+          <span class="price">{{
+            formatPrice(bestPrice, authStore.pricePreferences.currency)
+          }}</span>
           <span v-if="hasDiscount" class="original-price"
-            >${{ originalPrice }}</span
+            ><span class="price">{{
+              formatPrice(originalPrice, authStore.pricePreferences.currency)
+            }}</span></span
           >
           <span v-if="hasDiscount" class="discount"
             >{{ discountPercentage }}% OFF</span
