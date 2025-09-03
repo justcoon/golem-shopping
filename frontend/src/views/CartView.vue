@@ -2,6 +2,7 @@
 import { computed, onMounted } from "vue";
 import { useCartStore } from "@/stores/cartStore";
 import { useAuthStore } from "@/stores/authStore";
+import { formatPrice } from "@/utils/currency";
 
 const cartStore = useCartStore();
 const authStore = useAuthStore();
@@ -62,7 +63,7 @@ async function removeItem(productId: string) {
             {{ item["product-name"] }}
           </router-link>
         </h3>
-        <div class="price">${{ item.price.toFixed(2) }}</div>
+        <div class="price">{{ formatPrice(item.price, cart.currency) }}</div>
         <div class="quantity-controls">
           <button
             class="quantity-btn"
@@ -85,7 +86,9 @@ async function removeItem(productId: string) {
       </div>
       <div class="summary">
         <div>
-          <div class="total-amount">Total: ${{ cart.total.toFixed(2) }}</div>
+          <div class="total-amount">
+            Total: {{ formatPrice(cart.total, cart.currency) }}
+          </div>
           <p
             class="text-muted"
             style="margin-top: 0.25rem; color: #6c757d; font-size: 0.9rem"

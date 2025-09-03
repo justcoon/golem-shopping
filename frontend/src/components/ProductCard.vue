@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useAuthStore } from "@/stores/authStore";
+import { formatPrice } from "@/utils/currency";
 import {
   Product,
   getProductBestPrice,
@@ -84,7 +85,12 @@ const emit = defineEmits(["add-to-cart"]);
           "
           class="original-price"
         >
-          ${{ getProductOriginalPrice(product, authStore.pricePreferences) }}
+          {{
+            formatPrice(
+              getProductOriginalPrice(product, authStore.pricePreferences),
+              authStore.pricePreferences.currency,
+            )
+          }}
         </span>
       </div>
       <slot>

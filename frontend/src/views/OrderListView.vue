@@ -4,6 +4,7 @@ import { useOrderStore } from "@/stores/orderStore";
 import { useAuthStore } from "@/stores/authStore";
 import { getProductImage } from "@/api/services/productService";
 import { DateTime, dateTimeToDate } from "@/types/datetime.ts";
+import { formatPrice } from "@/utils/currency";
 
 const orderStore = useOrderStore();
 const authStore = useAuthStore();
@@ -97,7 +98,7 @@ onMounted(fetchOrders);
                 </router-link>
               </h4>
               <p>Qty: {{ item.quantity }}</p>
-              <p class="price">${{ item.price.toFixed(2) }}</p>
+              <p class="price">{{ formatPrice(item.price, order.currency) }}</p>
             </div>
           </div>
 
@@ -110,7 +111,9 @@ onMounted(fetchOrders);
 
         <div class="order-footer">
           <div class="order-total">
-            Total: <span>${{ order.total.toFixed(2) }}</span>
+            <p class="total-amount">
+              Total: {{ formatPrice(order.total, order.currency) }}
+            </p>
           </div>
           <router-link
             :to="`/orders/${order['order-id']}`"

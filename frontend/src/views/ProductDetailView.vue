@@ -3,6 +3,7 @@ import { ref, computed, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useProductStore } from "@/stores/productStore";
 import { useCartStore } from "@/stores/cartStore";
+import { formatPrice } from "@/utils/currency";
 import { getProductImage } from "@/api/services/productService";
 import { useAuthStore } from "@/stores/authStore";
 import {
@@ -143,9 +144,13 @@ watch(() => route.params.id, fetchProduct);
         </div>
 
         <div class="price" :class="{ 'on-sale': hasDiscount }">
-          ${{ bestPrice }}
+          <span class="price">{{
+            formatPrice(bestPrice, authStore.pricePreferences.currency)
+          }}</span>
           <span v-if="hasDiscount" class="original-price"
-            >${{ originalPrice }}</span
+            ><span class="price">{{
+              formatPrice(originalPrice, authStore.pricePreferences.currency)
+            }}</span></span
           >
           <span v-if="hasDiscount" class="discount"
             >{{ discountPercentage }}% OFF</span

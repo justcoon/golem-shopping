@@ -4,6 +4,7 @@ import { useRoute } from "vue-router";
 import { useOrderStore } from "@/stores/orderStore";
 import { getProductImage } from "@/api/services/productService";
 import { DateTime, dateTimeToDate } from "@/types/datetime.ts";
+import { formatPrice } from "@/utils/currency";
 
 const route = useRoute();
 const orderStore = useOrderStore();
@@ -129,11 +130,12 @@ watch(() => route.params.id, fetchOrder);
               </h3>
               <p class="item-brand">{{ item["product-brand"] }}</p>
               <p class="item-price">
-                ${{ item.price.toFixed(2) }} × {{ item.quantity }}
+                {{ formatPrice(item.price, order.currency) }} ×
+                {{ item.quantity }}
               </p>
             </div>
             <div class="item-total">
-              ${{ (item.price * item.quantity).toFixed(2) }}
+              {{ formatPrice(item.price * item.quantity, order.currency) }}
             </div>
           </div>
 
@@ -193,7 +195,9 @@ watch(() => route.params.id, fetchOrder);
           <div class="order-summary">
             <div class="summary-row total">
               <span>Total</span>
-              <span>${{ order.total.toFixed(2) }}</span>
+              <p class="total">
+                {{ formatPrice(order.total, order.currency) }}
+              </p>
             </div>
           </div>
         </div>
