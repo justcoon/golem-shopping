@@ -1,5 +1,3 @@
-// import { useAuthStore } from "@/stores/authStore";
-
 const CURRENCY_SYMBOLS: Record<string, string> = {
   USD: "$",
   EUR: "€",
@@ -9,8 +7,6 @@ const CURRENCY_SYMBOLS: Record<string, string> = {
 };
 
 export function formatPrice(price: string | number, currency: string): string {
-  // const authStore = useAuthStore();
-  // const currency = authStore.pricePreferences.currency || 'USD';
   const symbol = CURRENCY_SYMBOLS[currency] || currency;
 
   // Convert price to number if it's a string
