@@ -67,19 +67,59 @@ export const getBatchPricing = async (
   }
 };
 
-export const getCurrentSalePrices = (pricing: Pricing): SalePricingItem[] => {
+export interface PriceFilterOptions {
+  currency?: string;
+  zone?: string;
+}
+
+export const getCurrentSalePrices = (
+  pricing: Pricing,
+  options?: PriceFilterOptions | string,
+): SalePricingItem[] => {
   const now = new Date();
+  const filterOptions =
+    typeof options === "string"
+      ? { currency: options } // Backward compatibility for string currency
+      : options || {};
+
   return pricing["sale-prices"].filter((sale) => {
     const start = sale.start ? dateTimeToDate(sale.start) : null;
     const end = sale.end ? dateTimeToDate(sale.end) : null;
+    const matchesCurrency = filterOptions.currency
+      ? sale.currency === filterOptions.currency
+      : true;
+    const matchesZone = filterOptions.zone
+      ? sale.zone === filterOptions.zone
+      : true;
 
-    return (!start || now >= start) && (!end || now <= end);
+    return (
+      matchesCurrency &&
+      matchesZone &&
+      (!start || now >= start) &&
+      (!end || now <= end)
+    );
   });
 };
 
-export const getBestPrice = (pricing: Pricing): number | null => {
-  const salePrices = getCurrentSalePrices(pricing);
-  const listPrices = pricing["list-prices"];
+export const getBestPrice = (
+  pricing: Pricing,
+  options?: PriceFilterOptions | string,
+): number | null => {
+  const filterOptions =
+    typeof options === "string"
+      ? { currency: options } // Backward compatibility for string currency
+      : options || {};
+
+  const salePrices = getCurrentSalePrices(pricing, filterOptions);
+  const listPrices = pricing["list-prices"].filter((p) => {
+    const matchesCurrency = filterOptions.currency
+      ? p.currency === filterOptions.currency
+      : true;
+    const matchesZone = filterOptions.zone
+      ? p.zone === filterOptions.zone
+      : true;
+    return matchesCurrency && matchesZone;
+  });
 
   if (salePrices.length > 0) {
     // Get the lowest sale price

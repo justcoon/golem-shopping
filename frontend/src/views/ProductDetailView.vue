@@ -34,16 +34,18 @@ const productImages = computed(() => {
 
 const bestPrice = computed(() => {
   if (!product.value) return "0.00";
-  return getProductBestPrice(product.value);
+  return getProductBestPrice(product.value, authStore.pricePreferences);
 });
 
 const originalPrice = computed(() => {
   if (!product.value) return "0.00";
-  return getProductOriginalPrice(product.value);
+  return getProductOriginalPrice(product.value, authStore.pricePreferences);
 });
 
 const hasDiscount = computed(() => {
-  return product.value && isProductOnSale(product.value);
+  return (
+    product.value && isProductOnSale(product.value, authStore.pricePreferences)
+  );
 });
 
 const discountPercentage = computed(() => {
@@ -85,7 +87,10 @@ async function addToCart() {
 
 async function fetchProduct() {
   if (productId.value) {
-    await productStore.fetchProduct(productId.value);
+    await productStore.fetchProduct(
+      productId.value,
+      authStore.pricePreferences,
+    );
     if (product.value) {
       mainImage.value = getProductImage({ name: product.value.name });
     }

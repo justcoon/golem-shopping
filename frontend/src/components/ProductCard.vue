@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useAuthStore } from "@/stores/authStore";
 import {
   Product,
   getProductBestPrice,
@@ -6,6 +7,8 @@ import {
   getProductOriginalPrice,
   getProductImage,
 } from "@/api/services/productService";
+
+const authStore = useAuthStore();
 
 const props = defineProps({
   product: {
@@ -45,7 +48,11 @@ const emit = defineEmits(["add-to-cart"]);
   <div class="product-card">
     <div class="product-image">
       <img :src="getProductImage(product)" :alt="product.name" />
-      <span v-if="showSaleBadge && isProductOnSale(product)" class="sale-badge"
+      <span
+        v-if="
+          showSaleBadge && isProductOnSale(product, authStore.pricePreferences)
+        "
+        class="sale-badge"
         >Sale</span
       >
     </div>
@@ -62,15 +69,22 @@ const emit = defineEmits(["add-to-cart"]);
       <p v-if="!hideBrand" class="brand">{{ product.brand }}</p>
       <div class="price">
         <span
-          :class="{ 'sale-price': showSaleBadge && isProductOnSale(product) }"
+          :class="{
+            'sale-price':
+              showSaleBadge &&
+              isProductOnSale(product, authStore.pricePreferences),
+          }"
         >
-          ${{ getProductBestPrice(product) }}
+          ${{ getProductBestPrice(product, authStore.pricePreferences) }}
         </span>
         <span
-          v-if="showOriginalPrice && isProductOnSale(product)"
+          v-if="
+            showOriginalPrice &&
+            isProductOnSale(product, authStore.pricePreferences)
+          "
           class="original-price"
         >
-          ${{ getProductOriginalPrice(product) }}
+          ${{ getProductOriginalPrice(product, authStore.pricePreferences) }}
         </span>
       </div>
       <slot>
