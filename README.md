@@ -1,38 +1,61 @@
-# golem-shopping
+# Golem Shopping Application
 
-Project representing simple shopping application with components: product, pricing, cart and order. 
-Application is written in Rust and aim to be run on [golem](https://learn.golem.cloud/)
+A distributed shopping application built with Rust and WebAssembly, designed to run on the [Golem](https://learn.golem.cloud/). This application demonstrates a microservices architecture using Golem's serverless functions.
 
-## Components and Workers
+## 🚀 Quick Start
+
+1. **Prerequisites**:
+   - Install [Rust](https://www.rust-lang.org/tools/install)
+   - Install [Golem CLI](https://learn.golem.cloud/docs/golem-cli/install)
+   - Install [Docker](https://docs.docker.com/get-docker/) (for local development)
+
+2. **Build and Deploy**:
+   ```bash
+   # Build all components
+   golem-cli app build
+   
+   # Deploy to Golem Network
+   golem-cli app deploy
+   ```
+
+3. **Import Sample Data**:
+   For information on importing sample data, see the [Data README](./data/README.md).
+
+4. **Run the Frontend**:
+   See the [Frontend README](./frontend/README.md) for detailed frontend setup and development instructions.
+
+## 🏗️ Project Structure
+
+### Components and Workers
 
 * pricing
   - worker - per product, worker name: id of product
-  - [api](./pricing/src_wit/pricing.wit)
+  - [api](./components/pricing/src_wit/pricing.wit)
 * product
   - worker - per product, worker name: id of product
-  - [api](./product/src_wit/product.wit)
+  - [api](./components/product/src_wit/product.wit)
 * cart 
   - worker - per user/customer (there is always only one cart per user), worker name: id of user/customer
-  - [api](./cart/src_wit/cart.wit)
+  - [api](./components/cart/src_wit/cart.wit)
   - dependencies: 
     - pricing 
     - product 
     - order
 * order
   - worker - per order, worker name: id of order
-  - [api](./order/src_wit/order.wit)
+  - [api](./components/order/src_wit/order.wit)
   - dependencies:
       - pricing 
       - product
 * product-search
   - worker - per request
-  - [api](./product-search/src_wit/product-search.wit)
+  - [api](./components/product-search/src_wit/product-search.wit)
   - dependencies:
     - product
 
 Components have implementation for [snapshots based updates of golem workers](https://learn.golem.cloud/rust-language-guide/updating#manual-snapshot-based-update)
 
-[REST APIs](./api/README.md) are provided by [golem workers api gateway](https://learn.golem.cloud/invoke/making-custom-apis)
+REST APIs are provided by [golem workers api gateway](https://learn.golem.cloud/invoke/making-custom-apis)
 
 
 ## Commands
@@ -78,13 +101,23 @@ golem-cli worker invoke golem:pricing/p001 golem:pricing-exports/api.{get}
 golem-cli worker invoke golem:product-search/- golem:product-search-exports/api.{search} '"brand:\"Brand C\""'
 ```
 
-## References
+## 📊 Benchmarking
 
-* [benchmark](./benchmark/README.md)
+For detailed information about performance testing, including how to import test data and run load tests, please see the [Benchmark README](./benchmark/README.md).
 
-golem documentation:
-* [golem rust setup](https://learn.golem.cloud/docs/rust-language-guide/setup)
-* [golem docker deployment](https://learn.golem.cloud/docs/deploy/docker)
-* [snapshots based update of golem workers](https://learn.golem.cloud/rust-language-guide/updating#manual-snapshot-based-update)
-* [golem worker to worker communication](https://learn.golem.cloud/common-language-guide/rpc)
-* [wasm interface type - wit](https://component-model.bytecodealliance.org/design/wit.html)
+## 🌐 Frontend
+
+For detailed information about the frontend, including setup, development, and available scripts, please see the [Frontend README](./frontend/README.md).
+
+## 📚 Documentation
+
+### Architecture
+
+For a detailed architecture overview, see [architecture.puml](./architecture.puml) or the generated [architecture.png](./architecture.png).
+
+### Golem Documentation
+* [Golem Rust Setup](https://learn.golem.cloud/docs/rust-language-guide/setup)
+* [Docker Deployment](https://learn.golem.cloud/docs/deploy/docker)
+* [Worker Updates](https://learn.golem.cloud/rust-language-guide/updating#manual-snapshot-based-update)
+* [Worker Communication](https://learn.golem.cloud/common-language-guide/rpc)
+* [WASM Interface Types](https://component-model.bytecodealliance.org/design/wit.html)

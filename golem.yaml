@@ -6,15 +6,15 @@ components:
         build:
           - command: cargo component build --release
             sources:
-              - pricing/src
-              - pricing/wit
+              - components/pricing/src
+              - components/pricing/wit
             targets:
               - target/wasm32-wasip1/release/pricing.wasm
-        sourceWit: pricing/src_wit
-        generatedWit: pricing/wit
+        sourceWit: components/pricing/src_wit
+        generatedWit: components/pricing/wit
         componentWasm: target/wasm32-wasip1/release/pricing.wasm
         clean:
-          - pricing/src/bindings.rs
+          - components/pricing/src/bindings.rs
     defaultProfile: release
   golem:product:
     profiles:
@@ -22,15 +22,15 @@ components:
         build:
           - command: cargo component build --release
             sources:
-              - product/src
-              - product/wit
+              - components/product/src
+              - components/product/wit
             targets:
               - target/wasm32-wasip1/release/product.wasm
-        sourceWit: product/src_wit
-        generatedWit: product/wit
+        sourceWit: components/product/src_wit
+        generatedWit: components/product/wit
         componentWasm: target/wasm32-wasip1/release/product.wasm
         clean:
-          - product/src/bindings.rs
+          - components/product/src/bindings.rs
     defaultProfile: release
   golem:cart:
     profiles:
@@ -38,15 +38,15 @@ components:
         build:
           - command: cargo component build --release
             sources:
-              - cart/src
-              - cart/wit
+              - components/cart/src
+              - components/cart/wit
             targets:
               - target/wasm32-wasip1/release/cart.wasm
-        sourceWit: cart/src_wit
-        generatedWit: cart/wit
+        sourceWit: components/cart/src_wit
+        generatedWit: components/cart/wit
         componentWasm: target/wasm32-wasip1/release/cart.wasm
         clean:
-          - cart/src/bindings.rs
+          - components/cart/src/bindings.rs
     defaultProfile: release
   golem:order:
     profiles:
@@ -54,15 +54,15 @@ components:
         build:
           - command: cargo component build --release
             sources:
-              - order/src
-              - order/wit
+              - components/order/src
+              - components/order/wit
             targets:
               - target/wasm32-wasip1/release/order.wasm
-        sourceWit: order/src_wit
-        generatedWit: order/wit
+        sourceWit: components/order/src_wit
+        generatedWit: components/order/wit
         componentWasm: target/wasm32-wasip1/release/order.wasm
         clean:
-          - order/src/bindings.rs
+          - components/order/src/bindings.rs
     defaultProfile: release
   golem:product-search:
     profiles:
@@ -71,15 +71,15 @@ components:
         build:
           - command: cargo component build --release
             sources:
-              - product-search/src
-              - product-search/wit
+              - components/product-search/src
+              - components/product-search/wit
             targets:
               - target/wasm32-wasip1/release/product_search.wasm
-        sourceWit: product-search/src_wit
-        generatedWit: product-search/wit
+        sourceWit: components/product-search/src_wit
+        generatedWit: components/product-search/wit
         componentWasm: target/wasm32-wasip1/release/product_search.wasm
         clean:
-          - product-search/src/bindings.rs
+          - components/product-search/src/bindings.rs
     defaultProfile: release
 dependencies:
   golem:order:
