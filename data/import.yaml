@@ -5,7 +5,7 @@ concurrency: 1
 rampup: 1
 
 plan:
-  - name: Create product, index {{ index }}
+  - name: Create tech product, index {{ index }}
     request:
       url: /v1/product/{{ item.product-id }}
       method: POST
@@ -15,10 +15,10 @@ plan:
         Content-Type: 'application/json'
         Accept: 'application/json'
     with_items_from_csv:
-      file_name: ./fixtures/products.csv
+      file_name: ./fixtures/tech_products.csv
       quote_char: "\'"
 
-  - name: Create pricing, index {{ index }}
+  - name: Create tech pricing, index {{ index }}
     request:
       url: /v1/pricing/{{ item.product-id }}
       method: POST
@@ -28,5 +28,5 @@ plan:
         Content-Type: 'application/json'
         Accept: 'application/json'
     with_items_from_csv:
-      file_name: ./fixtures/prices.csv
+      file_name: ./fixtures/tech_prices.csv
       quote_char: "\'"

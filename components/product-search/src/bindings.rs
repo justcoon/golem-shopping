@@ -2,9 +2,9 @@
 // Options used:
 //   * runtime_path: "wit_bindgen_rt"
 //   * with "wasi:clocks/monotonic-clock@0.2.0" = "golem_rust::bindings::wasi::clocks::monotonic_clock"
-//   * with "golem:rpc/types@0.2.0" = "golem_rust::wasm_rpc::golem_rpc_0_2_x::types"
-//   * with "golem:api/host@1.1.6" = "golem_rust::bindings::golem::api::host"
 //   * with "wasi:clocks/wall-clock@0.2.0" = "golem_rust::wasm_rpc::wasi::clocks::wall_clock"
+//   * with "golem:api/host@1.1.6" = "golem_rust::bindings::golem::api::host"
+//   * with "golem:rpc/types@0.2.0" = "golem_rust::wasm_rpc::golem_rpc_0_2_x::types"
 //   * with "wasi:io/poll@0.2.0" = "golem_rust::wasm_rpc::wasi::io::poll"
 use golem_rust::wasm_rpc::wasi::io::poll as __with_name0;
 use golem_rust::bindings::wasi::clocks::monotonic_clock as __with_name1;
