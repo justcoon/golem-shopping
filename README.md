@@ -6,8 +6,13 @@ A distributed shopping application built with Rust and WebAssembly, designed to 
 
 1. **Prerequisites**:
    - Install [Rust](https://www.rust-lang.org/tools/install)
-   - Install [Golem CLI](https://learn.golem.cloud/docs/golem-cli/install)
-   - Install [Docker](https://docs.docker.com/get-docker/) (for local development)
+   - Install [Golem CLI](https://learn.golem.cloud/docs/golem-cli/install) (version 1.2.5)
+   - [Running Golem Environment](https://learn.golem.cloud/quickstart#running-golem)
+
+   See [Golem Quickstart](https://learn.golem.cloud/quickstart) for more information.
+
+   **Note**: This project was developed and tested with Golem v1.2.5. For best results, please use this version.
+
 
 2. **Build and Deploy**:
    ```bash
@@ -116,6 +121,7 @@ For detailed information about the frontend, including setup, development, and a
 For a detailed architecture overview, see [architecture.puml](./architecture.puml) or the generated [architecture.png](./architecture.png).
 
 ### Golem Documentation
+* [Golem Quickstart](https://learn.golem.cloud/quickstart)
 * [Golem Rust Setup](https://learn.golem.cloud/docs/rust-language-guide/setup)
 * [Docker Deployment](https://learn.golem.cloud/docs/deploy/docker)
 * [Worker Updates](https://learn.golem.cloud/rust-language-guide/updating#manual-snapshot-based-update)
